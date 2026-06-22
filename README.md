@@ -41,7 +41,6 @@ sourced best-practices slide.
 | `web/components.html` | Component gallery source |
 | `web/assets/` | OCBC logo, icons, cover image, example charts |
 | `web/make_standalone.py` | Bundles a source deck into a standalone file |
-| `CRAYON_2026_Project_Brief_Suara_Pintar_v3.docx` | Project brief |
 
 ## Rebuild the standalone file
 

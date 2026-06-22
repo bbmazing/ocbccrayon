@@ -16,3 +16,7 @@ Thumbs.db
 
 # loose source logos (the web deck bundles its own copies in web/assets/)
 ocbc-bank-logo-png_seeklogo-*.png
+
+# internal project brief — kept local only, never published
+CRAYON_2026_Project_Brief_Suara_Pintar_v3.docx
+*.docx
