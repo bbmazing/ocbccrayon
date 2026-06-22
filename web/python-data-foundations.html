@@ -1,0 +1,1597 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Python Data Foundations · OCBC CRAYON</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+/* =========================================================================
+   OCBC CRAYON · Python Data Foundations
+   Self-contained animated deck. Fixed 16:9 stage, one slide at a time.
+   ========================================================================= */
+:root{
+  /* OCBC brand */
+  --red:#EC1B23; --red-dark:#B3141A; --red-deep:#7A0E12;
+  --ink:#1A1A1A; --charcoal:#202024; --charcoal-2:#2A2A2F;
+  --text:#1F2937; --muted:#6B7280; --faint:#9AA1AC;
+  --surface:#FFFFFF; --card:#F5F5F6; --card-2:#EFEFF1;
+  --line:#E4E7EB; --line-strong:#D6D9DE;
+  --tint-red:#FCEEEF; --tint-red-2:#FBE2E3;
+  --code-bg:#1A1C22; --code-ink:#E7E9EE;
+  /* supporting diagram hues (used sparingly) */
+  --blue:#1C6E9C; --teal:#0E7C6B; --amber:#C9851A; --green:#1E8E5A; --violet:#6C4FB3;
+  /* stage geometry */
+  --stageW:1280px; --stageH:720px;
+  --fHead:'Manrope',system-ui,sans-serif;
+  --fBody:'Inter',system-ui,sans-serif;
+  --fMono:'JetBrains Mono',ui-monospace,monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:#0c0c0e;
+  font-family:var(--fBody);
+  color:var(--text);
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+/* ---- Stage: scale a fixed 1280x720 deck to fit the viewport ---- */
+.stage{
+  position:fixed; inset:0; display:grid; place-items:center;
+  background:
+    radial-gradient(1200px 700px at 80% -10%, rgba(236,27,35,.10), transparent 60%),
+    #0a0a0c;
+}
+.deck{
+  position:relative;
+  width:var(--stageW); height:var(--stageH);
+  transform-origin:center center;
+  box-shadow:0 40px 120px -30px rgba(0,0,0,.8);
+  border-radius:4px; overflow:hidden;
+  background:#fff;
+}
+
+/* ---- Slides ---- */
+.slide{
+  position:absolute; inset:0;
+  width:var(--stageW); height:var(--stageH);
+  opacity:0; visibility:hidden; pointer-events:none;
+  transition:opacity .5s ease;
+  display:flex; flex-direction:column;
+  padding:62px 76px 58px;
+  background:var(--surface);
+}
+.slide.active{opacity:1; visibility:visible; pointer-events:auto; z-index:2}
+.slide.prev{z-index:1}
+
+/* dark slides (cover, dividers, close) */
+.slide.dark{
+  color:#fff;
+  background:
+    radial-gradient(900px 600px at 78% -8%, rgba(236,27,35,.30), transparent 55%),
+    radial-gradient(700px 500px at -5% 110%, rgba(236,27,35,.12), transparent 60%),
+    linear-gradient(160deg,#202024 0%,#161618 60%,#121214 100%);
+}
+.slide.dark::after{ /* fine grain texture */
+  content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
+  background-image:radial-gradient(rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size:3px 3px; mix-blend-mode:screen;
+}
+
+/* =========================================================================
+   Shared chrome: kicker, badge, footer, titles
+   ========================================================================= */
+.kicker{
+  display:inline-flex; align-items:center; gap:11px;
+  font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--red); margin-bottom:16px;
+}
+.kicker .badge{
+  width:24px; height:24px; border-radius:50%;
+  background:var(--red); position:relative; flex:none;
+  box-shadow:0 0 0 4px var(--tint-red);
+  overflow:hidden;
+}
+.kicker .badge::before{ /* rising-sun rays motif */
+  content:""; position:absolute; left:50%; bottom:5px; width:0; height:0;
+  border-left:7px solid transparent; border-right:7px solid transparent;
+  border-bottom:9px solid #fff; transform:translateX(-50%); opacity:.95;
+}
+.kicker .badge::after{
+  content:""; position:absolute; left:0; right:0; bottom:6px; height:1.5px;
+  background:rgba(255,255,255,.85);
+}
+.dark .kicker{color:#ff6a6f}
+.dark .kicker .badge{box-shadow:0 0 0 4px rgba(236,27,35,.25)}
+
+.slide-title{
+  font-family:var(--fHead); font-weight:800; color:var(--ink);
+  font-size:38px; line-height:1.08; letter-spacing:-.02em; max-width:24ch;
+}
+.dark .slide-title{color:#fff}
+.slide-sub{font-size:17px; color:var(--muted); margin-top:12px; max-width:60ch; line-height:1.5}
+
+.foot{
+  position:absolute; left:76px; right:76px; bottom:26px;
+  display:flex; align-items:center; justify-content:space-between;
+  font-size:12px; color:var(--faint); letter-spacing:.02em;
+}
+.foot .mark{display:flex; align-items:center; gap:9px; font-weight:600; color:var(--muted)}
+.foot .mark img{height:18px; width:auto; display:block}
+.foot .pg{font-family:var(--fMono); font-weight:500}
+.dark .foot{color:rgba(255,255,255,.5)}
+.dark .foot .mark{color:rgba(255,255,255,.7)}
+
+.body-area{flex:1; min-height:0; display:flex; flex-direction:column; margin-top:8px}
+
+/* =========================================================================
+   Reveal system — children animate in when slide becomes active
+   ========================================================================= */
+[data-r]{opacity:0; transform:translateY(16px); transition:opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1);}
+.slide.active [data-r]{opacity:1; transform:none}
+[data-r][data-d="1"]{transition-delay:.08s}[data-r][data-d="2"]{transition-delay:.16s}
+[data-r][data-d="3"]{transition-delay:.24s}[data-r][data-d="4"]{transition-delay:.32s}
+[data-r][data-d="5"]{transition-delay:.40s}[data-r][data-d="6"]{transition-delay:.48s}
+[data-r][data-d="7"]{transition-delay:.56s}[data-r][data-d="8"]{transition-delay:.64s}
+[data-r][data-d="9"]{transition-delay:.72s}[data-r][data-d="10"]{transition-delay:.80s}
+[data-r][data-d="11"]{transition-delay:.88s}[data-r][data-d="12"]{transition-delay:.96s}
+
+/* =========================================================================
+   COVER (slide 1)
+   ========================================================================= */
+.cover{padding:0}
+.cover .bg{
+  position:absolute; inset:0;
+  background:url('assets/bg_title_skyline.png') center/cover no-repeat;
+}
+.cover .scrim{position:absolute; inset:0; background:linear-gradient(100deg, rgba(255,255,255,.96) 0%, rgba(255,255,255,.82) 34%, rgba(255,255,255,0) 56%);}
+.cover .inner{position:relative; height:100%; display:flex; flex-direction:column; justify-content:center; padding:0 76px;}
+.cover .logo{height:34px; width:auto; position:absolute; top:48px; left:76px}
+.cover h1{font-family:var(--fHead); font-weight:800; letter-spacing:-.025em; line-height:1.02; font-size:66px; color:var(--ink)}
+.cover h1 .red{color:var(--red); display:block}
+.cover .rule{width:64px; height:5px; background:var(--red); border-radius:3px; margin:26px 0 22px}
+.cover .meta{font-size:15px; color:var(--muted); line-height:1.7}
+.cover .meta strong{color:var(--text); font-weight:600}
+.cover .program{position:absolute; bottom:46px; left:76px; font-size:12.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); font-weight:600}
+
+/* =========================================================================
+   QUOTE (slide 2)
+   ========================================================================= */
+.quote-wrap{flex:1; display:flex; flex-direction:column; justify-content:center; max-width:70ch}
+.quote-mark{font-family:var(--fHead); font-size:120px; line-height:.6; color:var(--red); font-weight:800; height:54px}
+.quote-wrap blockquote{font-family:var(--fHead); font-weight:600; font-size:46px; line-height:1.18; letter-spacing:-.02em; color:#fff; margin:18px 0 26px}
+.quote-wrap blockquote em{color:#ff6a6f; font-style:normal}
+.quote-wrap cite{font-style:normal; font-size:16px; color:rgba(255,255,255,.65); letter-spacing:.04em}
+.quote-wrap cite b{color:#fff; font-weight:600}
+
+/* =========================================================================
+   DIVIDER (section openers)
+   ========================================================================= */
+.divider{justify-content:center}
+.divider .pillar-no{font-family:var(--fHead); font-weight:800; font-size:200px; line-height:.8; color:rgba(255,255,255,.06); position:absolute; right:60px; top:50%; transform:translateY(-50%); letter-spacing:-.04em}
+.divider .eyebrow{font-family:var(--fHead); font-weight:700; letter-spacing:.18em; text-transform:uppercase; font-size:14px; color:#ff6a6f; display:flex; align-items:center; gap:12px}
+.divider .eyebrow .dot{width:26px;height:26px;border-radius:50%;background:var(--red);position:relative;overflow:hidden}
+.divider .eyebrow .dot::before{content:"";position:absolute;left:50%;bottom:5px;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:9px solid #fff;transform:translateX(-50%)}
+.divider h2{font-family:var(--fHead); font-weight:800; font-size:64px; letter-spacing:-.025em; color:#fff; margin:20px 0 18px; line-height:1.02; max-width:18ch}
+.divider .lead{font-size:18px; color:rgba(255,255,255,.7); max-width:54ch; line-height:1.55}
+.divider .prog-rail{display:flex; gap:10px; margin-top:34px}
+.divider .prog-rail span{font-size:12.5px; font-weight:600; letter-spacing:.04em; color:rgba(255,255,255,.4); padding:7px 14px; border:1px solid rgba(255,255,255,.14); border-radius:99px}
+.divider .prog-rail span.on{color:#fff; border-color:var(--red); background:rgba(236,27,35,.18)}
+
+/* =========================================================================
+   Generic building blocks
+   ========================================================================= */
+.cards{display:grid; gap:16px; flex:1; min-height:0}
+.cards.c3{grid-template-columns:repeat(3,1fr)}
+.cards.c2{grid-template-columns:repeat(2,1fr)}
+.card{
+  background:var(--card); border:1px solid var(--line); border-radius:14px;
+  padding:20px 22px; display:flex; flex-direction:column; gap:8px;
+  transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.card:hover{transform:translateY(-3px); box-shadow:0 18px 36px -22px rgba(0,0,0,.3); border-color:var(--line-strong)}
+.card .ic{width:40px; height:40px; border-radius:11px; background:var(--tint-red); color:var(--red); display:grid; place-items:center; flex:none}
+.card .ic svg{width:22px; height:22px}
+.card .num{font-family:var(--fHead); font-weight:800; font-size:15px; color:var(--red); width:30px; height:30px; border-radius:8px; background:var(--tint-red); display:grid; place-items:center}
+.card h3{font-family:var(--fHead); font-weight:700; font-size:18px; color:var(--ink); letter-spacing:-.01em}
+.card p{font-size:14px; color:var(--muted); line-height:1.5}
+.card .tag{font-family:var(--fMono); font-size:12px; color:var(--red); font-weight:500}
+
+/* two-column: text + visual */
+.two{display:grid; grid-template-columns:1fr 1fr; gap:40px; flex:1; min-height:0; align-items:center}
+.two.wide-r{grid-template-columns:0.86fr 1.14fr}
+.two .txt{display:flex; flex-direction:column; justify-content:center}
+.bullets{list-style:none; display:flex; flex-direction:column; gap:14px; margin-top:6px}
+.bullets li{position:relative; padding-left:28px; font-size:16.5px; line-height:1.5; color:var(--text)}
+.bullets li::before{content:""; position:absolute; left:0; top:9px; width:9px; height:9px; border-radius:3px; background:var(--red)}
+.bullets li.strong{font-weight:600; color:var(--ink)}
+.bullets li b{color:var(--ink); font-weight:600}
+.viz{position:relative; height:100%; display:flex; flex-direction:column; justify-content:center}
+
+/* rail (side panel) */
+.rail{background:var(--ink); color:#fff; border-radius:16px; padding:24px 26px; align-self:stretch; display:flex; flex-direction:column; justify-content:center}
+.rail h4{font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.12em; text-transform:uppercase; color:#ff6a6f; margin-bottom:16px}
+.rail ul{list-style:none; display:flex; flex-direction:column; gap:13px}
+.rail li{font-size:15px; color:rgba(255,255,255,.86); padding-left:22px; position:relative; line-height:1.4}
+.rail li::before{content:""; position:absolute; left:0; top:7px; width:7px; height:7px; border-radius:50%; background:var(--red)}
+
+.bullets-rail{display:grid; grid-template-columns:1.55fr 1fr; gap:32px; flex:1; min-height:0; align-items:stretch}
+.bullets-rail .txt{display:flex; flex-direction:column; justify-content:center}
+
+/* =========================================================================
+   Code block (typing reveal + syntax tint)
+   ========================================================================= */
+.codewrap{background:var(--code-bg); border-radius:14px; overflow:hidden; box-shadow:0 24px 50px -28px rgba(0,0,0,.5); border:1px solid #2a2d36; display:flex; flex-direction:column}
+.codewrap .bar{display:flex; align-items:center; gap:7px; padding:12px 16px; border-bottom:1px solid #272a33; background:#15171c}
+.codewrap .bar i{width:11px; height:11px; border-radius:50%; display:block}
+.codewrap .bar i:nth-child(1){background:#ff5f57}.codewrap .bar i:nth-child(2){background:#febc2e}.codewrap .bar i:nth-child(3){background:#28c840}
+.codewrap .bar .fn{margin-left:10px; font-family:var(--fMono); font-size:12.5px; color:#8b909c}
+.codewrap pre{margin:0; padding:20px 22px; overflow:hidden; flex:1}
+.codewrap code{font-family:var(--fMono); font-size:14.5px; line-height:1.65; color:var(--code-ink); white-space:pre; display:block}
+.tok-kw{color:#ff7b72}.tok-fn{color:#d2a8ff}.tok-str{color:#a5d6ff}.tok-num{color:#79c0ff}.tok-com{color:#7d8590; font-style:italic}.tok-op{color:#ff7b72}.tok-var{color:#ffa657}
+.code-line{display:block}
+.slide.active .code-line{animation:codeLine .42s both}
+.slide.active .code-line:nth-child(1){animation-delay:.15s}.slide.active .code-line:nth-child(2){animation-delay:.22s}
+.slide.active .code-line:nth-child(3){animation-delay:.29s}.slide.active .code-line:nth-child(4){animation-delay:.36s}
+.slide.active .code-line:nth-child(5){animation-delay:.43s}.slide.active .code-line:nth-child(6){animation-delay:.50s}
+.slide.active .code-line:nth-child(7){animation-delay:.57s}.slide.active .code-line:nth-child(8){animation-delay:.64s}
+.slide.active .code-line:nth-child(9){animation-delay:.71s}.slide.active .code-line:nth-child(10){animation-delay:.78s}
+.slide.active .code-line:nth-child(11){animation-delay:.85s}.slide.active .code-line:nth-child(12){animation-delay:.92s}
+.slide.active .code-line:nth-child(13){animation-delay:.99s}.slide.active .code-line:nth-child(14){animation-delay:1.06s}
+@keyframes codeLine{from{opacity:0; transform:translateX(-8px)}to{opacity:1; transform:none}}
+.code-note{font-size:14px; color:var(--muted); margin-top:14px; line-height:1.5; font-style:italic}
+.code-points{list-style:none; display:flex; flex-direction:column; gap:12px}
+.code-points li{position:relative; padding-left:24px; font-size:15.5px; line-height:1.45; color:var(--text)}
+.code-points li::before{content:"›"; position:absolute; left:0; top:-1px; color:var(--red); font-weight:800; font-size:18px}
+
+/* =========================================================================
+   Conway Venn (slide 4)
+   ========================================================================= */
+.venn{position:relative; width:430px; height:380px; margin:auto}
+.venn .circ{position:absolute; width:250px; height:250px; border-radius:50%; mix-blend-mode:multiply; display:grid; place-items:center; opacity:0; transform:scale(.6); transition:opacity .7s ease, transform .7s cubic-bezier(.34,1.56,.64,1)}
+.venn .c1{background:rgba(236,27,35,.40); left:0; top:0}
+.venn .c2{background:rgba(28,110,156,.40); right:0; top:0}
+.venn .c3{background:rgba(30,142,90,.42); left:50%; bottom:0; transform:translateX(-50%) scale(.6)}
+.slide.active .venn .c1{opacity:1; transform:scale(1); transition-delay:.2s}
+.slide.active .venn .c2{opacity:1; transform:scale(1); transition-delay:.45s}
+.slide.active .venn .c3{opacity:1; transform:translateX(-50%) scale(1); transition-delay:.7s}
+.venn .lbl{font-family:var(--fHead); font-weight:700; font-size:14px; color:var(--ink); text-align:center; line-height:1.2; pointer-events:none; padding:0 30px}
+.venn .center{position:absolute; left:50%; top:48%; transform:translate(-50%,-50%); z-index:5; background:var(--ink); color:#fff; font-family:var(--fHead); font-weight:800; font-size:13px; padding:8px 14px; border-radius:99px; white-space:nowrap; opacity:0; transition:opacity .5s ease .95s; box-shadow:0 8px 20px -8px rgba(0,0,0,.5)}
+.slide.active .venn .center{opacity:1}
+.venn .danger{position:absolute; left:14%; bottom:30%; z-index:6; font-family:var(--fHead); font-weight:800; font-size:11px; color:#fff; background:var(--red); padding:5px 10px; border-radius:6px; transform:rotate(-8deg); opacity:0; transition:opacity .5s ease 1.2s; box-shadow:0 6px 16px -6px rgba(236,27,35,.7)}
+.slide.active .venn .danger{opacity:1}
+
+/* =========================================================================
+   Stat counters (slide 5 + others)
+   ========================================================================= */
+.stat-row{display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin:auto 0}
+.stat{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:30px 26px; text-align:left; position:relative; overflow:hidden}
+.stat .big{font-family:var(--fHead); font-weight:800; font-size:62px; line-height:1; color:var(--red); letter-spacing:-.03em}
+.stat .big .unit{font-size:32px; vertical-align:super; margin-left:2px}
+.stat .lab{font-size:15px; color:var(--text); margin-top:12px; line-height:1.45; font-weight:500}
+.stat .sub{font-size:12.5px; color:var(--faint); margin-top:8px}
+.stat::before{content:""; position:absolute; left:0; top:0; bottom:0; width:5px; background:var(--red)}
+
+/* progress ring (80% stat) */
+.ring-wrap{display:flex; align-items:center; gap:40px; margin:auto 0}
+.ring{position:relative; width:230px; height:230px; flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring .pct{position:absolute; inset:0; display:grid; place-items:center; font-family:var(--fHead); font-weight:800; font-size:56px; color:var(--ink)}
+.ring-copy{max-width:46ch}
+.ring-copy h3{font-family:var(--fHead); font-weight:800; font-size:28px; color:var(--ink); letter-spacing:-.02em; line-height:1.1; margin-bottom:14px}
+.ring-copy p{font-size:16px; color:var(--muted); line-height:1.55}
+
+/* =========================================================================
+   Step strip (5 facets / workflow)
+   ========================================================================= */
+.flow{display:flex; align-items:stretch; gap:0; margin:auto 0; width:100%}
+.flow .step{flex:1; position:relative; display:flex; flex-direction:column; gap:8px; padding:0 6px}
+.flow .step .node{width:54px; height:54px; border-radius:14px; background:var(--ink); color:#fff; font-family:var(--fHead); font-weight:800; font-size:20px; display:grid; place-items:center; position:relative; z-index:2}
+.flow .step:nth-child(odd) .node{background:var(--red)}
+.flow .step h4{font-family:var(--fHead); font-weight:700; font-size:16.5px; color:var(--ink); margin-top:10px}
+.flow .step p{font-size:13.5px; color:var(--muted); line-height:1.45}
+.flow .arrow{position:absolute; top:27px; left:46px; right:-8px; height:2px; background:var(--line-strong); z-index:1}
+.flow .arrow::after{content:""; position:absolute; right:0; top:-4px; border-left:8px solid var(--line-strong); border-top:5px solid transparent; border-bottom:5px solid transparent}
+.flow .step:last-child .arrow{display:none}
+/* sequential build for flow */
+.flow .step{opacity:0; transform:translateY(14px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .flow .step{opacity:1; transform:none}
+.slide.active .flow .step:nth-child(1){transition-delay:.15s}.slide.active .flow .step:nth-child(2){transition-delay:.35s}
+.slide.active .flow .step:nth-child(3){transition-delay:.55s}.slide.active .flow .step:nth-child(4){transition-delay:.75s}
+.slide.active .flow .step:nth-child(5){transition-delay:.95s}.slide.active .flow .step:nth-child(6){transition-delay:1.15s}
+.flow.compact .node{width:46px;height:46px;border-radius:12px;font-size:17px}
+.flow-cap{font-size:14px; color:var(--muted); font-style:italic; text-align:center; margin-top:26px}
+
+/* journey / agenda */
+.journey{display:grid; grid-template-columns:repeat(4,1fr); gap:18px; flex:1; min-height:0; align-items:stretch}
+.jcard{border:1px solid var(--line); border-radius:16px; padding:24px 22px; display:flex; flex-direction:column; position:relative; background:var(--surface); overflow:hidden}
+.jcard .pn{font-family:var(--fHead); font-weight:800; font-size:46px; color:var(--card-2); line-height:1; letter-spacing:-.03em}
+.jcard .ph{font-family:var(--fHead); font-weight:700; font-size:18.5px; color:var(--ink); margin:14px 0 8px; letter-spacing:-.01em}
+.jcard p{font-size:13.5px; color:var(--muted); line-height:1.5; flex:1}
+.jcard .demo{margin-top:14px; font-family:var(--fMono); font-size:11px; font-weight:600; color:var(--red); background:var(--tint-red); padding:5px 10px; border-radius:6px; align-self:flex-start; display:inline-flex; gap:6px; align-items:center}
+.jcard::after{content:""; position:absolute; left:0; right:0; bottom:0; height:4px; background:var(--red); transform:scaleX(0); transform-origin:left; transition:transform .5s ease}
+.slide.active .jcard::after{transform:scaleX(1)}
+.slide.active .jcard:nth-child(1)::after{transition-delay:.3s}.slide.active .jcard:nth-child(2)::after{transition-delay:.45s}
+.slide.active .jcard:nth-child(3)::after{transition-delay:.6s}.slide.active .jcard:nth-child(4)::after{transition-delay:.75s}
+
+/* =========================================================================
+   Layered stack diagram (Python data stack)
+   ========================================================================= */
+.stack{display:flex; flex-direction:column; gap:12px; margin:auto 0; width:100%}
+.layer{display:grid; grid-template-columns:200px 1fr; align-items:center; gap:22px; border-radius:14px; padding:18px 24px; color:#fff; position:relative; overflow:hidden; opacity:0; transform:translateX(-18px); transition:opacity .55s ease, transform .55s cubic-bezier(.16,1,.3,1)}
+.slide.active .layer{opacity:1; transform:none}
+.slide.active .layer:nth-child(1){transition-delay:.5s}.slide.active .layer:nth-child(2){transition-delay:.38s}
+.slide.active .layer:nth-child(3){transition-delay:.26s}.slide.active .layer:nth-child(4){transition-delay:.14s}
+.layer .lname{font-family:var(--fHead); font-weight:800; font-size:21px; letter-spacing:-.01em; display:flex; align-items:baseline; gap:9px}
+.layer .lname code{font-family:var(--fMono); font-size:13px; opacity:.7; font-weight:500}
+.layer .ldesc{font-size:14.5px; line-height:1.4; opacity:.95}
+.layer.l1{background:linear-gradient(100deg,#2A2A2F,#1c1c20)}
+.layer.l2{background:linear-gradient(100deg,var(--red-dark),var(--red))}
+.layer.l3{background:linear-gradient(100deg,#1C6E9C,#2487bf)}
+.layer.l4{background:linear-gradient(100deg,#0E7C6B,#13a08a)}
+.stack .scaffold{font-size:12.5px; color:var(--muted); text-align:center; font-style:italic}
+
+/* container / building-block cards */
+.mini-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:14px}
+.mini{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:15px 18px}
+.mini .mh{font-family:var(--fMono); font-size:14px; font-weight:700; color:var(--red)}
+.mini .md{font-size:13.5px; color:var(--muted); margin-top:4px; line-height:1.4}
+.mini code{font-family:var(--fMono); font-size:12.5px; color:var(--ink); background:var(--card-2); padding:1px 5px; border-radius:4px}
+
+/* before / after code columns */
+.ba{display:grid; grid-template-columns:1fr 1fr; gap:22px; flex:1; min-height:0; align-items:stretch}
+.ba .col{display:flex; flex-direction:column}
+.ba .ba-h{font-family:var(--fHead); font-weight:700; font-size:14px; margin-bottom:10px; display:flex; align-items:center; gap:9px}
+.ba .ba-h .tagx{font-size:11px; padding:3px 9px; border-radius:99px; font-weight:700; letter-spacing:.04em}
+.ba .before .tagx{background:var(--card-2); color:var(--muted)}
+.ba .after .tagx{background:var(--tint-red); color:var(--red)}
+.ba .codewrap{flex:1}
+/* optimisation pushdown strip (eager vs lazy slide) */
+.pushdown{display:flex; gap:12px; margin-top:16px; justify-content:center; flex-wrap:wrap}
+.pushdown .pd{display:flex; align-items:center; gap:9px; background:var(--tint-red); border:1px solid var(--tint-red-2); border-radius:99px; padding:8px 16px; font-size:13px; color:var(--ink); opacity:0; transform:translateY(10px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .pushdown .pd{opacity:1; transform:none}
+.slide.active .pushdown .pd:nth-child(1){transition-delay:.5s}.slide.active .pushdown .pd:nth-child(2){transition-delay:.66s}.slide.active .pushdown .pd:nth-child(3){transition-delay:.82s}
+.pushdown .pd b{color:var(--red); font-weight:700}
+.pushdown .pd .ck{width:18px;height:18px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-size:11px;flex:none}
+
+/* =========================================================================
+   Notebook-playback demo component
+   ========================================================================= */
+.demo-stage{flex:1; min-height:0; display:grid; grid-template-columns:1.62fr 1fr; gap:26px; align-items:stretch}
+.nb{background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 24px 50px -30px rgba(0,0,0,.35); display:flex; flex-direction:column; overflow:hidden}
+.nb-top{display:flex; align-items:center; gap:8px; padding:11px 16px; border-bottom:1px solid var(--line); background:var(--card)}
+.nb-top .t-ic{width:9px;height:9px;border-radius:50%;background:#e0a800}
+.nb-top .t-ic.r{background:var(--red)} .nb-top .t-ic.g{background:#28a745}
+.nb-top .nb-name{font-family:var(--fMono); font-size:12.5px; color:var(--muted); margin-left:8px}
+.nb-top .nb-kernel{margin-left:auto; font-size:11.5px; color:var(--faint); display:flex; align-items:center; gap:6px}
+.nb-top .nb-kernel::after{content:"";width:8px;height:8px;border-radius:50%;background:#28a745}
+.nb-body{flex:1; overflow:hidden; padding:6px 0; scroll-behavior:smooth}
+.nb-cell{padding:5px 16px; opacity:0; transform:translateY(8px); transition:opacity .4s ease, transform .4s ease}
+.nb-cell.shown{opacity:1; transform:none}
+.nb-in{display:grid; grid-template-columns:54px 1fr; gap:10px; align-items:start}
+.nb-prompt{font-family:var(--fMono); font-size:12.5px; color:#3b6fb0; text-align:right; padding-top:9px; user-select:none}
+.nb-prompt.busy{color:var(--red)}
+.nb-code{position:relative; background:#f6f7f9; border:1px solid #eceef1; border-left:3px solid var(--red); border-radius:6px; padding:9px 12px; font-family:var(--fMono); font-size:13px; line-height:1.55; color:#1f2430; white-space:pre; overflow:hidden; transition:box-shadow .3s ease, border-left-color .3s ease}
+.nb-cell.running .nb-code{box-shadow:0 0 0 2px var(--tint-red-2), 0 8px 22px -12px rgba(236,27,35,.5); border-left-color:var(--red-dark)}
+.nb-cell.running .nb-code::after{content:"▋"; color:var(--red); animation:caret .7s steps(1) infinite; margin-left:1px}
+@keyframes caret{50%{opacity:0}}
+.nb-out{margin:6px 0 0 64px; font-family:var(--fMono); font-size:12px; line-height:1.5; color:#333; max-height:0; opacity:0; overflow:hidden; transition:max-height .5s ease, opacity .4s ease}
+.nb-out.shown{max-height:240px; opacity:1}
+.nb-out .otable{border-collapse:collapse; font-size:11px}
+.nb-out .otable th{background:var(--ink); color:#fff; font-weight:600; padding:2px 9px; text-align:right; font-family:var(--fMono)}
+.nb-out .otable td{padding:2px 9px; border-bottom:1px solid #eee; text-align:right; color:#444}
+.nb-out .otable tr:nth-child(even) td{background:#fafafa}
+.nb-out .muted{color:#8a9099}
+.nb-out .ok{color:#1E8E5A}
+.demo-side{display:flex; flex-direction:column; gap:16px; justify-content:center}
+.demo-card{border-radius:16px; padding:22px 24px; background:var(--ink); color:#fff}
+.demo-card .dk{font-family:var(--fHead); font-weight:700; font-size:12px; letter-spacing:.13em; text-transform:uppercase; color:#ff6a6f; margin-bottom:10px}
+.demo-card h3{font-family:var(--fHead); font-weight:800; font-size:22px; line-height:1.12; letter-spacing:-.01em; margin-bottom:10px}
+.demo-card p{font-size:14px; line-height:1.5; color:rgba(255,255,255,.82)}
+.demo-steps{list-style:none; display:flex; flex-direction:column; gap:11px}
+.demo-steps li{display:flex; gap:11px; align-items:flex-start; font-size:14px; color:var(--text); line-height:1.4}
+.demo-steps li .sn{flex:none; width:24px; height:24px; border-radius:7px; background:var(--tint-red); color:var(--red); font-family:var(--fHead); font-weight:800; font-size:12px; display:grid; place-items:center}
+.demo-steps li.on .sn{background:var(--red); color:#fff}
+.replay{align-self:flex-start; display:inline-flex; align-items:center; gap:8px; background:var(--tint-red); color:var(--red); border:1px solid var(--tint-red-2); font-family:var(--fHead); font-weight:700; font-size:13px; padding:9px 16px; border-radius:99px; cursor:pointer; transition:all .2s ease}
+.replay:hover{background:var(--red); color:#fff}
+.replay svg{width:14px;height:14px}
+.demo-take{background:var(--tint-red); border:1px solid var(--tint-red-2); border-radius:12px; padding:14px 18px; font-size:13.5px; color:var(--ink); line-height:1.45}
+.demo-take b{color:var(--red)}
+
+/* =========================================================================
+   VS compare panels (structured vs unstructured, good vs bad)
+   ========================================================================= */
+.vs{display:grid; grid-template-columns:1fr 1fr; gap:24px; flex:1; min-height:0}
+.vs .panel{border:1px solid var(--line); border-radius:16px; padding:24px 26px; display:flex; flex-direction:column; background:var(--surface); position:relative; overflow:hidden}
+.vs .panel.accent{background:linear-gradient(180deg,var(--tint-red),#fff); border-color:var(--tint-red-2)}
+.vs .panel .ph{font-family:var(--fHead); font-weight:800; font-size:21px; color:var(--ink); letter-spacing:-.01em; display:flex; align-items:center; gap:12px}
+.vs .panel .ph .glyph{width:42px; height:42px; border-radius:11px; display:grid; place-items:center; flex:none}
+.vs .panel.accent .ph .glyph{background:var(--red); color:#fff}
+.vs .panel:not(.accent) .ph .glyph{background:var(--ink); color:#fff}
+.vs .panel .ps{font-size:14px; color:var(--muted); margin:8px 0 16px; line-height:1.45}
+.vs .chips{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px}
+.vs .chip{font-family:var(--fMono); font-size:12px; padding:6px 11px; border-radius:8px; background:var(--card); border:1px solid var(--line); color:var(--text)}
+.vs .panel.accent .chip{background:#fff; border-color:var(--tint-red-2)}
+.vs .where{margin-top:auto; font-size:13.5px; color:var(--text); line-height:1.45; padding-top:14px; border-top:1px dashed var(--line-strong)}
+.vs .where b{color:var(--red)}
+
+/* annotated "shape of data" table */
+.shape-tbl{display:grid; grid-template-columns:auto 1fr; gap:0 18px; align-items:center; margin:auto 0}
+.dtable{border-collapse:separate; border-spacing:0; border-radius:12px; overflow:hidden; box-shadow:0 18px 40px -28px rgba(0,0,0,.3); width:100%}
+.dtable th{background:var(--ink); color:#fff; font-family:var(--fMono); font-size:13px; font-weight:600; padding:11px 16px; text-align:left}
+.dtable th.target{background:var(--red)}
+.dtable td{padding:10px 16px; font-family:var(--fMono); font-size:13.5px; color:var(--text); background:#fff; border-bottom:1px solid var(--line)}
+.dtable td.target{background:var(--tint-red); color:var(--red-dark); font-weight:600}
+.dtable tr:nth-child(even) td{background:#fafafb}
+.dtable tr:nth-child(even) td.target{background:var(--tint-red-2)}
+.annot{font-family:var(--fHead); font-weight:700; font-size:14px; color:var(--red); display:flex; align-items:center; gap:8px}
+.annot.muted{color:var(--muted)}
+.shape-legend{display:flex; gap:26px; justify-content:center; margin-top:22px; flex-wrap:wrap}
+.shape-legend .item{display:flex; align-items:center; gap:9px; font-size:14px; color:var(--text)}
+.shape-legend .sw{width:16px; height:16px; border-radius:5px}
+
+/* analytics staircase (ascending) */
+.stair{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; align-items:end; flex:1; min-height:0; padding-top:8px}
+.rung{display:flex; flex-direction:column; justify-content:flex-end}
+.rung .box{border-radius:14px 14px 0 0; padding:20px 20px 22px; color:#fff; position:relative; transform-origin:bottom; transform:scaleY(0); opacity:0; transition:transform .6s cubic-bezier(.16,1,.3,1), opacity .4s ease}
+.slide.active .rung .box{transform:scaleY(1); opacity:1}
+.slide.active .rung:nth-child(1) .box{transition-delay:.2s}.slide.active .rung:nth-child(2) .box{transition-delay:.42s}
+.slide.active .rung:nth-child(3) .box{transition-delay:.64s}.slide.active .rung:nth-child(4) .box{transition-delay:.86s}
+.rung:nth-child(1) .box{background:#3a3a40; min-height:150px}
+.rung:nth-child(2) .box{background:#8a1419; min-height:215px}
+.rung:nth-child(3) .box{background:var(--red-dark); min-height:280px}
+.rung:nth-child(4) .box{background:var(--red); min-height:345px}
+.rung .q{font-family:var(--fMono); font-size:12px; opacity:.85; margin-bottom:6px}
+.rung .box h4{font-family:var(--fHead); font-weight:800; font-size:21px; letter-spacing:-.01em}
+.rung .box p{font-size:13px; line-height:1.4; opacity:.92; margin-top:8px}
+.rung .box .step-i{position:absolute; top:14px; right:16px; font-family:var(--fHead); font-weight:800; font-size:14px; opacity:.35}
+.stair-axis{display:flex; justify-content:space-between; font-size:13px; color:var(--muted); margin-top:14px; font-style:italic}
+.stair-axis b{color:var(--red); font-style:normal; font-weight:700}
+
+/* animated SVG charts (scatter, dual-line) */
+.svg-card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px 22px; height:100%; display:flex; flex-direction:column}
+.svg-card .ct{font-family:var(--fHead); font-weight:700; font-size:15px; color:var(--ink); margin-bottom:6px}
+.chart-svg{width:100%; flex:1}
+.chart-svg .dot{opacity:0; transition:opacity .5s ease}
+.slide.active .chart-svg .dot{opacity:.78}
+.chart-svg .trend{stroke:var(--red); stroke-width:3; fill:none; stroke-dasharray:600; stroke-dashoffset:600; transition:stroke-dashoffset 1.3s ease .6s}
+.slide.active .chart-svg .trend{stroke-dashoffset:0}
+.chart-svg .ln{fill:none; stroke-width:3; stroke-dasharray:900; stroke-dashoffset:900; transition:stroke-dashoffset 1.5s ease}
+.slide.active .chart-svg .ln1{stroke-dashoffset:0; transition-delay:.3s}
+.slide.active .chart-svg .ln2{stroke-dashoffset:0; transition-delay:.7s}
+.chart-svg .axis{stroke:var(--line-strong); stroke-width:1.5}
+.chart-svg .glab{font-family:var(--fBody); font-size:11px; fill:var(--muted)}
+
+/* problem -> fix table */
+.pf-table{display:flex; flex-direction:column; border:1px solid var(--line); border-radius:14px; overflow:hidden; flex:1; min-height:0}
+.pf-row{display:grid; grid-template-columns:1.1fr 1fr 1.25fr; align-items:center; padding:0; border-bottom:1px solid var(--line); opacity:0; transform:translateX(-12px); transition:opacity .45s ease, transform .45s ease}
+.slide.active .pf-row{opacity:1; transform:none}
+.slide.active .pf-row:nth-child(1){transition-delay:.1s}.slide.active .pf-row:nth-child(2){transition-delay:.2s}
+.slide.active .pf-row:nth-child(3){transition-delay:.3s}.slide.active .pf-row:nth-child(4){transition-delay:.4s}
+.slide.active .pf-row:nth-child(5){transition-delay:.5s}.slide.active .pf-row:nth-child(6){transition-delay:.6s}
+.slide.active .pf-row:nth-child(7){transition-delay:.7s}
+.pf-row:last-child{border-bottom:none}
+.pf-row.head{background:var(--ink); color:#fff; opacity:1; transform:none}
+.pf-row.head>div{font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.04em; text-transform:uppercase; padding:12px 20px; color:rgba(255,255,255,.85)}
+.pf-row>div{padding:13px 20px; font-size:14.5px}
+.pf-row .prob{font-weight:600; color:var(--ink); display:flex; align-items:center; gap:10px}
+.pf-row .prob .d{width:8px;height:8px;border-radius:50%;background:var(--red);flex:none}
+.pf-row .fix code{font-family:var(--fMono); font-size:13px; background:var(--tint-red); color:var(--red-dark); padding:3px 9px; border-radius:6px; font-weight:500}
+.pf-row .desc{color:var(--muted); font-size:13.5px; line-height:1.4}
+.pf-row:nth-child(even):not(.head){background:#fafafb}
+
+/* tidy before/after tables */
+.tidy{display:grid; grid-template-columns:1fr auto 1fr; gap:20px; align-items:center; flex:1; min-height:0}
+.tidy .tcol{display:flex; flex-direction:column}
+.tidy .tlabel{font-family:var(--fHead); font-weight:800; font-size:14px; letter-spacing:.06em; text-transform:uppercase; margin-bottom:12px; display:flex; align-items:center; gap:9px}
+.tidy .messy .tlabel{color:var(--muted)} .tidy .clean .tlabel{color:var(--red)}
+.tidy .arrow-mid{font-size:34px; color:var(--red); font-weight:800}
+.tidy .note{font-size:12.5px; color:var(--muted); margin-top:10px; font-style:italic; line-height:1.4}
+
+/* histogram (EDA) */
+.hist{display:flex; align-items:flex-end; gap:7px; height:230px; padding:0 4px; border-bottom:2px solid var(--line-strong)}
+.hist .bar{flex:1; background:linear-gradient(180deg,var(--red),var(--red-dark)); border-radius:5px 5px 0 0; height:0; transition:height .8s cubic-bezier(.16,1,.3,1); position:relative}
+.hist .bar.med{background:linear-gradient(180deg,#3a3a40,#222)}
+.slide.active .hist .bar{height:var(--h)}
+.slide.active .hist .bar:nth-child(1){transition-delay:.1s}.slide.active .hist .bar:nth-child(2){transition-delay:.16s}
+.slide.active .hist .bar:nth-child(3){transition-delay:.22s}.slide.active .hist .bar:nth-child(4){transition-delay:.28s}
+.slide.active .hist .bar:nth-child(5){transition-delay:.34s}.slide.active .hist .bar:nth-child(6){transition-delay:.40s}
+.slide.active .hist .bar:nth-child(7){transition-delay:.46s}.slide.active .hist .bar:nth-child(8){transition-delay:.52s}
+.slide.active .hist .bar:nth-child(9){transition-delay:.58s}.slide.active .hist .bar:nth-child(10){transition-delay:.64s}
+.slide.active .hist .bar:nth-child(11){transition-delay:.70s}.slide.active .hist .bar:nth-child(12){transition-delay:.76s}
+.stat-chips{display:flex; flex-direction:column; gap:12px}
+.stat-chips .sc{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 18px; display:flex; justify-content:space-between; align-items:center}
+.stat-chips .sc .k{font-size:13.5px; color:var(--muted)}
+.stat-chips .sc .v{font-family:var(--fHead); font-weight:800; font-size:22px; color:var(--red)}
+
+/* chart-picker glyph grid */
+.picker{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; flex:1; min-height:0}
+.pick{border:1px solid var(--line); border-radius:14px; padding:18px 20px; display:flex; flex-direction:column; gap:10px; background:var(--surface); transition:transform .25s ease, box-shadow .25s ease, border-color .25s}
+.pick:hover{transform:translateY(-3px); box-shadow:0 18px 34px -22px rgba(0,0,0,.3); border-color:var(--tint-red-2)}
+.pick .pg-glyph{height:46px; display:flex; align-items:flex-end; gap:4px}
+.pick .q{font-family:var(--fMono); font-size:12px; color:var(--red); font-weight:500}
+.pick h4{font-family:var(--fHead); font-weight:700; font-size:16px; color:var(--ink)}
+.pick p{font-size:13px; color:var(--muted); line-height:1.4}
+.pick svg{width:100%; height:46px}
+
+/* insight callout */
+.insight{display:grid; grid-template-columns:1fr 1fr; gap:30px; flex:1; min-height:0; align-items:center}
+.insight .lead-card{background:var(--ink); color:#fff; border-radius:18px; padding:30px 32px; position:relative; overflow:hidden}
+.insight .lead-card::before{content:""; position:absolute; right:-40px; top:-40px; width:160px; height:160px; border-radius:50%; background:radial-gradient(circle,rgba(236,27,35,.4),transparent 70%)}
+.insight .lead-card .so{font-family:var(--fHead); font-weight:700; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#ff6a6f; margin-bottom:14px}
+.insight .lead-card .big-line{font-family:var(--fHead); font-weight:800; font-size:28px; line-height:1.15; letter-spacing:-.01em}
+.insight .lead-card .big-line em{color:#ff8e91; font-style:normal}
+.layer-list{list-style:none; display:flex; flex-direction:column; gap:16px}
+.layer-list li{display:flex; gap:14px; align-items:flex-start}
+.layer-list li .n{flex:none; width:30px; height:30px; border-radius:9px; background:var(--tint-red); color:var(--red); font-family:var(--fHead); font-weight:800; display:grid; place-items:center; font-size:14px}
+.layer-list li b{font-family:var(--fHead); color:var(--ink); font-size:16px}
+.layer-list li p{font-size:14px; color:var(--muted); line-height:1.4; margin-top:2px}
+
+/* closing recap */
+.recap-grid{display:grid; grid-template-columns:1fr 1fr; gap:30px; flex:1; min-height:0; align-items:center}
+.recap-col h4{font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.12em; text-transform:uppercase; margin-bottom:18px; display:flex; align-items:center; gap:10px}
+.recap-col.recap h4{color:#ff6a6f}.recap-col.next h4{color:#fff}
+.recap-col ul{list-style:none; display:flex; flex-direction:column; gap:14px}
+.recap-col li{font-size:16px; line-height:1.45; padding-left:26px; position:relative; color:rgba(255,255,255,.88)}
+.recap-col.recap li::before{content:"✓"; position:absolute; left:0; color:var(--red); font-weight:800}
+.recap-col.next li::before{content:"→"; position:absolute; left:0; color:#ff6a6f; font-weight:800}
+.recap-col.next{background:rgba(236,27,35,.1); border:1px solid rgba(236,27,35,.25); border-radius:18px; padding:26px 28px}
+
+/* big single stat (80%) */
+.megastat{display:flex; align-items:center; gap:60px; margin:auto 0}
+.megastat .num{font-family:var(--fHead); font-weight:800; font-size:200px; line-height:.85; color:var(--red); letter-spacing:-.05em}
+.megastat .num .u{font-size:90px}
+.megastat .copy{max-width:42ch}
+.megastat .copy h3{font-family:var(--fHead); font-weight:800; font-size:30px; color:var(--ink); line-height:1.1; letter-spacing:-.02em; margin-bottom:14px}
+.megastat .copy p{font-size:16px; color:var(--muted); line-height:1.55}
+.megastat .copy .src{font-size:12.5px; color:var(--faint); margin-top:14px}
+
+/* =========================================================================
+   Navigation chrome
+   ========================================================================= */
+.progress{position:fixed; top:0; left:0; height:3px; background:var(--red); z-index:50; transition:width .4s ease; box-shadow:0 0 12px rgba(236,27,35,.6)}
+.hud{position:fixed; bottom:18px; right:22px; z-index:50; display:flex; align-items:center; gap:14px; font-family:var(--fMono); font-size:12px; color:rgba(255,255,255,.55)}
+.hud .dots{display:flex; gap:6px}
+.hud .dot{width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.22); cursor:pointer; transition:all .25s ease}
+.hud .dot.on{background:var(--red); transform:scale(1.35)}
+.hud .dot.sec{background:rgba(255,255,255,.4)}
+.hud .count b{color:#fff}
+.hint{position:fixed; bottom:20px; left:22px; z-index:50; font-size:11.5px; color:rgba(255,255,255,.4); font-family:var(--fMono)}
+.hint kbd{background:rgba(255,255,255,.1); border-radius:4px; padding:1px 6px; color:rgba(255,255,255,.7)}
+/* auto-hide nav chrome when idle or when deck fills the viewport */
+.hud,.hint{transition:opacity .4s ease}
+body.idle .hud, body.idle .hint{opacity:0; pointer-events:none}
+body.static .hud, body.static .hint{display:none}
+
+/* speaker notes drawer */
+.notes{position:fixed; left:0; right:0; bottom:0; z-index:60; transform:translateY(100%); transition:transform .35s cubic-bezier(.16,1,.3,1); background:#16161a; color:#e7e7ea; border-top:3px solid var(--red); max-height:42vh; overflow:auto; padding:22px 30px; box-shadow:0 -20px 50px -20px rgba(0,0,0,.7)}
+.notes.show{transform:none}
+.notes h5{font-family:var(--fHead); font-weight:700; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#ff6a6f; margin-bottom:12px; display:flex; align-items:center; gap:10px}
+.notes ul{margin:0; padding-left:20px; display:flex; flex-direction:column; gap:9px}
+.notes li{font-size:14.5px; line-height:1.55; color:#cfd0d6}
+.notes .close{position:absolute; top:16px; right:22px; color:#888; cursor:pointer; font-size:18px; background:none; border:none}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important; transition-duration:.2s !important}
+  [data-r]{opacity:1 !important; transform:none !important}
+}
+/* static mode (QA captures / no-motion): snap everything to final */
+body.static [data-r]{opacity:1 !important; transform:none !important; transition:none !important}
+body.static .code-line{animation:none !important}
+body.static .flow .step,
+body.static .venn .circ,
+body.static .venn .center,
+body.static .venn .danger,
+body.static .jcard::after{opacity:1 !important; transform:none !important; transition:none !important}
+body.static .venn .c3{transform:translateX(-50%) !important}
+body.static .jcard::after{transform:scaleX(1) !important}
+body.static .nb-cell, body.static .nb-out{transition:none !important; transform:none !important; opacity:1 !important}
+body.static .nb-out.shown{max-height:320px !important}
+body.static .pushdown .pd{opacity:1 !important; transform:none !important; transition:none !important}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="stage">
+  <main class="deck" id="deck">
+
+  <!-- ============================== SLIDE 1 · COVER ============================== -->
+  <section class="slide dark cover active" data-notes='["Welcome the interns to the OCBC CRAYON program. This 90-minute session is the foundation everything else builds on — data wrangling, ML, GenAI all assume these skills.","Audience is Python-literate, so we move fast on syntax and spend time on the data-science way of thinking.","Set expectations: two recorded demos, a banking flavour throughout (transactions, fraud, churn, credit risk)."]'>
+    <div class="bg"></div><div class="scrim"></div>
+    <div class="inner">
+      <img class="logo" src="assets/ocbc-logo.png" alt="OCBC" />
+      <h1 data-r data-d="1">Python<span class="red">Data Foundations</span></h1>
+      <div class="rule" data-r data-d="2"></div>
+      <div class="meta" data-r data-d="3">
+        <strong>OCBC CRAYON 2026 · Intern Training</strong><br/>
+        Turning banking data into information, and information into insight<br/>
+        90 minutes · Lecture + 2 recorded demos
+      </div>
+      <div class="program" data-r data-d="4">Topic 1 of the program · OCBC Indonesia</div>
+    </div>
+    <div class="foot"><span class="pg">01</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 2 · QUOTE ============================== -->
+  <section class="slide dark" data-notes='["This is the thesis of the whole session. Data on its own is inert — rows in a table. The job is the two-step climb: data → information → insight.","Carly Fiorina said this as HP CEO. For a bank it is literal: every transaction is data; a fraud alert is information; the decision to block a card is insight acted upon.","We will return to this exact ladder on the closing slide."]'>
+    <div class="body-area">
+      <div class="kicker" data-r data-d="1"><span class="badge"></span>The premise</div>
+      <div class="quote-wrap">
+        <div class="quote-mark" data-r data-d="2">&ldquo;</div>
+        <blockquote data-r data-d="3">The goal is to turn data into <em>information</em>, and information into <em>insight</em>.</blockquote>
+        <cite data-r data-d="4"><b>Carly Fiorina</b> &middot; former CEO, Hewlett-Packard</cite>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON</div><span class="pg">02</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 3 · AGENDA ============================== -->
+  <section class="slide" data-notes='["Four pillars, taught as a journey from language to judgement. We deliberately put wrangling and analytics front and centre — that is where real data work lives.","Flag the two demos: Demo 1 lands after Pillar 1 (loading a transactions CSV); Demo 2 after Pillar 3 (cleaning a messy CSV). These are the hands-on payoffs.","Curriculum-informed: this arc mirrors how Berkeley Data 8, Harvard CS109 and MIT teach intro data science."]'>
+    <div class="kicker" data-r><span class="badge"></span>Roadmap</div>
+    <h2 class="slide-title" data-r data-d="1">Four pillars, one journey</h2>
+    <div class="body-area">
+      <div class="journey">
+        <div class="jcard" data-r data-d="1"><div class="pn">01</div><div class="ph">Basic Python</div><p>The language of data work — types, logic, functions and the data stack.</p><span class="demo">▶ Demo 1 · load a CSV</span></div>
+        <div class="jcard" data-r data-d="2"><div class="pn">02</div><div class="ph">Data Science Concepts</div><p>Structured vs unstructured, the shape of data, and the four types of analytics.</p></div>
+        <div class="jcard" data-r data-d="3"><div class="pn">03</div><div class="ph">Data Wrangling</div><p>The 80% of the job: cleaning, reshaping and taming messy banking data.</p><span class="demo">▶ Demo 2 · clean a CSV</span></div>
+        <div class="jcard" data-r data-d="4"><div class="pn">04</div><div class="ph">Analytics Principles</div><p>EDA, choosing charts, honest visuals, and the traps that fool smart people.</p></div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">03</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 4 · WHAT IS DATA SCIENCE (VENN) ============================== -->
+  <section class="slide" data-notes='["Drew Conway''s 2010 Venn is still the cleanest definition. Data science sits at the intersection of three skills, none sufficient alone.","Hammer the danger zone: coding + domain knowledge WITHOUT statistics. You can produce confident-looking analysis that is quietly wrong — dangerous in a bank.","At OCBC the domain expertise is the banking knowledge interns are building; we are adding the programming and the statistical literacy."]'>
+    <div class="kicker" data-r><span class="badge"></span>The data mindset</div>
+    <h2 class="slide-title" data-r data-d="1">What is data science?</h2>
+    <div class="body-area">
+      <div class="two wide-r">
+        <div class="txt">
+          <ul class="bullets">
+            <li class="strong" data-r data-d="2">It lives where three skills overlap — Drew Conway's Venn.</li>
+            <li data-r data-d="3"><b>Programming</b> to wrangle and automate at scale.</li>
+            <li data-r data-d="4"><b>Math &amp; statistics</b> to reason about uncertainty.</li>
+            <li data-r data-d="5"><b>Domain expertise</b> — here, how banking actually works.</li>
+            <li data-r data-d="6">Coding + domain but <b>no stats</b> = the <b>danger zone</b>: confident, plausible, wrong.</li>
+          </ul>
+        </div>
+        <div class="viz" data-r data-d="3">
+          <div class="venn">
+            <div class="circ c1"><span class="lbl" style="margin-top:-50px">Programming</span></div>
+            <div class="circ c2"><span class="lbl" style="margin-top:-50px">Math &amp; Statistics</span></div>
+            <div class="circ c3"><span class="lbl" style="margin-bottom:-60px">Domain<br/>Expertise</span></div>
+            <div class="center">Data Science</div>
+            <div class="danger">Danger zone</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">04</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 5 · WHY NOW (STATS) ============================== -->
+  <section class="slide" data-notes='["The why-now is two forces colliding: an explosion of data and the cheap compute to use it. Banks are unusually data-rich — every tap, transfer and login is a logged event.","Numbers are indicative, not gospel — use them to convey scale. ~402M is a common estimate for terabytes of data created per day; ~90% of the world''s data is from the last couple of years.","Tie to OCBC: a retail bank sits on years of high-frequency transactional data — exactly the raw material these skills unlock."]'>
+    <div class="kicker" data-r><span class="badge"></span>Why now</div>
+    <h2 class="slide-title" data-r data-d="1">Data is the deluge — value is the dividend</h2>
+    <div class="body-area">
+      <div class="stat-row">
+        <div class="stat" data-r data-d="2"><div class="big" data-count="402" data-suffix="M">0</div><div class="lab">Terabytes of data created every day, worldwide.</div><div class="sub">Indicative scale, 2024 estimates</div></div>
+        <div class="stat" data-r data-d="3"><div class="big" data-count="90" data-suffix="%">0</div><div class="lab">Of all data was generated in just the last few years.</div><div class="sub">The curve is still steepening</div></div>
+        <div class="stat" data-r data-d="4"><div class="big" data-prefix="$" data-count="3" data-suffix="T">0</div><div class="lab">Estimated annual value of analytics to banking.</div><div class="sub">Fraud, risk, personalisation</div></div>
+      </div>
+      <p class="flow-cap" data-r data-d="5">A retail bank logs every transaction, login and transfer — years of high-frequency data waiting to be turned into insight.</p>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">05</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 6 · WHAT YOU CAN BUILD ============================== -->
+  <section class="slide" data-notes='["Make it concrete and banking-specific. These six are real, deployed use cases across retail and corporate banking.","Each maps to a later pillar: fraud and churn are predictive (Pillar 2 preview); dashboards are descriptive; NLP handles the unstructured pile.","Invite interns to spot which of these touch their own team — keeps it grounded."]'>
+    <div class="kicker" data-r><span class="badge"></span>Why it matters</div>
+    <h2 class="slide-title" data-r data-d="1">What you can build with these skills</h2>
+    <div class="body-area">
+      <div class="cards c3">
+        <div class="card" data-r data-d="1"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l3-4 3 3 4-6"/></svg></div><h3>Risk dashboards</h3><p>Live exposure, limits and KPIs the business actually watches.</p></div>
+        <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg></div><h3>Cashflow forecasting</h3><p>Project demand and liquidity from historical transaction flows.</p></div>
+        <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="3"/><path d="M5 21v-2a5 5 0 015-5h4a5 5 0 015 5v2"/></svg></div><h3>Product recommendations</h3><p>Suggest the next best product for each customer segment.</p></div>
+        <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div><h3>Fraud &amp; anomaly detection</h3><p>Flag transactions that don't fit the normal pattern, in real time.</p></div>
+        <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/><path d="M9 5H4v14h5"/></svg></div><h3>Churn prediction</h3><p>Spot customers likely to leave — early enough to act.</p></div>
+        <div class="card" data-r data-d="6"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H7l-3 3z"/><path d="M8 9h8M8 12h5"/></svg></div><h3>Document &amp; text (NLP)</h3><p>Read contracts, complaints and chats at scale.</p></div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">06</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 7 · HOW THE BEST SCHOOLS TEACH ============================== -->
+  <section class="slide" data-notes='["Borrow authority from the best programmes. Harvard CS109 frames data science as five recurring facets; MIT frames computation as a tool to understand the real world.","The point for interns: this is not a syntax tour. The hard parts are asking the right question and communicating the answer — the bookends, not the modelling in the middle.","Our 90 minutes follows exactly this arc."]'>
+    <div class="kicker" data-r><span class="badge"></span>How the pros teach it</div>
+    <h2 class="slide-title" data-r data-d="1">The five facets of data science</h2>
+    <p class="slide-sub" data-r data-d="2">Harvard CS109's framing — the recurring loop behind every project. MIT adds: computation is a tool to understand the real world.</p>
+    <div class="body-area">
+      <div class="flow compact">
+        <div class="step"><div class="node">1</div><h4>Ask</h4><p>A precise, answerable question.</p><div class="arrow"></div></div>
+        <div class="step"><div class="node">2</div><h4>Collect</h4><p>Source and store the right data.</p><div class="arrow"></div></div>
+        <div class="step"><div class="node">3</div><h4>Explore</h4><p>Wrangle, visualise, find shape.</p><div class="arrow"></div></div>
+        <div class="step"><div class="node">4</div><h4>Model</h4><p>Quantify, predict, test.</p><div class="arrow"></div></div>
+        <div class="step"><div class="node">5</div><h4>Communicate</h4><p>Turn findings into a decision.</p><div class="arrow"></div></div>
+      </div>
+      <p class="flow-cap" data-r data-d="5">Most beginners over-invest in the middle. The pros know the value is at the edges — the question and the story.</p>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">07</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 8 · THE WORKFLOW ============================== -->
+  <section class="slide" data-notes='["This is the map we return to all session. Ask → Acquire → Wrangle → Explore → Model → Communicate. Note the loop — findings at any stage send you back upstream.","Frame is the most skipped, most important step. A vague question wastes weeks. Communicate is where value is realised — analysis nobody acts on is wasted.","Watch it build step by step; each pillar today lives on a different part of this arc."]'>
+    <div class="kicker" data-r><span class="badge"></span>The map</div>
+    <h2 class="slide-title" data-r data-d="1">The data science workflow</h2>
+    <p class="slide-sub" data-r data-d="2">A loop, not a line — we'll return to this map throughout the session.</p>
+    <div class="body-area">
+      <div class="flow">
+        <div class="step"><div class="node">A</div><h4>Ask</h4><p>Define the question &amp; success metric.</p><div class="arrow"></div></div>
+        <div class="step"><div class="node">A</div><h4>Acquire</h4><p>Gather &amp; store the data.</p><div class="arrow"></div></div>
+        <div class="step"><div class="node">W</div><h4>Wrangle</h4><p>Clean, transform, reshape.</p><div class="arrow"></div></div>
+        <div class="step"><div class="node">E</div><h4>Explore</h4><p>Summaries &amp; visuals (EDA).</p><div class="arrow"></div></div>
+        <div class="step"><div class="node">M</div><h4>Model</h4><p>Quantify &amp; predict.</p><div class="arrow"></div></div>
+        <div class="step"><div class="node">C</div><h4>Communicate</h4><p>Insight &amp; decision.</p><div class="arrow"></div></div>
+      </div>
+      <p class="flow-cap" data-r data-d="6">↻ Findings loop you back upstream — a data gap sends you back to acquire; a weak model back to wrangle.</p>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">08</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 9 · DIVIDER P1 ============================== -->
+  <section class="slide dark divider" data-notes='["Pillar 1. Audience is Python-literate, so this is a fast, confident pass — we sell the ecosystem and the data stack, not the syntax.","The one habit to instil: think in tables and vectorised operations, not row-by-row loops.","End of this pillar = Demo 1, where a CSV becomes a programmable table."]'>
+    <div class="pillar-no">01</div>
+    <div class="eyebrow"><span class="dot"></span>Pillar 1</div>
+    <h2>Basic Python</h2>
+    <p class="lead">The language of data work — and the four-layer stack that turns it into a data platform.</p>
+    <div class="prog-rail"><span class="on">01 · Python</span><span>02 · DS Concepts</span><span>03 · Wrangling</span><span>04 · Analytics</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON</div><span class="pg">09</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 10 · WHY PYTHON ============================== -->
+  <section class="slide" data-notes='["Sell the ecosystem, not the syntax. Python is readable, has a mature library for every step, and is the lingua franca of data and AI research — new tools ship here first.","Key insight: Python is slow as a language but fast as a platform — the heavy lifting runs in compiled C/Rust under the hood (NumPy, Apache Arrow, Polars).","The hello-data snippet: three lines load a banking CSV and answer a real question — that economy of expression is the point."]'>
+    <div class="kicker" data-r><span class="badge"></span>Pillar 1 · Why Python</div>
+    <h2 class="slide-title" data-r data-d="1">Readable, batteries-included, everywhere</h2>
+    <div class="body-area">
+      <div class="two">
+        <div class="txt">
+          <ul class="bullets">
+            <li class="strong" data-r data-d="2">Low-ceremony syntax — you spend time on the problem, not the language.</li>
+            <li data-r data-d="3">A mature library for <b>every step</b> of the data lifecycle.</li>
+            <li data-r data-d="4">A <b>glue language</b>: wraps fast C/Rust/CUDA behind simple APIs.</li>
+            <li data-r data-d="5">The <b>lingua franca</b> of data &amp; AI — new research ships here first.</li>
+            <li data-r data-d="6">A huge community — most problems already have a documented answer.</li>
+          </ul>
+        </div>
+        <div class="viz" data-r data-d="3">
+          <div class="codewrap">
+            <div class="bar"><i></i><i></i><i></i><span class="fn">hello_data.py</span></div>
+            <pre><code><span class="code-line"><span class="tok-kw">import</span> polars <span class="tok-kw">as</span> pl</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="tok-com"># three lines, one real answer</span></span>
+<span class="code-line">df = pl.<span class="tok-fn">read_csv</span>(<span class="tok-str">"transactions.csv"</span>)</span>
+<span class="code-line">fraud = df.<span class="tok-fn">filter</span>(pl.<span class="tok-fn">col</span>(<span class="tok-str">"is_fraud"</span>))</span>
+<span class="code-line"><span class="tok-fn">print</span>(fraud[<span class="tok-str">"amount"</span>].<span class="tok-fn">sum</span>())</span>
+<span class="code-line"></span>
+<span class="code-line"><span class="tok-com"># → 1_284_905.50  (flagged this month)</span></span></code></pre>
+          </div>
+          <p class="code-note">Three lines load a CSV and total this month's flagged fraud — that economy is the whole pitch.</p>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">10</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 11 · BUILDING BLOCKS ============================== -->
+  <section class="slide" data-notes='["A fast refresher on the primitives. Variables, the four scalar types, and the four containers. Keep it brisk — they know this.","The teaching emphasis: pick the right container. Lists for ordered collections, dicts to model records (a customer), tuples for fixed records, sets for membership and de-duplication.","Dicts modelling records is the bridge to DataFrame rows on the next slides."]'>
+    <div class="kicker" data-r><span class="badge"></span>Pillar 1 · Building blocks</div>
+    <h2 class="slide-title" data-r data-d="1">Variables, types &amp; the four containers</h2>
+    <div class="body-area">
+      <div class="two">
+        <div class="viz" data-r data-d="2">
+          <div class="codewrap">
+            <div class="bar"><i></i><i></i><i></i><span class="fn">basics.py</span></div>
+            <pre><code><span class="code-line"><span class="tok-com"># scalars: the atoms</span></span>
+<span class="code-line">customer_id = <span class="tok-num">1021</span>          <span class="tok-com"># int</span></span>
+<span class="code-line">balance     = <span class="tok-num">8420.50</span>       <span class="tok-com"># float</span></span>
+<span class="code-line">segment     = <span class="tok-str">"premier"</span>     <span class="tok-com"># str</span></span>
+<span class="code-line">is_active   = <span class="tok-kw">True</span>          <span class="tok-com"># bool</span></span></code></pre>
+          </div>
+        </div>
+        <div class="txt" data-r data-d="3">
+          <div class="mini-grid">
+            <div class="mini"><div class="mh">list</div><div class="md">Ordered, mutable. <code>txns = [a, b, c]</code></div></div>
+            <div class="mini"><div class="mh">dict</div><div class="md">Key→value record. <code>{"id": 1021}</code></div></div>
+            <div class="mini"><div class="mh">tuple</div><div class="md">Fixed record. <code>(lat, lon)</code></div></div>
+            <div class="mini"><div class="mh">set</div><div class="md">Unique members. <code>{"ID","SG"}</code></div></div>
+          </div>
+          <p class="code-note">Model a customer as a <b>dict</b>; a column of customers as a <b>list of dicts</b> — one step from a <b>Polars DataFrame</b>.</p>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">11</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 12 · LOGIC & FLOW ============================== -->
+  <section class="slide" data-notes='["if/else and for are universal. The Python-specific habit to instil is the comprehension: a declarative one-liner that replaces the build-an-empty-list-and-append loop.","Comprehensions read closer to the intent (\"the active premier customers\") and are usually faster. This same declarative style carries straight into Polars expressions.","Show both side by side: identical result, far less ceremony on the right."]'>
+    <div class="kicker" data-r><span class="badge"></span>Pillar 1 · Logic &amp; flow</div>
+    <h2 class="slide-title" data-r data-d="1">From loops to comprehensions</h2>
+    <p class="slide-sub" data-r data-d="2">Same result — the comprehension says <em>what</em> you want, not <em>how</em> to build it.</p>
+    <div class="body-area">
+      <div class="ba">
+        <div class="col before" data-r data-d="2">
+          <div class="ba-h"><span class="tagx">Imperative loop</span></div>
+          <div class="codewrap">
+            <div class="bar"><i></i><i></i><i></i><span class="fn">loop.py</span></div>
+            <pre><code><span class="code-line">premier = []</span>
+<span class="code-line"><span class="tok-kw">for</span> c <span class="tok-kw">in</span> customers:</span>
+<span class="code-line">    <span class="tok-kw">if</span> c[<span class="tok-str">"segment"</span>] == <span class="tok-str">"premier"</span>:</span>
+<span class="code-line">        <span class="tok-kw">if</span> c[<span class="tok-str">"active"</span>]:</span>
+<span class="code-line">            premier.<span class="tok-fn">append</span>(c[<span class="tok-str">"id"</span>])</span></code></pre>
+          </div>
+        </div>
+        <div class="col after" data-r data-d="3">
+          <div class="ba-h"><span class="tagx">Comprehension</span></div>
+          <div class="codewrap">
+            <div class="bar"><i></i><i></i><i></i><span class="fn">comp.py</span></div>
+            <pre><code><span class="code-line"><span class="tok-com"># one declarative line</span></span>
+<span class="code-line">premier = [</span>
+<span class="code-line">    c[<span class="tok-str">"id"</span>] <span class="tok-kw">for</span> c <span class="tok-kw">in</span> customers</span>
+<span class="code-line">    <span class="tok-kw">if</span> c[<span class="tok-str">"segment"</span>] == <span class="tok-str">"premier"</span></span>
+<span class="code-line">    <span class="tok-kw">and</span> c[<span class="tok-str">"active"</span>]</span>
+<span class="code-line">]</span></code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">12</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 13 · FUNCTIONS ============================== -->
+  <section class="slide" data-notes='["Functions are the unit of reuse. Define once, call many. Small, pure functions (output depends only on input, no side effects) are easy to test, share and reason about.","The banking example: a reusable risk-band function. Write it once, apply it to a whole column later. This is exactly how feature engineering works.","Tie forward: pure functions map cleanly onto DataFrame transformations and, later, ML features."]'>
+    <div class="kicker" data-r><span class="badge"></span>Pillar 1 · Functions &amp; reuse</div>
+    <h2 class="slide-title" data-r data-d="1">Define once, call many</h2>
+    <div class="body-area">
+      <div class="two wide-r">
+        <div class="txt">
+          <ul class="code-points">
+            <li data-r data-d="2">A function names a piece of logic so you write it <b>once</b>.</li>
+            <li data-r data-d="3">Keep them <b>small and pure</b>: output depends only on inputs.</li>
+            <li data-r data-d="4">Pure functions are easy to <b>test</b> and safe to <b>reuse</b>.</li>
+            <li data-r data-d="5">The same idea becomes a <b>column transform</b> and, later, a feature.</li>
+          </ul>
+        </div>
+        <div class="viz" data-r data-d="3">
+          <div class="codewrap">
+            <div class="bar"><i></i><i></i><i></i><span class="fn">risk.py</span></div>
+            <pre><code><span class="code-line"><span class="tok-kw">def</span> <span class="tok-fn">risk_band</span>(score: <span class="tok-kw">int</span>) -> <span class="tok-kw">str</span>:</span>
+<span class="code-line">    <span class="tok-str">"""Map a credit score to a band."""</span></span>
+<span class="code-line">    <span class="tok-kw">if</span> score >= <span class="tok-num">750</span>: <span class="tok-kw">return</span> <span class="tok-str">"low"</span></span>
+<span class="code-line">    <span class="tok-kw">if</span> score >= <span class="tok-num">650</span>: <span class="tok-kw">return</span> <span class="tok-str">"medium"</span></span>
+<span class="code-line">    <span class="tok-kw">return</span> <span class="tok-str">"high"</span></span>
+<span class="code-line"></span>
+<span class="code-line"><span class="tok-com"># reuse across a whole column (an expression)</span></span>
+<span class="code-line">df = df.<span class="tok-fn">with_columns</span>(</span>
+<span class="code-line">    pl.<span class="tok-fn">col</span>(<span class="tok-str">"score"</span>).<span class="tok-fn">map_elements</span>(risk_band).<span class="tok-fn">alias</span>(<span class="tok-str">"band"</span>))</span></code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">13</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 14 · DATA STACK ============================== -->
+  <section class="slide" data-notes='["The four-layer stack is how Python becomes a data platform. Each layer builds on the one below and speaks the same shapes.","NumPy / Apache Arrow = the columnar + n-dimensional memory engine. Polars = labelled DataFrames on Arrow, written in Rust (where most wrangling happens). matplotlib/seaborn = charts. scikit-learn = classic ML.","Why Polars over the older pandas: pandas wraps NumPy and runs single-threaded through Python objects; Polars is built in Rust on Apache Arrow''s columnar format, runs multi-threaded by default, and has a lazy query optimiser — typically 5–30x faster on real data, with a cleaner expression API. The DataFrame concepts transfer directly if you already know pandas."]'>
+    <div class="kicker" data-r><span class="badge"></span>Pillar 1 · The data stack</div>
+    <h2 class="slide-title" data-r data-d="1">Four layers turn Python into a data platform</h2>
+    <div class="body-area">
+      <div class="stack">
+        <div class="layer l4"><div class="lname">scikit-learn <code>models</code></div><div class="ldesc">Classic machine learning — classification, regression, clustering. Consumes the DataFrames below.</div></div>
+        <div class="layer l3"><div class="lname">matplotlib · seaborn <code>charts</code></div><div class="ldesc">Turn DataFrames into figures — distributions, trends, relationships for EDA and reporting.</div></div>
+        <div class="layer l2"><div class="lname">Polars <code>DataFrames</code></div><div class="ldesc">Columnar DataFrames on Apache Arrow (Rust) — load, clean, reshape, group. Multi-threaded and fast.</div></div>
+        <div class="layer l1"><div class="lname">NumPy · Apache Arrow <code>arrays</code></div><div class="ldesc">The columnar / n-dimensional memory engine in compiled Rust &amp; C under everything.</div></div>
+      </div>
+      <p class="flow-cap" data-r data-d="6">Each layer speaks the same columnar shapes — learn the DataFrame once, reuse it everywhere.</p>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">14</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 15 · DEMO 1 (notebook playback) ============================== -->
+  <section class="slide demo-slide" data-demo="1" data-notes='["Recorded demo 1, replayed live in-deck. The whole point in one line: a DataFrame is a spreadsheet you can program.","Walk the four cells: pl.read_csv loads 50k transactions; .head() shows the first rows; .shape confirms size; .describe() gives instant summary stats — count, null_count, mean, min/max.","Press R (or the replay button) to run it again. In a real Polars notebook this is exactly what the first five minutes with any dataset looks like."]'>
+    <div class="kicker" data-r><span class="badge"></span>Pillar 1 · Recorded Demo 1</div>
+    <h2 class="slide-title" data-r data-d="1">A DataFrame is a spreadsheet you can program</h2>
+    <div class="body-area">
+      <div class="demo-stage">
+        <div class="nb" id="nb1">
+          <div class="nb-top"><span class="t-ic r"></span><span class="t-ic"></span><span class="t-ic g"></span><span class="nb-name">demo1_explore.ipynb</span><span class="nb-kernel">Python 3</span></div>
+          <div class="nb-body">
+            <div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[1]</div><div class="nb-code"><span class="tok-kw">import</span> polars <span class="tok-kw">as</span> pl
+df = pl.read_csv(<span style="color:#0a7">"transactions.csv"</span>)</div></div><div class="nb-out"><span class="muted"># 50,000 rows loaded</span></div></div>
+            <div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[2]</div><div class="nb-code">df.head()</div></div><div class="nb-out"><table class="otable"><tr><th>id</th><th>date</th><th>amount</th><th>product</th><th>channel</th><th>is_fraud</th></tr><tr><td>1021</td><td>03-02</td><td>42.10</td><td>savings</td><td>mobile</td><td>False</td></tr><tr><td>1022</td><td>03-02</td><td>1804.0</td><td>loans</td><td>branch</td><td>False</td></tr><tr><td>1023</td><td>03-03</td><td>12.75</td><td>cards</td><td>mobile</td><td>False</td></tr><tr><td>1024</td><td>03-03</td><td>9650.0</td><td>deposit</td><td>web</td><td>True</td></tr></table></div></div>
+            <div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[3]</div><div class="nb-code">df.shape</div></div><div class="nb-out">(<span style="color:#1057a6">50000</span>, <span style="color:#1057a6">6</span>)</div></div>
+            <div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[4]</div><div class="nb-code">df.describe()</div></div><div class="nb-out"><table class="otable"><tr><th>statistic</th><th>id</th><th>amount</th></tr><tr><td>count</td><td>50000</td><td>50000</td></tr><tr><td>null_count</td><td>0</td><td>0</td></tr><tr><td>mean</td><td>26020</td><td>312.6</td></tr><tr><td>min</td><td>1021</td><td>0.50</td></tr><tr><td>max</td><td>51020</td><td>9980</td></tr></table></div></div>
+          </div>
+        </div>
+        <div class="demo-side">
+          <div class="demo-card" data-r data-d="2"><div class="dk">▶ Demo 1 · learning goal</div><h3>Load a CSV, see it instantly</h3><p>Polars reads a banking CSV into a DataFrame — then <code style="color:#ff9da0">.head()</code>, <code style="color:#ff9da0">.shape</code> and <code style="color:#ff9da0">.describe()</code> answer "what's in here?" in seconds.</p></div>
+          <ul class="demo-steps" id="demo1steps" data-r data-d="3">
+            <li data-step="0"><span class="sn">1</span>Read 50k transactions into a DataFrame</li>
+            <li data-step="1"><span class="sn">2</span><code>.head()</code> — peek at the first rows</li>
+            <li data-step="2"><span class="sn">3</span><code>.shape</code> — confirm size (rows, cols)</li>
+            <li data-step="3"><span class="sn">4</span><code>.describe()</code> — instant summary stats</li>
+          </ul>
+          <button class="replay" data-replay="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 109-9 9 9 0 00-7 3.3M3 3v4h4"/></svg>Replay demo</button>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">15</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 16 · DIVIDER P2 ============================== -->
+  <section class="slide dark divider" data-notes='["Pillar 2: the concepts that frame everything before we touch a model. Light and fast — 13 minutes.","Three ideas: what kind of data we have (structured vs unstructured), the universal shape of a dataset, and the ladder of analytics from describing to prescribing.","These are the vocabulary the rest of the program assumes."]'>
+    <div class="pillar-no">02</div>
+    <div class="eyebrow"><span class="dot"></span>Pillar 2</div>
+    <h2>Data Science Concepts</h2>
+    <p class="lead">The vocabulary of the field — data types, the shape of a dataset, and the ladder of analytics.</p>
+    <div class="prog-rail"><span>01 · Python</span><span class="on">02 · DS Concepts</span><span>03 · Wrangling</span><span>04 · Analytics</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON</div><span class="pg">16</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 17 · STRUCTURED VS UNSTRUCTURED ============================== -->
+  <section class="slide" data-notes='["Two broad families. Structured data fits neatly in rows and columns — the transaction table. Unstructured data does not — text, images, audio, logs.","In a bank, roughly 80–90% of data is unstructured: call recordings, chat transcripts, scanned documents, complaint emails. The structured slice is where most classic analytics happens; the unstructured pile is where NLP and GenAI unlock new value.","Most of this session lives in the structured world; keep the unstructured pile in mind — it is the frontier."]'>
+    <div class="kicker" data-r><span class="badge"></span>Pillar 2 · Data types</div>
+    <h2 class="slide-title" data-r data-d="1">Structured vs unstructured data</h2>
+    <div class="body-area">
+      <div class="vs">
+        <div class="panel accent" data-r data-d="2">
+          <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M3 14h18M9 4v16"/></svg></span>Structured</div>
+          <div class="ps">Fits neatly in rows and columns — a defined schema you can query.</div>
+          <div class="chips"><span class="chip">transactions</span><span class="chip">account balances</span><span class="chip">credit scores</span><span class="chip">CRM records</span></div>
+          <div class="where">Where it lives: <b>databases &amp; data warehouses.</b> The home of dashboards, SQL and classic ML.</div>
+        </div>
+        <div class="panel" data-r data-d="3">
+          <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16M4 10h10M4 15h13M4 20h7"/></svg></span>Unstructured</div>
+          <div class="ps">No fixed schema — needs processing before analysis.</div>
+          <div class="chips"><span class="chip">call recordings</span><span class="chip">chat transcripts</span><span class="chip">scanned docs</span><span class="chip">complaint emails</span></div>
+          <div class="where">Where it lives: <b>files, logs &amp; object storage.</b> The frontier — NLP, speech and GenAI live here. ~80% of a bank's data.</div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">17</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 18 · SHAPE OF DATA ============================== -->
+  <section class="slide" data-notes='["Every structured dataset has the same shape. Rows are observations — one per thing you measured (here, one customer). Columns are features — the attributes.","One column is often special: the target (or label) — the thing you want to predict. Here it is churned. Features are the inputs; the target is the output.","This sets up machine learning next session without diving in: ML learns the mapping from features to target. No deep dive today — just plant the vocabulary."]'>
+    <div class="kicker" data-r><span class="badge"></span>Pillar 2 · The shape of data</div>
+    <h2 class="slide-title" data-r data-d="1">Rows, columns, and a target</h2>
+    <div class="body-area">
+      <div class="two wide-r">
+        <div class="txt">
+          <ul class="bullets">
+            <li class="strong" data-r data-d="2">Every row is one <b>observation</b> — here, one customer.</li>
+            <li data-r data-d="3">Every column is a <b>feature</b> — an attribute you measured.</li>
+            <li data-r data-d="4">One column is often the <b>target</b> — what you want to predict.</li>
+            <li data-r data-d="5">Features in, target out — the setup for ML next session.</li>
+          </ul>
+        </div>
+        <div class="viz" data-r data-d="3">
+          <table class="dtable">
+            <tr><th>customer</th><th>tenure</th><th>balance</th><th>products</th><th class="target">churned</th></tr>
+            <tr><td>1021</td><td>34</td><td>8,420</td><td>3</td><td class="target">No</td></tr>
+            <tr><td>1022</td><td>5</td><td>120</td><td>1</td><td class="target">Yes</td></tr>
+            <tr><td>1023</td><td>61</td><td>26,050</td><td>4</td><td class="target">No</td></tr>
+            <tr><td>1024</td><td>9</td><td>340</td><td>1</td><td class="target">Yes</td></tr>
+          </table>
+          <div class="shape-legend">
+            <div class="item"><span class="sw" style="background:var(--ink)"></span>features (inputs)</div>
+            <div class="item"><span class="sw" style="background:var(--red)"></span>target (output to predict)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">18</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 19 · FOUR TYPES OF ANALYTICS ============================== -->
+  <section class="slide" data-notes='["The analytic value escalator (Gartner''s framing). Four rungs, rising in both value and difficulty from left to right.","Descriptive: what happened (dashboards). Diagnostic: why (drill-down, correlation). Predictive: what will happen (ML forecasts). Prescriptive: what to do (optimisation, recommendations).","Two messages: you cannot skip rungs — good prediction needs solid description and clean data first; and most organisations are strong on the left, weak on the right. That gap is the opportunity."]'>
+    <div class="kicker" data-r><span class="badge"></span>Pillar 2 · The four types</div>
+    <h2 class="slide-title" data-r data-d="1">Four types of analytics — value rises with difficulty</h2>
+    <div class="body-area">
+      <div class="stair">
+        <div class="rung"><div class="box"><span class="step-i">01</span><div class="q">What happened?</div><h4>Descriptive</h4><p>Dashboards, KPIs, summaries.</p></div></div>
+        <div class="rung"><div class="box"><span class="step-i">02</span><div class="q">Why did it happen?</div><h4>Diagnostic</h4><p>Drill-down, correlation, root cause.</p></div></div>
+        <div class="rung"><div class="box"><span class="step-i">03</span><div class="q">What will happen?</div><h4>Predictive</h4><p>Forecasts, ML models, scoring.</p></div></div>
+        <div class="rung"><div class="box"><span class="step-i">04</span><div class="q">What should we do?</div><h4>Prescriptive</h4><p>Recommendations, optimisation.</p></div></div>
+      </div>
+      <div class="stair-axis"><span>Hindsight &nbsp;→&nbsp; insight &nbsp;→&nbsp; foresight</span><span><b>Value &amp; difficulty rise →</b></span></div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">19</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 20 · SIGNAL VS NOISE ============================== -->
+  <section class="slide" data-notes='["The core job of the analyst: separate signal (the real pattern) from noise (random scatter). Real data is never a clean line — it is a cloud.","Here, transaction count vs fraud risk: noisy, but a real upward trend hides in the scatter. The skill is seeing the trend without over-fitting to the wiggles.","Two failure modes: missing a real signal (too cautious), and seeing patterns in pure noise (too eager). Both are expensive. Statistics is how we tell them apart — back to the danger zone."]'>
+    <div class="kicker" data-r><span class="badge"></span>Pillar 2 · Signal vs noise</div>
+    <h2 class="slide-title" data-r data-d="1">Find the signal in the noise</h2>
+    <div class="body-area">
+      <div class="two">
+        <div class="txt">
+          <ul class="bullets">
+            <li class="strong" data-r data-d="2">Real data is a cloud, not a line.</li>
+            <li data-r data-d="3">The <b>signal</b> is the real pattern; the <b>noise</b> is randomness.</li>
+            <li data-r data-d="4">Miss a real signal &rarr; you act too late.</li>
+            <li data-r data-d="5">See a pattern in pure noise &rarr; you act on nothing.</li>
+            <li data-r data-d="6">Statistics is how we tell them apart — honestly.</li>
+          </ul>
+        </div>
+        <div class="viz" data-r data-d="3">
+          <div class="svg-card">
+            <div class="ct">Transactions per day vs fraud risk</div>
+            <svg class="chart-svg" viewBox="0 0 360 250" preserveAspectRatio="xMidYMid meet">
+              <line class="axis" x1="30" y1="220" x2="350" y2="220"/><line class="axis" x1="30" y1="20" x2="30" y2="220"/>
+              <text class="glab" x="180" y="244" text-anchor="middle">daily transactions →</text>
+              <g>
+                <circle class="dot" cx="50" cy="195" r="5" fill="#1C6E9C"/><circle class="dot" cx="66" cy="202" r="5" fill="#1C6E9C"/>
+                <circle class="dot" cx="78" cy="178" r="5" fill="#1C6E9C"/><circle class="dot" cx="96" cy="186" r="5" fill="#1C6E9C"/>
+                <circle class="dot" cx="112" cy="168" r="5" fill="#1C6E9C"/><circle class="dot" cx="126" cy="181" r="5" fill="#1C6E9C"/>
+                <circle class="dot" cx="146" cy="152" r="5" fill="#1C6E9C"/><circle class="dot" cx="160" cy="164" r="5" fill="#1C6E9C"/>
+                <circle class="dot" cx="176" cy="144" r="5" fill="#1C6E9C"/><circle class="dot" cx="190" cy="156" r="5" fill="#1C6E9C"/>
+                <circle class="dot" cx="208" cy="130" r="5" fill="#1C6E9C"/><circle class="dot" cx="222" cy="142" r="5" fill="#1C6E9C"/>
+                <circle class="dot" cx="240" cy="122" r="5" fill="#1C6E9C"/><circle class="dot" cx="256" cy="134" r="5" fill="#1C6E9C"/>
+                <circle class="dot" cx="274" cy="106" r="5" fill="#1C6E9C"/><circle class="dot" cx="290" cy="120" r="5" fill="#1C6E9C"/>
+                <circle class="dot" cx="306" cy="96" r="5" fill="#1C6E9C"/><circle class="dot" cx="324" cy="108" r="5" fill="#1C6E9C"/><circle class="dot" cx="338" cy="88" r="5" fill="#1C6E9C"/>
+              </g>
+              <path class="trend" d="M40 200 L344 96"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">20</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 21 · DIVIDER P3 ============================== -->
+  <section class="slide dark divider" data-notes='["Pillar 3, the heart of the session: data wrangling. This is where real data scientists spend most of their time, and where Demo 2 lands.","Reset expectations: the glamorous modelling is a thin slice. The bulk is finding and fixing problems in messy data.","We map every common mess to a one-line Polars expression, then do it live."]'>
+    <div class="pillar-no">03</div>
+    <div class="eyebrow"><span class="dot"></span>Pillar 3</div>
+    <h2>Data Wrangling</h2>
+    <p class="lead">The unglamorous 80% — finding the mess in real data and turning it into something you can trust.</p>
+    <div class="prog-rail"><span>01 · Python</span><span>02 · DS Concepts</span><span class="on">03 · Wrangling</span><span>04 · Analytics</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON</div><span class="pg">21</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 22 · 80% OF THE JOB ============================== -->
+  <section class="slide" data-notes='["The expectation-reset slide. Surveys (e.g. CrowdFlower/Anaconda) consistently put data preparation at roughly 60% of effort for cleaning alone, ~80% including collection.","State it as indicative, not gospel — the exact number varies. The point is directional: most of the work is before the modelling.","Why? Real data is generated by messy real-world processes — systems change, fields get renamed, humans typo. Clean data is made, not found."]'>
+    <div class="kicker" data-r><span class="badge"></span>Pillar 3 · Reality check</div>
+    <h2 class="slide-title" data-r data-d="1">Wrangling is most of the job</h2>
+    <div class="body-area">
+      <div class="megastat">
+        <div class="num" data-r data-d="2">~80<span class="u">%</span></div>
+        <div class="copy" data-r data-d="3">
+          <h3>of real data work is preparation</h3>
+          <p>Loading, cleaning and reshaping data — before any chart or model. The glamorous modelling is the thin slice on top.</p>
+          <p class="src">Indicative: surveys put cleaning at ~60%, ~80% including collection. Clean data is <b style="color:var(--red)">made, not found.</b></p>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">22</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 23 · MESSY DATA ============================== -->
+  <section class="slide" data-notes='["The six usual suspects you hunt for during inspection. Two deserve emphasis.","Missing values are a decision, not an accident — dropping vs filling changes your results, so be deliberate. Outliers can be real signal (a genuine large transfer) or a data error — investigate before deleting.","Inconsistent categories (ID / Indonesia / idn) and wrong types (\"1,000\" as text) are the silent time-sinks. Duplicates quietly inflate every total."]'>
+    <div class="kicker" data-r><span class="badge"></span>Pillar 3 · The usual suspects</div>
+    <h2 class="slide-title" data-r data-d="1">What messy data looks like</h2>
+    <div class="body-area">
+      <div class="cards c3">
+        <div class="card" data-r data-d="1"><span class="num">1</span><h3>Missing values</h3><p>Blanks, nulls, NaN. Decide: drop, fill or flag — never ignore.</p></div>
+        <div class="card" data-r data-d="2"><span class="num">2</span><h3>Duplicates</h3><p>Repeated rows quietly inflate counts and bias every total.</p></div>
+        <div class="card" data-r data-d="3"><span class="num">3</span><h3>Wrong types</h3><p>"1,000" as text; dates stored as strings. Normalise early.</p></div>
+        <div class="card" data-r data-d="4"><span class="num">4</span><h3>Inconsistent categories</h3><p>"ID", "Indonesia", "idn" — one thing, many spellings.</p></div>
+        <div class="card" data-r data-d="5"><span class="num">5</span><h3>Outliers</h3><p>Real signal or data error? Investigate before deleting.</p></div>
+        <div class="card" data-r data-d="6"><span class="num">6</span><h3>Inconsistent formats</h3><p>Dates, currencies, casing — the same value, many shapes.</p></div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">23</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 24 · PANDAS TOOLKIT ============================== -->
+  <section class="slide" data-notes='["Every mess maps to a small set of Polars expressions. This is the cheat sheet.","drop_nulls/fill_null for missingness; unique for duplicates; cast and str methods for types and text; group_by().agg() to aggregate; join to combine tables.","The point: you do not memorise a thousand functions. You learn this handful, compose them as expressions in a pipeline, and (in Polars) let the lazy optimiser do the rest — more on that just before the demo."]'>
+    <div class="kicker" data-r><span class="badge"></span>Pillar 3 · The toolkit</div>
+    <h2 class="slide-title" data-r data-d="1">Every mess maps to a Polars expression</h2>
+    <div class="body-area">
+      <div class="pf-table">
+        <div class="pf-row head"><div>Problem</div><div>Polars fix</div><div>What it does</div></div>
+        <div class="pf-row"><div class="prob"><span class="d"></span>Missing values</div><div class="fix"><code>.drop_nulls()</code> · <code>.fill_null()</code></div><div class="desc">Drop rows or fill blanks with a default / median.</div></div>
+        <div class="pf-row"><div class="prob"><span class="d"></span>Duplicates</div><div class="fix"><code>.unique()</code></div><div class="desc">Remove exact repeated rows.</div></div>
+        <div class="pf-row"><div class="prob"><span class="d"></span>Wrong types</div><div class="fix"><code>.cast()</code></div><div class="desc">Cast a column to Int64, Float64, Date…</div></div>
+        <div class="pf-row"><div class="prob"><span class="d"></span>Messy text</div><div class="fix"><code>.str.strip_chars()</code> · <code>.str.to_lowercase()</code></div><div class="desc">Normalise casing, whitespace, categories.</div></div>
+        <div class="pf-row"><div class="prob"><span class="d"></span>Need a summary</div><div class="fix"><code>.group_by().agg()</code></div><div class="desc">Collapse rows into per-group totals — the pivot table of code.</div></div>
+        <div class="pf-row"><div class="prob"><span class="d"></span>Two tables</div><div class="fix"><code>.join()</code></div><div class="desc">Join on a key — like a SQL JOIN.</div></div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">24</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 25 · TIDY DATA ============================== -->
+  <section class="slide" data-notes='["Tidy data (Hadley Wickham): one variable per column, one observation per row, one table per unit. A simple, powerful contract.","Spreadsheets push people toward the messy wide form — values spread across columns (Q1, Q2, Q3). The tidy long form looks more verbose but is exactly what group_by, plotting and ML expect.","Much of wrangling is just reshaping wide into long. In Polars: df.unpivot(). Tidy in, everything downstream gets easier."]'>
+    <div class="kicker" data-r><span class="badge"></span>Pillar 3 · Tidy data</div>
+    <h2 class="slide-title" data-r data-d="1">Tidy data: the analysis-ready shape</h2>
+    <div class="body-area">
+      <div class="tidy">
+        <div class="tcol messy" data-r data-d="2">
+          <div class="tlabel">Messy (wide)</div>
+          <table class="dtable"><tr><th>product</th><th>Q1</th><th>Q2</th><th>Q3</th></tr>
+          <tr><td>savings</td><td>120</td><td>140</td><td>160</td></tr>
+          <tr><td>loans</td><td>80</td><td>95</td><td>110</td></tr></table>
+          <div class="note">Values spread across columns — a new quarter means a new column.</div>
+        </div>
+        <div class="arrow-mid" data-r data-d="3">&rarr;</div>
+        <div class="tcol clean" data-r data-d="4">
+          <div class="tlabel">Tidy (long)</div>
+          <table class="dtable"><tr><th>product</th><th>quarter</th><th class="target">value</th></tr>
+          <tr><td>savings</td><td>Q1</td><td class="target">120</td></tr>
+          <tr><td>savings</td><td>Q2</td><td class="target">140</td></tr>
+          <tr><td>loans</td><td>Q1</td><td class="target">80</td></tr></table>
+          <div class="note">One variable per column, one observation per row — group_by &amp; plots just work.</div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">25</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 26 · EAGER VS LAZY ============================== -->
+  <section class="slide" data-notes='["Polars'' signature feature, and the one mental model to take away. Two execution modes for the SAME pipeline.","Eager (read_csv): every step runs the moment you write it — simple, immediate, great for exploring. This is how pandas always works.","Lazy (scan_csv … .collect()): you describe the whole query first; Polars builds a plan, OPTIMISES it, then runs once. Predicate pushdown moves your filter down to the file read; projection pushdown reads only the columns you actually use; and it runs multi-threaded. On a large file that can be the difference between reading 10 GB and reading 1 GB. Rule of thumb: explore eager, run pipelines lazy. You''ll see .lazy()…collect() in the demo next."]'>
+    <div class="kicker" data-r><span class="badge"></span>Pillar 3 · How Polars runs</div>
+    <h2 class="slide-title" data-r data-d="1">Eager vs lazy: plan, then run</h2>
+    <p class="slide-sub" data-r data-d="2">Same result — lazy lets Polars optimise the whole query before it reads a single row.</p>
+    <div class="body-area">
+      <div class="ba">
+        <div class="col before" data-r data-d="2">
+          <div class="ba-h"><span class="tagx">Eager · runs each step now</span></div>
+          <div class="codewrap">
+            <div class="bar"><i></i><i></i><i></i><span class="fn">eager.py</span></div>
+            <pre><code><span class="code-line"><span class="tok-com"># each line executes immediately</span></span>
+<span class="code-line">df = pl.<span class="tok-fn">read_csv</span>(<span class="tok-str">"transactions.csv"</span>)</span>
+<span class="code-line">df = df.<span class="tok-fn">filter</span>(pl.<span class="tok-fn">col</span>(<span class="tok-str">"amount"</span>) > <span class="tok-num">0</span>)</span>
+<span class="code-line">out = df.<span class="tok-fn">group_by</span>(<span class="tok-str">"product"</span>).<span class="tok-fn">agg</span>(</span>
+<span class="code-line">    pl.<span class="tok-fn">col</span>(<span class="tok-str">"amount"</span>).<span class="tok-fn">sum</span>())</span></code></pre>
+          </div>
+        </div>
+        <div class="col after" data-r data-d="3">
+          <div class="ba-h"><span class="tagx">Lazy · plan → optimise → collect</span></div>
+          <div class="codewrap">
+            <div class="bar"><i></i><i></i><i></i><span class="fn">lazy.py</span></div>
+            <pre><code><span class="code-line"><span class="tok-com"># build a plan, run it once</span></span>
+<span class="code-line">out = (pl.<span class="tok-fn">scan_csv</span>(<span class="tok-str">"transactions.csv"</span>)</span>
+<span class="code-line">       .<span class="tok-fn">filter</span>(pl.<span class="tok-fn">col</span>(<span class="tok-str">"amount"</span>) > <span class="tok-num">0</span>)</span>
+<span class="code-line">       .<span class="tok-fn">group_by</span>(<span class="tok-str">"product"</span>)</span>
+<span class="code-line">       .<span class="tok-fn">agg</span>(pl.<span class="tok-fn">col</span>(<span class="tok-str">"amount"</span>).<span class="tok-fn">sum</span>())</span>
+<span class="code-line">       .<span class="tok-fn">collect</span>())  <span class="tok-com"># ← optimise + run</span></span></code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="pushdown">
+        <div class="pd"><span class="ck">✓</span><b>Predicate pushdown</b> — filter at the file read</div>
+        <div class="pd"><span class="ck">✓</span><b>Projection pushdown</b> — read only the columns used</div>
+        <div class="pd"><span class="ck">✓</span><b>Multi-threaded</b> — all cores, one pass</div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">26</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 27 · DEMO 2 (notebook playback) ============================== -->
+  <section class="slide demo-slide" data-demo="2" data-notes='["Recorded demo 2 — the payoff of the whole pillar. A deliberately messy banking CSV becomes one clean summary table, in Polars.","Walk the pipeline: inspect missingness with null_count(); fill amounts and drop rows missing a product with expressions; cast the dtype and de-duplicate with unique(); then the finale — a lazy query (.lazy() … .collect()) that Polars optimises into one pass.","Press R to replay. This four-step shape — inspect, fix, reshape, summarise — is 80% of real data work in miniature. The lazy pipeline is Polars'' headline feature: it plans and optimises the whole query before touching data."]'>
+    <div class="kicker" data-r><span class="badge"></span>Pillar 3 · Recorded Demo 2</div>
+    <h2 class="slide-title" data-r data-d="1">From messy CSV to one clean table</h2>
+    <div class="body-area">
+      <div class="demo-stage">
+        <div class="nb" id="nb2">
+          <div class="nb-top"><span class="t-ic r"></span><span class="t-ic"></span><span class="t-ic g"></span><span class="nb-name">demo2_clean.ipynb</span><span class="nb-kernel">Python 3</span></div>
+          <div class="nb-body">
+            <div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[1]</div><div class="nb-code">df = pl.read_csv(<span style="color:#0a7">"transactions_raw.csv"</span>)
+df.null_count()</div></div><div class="nb-out">amount&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#c0392b">214</span>
+product&nbsp;&nbsp;&nbsp;<span style="color:#c0392b">38</span>
+channel&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#1E8E5A">0</span><span class="muted">  ← missing values found</span></div></div>
+            <div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[2]</div><div class="nb-code">df = df.with_columns(pl.col(<span style="color:#0a7">"amount"</span>).fill_null(0))
+df = df.drop_nulls(<span style="color:#0a7">"product"</span>)</div></div><div class="nb-out"><span class="ok">✓ amounts filled · 38 rows dropped</span></div></div>
+            <div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[3]</div><div class="nb-code">df = df.with_columns(pl.col(<span style="color:#0a7">"amount"</span>).cast(pl.Float64))
+df = df.unique()</div></div><div class="nb-out"><span class="ok">✓ dtype fixed · 1,107 duplicates removed</span></div></div>
+            <div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[4]</div><div class="nb-code">(df.lazy()                          <span style="color:#8a9099"># plan, don't run yet</span>
+   .group_by(<span style="color:#0a7">"product"</span>)
+   .agg(pl.col(<span style="color:#0a7">"amount"</span>).sum())
+   .sort(<span style="color:#0a7">"amount"</span>, descending=<span style="color:#1057a6">True</span>)
+   .collect())                      <span style="color:#8a9099"># optimise + run once</span></div></div><div class="nb-out"><table class="otable"><tr><th>product</th><th>amount</th></tr><tr><td>deposit</td><td>8,940,210</td></tr><tr><td>loans</td><td>4,512,770</td></tr><tr><td>savings</td><td>2,108,440</td></tr><tr><td>cards</td><td>1,284,905</td></tr></table></div></div>
+          </div>
+        </div>
+        <div class="demo-side">
+          <div class="demo-card" data-r data-d="2"><div class="dk">▶ Demo 2 · learning goal</div><h3>Inspect → fix → reshape → summarise</h3><p>A messy CSV becomes one trustworthy summary — and the finale runs as a <code style="color:#ff9da0">.lazy()</code> query Polars optimises into a single pass.</p></div>
+          <ul class="demo-steps" data-r data-d="3">
+            <li data-step="0"><span class="sn">1</span><code>.null_count()</code> — find the missing</li>
+            <li data-step="1"><span class="sn">2</span><code>.fill_null()</code> / <code>.drop_nulls()</code></li>
+            <li data-step="2"><span class="sn">3</span><code>.cast()</code> + <code>.unique()</code> — types &amp; dupes</li>
+            <li data-step="3"><span class="sn">4</span><code>.lazy()…collect()</code> — optimised total</li>
+          </ul>
+          <button class="replay" data-replay="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 109-9 9 9 0 00-7 3.3M3 3v4h4"/></svg>Replay demo</button>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">26</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 27 · DIVIDER P4 ============================== -->
+  <section class="slide dark divider" data-notes='["Pillar 4: turning clean data into honest insight. EDA, choosing charts, designing them truthfully, dodging the classic traps, and communicating the so-what.","This is where top courses deliberately end — on judgement and interpretation, not technique.","17 minutes, then we wrap."]'>
+    <div class="pillar-no">04</div>
+    <div class="eyebrow"><span class="dot"></span>Pillar 4</div>
+    <h2>Analytics Principles</h2>
+    <p class="lead">From clean data to honest insight — explore it, chart it truthfully, and tell the story that drives a decision.</p>
+    <div class="prog-rail"><span>01 · Python</span><span>02 · DS Concepts</span><span>03 · Wrangling</span><span class="on">04 · Analytics</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON</div><span class="pg">27</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 28 · EDA ============================== -->
+  <section class="slide" data-notes='["EDA = exploratory data analysis: interrogating data with summaries and visuals before any modelling. Always look at your data first.","Distributions (histograms, box plots) reveal shape, spread and outliers. Summary stats give center and spread. Relationships (scatter, correlation) show how variables move together.","A single histogram can expose a broken feed, a default value masquerading as real, or two populations mixed together. Anscombe''s quartet proves it: near-identical summary stats, completely different pictures — you must visualise, not just summarise."]'>
+    <div class="kicker" data-r><span class="badge"></span>Pillar 4 · EDA</div>
+    <h2 class="slide-title" data-r data-d="1">Always look at your data first</h2>
+    <p class="slide-sub" data-r data-d="2">A distribution of transaction amounts — right-skewed, with a long tail of large transfers.</p>
+    <div class="body-area">
+      <div class="two wide-r">
+        <div class="viz" data-r data-d="2">
+          <div class="hist">
+            <div class="bar" style="--h:62px"></div><div class="bar" style="--h:135px"></div>
+            <div class="bar" style="--h:205px"></div><div class="bar med" style="--h:228px"></div>
+            <div class="bar" style="--h:188px"></div><div class="bar" style="--h:150px"></div>
+            <div class="bar" style="--h:112px"></div><div class="bar" style="--h:84px"></div>
+            <div class="bar" style="--h:60px"></div><div class="bar" style="--h:44px"></div>
+            <div class="bar" style="--h:32px"></div><div class="bar" style="--h:22px"></div>
+          </div>
+          <div class="stair-axis" style="margin-top:10px"><span>transaction amount &rarr;</span><span style="color:var(--ink);font-style:normal">▮ median band</span></div>
+        </div>
+        <div class="txt">
+          <div class="stat-chips" data-r data-d="3">
+            <div class="sc"><span class="k">Median amount</span><span class="v">$74</span></div>
+            <div class="sc"><span class="k">Mean (pulled up by tail)</span><span class="v">$313</span></div>
+            <div class="sc"><span class="k">95th percentile</span><span class="v">$1.4k</span></div>
+            <div class="sc"><span class="k">Max (investigate!)</span><span class="v">$9.9k</span></div>
+          </div>
+          <p class="code-note" data-r data-d="4">Mean ≫ median is the skew talking. The tail is where fraud and errors hide.</p>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">28</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 29 · CHOOSING THE CHART ============================== -->
+  <section class="slide" data-notes='["The intellectual core of the viz block: start from the QUESTION, then pick the chart — not the other way around.","Six purposes, six defaults: comparison→bar, trend→line, relationship→scatter, distribution→histogram, composition→stacked bar (over pie), correlation→heatmap.","The beginner mistake is starting from a chart they like. Ask: am I showing comparison, trend, relationship, distribution, composition or correlation? Each has a default."]'>
+    <div class="kicker" data-r><span class="badge"></span>Pillar 4 · Choosing the chart</div>
+    <h2 class="slide-title" data-r data-d="1">Start from the question, then pick the chart</h2>
+    <div class="body-area">
+      <div class="picker">
+        <div class="pick" data-r data-d="1"><div class="pg-glyph"><svg viewBox="0 0 90 46"><rect x="6" y="20" width="14" height="26" fill="#1A1A1A"/><rect x="26" y="10" width="14" height="36" fill="#EC1B23"/><rect x="46" y="26" width="14" height="20" fill="#1A1A1A"/><rect x="66" y="16" width="14" height="30" fill="#1A1A1A"/></svg></div><div class="q">Comparison</div><h4>Bar chart</h4><p>A value across categories. Sort by value; start the axis at zero.</p></div>
+        <div class="pick" data-r data-d="2"><div class="pg-glyph"><svg viewBox="0 0 90 46"><polyline points="6,38 26,28 46,32 66,14 84,8" fill="none" stroke="#EC1B23" stroke-width="3"/><circle cx="66" cy="14" r="3" fill="#EC1B23"/></svg></div><div class="q">Trend over time</div><h4>Line chart</h4><p>A value over time. Time on the x-axis; don't overload series.</p></div>
+        <div class="pick" data-r data-d="3"><div class="pg-glyph"><svg viewBox="0 0 90 46"><circle cx="14" cy="36" r="3.5" fill="#1C6E9C"/><circle cx="30" cy="28" r="3.5" fill="#1C6E9C"/><circle cx="44" cy="30" r="3.5" fill="#1C6E9C"/><circle cx="58" cy="18" r="3.5" fill="#1C6E9C"/><circle cx="74" cy="12" r="3.5" fill="#1C6E9C"/><line x1="10" y1="40" x2="80" y2="10" stroke="#EC1B23" stroke-width="2"/></svg></div><div class="q">Relationship</div><h4>Scatter plot</h4><p>Two numbers together. Add a trend line; correlation ≠ causation.</p></div>
+        <div class="pick" data-r data-d="4"><div class="pg-glyph"><svg viewBox="0 0 90 46"><rect x="8" y="30" width="11" height="16" fill="#EC1B23"/><rect x="21" y="18" width="11" height="28" fill="#EC1B23"/><rect x="34" y="10" width="11" height="36" fill="#EC1B23"/><rect x="47" y="22" width="11" height="24" fill="#EC1B23"/><rect x="60" y="32" width="11" height="14" fill="#EC1B23"/><rect x="73" y="38" width="11" height="8" fill="#EC1B23"/></svg></div><div class="q">Distribution</div><h4>Histogram</h4><p>Shape, center, spread of one variable. Mind your bin count.</p></div>
+        <div class="pick" data-r data-d="5"><div class="pg-glyph"><svg viewBox="0 0 90 46"><rect x="20" y="6" width="22" height="10" fill="#1A1A1A"/><rect x="20" y="16" width="22" height="12" fill="#B3141A"/><rect x="20" y="28" width="22" height="12" fill="#EC1B23"/><rect x="52" y="10" width="22" height="14" fill="#1A1A1A"/><rect x="52" y="24" width="22" height="8" fill="#B3141A"/><rect x="52" y="32" width="22" height="8" fill="#EC1B23"/></svg></div><div class="q">Composition</div><h4>Stacked bar</h4><p>Parts of a whole. Prefer bars over pie — length beats angle.</p></div>
+        <div class="pick" data-r data-d="6"><div class="pg-glyph"><svg viewBox="0 0 90 46"><g><rect x="20" y="6" width="12" height="12" fill="#EC1B23"/><rect x="33" y="6" width="12" height="12" fill="#f3b0b3"/><rect x="46" y="6" width="12" height="12" fill="#B3141A"/><rect x="20" y="19" width="12" height="12" fill="#f3b0b3"/><rect x="33" y="19" width="12" height="12" fill="#EC1B23"/><rect x="46" y="19" width="12" height="12" fill="#f7d2d4"/><rect x="20" y="32" width="12" height="12" fill="#B3141A"/><rect x="33" y="32" width="12" height="12" fill="#f7d2d4"/><rect x="46" y="32" width="12" height="12" fill="#EC1B23"/></g></svg></div><div class="q">Many relationships</div><h4>Heatmap</h4><p>Pairwise correlations at once. Spot clusters fast.</p></div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">29</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 30 · VIZ PRINCIPLES (good vs bad) ============================== -->
+  <section class="slide" data-notes='["Visualization is persuasion, so it carries ethical weight. Clarity over decoration.","The truncated-axis example is the classic deception: identical data, but the left chart starts the y-axis high, making a 1–2% wiggle look like a dramatic surge. The right chart starts at zero and tells the truth.","Rules of thumb: start bars at zero, label your axes, strip chart-junk, one message per chart, colour with meaning. Design honestly — and read others'' charts sceptically."]'>
+    <div class="kicker" data-r><span class="badge"></span>Pillar 4 · Honest charts</div>
+    <h2 class="slide-title" data-r data-d="1">Good charts clarify — bad charts mislead</h2>
+    <p class="slide-sub" data-r data-d="2">Same numbers, two stories. The only difference is where the y-axis starts.</p>
+    <div class="body-area">
+      <div class="vs">
+        <div class="panel" data-r data-d="2" style="align-items:stretch">
+          <div class="ph" style="font-size:17px"><span class="glyph" style="background:var(--red)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg></span>Misleading — truncated axis</div>
+          <img src="assets/charts/chart_axis_bad.png" alt="truncated axis chart" style="width:100%;max-height:330px;object-fit:contain;margin-top:12px"/>
+        </div>
+        <div class="panel accent" data-r data-d="3" style="align-items:stretch">
+          <div class="ph" style="font-size:17px"><span class="glyph"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></span>Honest — full baseline</div>
+          <img src="assets/charts/chart_axis_good.png" alt="full baseline chart" style="width:100%;max-height:330px;object-fit:contain;margin-top:12px"/>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">30</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 31 · CORRELATION VS CAUSATION ============================== -->
+  <section class="slide" data-notes='["The most expensive analyst mistake. Two series can move together without one causing the other — they may share a hidden third cause.","The classic: ice-cream sales and drownings rise together. Ice cream does not cause drowning — summer drives both. In banking: marketing spend and revenue both rise in Q4 because of the holidays, not because the ads worked.","Tie back to Conway''s danger zone: this is exactly the trap of coding + domain without statistics. Always ask: could a third factor explain this? Would it hold on new data?"]'>
+    <div class="kicker" data-r><span class="badge"></span>Pillar 4 · The big trap</div>
+    <h2 class="slide-title" data-r data-d="1">Correlation ≠ causation</h2>
+    <div class="body-area">
+      <div class="two">
+        <div class="txt">
+          <ul class="bullets">
+            <li class="strong" data-r data-d="2">Two series moving together may share a <b>hidden cause</b>.</li>
+            <li data-r data-d="3">Ice-cream sales &amp; drownings rise together — the cause is <b>summer</b>.</li>
+            <li data-r data-d="4">It's the danger zone: domain + code, <b>no statistics</b>.</li>
+            <li data-r data-d="5">Always ask: could a <b>third factor</b> explain it?</li>
+            <li data-r data-d="6">And: would this still hold on <b>new data</b>?</li>
+          </ul>
+        </div>
+        <div class="viz" data-r data-d="3">
+          <div class="svg-card">
+            <div class="ct">Two lines that move together — but neither drives the other</div>
+            <svg class="chart-svg" viewBox="0 0 360 250" preserveAspectRatio="xMidYMid meet">
+              <line class="axis" x1="30" y1="220" x2="350" y2="220"/><line class="axis" x1="30" y1="20" x2="30" y2="220"/>
+              <path class="ln ln1" d="M36 196 L86 188 L136 150 L186 158 L236 110 L286 96 L340 70" stroke="#EC1B23"/>
+              <path class="ln ln2" d="M36 204 L86 198 L136 168 L186 172 L236 128 L286 116 L340 92" stroke="#1C6E9C"/>
+              <text class="glab" x="345" y="64" text-anchor="end" fill="#EC1B23">ice-cream sales</text>
+              <text class="glab" x="345" y="108" text-anchor="end" fill="#1C6E9C">drownings</text>
+              <text class="glab" x="190" y="244" text-anchor="middle">months (Jan → Dec) →</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">31</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 32 · COMMUNICATING INSIGHT ============================== -->
+  <section class="slide" data-notes='["The final facet (Harvard CS109''s last word): communicate. Analysis nobody acts on is wasted.","Storytelling with data: lead with the so-what, not the method. Your stakeholder does not care about your pipeline — they care about the decision.","Three habits: lead with the conclusion; one chart, one message; end with a recommendation, not a data dump. This is what turns information into insight — back to Fiorina."]'>
+    <div class="kicker" data-r><span class="badge"></span>Pillar 4 · Communicate</div>
+    <h2 class="slide-title" data-r data-d="1">Lead with the &ldquo;so what&rdquo;</h2>
+    <div class="body-area">
+      <div class="insight">
+        <div class="lead-card" data-r data-d="2">
+          <div class="so">Don't bury the lede</div>
+          <div class="big-line">&ldquo;Churn in the <em>under-30 segment</em> jumped 14% last quarter — here's the one fix.&rdquo;</div>
+        </div>
+        <ul class="layer-list">
+          <li data-r data-d="3"><span class="n">1</span><div><b>Lead with the conclusion</b><p>Open with the decision, not the methodology.</p></div></li>
+          <li data-r data-d="4"><span class="n">2</span><div><b>One chart, one message</b><p>If it needs a paragraph to explain, it's two charts.</p></div></li>
+          <li data-r data-d="5"><span class="n">3</span><div><b>End with a recommendation</b><p>Not a data dump — a clear next action.</p></div></li>
+          <li data-r data-d="6"><span class="n">4</span><div><b>Know your audience</b><p>The exec wants the so-what; the analyst wants the how.</p></div></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">32</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 33 · PUTTING IT TOGETHER ============================== -->
+  <section class="slide" data-notes='["Replay the whole arc on one concrete banking example: reducing churn in young customers.","Ask: which customers will churn next quarter? Acquire: pull transactions + tenure. Wrangle: clean and build features. Explore: EDA shows low-engagement under-30s churn most. Model: a churn score (next session). Communicate: target the at-risk segment with one offer.","Recap the four pillars, then point to practice: get hands-on in a notebook with a real CSV. The only way to learn this is to do it."]'>
+    <div class="kicker" data-r><span class="badge"></span>Wrap · End to end</div>
+    <h2 class="slide-title" data-r data-d="1">One question, all the way through</h2>
+    <p class="slide-sub" data-r data-d="2">&ldquo;Which young customers are about to churn — and what do we do about it?&rdquo;</p>
+    <div class="body-area">
+      <div class="flow compact" style="margin:40px 0 0">
+        <div class="step"><div class="node">A</div><h4>Ask</h4><p>Who'll churn next quarter?</p><div class="arrow"></div></div>
+        <div class="step"><div class="node">A</div><h4>Acquire</h4><p>Pull txns + tenure.</p><div class="arrow"></div></div>
+        <div class="step"><div class="node">W</div><h4>Wrangle</h4><p>Clean, build features.</p><div class="arrow"></div></div>
+        <div class="step"><div class="node">E</div><h4>Explore</h4><p>Low-engagement = churn.</p><div class="arrow"></div></div>
+        <div class="step"><div class="node">M</div><h4>Model</h4><p>A churn score (next).</p><div class="arrow"></div></div>
+        <div class="step"><div class="node">C</div><h4>Communicate</h4><p>One offer, right segment.</p><div class="arrow"></div></div>
+      </div>
+      <div class="cards c2" style="flex:none;margin-top:48px;grid-template-columns:1.3fr 1fr">
+        <div class="card" data-r data-d="3" style="background:var(--tint-red);border-color:var(--tint-red-2)"><h3 style="font-size:16px">The four pillars, recapped</h3><p style="color:var(--text)"><b>Python</b> &amp; its stack → <b>data concepts</b> → <b>wrangling</b> (80% of it) → <b>analytics</b> &amp; honest interpretation. Each builds on the last.</p></div>
+        <div class="card" data-r data-d="4"><h3 style="font-size:16px">Practice next</h3><p>Open a notebook, load a real CSV, and run the four-step clean. The only way to learn this is to do it.</p></div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">33</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 34 · BEST PRACTICES ============================== -->
+  <section class="slide" data-notes='["These six habits are what the literature and practice converge on — they outlast any single tool or language.","Frame first (CRISP-DM business understanding): a precise question + success metric prevents weeks of wasted effort. Look before you model: EDA first, always visualise. Tidy + validated: one variable per column, plus explicit data-quality checks.","Reproducibility by default: version-control code AND data with Git; a notebook should re-run top-to-bottom with the same result. Efficient pipelines: in Polars, prefer lazy scans and expressions so the optimiser prunes columns and pushes filters down. Iterate & document: the workflow is a loop heading toward deployment — record decisions (this is where MLOps begins).","Sources: CRISP-DM (2025 refresh, datascience-pm.com); ''Ten simple rules for a responsible data science workflow'' (PMC, 2024); Polars docs (pola.rs)."]'>
+    <div class="kicker" data-r><span class="badge"></span>Wrap · Best practices</div>
+    <h2 class="slide-title" data-r data-d="1">Six habits that outlast any tool</h2>
+    <div class="body-area">
+      <div class="cards c3">
+        <div class="card" data-r data-d="1"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></div><h3>Frame the question first</h3><p>Define the decision and success metric before touching data. (CRISP-DM step 1.)</p></div>
+        <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></div><h3>Look before you model</h3><p>EDA first — always visualise distributions and relationships before any model.</p></div>
+        <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 4v16"/></svg></div><h3>Tidy &amp; validated data</h3><p>One variable per column; add explicit data-quality checks you can re-run.</p></div>
+        <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="12" r="2.5"/><path d="M6 8.5v7M8.5 6H14a2 2 0 012 2v1.5"/></svg></div><h3>Reproducible by default</h3><p>Version-control code <em>and</em> data with Git; notebooks must re-run top-to-bottom.</p></div>
+        <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></div><h3>Efficient, lazy pipelines</h3><p>In Polars, prefer expressions and lazy scans — let the optimiser prune &amp; push down.</p></div>
+        <div class="card" data-r data-d="6"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1015-6.7L21 8"/><path d="M21 3v5h-5"/></svg></div><h3>Iterate &amp; document</h3><p>The workflow is a loop toward deployment — record decisions. This is where MLOps begins.</p></div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">34</span></div>
+  </section>
+
+  <!-- ============================== SLIDE 35 · CLOSING ============================== -->
+  <section class="slide dark" data-notes='["Land the plane. Recap in one breath, then bridge to next session: Machine Learning & MLOps — moving from describing data to learning from it.","Call back to Fiorina: we have turned data into information and information into insight. Everything in ML next session assumes the clean, well-understood data we just learned to produce.","Thank them, open the floor for Q&A."]'>
+    <div class="body-area" style="justify-content:center">
+      <div class="kicker" data-r><span class="badge"></span>Wrap &amp; Q&amp;A</div>
+      <h2 class="slide-title" data-r data-d="1" style="font-size:44px;margin-bottom:6px">Data → information → insight</h2>
+      <p class="slide-sub" data-r data-d="2" style="color:rgba(255,255,255,.65);margin-bottom:26px">You can now load it, clean it, explore it, and read it honestly. That's the foundation.</p>
+      <div class="recap-grid" style="flex:none">
+        <div class="recap-col recap" data-r data-d="3">
+          <h4><span style="width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block"></span>What we covered</h4>
+          <ul>
+            <li>Python &amp; the four-layer data stack</li>
+            <li>The shape of data &amp; types of analytics</li>
+            <li>Wrangling: the 80% that makes data trustworthy</li>
+            <li>EDA, honest charts &amp; the traps to avoid</li>
+          </ul>
+        </div>
+        <div class="recap-col next" data-r data-d="4">
+          <h4><span style="width:8px;height:8px;border-radius:50%;background:#ff6a6f;display:inline-block"></span>Next session</h4>
+          <ul>
+            <li><b style="color:#fff">Machine Learning &amp; MLOps</b></li>
+            <li>From describing data to learning from it</li>
+            <li>Bring your data-quality mindset — models amplify it</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Python Data Foundations</div><span class="pg">34</span></div>
+  </section>
+
+  <!-- SLIDE-INSERT -->
+  </main>
+</div>
+
+<div class="hud">
+  <div class="dots" id="dots"></div>
+  <div class="count">slide <b id="cur">1</b> / <span id="tot">34</span></div>
+</div>
+<div class="hint"><kbd>→</kbd> next &nbsp; <kbd>←</kbd> back &nbsp; <kbd>N</kbd> notes &nbsp; <kbd>F</kbd> full</div>
+
+<div class="notes" id="notes">
+  <button class="close" id="notesClose">&times;</button>
+  <h5><span style="width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block"></span>Speaker notes</h5>
+  <ul id="notesBody"></ul>
+</div>
+
+<script>
+/* ---- fit fixed 1280x720 stage to viewport ---- */
+const STATIC = location.search.includes('static');
+if(STATIC) document.body.classList.add('static');
+const deck = document.getElementById('deck');
+function fit(){
+  const w = innerWidth || document.documentElement.clientWidth || 1280;
+  const h = innerHeight || document.documentElement.clientHeight || 720;
+  const s = Math.min(w/1280, h/720) || 1;
+  deck.style.transform = `scale(${s>0?s:1})`;
+}
+addEventListener('resize', fit);
+addEventListener('load', fit);
+fit(); requestAnimationFrame(fit); setTimeout(fit,120);
+
+/* ---- presentation controller ---- */
+const slides = [...document.querySelectorAll('.slide')];
+const TOT = slides.length;
+let i = 0;
+document.getElementById('tot').textContent = TOT;
+
+const dotsEl = document.getElementById('dots');
+slides.forEach((sl,idx)=>{
+  const d = document.createElement('span');
+  d.className='dot'+(sl.classList.contains('dark')?' sec':'');
+  d.addEventListener('click',()=>go(idx));
+  dotsEl.appendChild(d);
+});
+const dots=[...dotsEl.children];
+// page numbers follow slide order (so slides can be inserted freely)
+slides.forEach((s,idx)=>{const pg=s.querySelector('.foot .pg'); if(pg)pg.textContent=String(idx+1).padStart(2,'0');});
+
+const notesEl=document.getElementById('notes');
+const notesBody=document.getElementById('notesBody');
+function renderNotes(){
+  let data=[]; try{data=JSON.parse(slides[i].dataset.notes||'[]')}catch(e){}
+  notesBody.innerHTML='';
+  if(!data.length){notesBody.innerHTML='<li style="color:#777">No notes for this slide.</li>';}
+  data.forEach(t=>{const li=document.createElement('li');li.textContent=t;notesBody.appendChild(li);});
+}
+function go(n){
+  n=Math.max(0,Math.min(TOT-1,n));
+  if(n===i) return;
+  slides[i].classList.remove('active'); slides[i].classList.add('prev');
+  slides[n].classList.remove('prev'); slides[n].classList.add('active');
+  i=n; sync();
+}
+function sync(){
+  document.getElementById('progress').style.width=((i+1)/TOT*100)+'%';
+  document.getElementById('cur').textContent=i+1;
+  dots.forEach((d,x)=>d.classList.toggle('on',x===i));
+  location.hash=i+1;
+  if(notesEl.classList.contains('show')) renderNotes();
+  // (re)trigger counters on the active slide
+  triggerCounters(slides[i]);
+  playDemo(slides[i]);
+}
+function next(){go(i+1)} function prev(){go(i-1)}
+
+/* keyboard */
+addEventListener('keydown',e=>{
+  if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();next();}
+  else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();prev();}
+  else if(e.key==='Home'){go(0)} else if(e.key==='End'){go(TOT-1)}
+  else if(e.key.toLowerCase()==='n'){notesEl.classList.toggle('show'); renderNotes();}
+  else if(e.key.toLowerCase()==='f'){if(!document.fullscreenElement)document.documentElement.requestFullscreen();else document.exitFullscreen();}
+});
+document.getElementById('notesClose').addEventListener('click',()=>notesEl.classList.remove('show'));
+
+/* wheel (debounced) */
+let wlock=false;
+addEventListener('wheel',e=>{
+  if(wlock) return; if(Math.abs(e.deltaY)<18) return;
+  wlock=true; e.deltaY>0?next():prev();
+  setTimeout(()=>wlock=false,650);
+},{passive:true});
+
+/* touch */
+let tx=0,ty=0;
+addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
+addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty;
+  if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)) dx<0?next():prev();
+},{passive:true});
+
+/* counters */
+function triggerCounters(slide){
+  slide.querySelectorAll('[data-count]').forEach(el=>{
+    if(el.dataset.done) return; el.dataset.done='1';
+    const end=+el.dataset.count, pre=el.dataset.prefix||'', suf=el.dataset.suffix||'';
+    if(STATIC){el.innerHTML=pre+end+(suf?'<span class="unit">'+suf+'</span>':'');return;}
+    const dur=1100, t0=performance.now();
+    function tick(t){
+      const p=Math.min(1,(t-t0)/dur), e=1-Math.pow(1-p,3);
+      const v=Math.round(end*e);
+      el.innerHTML=pre+v+(suf?'<span class="unit">'+suf+'</span>':'');
+      if(p<1)requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+  // progress rings
+  slide.querySelectorAll('[data-ring]').forEach(el=>{
+    if(el.dataset.done) return; el.dataset.done='1';
+    const circle=el.querySelector('.fg'); if(!circle)return;
+    const pct=+el.dataset.ring, len=circle.getTotalLength();
+    if(STATIC){circle.style.strokeDasharray=len;circle.style.strokeDashoffset=len*(1-pct/100);const o=el.querySelector('.pct');if(o)o.textContent=pct+'%';return;}
+    circle.style.strokeDasharray=len; circle.style.strokeDashoffset=len;
+    requestAnimationFrame(()=>{circle.style.transition='stroke-dashoffset 1.3s cubic-bezier(.16,1,.3,1)';circle.style.strokeDashoffset=len*(1-pct/100);});
+    const out=el.querySelector('.pct'); if(out){const t0=performance.now();(function tk(t){const p=Math.min(1,(t-t0)/1300);out.textContent=Math.round(pct*(1-Math.pow(1-p,3)))+'%';if(p<1)requestAnimationFrame(tk);})(performance.now());}
+  });
+}
+
+/* notebook demo player */
+const demoTimers=[];
+function clearDemo(){demoTimers.forEach(clearTimeout); demoTimers.length=0;}
+function playDemo(slide){
+  if(!slide.classList.contains('demo-slide')) return;
+  clearDemo();
+  const cells=[...slide.querySelectorAll('.nb-cell')];
+  const steps=[...slide.querySelectorAll('.demo-steps li')];
+  cells.forEach(c=>{c.classList.remove('shown','running'); const o=c.querySelector('.nb-out'); if(o)o.classList.remove('shown'); const p=c.querySelector('.nb-prompt'); if(p){p.classList.remove('busy'); p.textContent='['+(cells.indexOf(c)+1)+']';}});
+  steps.forEach(s=>s.classList.remove('on'));
+  if(STATIC){cells.forEach(c=>{c.classList.add('shown'); const o=c.querySelector('.nb-out'); if(o)o.classList.add('shown');}); steps.forEach(s=>s.classList.add('on')); const body=slide.querySelector('.nb-body'); if(body){body.style.scrollBehavior='auto'; const snap=()=>body.scrollTop=body.scrollHeight; snap(); requestAnimationFrame(snap); setTimeout(snap,80);} return;}
+  let t=420;
+  cells.forEach((cell,idx)=>{
+    const prompt=cell.querySelector('.nb-prompt');
+    const out=cell.querySelector('.nb-out');
+    demoTimers.push(setTimeout(()=>{cell.classList.add('shown','running'); if(prompt){prompt.classList.add('busy'); prompt.textContent='[*]';} const body=cell.parentElement; body.scrollTop=Math.max(0,cell.offsetTop-90);},t));
+    t+=720;
+    demoTimers.push(setTimeout(()=>{
+      cell.classList.remove('running');
+      if(prompt){prompt.classList.remove('busy'); prompt.textContent='['+(idx+1)+']';}
+      if(out)out.classList.add('shown');
+      if(steps[idx])steps[idx].classList.add('on');
+    },t));
+    t+=820;
+  });
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-replay]'); if(!b) return;
+  playDemo(b.closest('.slide'));
+});
+addEventListener('keydown',e=>{if(e.key.toLowerCase()==='r'){const s=slides[i]; if(s.classList.contains('demo-slide'))playDemo(s);}});
+
+/* auto-hide chrome when idle */
+let idleT; function poke(){document.body.classList.remove('idle'); clearTimeout(idleT); idleT=setTimeout(()=>document.body.classList.add('idle'),3200);}
+['mousemove','keydown','touchstart','wheel','click'].forEach(ev=>addEventListener(ev,poke,{passive:true})); poke();
+
+/* deep link */
+if(location.hash){const n=parseInt(location.hash.slice(1));if(n>=1&&n<=TOT){slides[0].classList.remove('active');i=n-1;slides[i].classList.add('active');}}
+sync();
+</script>
+</body>
+</html>

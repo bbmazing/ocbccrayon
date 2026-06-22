@@ -1,0 +1,18 @@
+# Day-1 PPTX build system — kept locally, not part of this web deck repo
+day1/
+
+# dependencies & local editor/IDE config
+node_modules/
+.claude/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*~
+~$*
+
+# generated PowerPoint / temp
+*.pptx
+
+# loose source logos (the web deck bundles its own copies in web/assets/)
+ocbc-bank-logo-png_seeklogo-*.png
