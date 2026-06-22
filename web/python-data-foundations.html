@@ -49,9 +49,9 @@ body{
     #0a0a0c;
 }
 .deck{
-  position:relative;
+  position:absolute; left:0; top:0;
   width:var(--stageW); height:var(--stageH);
-  transform-origin:center center;
+  transform-origin:top left;
   box-shadow:0 40px 120px -30px rgba(0,0,0,.8);
   border-radius:4px; overflow:hidden;
   background:#fff;
@@ -1474,7 +1474,10 @@ function fit(){
   const w = (vv && vv.width)  || innerWidth  || document.documentElement.clientWidth  || 1280;
   const h = (vv && vv.height) || innerHeight || document.documentElement.clientHeight || 720;
   const s = Math.min(w/1280, h/720) || 1;
-  deck.style.transform = `scale(${s>0?s:1})`;
+  // anchor top-left and centre with an explicit pixel offset — robust even when
+  // the deck is larger than the viewport (small mobile-landscape screens)
+  const x = (w - 1280*s) / 2, y = (h - 720*s) / 2;
+  deck.style.transform = `translate(${x}px, ${y}px) scale(${s>0?s:1})`;
 }
 addEventListener('resize', fit);
 addEventListener('load', fit);
