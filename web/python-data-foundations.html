@@ -43,7 +43,7 @@ body{
 
 /* ---- Stage: scale a fixed 1280x720 deck to fit the viewport ---- */
 .stage{
-  position:fixed; inset:0; display:grid; place-items:center;
+  position:fixed; inset:0; height:100dvh; display:grid; place-items:center;
   background:
     radial-gradient(1200px 700px at 80% -10%, rgba(236,27,35,.10), transparent 60%),
     #0a0a0c;
@@ -577,9 +577,24 @@ body.static .hud, body.static .hint{display:none}
 .notes li{font-size:14.5px; line-height:1.55; color:#cfd0d6}
 .notes .close{position:absolute; top:16px; right:22px; color:#888; cursor:pointer; font-size:18px; background:none; border:none}
 
+/* mobile: the deck is a fixed 16:9 stage — prompt rotation when held upright */
+.rotate-cue{position:fixed; inset:0; height:100dvh; z-index:120; display:none;
+  place-items:center; text-align:center; padding:42px;
+  background:radial-gradient(700px 460px at 50% 0%, rgba(236,27,35,.14), transparent 62%), #0a0a0c;
+  color:#e7e7ea; font-family:var(--fHead)}
+.rotate-cue .ic{width:58px; height:58px; margin:0 auto 24px; color:var(--red);
+  animation:rot-tilt 2.2s ease-in-out infinite}
+.rotate-cue h4{font-size:21px; font-weight:800; letter-spacing:-.01em; color:#fff; margin-bottom:10px}
+.rotate-cue p{font-size:14px; line-height:1.55; color:rgba(255,255,255,.6); max-width:34ch; margin:0 auto}
+@keyframes rot-tilt{0%,100%{transform:rotate(-12deg)} 50%{transform:rotate(78deg)}}
+/* show only on small screens held in portrait */
+@media (orientation:portrait) and (max-width:860px){
+  .rotate-cue{display:grid}
+}
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms !important; transition-duration:.2s !important}
   [data-r]{opacity:1 !important; transform:none !important}
+  .rotate-cue .ic{animation:none; transform:rotate(78deg)}
 }
 /* static mode (QA captures / no-motion): snap everything to final */
 body.static [data-r]{opacity:1 !important; transform:none !important; transition:none !important}
@@ -1435,6 +1450,14 @@ df = df.unique()</div></div><div class="nb-out"><span class="ok">✓ dtype fixed
 </div>
 <div class="hint"><kbd>→</kbd> next &nbsp; <kbd>←</kbd> back &nbsp; <kbd>N</kbd> notes &nbsp; <kbd>F</kbd> full</div>
 
+<div class="rotate-cue" aria-hidden="true">
+  <div>
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="7" y="2" width="10" height="20" rx="2.2"/><path d="M11 18.5h2"/></svg>
+    <h4>Rotate your device</h4>
+    <p>This deck is built for a wide 16:9 stage — turn your phone to landscape for the full view.</p>
+  </div>
+</div>
+
 <div class="notes" id="notes">
   <button class="close" id="notesClose">&times;</button>
   <h5><span style="width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block"></span>Speaker notes</h5>
@@ -1447,13 +1470,17 @@ const STATIC = location.search.includes('static');
 if(STATIC) document.body.classList.add('static');
 const deck = document.getElementById('deck');
 function fit(){
-  const w = innerWidth || document.documentElement.clientWidth || 1280;
-  const h = innerHeight || document.documentElement.clientHeight || 720;
+  const vv = window.visualViewport;
+  const w = (vv && vv.width)  || innerWidth  || document.documentElement.clientWidth  || 1280;
+  const h = (vv && vv.height) || innerHeight || document.documentElement.clientHeight || 720;
   const s = Math.min(w/1280, h/720) || 1;
   deck.style.transform = `scale(${s>0?s:1})`;
 }
 addEventListener('resize', fit);
 addEventListener('load', fit);
+// mobile: re-fit when rotating or when the browser chrome resizes the visible area
+addEventListener('orientationchange', ()=>{ fit(); setTimeout(fit,200); setTimeout(fit,500); });
+if(window.visualViewport){ visualViewport.addEventListener('resize', fit); }
 fit(); requestAnimationFrame(fit); setTimeout(fit,120);
 
 /* ---- presentation controller ---- */
