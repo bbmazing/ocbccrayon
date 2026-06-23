@@ -1,0 +1,1593 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Speech Technologies · OCBC CRAYON</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+/* =========================================================================
+   OCBC CRAYON · Python Data Foundations
+   Self-contained animated deck. Fixed 16:9 stage, one slide at a time.
+   ========================================================================= */
+:root{
+  /* OCBC brand */
+  --red:#EC1B23; --red-dark:#B3141A; --red-deep:#7A0E12;
+  --ink:#1A1A1A; --charcoal:#202024; --charcoal-2:#2A2A2F;
+  --text:#1F2937; --muted:#6B7280; --faint:#9AA1AC;
+  --surface:#FFFFFF; --card:#F5F5F6; --card-2:#EFEFF1;
+  --line:#E4E7EB; --line-strong:#D6D9DE;
+  --tint-red:#FCEEEF; --tint-red-2:#FBE2E3;
+  --code-bg:#1A1C22; --code-ink:#E7E9EE;
+  /* supporting diagram hues (used sparingly) */
+  --blue:#1C6E9C; --teal:#0E7C6B; --amber:#C9851A; --green:#1E8E5A; --violet:#6C4FB3;
+  /* stage geometry */
+  --stageW:1280px; --stageH:720px;
+  --fHead:'Manrope',system-ui,sans-serif;
+  --fBody:'Inter',system-ui,sans-serif;
+  --fMono:'JetBrains Mono',ui-monospace,monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:#0c0c0e;
+  font-family:var(--fBody);
+  color:var(--text);
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+/* ---- Stage: scale a fixed 1280x720 deck to fit the viewport ---- */
+.stage{
+  position:fixed; inset:0; height:100dvh; display:grid; place-items:center;
+  background:
+    radial-gradient(1200px 700px at 80% -10%, rgba(236,27,35,.10), transparent 60%),
+    #0a0a0c;
+}
+.deck{
+  position:absolute; left:0; top:0;
+  width:var(--stageW); height:var(--stageH);
+  transform-origin:top left;
+  box-shadow:0 40px 120px -30px rgba(0,0,0,.8);
+  border-radius:4px; overflow:hidden;
+  background:#fff;
+}
+
+/* ---- Slides ---- */
+.slide{
+  position:absolute; inset:0;
+  width:var(--stageW); height:var(--stageH);
+  opacity:0; visibility:hidden; pointer-events:none;
+  transition:opacity .5s ease;
+  display:flex; flex-direction:column;
+  padding:62px 76px 58px;
+  background:var(--surface);
+}
+.slide.active{opacity:1; visibility:visible; pointer-events:auto; z-index:2}
+.slide.prev{z-index:1}
+
+/* dark slides (cover, dividers, close) */
+.slide.dark{
+  color:#fff;
+  background:
+    radial-gradient(900px 600px at 78% -8%, rgba(236,27,35,.30), transparent 55%),
+    radial-gradient(700px 500px at -5% 110%, rgba(236,27,35,.12), transparent 60%),
+    linear-gradient(160deg,#202024 0%,#161618 60%,#121214 100%);
+}
+.slide.dark::after{ /* fine grain texture */
+  content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
+  background-image:radial-gradient(rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size:3px 3px; mix-blend-mode:screen;
+}
+
+/* =========================================================================
+   Shared chrome: kicker, badge, footer, titles
+   ========================================================================= */
+.kicker{
+  display:inline-flex; align-items:center; gap:11px;
+  font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--red); margin-bottom:16px;
+}
+.kicker .badge{
+  width:24px; height:24px; border-radius:50%;
+  background:var(--red); position:relative; flex:none;
+  box-shadow:0 0 0 4px var(--tint-red);
+  overflow:hidden;
+}
+.kicker .badge::before{ /* rising-sun rays motif */
+  content:""; position:absolute; left:50%; bottom:5px; width:0; height:0;
+  border-left:7px solid transparent; border-right:7px solid transparent;
+  border-bottom:9px solid #fff; transform:translateX(-50%); opacity:.95;
+}
+.kicker .badge::after{
+  content:""; position:absolute; left:0; right:0; bottom:6px; height:1.5px;
+  background:rgba(255,255,255,.85);
+}
+.dark .kicker{color:#ff6a6f}
+.dark .kicker .badge{box-shadow:0 0 0 4px rgba(236,27,35,.25)}
+
+.slide-title{
+  font-family:var(--fHead); font-weight:800; color:var(--ink);
+  font-size:38px; line-height:1.08; letter-spacing:-.02em; max-width:24ch;
+}
+.dark .slide-title{color:#fff}
+.slide-sub{font-size:17px; color:var(--muted); margin-top:12px; max-width:60ch; line-height:1.5}
+
+.foot{
+  position:absolute; left:76px; right:76px; bottom:26px;
+  display:flex; align-items:center; justify-content:space-between;
+  font-size:12px; color:var(--faint); letter-spacing:.02em;
+}
+.foot .mark{display:flex; align-items:center; gap:9px; font-weight:600; color:var(--muted)}
+.foot .mark img{height:18px; width:auto; display:block}
+.foot .pg{font-family:var(--fMono); font-weight:500}
+.dark .foot{color:rgba(255,255,255,.5)}
+.dark .foot .mark{color:rgba(255,255,255,.7)}
+
+.body-area{flex:1; min-height:0; display:flex; flex-direction:column; margin-top:8px}
+
+/* =========================================================================
+   Reveal system — children animate in when slide becomes active
+   ========================================================================= */
+[data-r]{opacity:0; transform:translateY(16px); transition:opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1);}
+.slide.active [data-r]{opacity:1; transform:none}
+[data-r][data-d="1"]{transition-delay:.08s}[data-r][data-d="2"]{transition-delay:.16s}
+[data-r][data-d="3"]{transition-delay:.24s}[data-r][data-d="4"]{transition-delay:.32s}
+[data-r][data-d="5"]{transition-delay:.40s}[data-r][data-d="6"]{transition-delay:.48s}
+[data-r][data-d="7"]{transition-delay:.56s}[data-r][data-d="8"]{transition-delay:.64s}
+[data-r][data-d="9"]{transition-delay:.72s}[data-r][data-d="10"]{transition-delay:.80s}
+[data-r][data-d="11"]{transition-delay:.88s}[data-r][data-d="12"]{transition-delay:.96s}
+
+/* =========================================================================
+   COVER (slide 1)
+   ========================================================================= */
+.cover{padding:0}
+.cover .bg{
+  position:absolute; inset:0;
+  background:url('assets/bg_title_skyline.png') center/cover no-repeat;
+}
+.cover .scrim{position:absolute; inset:0; background:linear-gradient(100deg, rgba(255,255,255,.96) 0%, rgba(255,255,255,.82) 34%, rgba(255,255,255,0) 56%);}
+.cover .inner{position:relative; height:100%; display:flex; flex-direction:column; justify-content:center; padding:0 76px;}
+.cover .logo{height:34px; width:auto; position:absolute; top:48px; left:76px}
+.cover h1{font-family:var(--fHead); font-weight:800; letter-spacing:-.025em; line-height:1.02; font-size:66px; color:var(--ink)}
+.cover h1 .red{color:var(--red); display:block}
+.cover .rule{width:64px; height:5px; background:var(--red); border-radius:3px; margin:26px 0 22px}
+.cover .meta{font-size:15px; color:var(--muted); line-height:1.7}
+.cover .meta strong{color:var(--text); font-weight:600}
+.cover .program{position:absolute; bottom:46px; left:76px; font-size:12.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); font-weight:600}
+
+/* =========================================================================
+   QUOTE (slide 2)
+   ========================================================================= */
+.quote-wrap{flex:1; display:flex; flex-direction:column; justify-content:center; max-width:70ch}
+.quote-mark{font-family:var(--fHead); font-size:120px; line-height:.6; color:var(--red); font-weight:800; height:54px}
+.quote-wrap blockquote{font-family:var(--fHead); font-weight:600; font-size:46px; line-height:1.18; letter-spacing:-.02em; color:#fff; margin:18px 0 26px}
+.quote-wrap blockquote em{color:#ff6a6f; font-style:normal}
+.quote-wrap cite{font-style:normal; font-size:16px; color:rgba(255,255,255,.65); letter-spacing:.04em}
+.quote-wrap cite b{color:#fff; font-weight:600}
+
+/* =========================================================================
+   DIVIDER (section openers)
+   ========================================================================= */
+.divider{justify-content:center}
+.divider .pillar-no{font-family:var(--fHead); font-weight:800; font-size:200px; line-height:.8; color:rgba(255,255,255,.06); position:absolute; right:60px; top:50%; transform:translateY(-50%); letter-spacing:-.04em}
+.divider .eyebrow{font-family:var(--fHead); font-weight:700; letter-spacing:.18em; text-transform:uppercase; font-size:14px; color:#ff6a6f; display:flex; align-items:center; gap:12px}
+.divider .eyebrow .dot{width:26px;height:26px;border-radius:50%;background:var(--red);position:relative;overflow:hidden}
+.divider .eyebrow .dot::before{content:"";position:absolute;left:50%;bottom:5px;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:9px solid #fff;transform:translateX(-50%)}
+.divider h2{font-family:var(--fHead); font-weight:800; font-size:64px; letter-spacing:-.025em; color:#fff; margin:20px 0 18px; line-height:1.02; max-width:18ch}
+.divider .lead{font-size:18px; color:rgba(255,255,255,.7); max-width:54ch; line-height:1.55}
+.divider .prog-rail{display:flex; gap:10px; margin-top:34px}
+.divider .prog-rail span{font-size:12.5px; font-weight:600; letter-spacing:.04em; color:rgba(255,255,255,.4); padding:7px 14px; border:1px solid rgba(255,255,255,.14); border-radius:99px}
+.divider .prog-rail span.on{color:#fff; border-color:var(--red); background:rgba(236,27,35,.18)}
+
+/* =========================================================================
+   Generic building blocks
+   ========================================================================= */
+.cards{display:grid; gap:16px; flex:1; min-height:0}
+.cards.c3{grid-template-columns:repeat(3,1fr)}
+.cards.c2{grid-template-columns:repeat(2,1fr)}
+.card{
+  background:var(--card); border:1px solid var(--line); border-radius:14px;
+  padding:20px 22px; display:flex; flex-direction:column; gap:8px;
+  transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.card:hover{transform:translateY(-3px); box-shadow:0 18px 36px -22px rgba(0,0,0,.3); border-color:var(--line-strong)}
+.card .ic{width:40px; height:40px; border-radius:11px; background:var(--tint-red); color:var(--red); display:grid; place-items:center; flex:none}
+.card .ic svg{width:22px; height:22px}
+.card .num{font-family:var(--fHead); font-weight:800; font-size:15px; color:var(--red); width:30px; height:30px; border-radius:8px; background:var(--tint-red); display:grid; place-items:center}
+.card h3{font-family:var(--fHead); font-weight:700; font-size:18px; color:var(--ink); letter-spacing:-.01em}
+.card p{font-size:14px; color:var(--muted); line-height:1.5}
+.card .tag{font-family:var(--fMono); font-size:12px; color:var(--red); font-weight:500}
+
+/* two-column: text + visual */
+.two{display:grid; grid-template-columns:1fr 1fr; gap:40px; flex:1; min-height:0; align-items:center}
+.two.wide-r{grid-template-columns:0.86fr 1.14fr}
+.two .txt{display:flex; flex-direction:column; justify-content:center}
+.bullets{list-style:none; display:flex; flex-direction:column; gap:14px; margin-top:6px}
+.bullets li{position:relative; padding-left:28px; font-size:16.5px; line-height:1.5; color:var(--text)}
+.bullets li::before{content:""; position:absolute; left:0; top:9px; width:9px; height:9px; border-radius:3px; background:var(--red)}
+.bullets li.strong{font-weight:600; color:var(--ink)}
+.bullets li b{color:var(--ink); font-weight:600}
+.viz{position:relative; height:100%; display:flex; flex-direction:column; justify-content:center}
+
+/* rail (side panel) */
+.rail{background:var(--ink); color:#fff; border-radius:16px; padding:24px 26px; align-self:stretch; display:flex; flex-direction:column; justify-content:center}
+.rail h4{font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.12em; text-transform:uppercase; color:#ff6a6f; margin-bottom:16px}
+.rail ul{list-style:none; display:flex; flex-direction:column; gap:13px}
+.rail li{font-size:15px; color:rgba(255,255,255,.86); padding-left:22px; position:relative; line-height:1.4}
+.rail li::before{content:""; position:absolute; left:0; top:7px; width:7px; height:7px; border-radius:50%; background:var(--red)}
+
+.bullets-rail{display:grid; grid-template-columns:1.55fr 1fr; gap:32px; flex:1; min-height:0; align-items:stretch}
+.bullets-rail .txt{display:flex; flex-direction:column; justify-content:center}
+
+/* =========================================================================
+   Code block (typing reveal + syntax tint)
+   ========================================================================= */
+.codewrap{background:var(--code-bg); border-radius:14px; overflow:hidden; box-shadow:0 24px 50px -28px rgba(0,0,0,.5); border:1px solid #2a2d36; display:flex; flex-direction:column}
+.codewrap .bar{display:flex; align-items:center; gap:7px; padding:12px 16px; border-bottom:1px solid #272a33; background:#15171c}
+.codewrap .bar i{width:11px; height:11px; border-radius:50%; display:block}
+.codewrap .bar i:nth-child(1){background:#ff5f57}.codewrap .bar i:nth-child(2){background:#febc2e}.codewrap .bar i:nth-child(3){background:#28c840}
+.codewrap .bar .fn{margin-left:10px; font-family:var(--fMono); font-size:12.5px; color:#8b909c}
+.codewrap pre{margin:0; padding:20px 22px; overflow:hidden; flex:1}
+.codewrap code{font-family:var(--fMono); font-size:14.5px; line-height:1.65; color:var(--code-ink); white-space:pre; display:block}
+.tok-kw{color:#ff7b72}.tok-fn{color:#d2a8ff}.tok-str{color:#a5d6ff}.tok-num{color:#79c0ff}.tok-com{color:#7d8590; font-style:italic}.tok-op{color:#ff7b72}.tok-var{color:#ffa657}
+.code-line{display:block}
+.slide.active .code-line{animation:codeLine .42s both}
+.slide.active .code-line:nth-child(1){animation-delay:.15s}.slide.active .code-line:nth-child(2){animation-delay:.22s}
+.slide.active .code-line:nth-child(3){animation-delay:.29s}.slide.active .code-line:nth-child(4){animation-delay:.36s}
+.slide.active .code-line:nth-child(5){animation-delay:.43s}.slide.active .code-line:nth-child(6){animation-delay:.50s}
+.slide.active .code-line:nth-child(7){animation-delay:.57s}.slide.active .code-line:nth-child(8){animation-delay:.64s}
+.slide.active .code-line:nth-child(9){animation-delay:.71s}.slide.active .code-line:nth-child(10){animation-delay:.78s}
+.slide.active .code-line:nth-child(11){animation-delay:.85s}.slide.active .code-line:nth-child(12){animation-delay:.92s}
+.slide.active .code-line:nth-child(13){animation-delay:.99s}.slide.active .code-line:nth-child(14){animation-delay:1.06s}
+@keyframes codeLine{from{opacity:0; transform:translateX(-8px)}to{opacity:1; transform:none}}
+.code-note{font-size:14px; color:var(--muted); margin-top:14px; line-height:1.5; font-style:italic}
+.code-points{list-style:none; display:flex; flex-direction:column; gap:12px}
+.code-points li{position:relative; padding-left:24px; font-size:15.5px; line-height:1.45; color:var(--text)}
+.code-points li::before{content:"›"; position:absolute; left:0; top:-1px; color:var(--red); font-weight:800; font-size:18px}
+
+/* =========================================================================
+   Conway Venn (slide 4)
+   ========================================================================= */
+.venn{position:relative; width:430px; height:380px; margin:auto}
+.venn .circ{position:absolute; width:250px; height:250px; border-radius:50%; mix-blend-mode:multiply; display:grid; place-items:center; opacity:0; transform:scale(.6); transition:opacity .7s ease, transform .7s cubic-bezier(.34,1.56,.64,1)}
+.venn .c1{background:rgba(236,27,35,.40); left:0; top:0}
+.venn .c2{background:rgba(28,110,156,.40); right:0; top:0}
+.venn .c3{background:rgba(30,142,90,.42); left:50%; bottom:0; transform:translateX(-50%) scale(.6)}
+.slide.active .venn .c1{opacity:1; transform:scale(1); transition-delay:.2s}
+.slide.active .venn .c2{opacity:1; transform:scale(1); transition-delay:.45s}
+.slide.active .venn .c3{opacity:1; transform:translateX(-50%) scale(1); transition-delay:.7s}
+.venn .lbl{font-family:var(--fHead); font-weight:700; font-size:14px; color:var(--ink); text-align:center; line-height:1.2; pointer-events:none; padding:0 30px}
+.venn .center{position:absolute; left:50%; top:48%; transform:translate(-50%,-50%); z-index:5; background:var(--ink); color:#fff; font-family:var(--fHead); font-weight:800; font-size:13px; padding:8px 14px; border-radius:99px; white-space:nowrap; opacity:0; transition:opacity .5s ease .95s; box-shadow:0 8px 20px -8px rgba(0,0,0,.5)}
+.slide.active .venn .center{opacity:1}
+.venn .danger{position:absolute; left:14%; bottom:30%; z-index:6; font-family:var(--fHead); font-weight:800; font-size:11px; color:#fff; background:var(--red); padding:5px 10px; border-radius:6px; transform:rotate(-8deg); opacity:0; transition:opacity .5s ease 1.2s; box-shadow:0 6px 16px -6px rgba(236,27,35,.7)}
+.slide.active .venn .danger{opacity:1}
+
+/* =========================================================================
+   Stat counters (slide 5 + others)
+   ========================================================================= */
+.stat-row{display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin:auto 0}
+.stat{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:30px 26px; text-align:left; position:relative; overflow:hidden}
+.stat .big{font-family:var(--fHead); font-weight:800; font-size:62px; line-height:1; color:var(--red); letter-spacing:-.03em}
+.stat .big .unit{font-size:32px; vertical-align:super; margin-left:2px}
+.stat .lab{font-size:15px; color:var(--text); margin-top:12px; line-height:1.45; font-weight:500}
+.stat .sub{font-size:12.5px; color:var(--faint); margin-top:8px}
+.stat::before{content:""; position:absolute; left:0; top:0; bottom:0; width:5px; background:var(--red)}
+
+/* progress ring (80% stat) */
+.ring-wrap{display:flex; align-items:center; gap:40px; margin:auto 0}
+.ring{position:relative; width:230px; height:230px; flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring .pct{position:absolute; inset:0; display:grid; place-items:center; font-family:var(--fHead); font-weight:800; font-size:56px; color:var(--ink)}
+.ring-copy{max-width:46ch}
+.ring-copy h3{font-family:var(--fHead); font-weight:800; font-size:28px; color:var(--ink); letter-spacing:-.02em; line-height:1.1; margin-bottom:14px}
+.ring-copy p{font-size:16px; color:var(--muted); line-height:1.55}
+
+/* =========================================================================
+   Step strip (5 facets / workflow)
+   ========================================================================= */
+.flow{display:flex; align-items:stretch; gap:0; margin:auto 0; width:100%}
+.flow .step{flex:1; position:relative; display:flex; flex-direction:column; gap:8px; padding:0 6px}
+.flow .step .node{width:54px; height:54px; border-radius:14px; background:var(--ink); color:#fff; font-family:var(--fHead); font-weight:800; font-size:20px; display:grid; place-items:center; position:relative; z-index:2}
+.flow .step:nth-child(odd) .node{background:var(--red)}
+.flow .step h4{font-family:var(--fHead); font-weight:700; font-size:16.5px; color:var(--ink); margin-top:10px}
+.flow .step p{font-size:13.5px; color:var(--muted); line-height:1.45}
+.flow .arrow{position:absolute; top:27px; left:46px; right:-8px; height:2px; background:var(--line-strong); z-index:1}
+.flow .arrow::after{content:""; position:absolute; right:0; top:-4px; border-left:8px solid var(--line-strong); border-top:5px solid transparent; border-bottom:5px solid transparent}
+.flow .step:last-child .arrow{display:none}
+/* sequential build for flow */
+.flow .step{opacity:0; transform:translateY(14px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .flow .step{opacity:1; transform:none}
+.slide.active .flow .step:nth-child(1){transition-delay:.15s}.slide.active .flow .step:nth-child(2){transition-delay:.35s}
+.slide.active .flow .step:nth-child(3){transition-delay:.55s}.slide.active .flow .step:nth-child(4){transition-delay:.75s}
+.slide.active .flow .step:nth-child(5){transition-delay:.95s}.slide.active .flow .step:nth-child(6){transition-delay:1.15s}
+.flow.compact .node{width:46px;height:46px;border-radius:12px;font-size:17px}
+.flow-cap{font-size:14px; color:var(--muted); font-style:italic; text-align:center; margin-top:26px}
+
+/* journey / agenda */
+.journey{display:grid; grid-template-columns:repeat(4,1fr); gap:18px; flex:1; min-height:0; align-items:stretch}
+.jcard{border:1px solid var(--line); border-radius:16px; padding:24px 22px; display:flex; flex-direction:column; position:relative; background:var(--surface); overflow:hidden}
+.jcard .pn{font-family:var(--fHead); font-weight:800; font-size:46px; color:var(--card-2); line-height:1; letter-spacing:-.03em}
+.jcard .ph{font-family:var(--fHead); font-weight:700; font-size:18.5px; color:var(--ink); margin:14px 0 8px; letter-spacing:-.01em}
+.jcard p{font-size:13.5px; color:var(--muted); line-height:1.5; flex:1}
+.jcard .demo{margin-top:14px; font-family:var(--fMono); font-size:11px; font-weight:600; color:var(--red); background:var(--tint-red); padding:5px 10px; border-radius:6px; align-self:flex-start; display:inline-flex; gap:6px; align-items:center}
+.jcard::after{content:""; position:absolute; left:0; right:0; bottom:0; height:4px; background:var(--red); transform:scaleX(0); transform-origin:left; transition:transform .5s ease}
+.slide.active .jcard::after{transform:scaleX(1)}
+.slide.active .jcard:nth-child(1)::after{transition-delay:.3s}.slide.active .jcard:nth-child(2)::after{transition-delay:.45s}
+.slide.active .jcard:nth-child(3)::after{transition-delay:.6s}.slide.active .jcard:nth-child(4)::after{transition-delay:.75s}
+
+/* =========================================================================
+   Layered stack diagram (Python data stack)
+   ========================================================================= */
+.stack{display:flex; flex-direction:column; gap:12px; margin:auto 0; width:100%}
+.layer{display:grid; grid-template-columns:200px 1fr; align-items:center; gap:22px; border-radius:14px; padding:18px 24px; color:#fff; position:relative; overflow:hidden; opacity:0; transform:translateX(-18px); transition:opacity .55s ease, transform .55s cubic-bezier(.16,1,.3,1)}
+.slide.active .layer{opacity:1; transform:none}
+.slide.active .layer:nth-child(1){transition-delay:.5s}.slide.active .layer:nth-child(2){transition-delay:.38s}
+.slide.active .layer:nth-child(3){transition-delay:.26s}.slide.active .layer:nth-child(4){transition-delay:.14s}
+.layer .lname{font-family:var(--fHead); font-weight:800; font-size:21px; letter-spacing:-.01em; display:flex; align-items:baseline; gap:9px}
+.layer .lname code{font-family:var(--fMono); font-size:13px; opacity:.7; font-weight:500}
+.layer .ldesc{font-size:14.5px; line-height:1.4; opacity:.95}
+.layer.l1{background:linear-gradient(100deg,#2A2A2F,#1c1c20)}
+.layer.l2{background:linear-gradient(100deg,var(--red-dark),var(--red))}
+.layer.l3{background:linear-gradient(100deg,#1C6E9C,#2487bf)}
+.layer.l4{background:linear-gradient(100deg,#0E7C6B,#13a08a)}
+.stack .scaffold{font-size:12.5px; color:var(--muted); text-align:center; font-style:italic}
+
+/* container / building-block cards */
+.mini-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:14px}
+.mini{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:15px 18px}
+.mini .mh{font-family:var(--fMono); font-size:14px; font-weight:700; color:var(--red)}
+.mini .md{font-size:13.5px; color:var(--muted); margin-top:4px; line-height:1.4}
+.mini code{font-family:var(--fMono); font-size:12.5px; color:var(--ink); background:var(--card-2); padding:1px 5px; border-radius:4px}
+
+/* before / after code columns */
+.ba{display:grid; grid-template-columns:1fr 1fr; gap:22px; flex:1; min-height:0; align-items:stretch}
+.ba .col{display:flex; flex-direction:column}
+.ba .ba-h{font-family:var(--fHead); font-weight:700; font-size:14px; margin-bottom:10px; display:flex; align-items:center; gap:9px}
+.ba .ba-h .tagx{font-size:11px; padding:3px 9px; border-radius:99px; font-weight:700; letter-spacing:.04em}
+.ba .before .tagx{background:var(--card-2); color:var(--muted)}
+.ba .after .tagx{background:var(--tint-red); color:var(--red)}
+.ba .codewrap{flex:1}
+/* optimisation pushdown strip (eager vs lazy slide) */
+.pushdown{display:flex; gap:12px; margin-top:16px; justify-content:center; flex-wrap:wrap}
+.pushdown .pd{display:flex; align-items:center; gap:9px; background:var(--tint-red); border:1px solid var(--tint-red-2); border-radius:99px; padding:8px 16px; font-size:13px; color:var(--ink); opacity:0; transform:translateY(10px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .pushdown .pd{opacity:1; transform:none}
+.slide.active .pushdown .pd:nth-child(1){transition-delay:.5s}.slide.active .pushdown .pd:nth-child(2){transition-delay:.66s}.slide.active .pushdown .pd:nth-child(3){transition-delay:.82s}
+.pushdown .pd b{color:var(--red); font-weight:700}
+.pushdown .pd .ck{width:18px;height:18px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-size:11px;flex:none}
+
+/* =========================================================================
+   Notebook-playback demo component
+   ========================================================================= */
+.demo-stage{flex:1; min-height:0; display:grid; grid-template-columns:1.62fr 1fr; gap:26px; align-items:stretch}
+.nb{background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 24px 50px -30px rgba(0,0,0,.35); display:flex; flex-direction:column; overflow:hidden}
+.nb-top{display:flex; align-items:center; gap:8px; padding:11px 16px; border-bottom:1px solid var(--line); background:var(--card)}
+.nb-top .t-ic{width:9px;height:9px;border-radius:50%;background:#e0a800}
+.nb-top .t-ic.r{background:var(--red)} .nb-top .t-ic.g{background:#28a745}
+.nb-top .nb-name{font-family:var(--fMono); font-size:12.5px; color:var(--muted); margin-left:8px}
+.nb-top .nb-kernel{margin-left:auto; font-size:11.5px; color:var(--faint); display:flex; align-items:center; gap:6px}
+.nb-top .nb-kernel::after{content:"";width:8px;height:8px;border-radius:50%;background:#28a745}
+.nb-body{flex:1; overflow:hidden; padding:6px 0; scroll-behavior:smooth}
+.nb-cell{padding:5px 16px; opacity:0; transform:translateY(8px); transition:opacity .4s ease, transform .4s ease}
+.nb-cell.shown{opacity:1; transform:none}
+.nb-in{display:grid; grid-template-columns:54px 1fr; gap:10px; align-items:start}
+.nb-prompt{font-family:var(--fMono); font-size:12.5px; color:#3b6fb0; text-align:right; padding-top:9px; user-select:none}
+.nb-prompt.busy{color:var(--red)}
+.nb-code{position:relative; background:#f6f7f9; border:1px solid #eceef1; border-left:3px solid var(--red); border-radius:6px; padding:9px 12px; font-family:var(--fMono); font-size:13px; line-height:1.55; color:#1f2430; white-space:pre; overflow:hidden; transition:box-shadow .3s ease, border-left-color .3s ease}
+.nb-cell.running .nb-code{box-shadow:0 0 0 2px var(--tint-red-2), 0 8px 22px -12px rgba(236,27,35,.5); border-left-color:var(--red-dark)}
+.nb-cell.running .nb-code::after{content:"▋"; color:var(--red); animation:caret .7s steps(1) infinite; margin-left:1px}
+@keyframes caret{50%{opacity:0}}
+.nb-out{margin:6px 0 0 64px; font-family:var(--fMono); font-size:12px; line-height:1.5; color:#333; max-height:0; opacity:0; overflow:hidden; transition:max-height .5s ease, opacity .4s ease}
+.nb-out.shown{max-height:240px; opacity:1}
+.nb-out .otable{border-collapse:collapse; font-size:11px}
+.nb-out .otable th{background:var(--ink); color:#fff; font-weight:600; padding:2px 9px; text-align:right; font-family:var(--fMono)}
+.nb-out .otable td{padding:2px 9px; border-bottom:1px solid #eee; text-align:right; color:#444}
+.nb-out .otable tr:nth-child(even) td{background:#fafafa}
+.nb-out .muted{color:#8a9099}
+.nb-out .ok{color:#1E8E5A}
+.demo-side{display:flex; flex-direction:column; gap:16px; justify-content:center}
+.demo-card{border-radius:16px; padding:22px 24px; background:var(--ink); color:#fff}
+.demo-card .dk{font-family:var(--fHead); font-weight:700; font-size:12px; letter-spacing:.13em; text-transform:uppercase; color:#ff6a6f; margin-bottom:10px}
+.demo-card h3{font-family:var(--fHead); font-weight:800; font-size:22px; line-height:1.12; letter-spacing:-.01em; margin-bottom:10px}
+.demo-card p{font-size:14px; line-height:1.5; color:rgba(255,255,255,.82)}
+.demo-steps{list-style:none; display:flex; flex-direction:column; gap:11px}
+.demo-steps li{display:flex; gap:11px; align-items:flex-start; font-size:14px; color:var(--text); line-height:1.4}
+.demo-steps li .sn{flex:none; width:24px; height:24px; border-radius:7px; background:var(--tint-red); color:var(--red); font-family:var(--fHead); font-weight:800; font-size:12px; display:grid; place-items:center}
+.demo-steps li.on .sn{background:var(--red); color:#fff}
+.replay{align-self:flex-start; display:inline-flex; align-items:center; gap:8px; background:var(--tint-red); color:var(--red); border:1px solid var(--tint-red-2); font-family:var(--fHead); font-weight:700; font-size:13px; padding:9px 16px; border-radius:99px; cursor:pointer; transition:all .2s ease}
+.replay:hover{background:var(--red); color:#fff}
+.replay svg{width:14px;height:14px}
+.demo-take{background:var(--tint-red); border:1px solid var(--tint-red-2); border-radius:12px; padding:14px 18px; font-size:13.5px; color:var(--ink); line-height:1.45}
+.demo-take b{color:var(--red)}
+
+/* =========================================================================
+   VS compare panels (structured vs unstructured, good vs bad)
+   ========================================================================= */
+.vs{display:grid; grid-template-columns:1fr 1fr; gap:24px; flex:1; min-height:0}
+.vs .panel{border:1px solid var(--line); border-radius:16px; padding:24px 26px; display:flex; flex-direction:column; background:var(--surface); position:relative; overflow:hidden}
+.vs .panel.accent{background:linear-gradient(180deg,var(--tint-red),#fff); border-color:var(--tint-red-2)}
+.vs .panel .ph{font-family:var(--fHead); font-weight:800; font-size:21px; color:var(--ink); letter-spacing:-.01em; display:flex; align-items:center; gap:12px}
+.vs .panel .ph .glyph{width:42px; height:42px; border-radius:11px; display:grid; place-items:center; flex:none}
+.vs .panel.accent .ph .glyph{background:var(--red); color:#fff}
+.vs .panel:not(.accent) .ph .glyph{background:var(--ink); color:#fff}
+.vs .panel .ps{font-size:14px; color:var(--muted); margin:8px 0 16px; line-height:1.45}
+.vs .chips{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px}
+.vs .chip{font-family:var(--fMono); font-size:12px; padding:6px 11px; border-radius:8px; background:var(--card); border:1px solid var(--line); color:var(--text)}
+.vs .panel.accent .chip{background:#fff; border-color:var(--tint-red-2)}
+.vs .where{margin-top:auto; font-size:13.5px; color:var(--text); line-height:1.45; padding-top:14px; border-top:1px dashed var(--line-strong)}
+.vs .where b{color:var(--red)}
+
+/* annotated "shape of data" table */
+.shape-tbl{display:grid; grid-template-columns:auto 1fr; gap:0 18px; align-items:center; margin:auto 0}
+.dtable{border-collapse:separate; border-spacing:0; border-radius:12px; overflow:hidden; box-shadow:0 18px 40px -28px rgba(0,0,0,.3); width:100%}
+.dtable th{background:var(--ink); color:#fff; font-family:var(--fMono); font-size:13px; font-weight:600; padding:11px 16px; text-align:left}
+.dtable th.target{background:var(--red)}
+.dtable td{padding:10px 16px; font-family:var(--fMono); font-size:13.5px; color:var(--text); background:#fff; border-bottom:1px solid var(--line)}
+.dtable td.target{background:var(--tint-red); color:var(--red-dark); font-weight:600}
+.dtable tr:nth-child(even) td{background:#fafafb}
+.dtable tr:nth-child(even) td.target{background:var(--tint-red-2)}
+.annot{font-family:var(--fHead); font-weight:700; font-size:14px; color:var(--red); display:flex; align-items:center; gap:8px}
+.annot.muted{color:var(--muted)}
+.shape-legend{display:flex; gap:26px; justify-content:center; margin-top:22px; flex-wrap:wrap}
+.shape-legend .item{display:flex; align-items:center; gap:9px; font-size:14px; color:var(--text)}
+.shape-legend .sw{width:16px; height:16px; border-radius:5px}
+
+/* analytics staircase (ascending) */
+.stair{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; align-items:end; flex:1; min-height:0; padding-top:8px}
+.rung{display:flex; flex-direction:column; justify-content:flex-end}
+.rung .box{border-radius:14px 14px 0 0; padding:20px 20px 22px; color:#fff; position:relative; transform-origin:bottom; transform:scaleY(0); opacity:0; transition:transform .6s cubic-bezier(.16,1,.3,1), opacity .4s ease}
+.slide.active .rung .box{transform:scaleY(1); opacity:1}
+.slide.active .rung:nth-child(1) .box{transition-delay:.2s}.slide.active .rung:nth-child(2) .box{transition-delay:.42s}
+.slide.active .rung:nth-child(3) .box{transition-delay:.64s}.slide.active .rung:nth-child(4) .box{transition-delay:.86s}
+.rung:nth-child(1) .box{background:#3a3a40; min-height:150px}
+.rung:nth-child(2) .box{background:#8a1419; min-height:215px}
+.rung:nth-child(3) .box{background:var(--red-dark); min-height:280px}
+.rung:nth-child(4) .box{background:var(--red); min-height:345px}
+.rung .q{font-family:var(--fMono); font-size:12px; opacity:.85; margin-bottom:6px}
+.rung .box h4{font-family:var(--fHead); font-weight:800; font-size:21px; letter-spacing:-.01em}
+.rung .box p{font-size:13px; line-height:1.4; opacity:.92; margin-top:8px}
+.rung .box .step-i{position:absolute; top:14px; right:16px; font-family:var(--fHead); font-weight:800; font-size:14px; opacity:.35}
+.stair-axis{display:flex; justify-content:space-between; font-size:13px; color:var(--muted); margin-top:14px; font-style:italic}
+.stair-axis b{color:var(--red); font-style:normal; font-weight:700}
+
+/* animated SVG charts (scatter, dual-line) */
+.svg-card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px 22px; height:100%; display:flex; flex-direction:column}
+.svg-card .ct{font-family:var(--fHead); font-weight:700; font-size:15px; color:var(--ink); margin-bottom:6px}
+.chart-svg{width:100%; flex:1}
+.chart-svg .dot{opacity:0; transition:opacity .5s ease}
+.slide.active .chart-svg .dot{opacity:.78}
+.chart-svg .trend{stroke:var(--red); stroke-width:3; fill:none; stroke-dasharray:600; stroke-dashoffset:600; transition:stroke-dashoffset 1.3s ease .6s}
+.slide.active .chart-svg .trend{stroke-dashoffset:0}
+.chart-svg .ln{fill:none; stroke-width:3; stroke-dasharray:900; stroke-dashoffset:900; transition:stroke-dashoffset 1.5s ease}
+.slide.active .chart-svg .ln1{stroke-dashoffset:0; transition-delay:.3s}
+.slide.active .chart-svg .ln2{stroke-dashoffset:0; transition-delay:.7s}
+.chart-svg .axis{stroke:var(--line-strong); stroke-width:1.5}
+.chart-svg .glab{font-family:var(--fBody); font-size:11px; fill:var(--muted)}
+
+/* problem -> fix table */
+.pf-table{display:flex; flex-direction:column; border:1px solid var(--line); border-radius:14px; overflow:hidden; flex:1; min-height:0}
+.pf-row{display:grid; grid-template-columns:1.1fr 1fr 1.25fr; align-items:center; padding:0; border-bottom:1px solid var(--line); opacity:0; transform:translateX(-12px); transition:opacity .45s ease, transform .45s ease}
+.slide.active .pf-row{opacity:1; transform:none}
+.slide.active .pf-row:nth-child(1){transition-delay:.1s}.slide.active .pf-row:nth-child(2){transition-delay:.2s}
+.slide.active .pf-row:nth-child(3){transition-delay:.3s}.slide.active .pf-row:nth-child(4){transition-delay:.4s}
+.slide.active .pf-row:nth-child(5){transition-delay:.5s}.slide.active .pf-row:nth-child(6){transition-delay:.6s}
+.slide.active .pf-row:nth-child(7){transition-delay:.7s}
+.pf-row:last-child{border-bottom:none}
+.pf-row.head{background:var(--ink); color:#fff; opacity:1; transform:none}
+.pf-row.head>div{font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.04em; text-transform:uppercase; padding:12px 20px; color:rgba(255,255,255,.85)}
+.pf-row>div{padding:13px 20px; font-size:14.5px}
+.pf-row .prob{font-weight:600; color:var(--ink); display:flex; align-items:center; gap:10px}
+.pf-row .prob .d{width:8px;height:8px;border-radius:50%;background:var(--red);flex:none}
+.pf-row .fix code{font-family:var(--fMono); font-size:13px; background:var(--tint-red); color:var(--red-dark); padding:3px 9px; border-radius:6px; font-weight:500}
+.pf-row .desc{color:var(--muted); font-size:13.5px; line-height:1.4}
+.pf-row:nth-child(even):not(.head){background:#fafafb}
+
+/* tidy before/after tables */
+.tidy{display:grid; grid-template-columns:1fr auto 1fr; gap:20px; align-items:center; flex:1; min-height:0}
+.tidy .tcol{display:flex; flex-direction:column}
+.tidy .tlabel{font-family:var(--fHead); font-weight:800; font-size:14px; letter-spacing:.06em; text-transform:uppercase; margin-bottom:12px; display:flex; align-items:center; gap:9px}
+.tidy .messy .tlabel{color:var(--muted)} .tidy .clean .tlabel{color:var(--red)}
+.tidy .arrow-mid{font-size:34px; color:var(--red); font-weight:800}
+.tidy .note{font-size:12.5px; color:var(--muted); margin-top:10px; font-style:italic; line-height:1.4}
+
+/* histogram (EDA) */
+.hist{display:flex; align-items:flex-end; gap:7px; height:230px; padding:0 4px; border-bottom:2px solid var(--line-strong)}
+.hist .bar{flex:1; background:linear-gradient(180deg,var(--red),var(--red-dark)); border-radius:5px 5px 0 0; height:0; transition:height .8s cubic-bezier(.16,1,.3,1); position:relative}
+.hist .bar.med{background:linear-gradient(180deg,#3a3a40,#222)}
+.slide.active .hist .bar{height:var(--h)}
+.slide.active .hist .bar:nth-child(1){transition-delay:.1s}.slide.active .hist .bar:nth-child(2){transition-delay:.16s}
+.slide.active .hist .bar:nth-child(3){transition-delay:.22s}.slide.active .hist .bar:nth-child(4){transition-delay:.28s}
+.slide.active .hist .bar:nth-child(5){transition-delay:.34s}.slide.active .hist .bar:nth-child(6){transition-delay:.40s}
+.slide.active .hist .bar:nth-child(7){transition-delay:.46s}.slide.active .hist .bar:nth-child(8){transition-delay:.52s}
+.slide.active .hist .bar:nth-child(9){transition-delay:.58s}.slide.active .hist .bar:nth-child(10){transition-delay:.64s}
+.slide.active .hist .bar:nth-child(11){transition-delay:.70s}.slide.active .hist .bar:nth-child(12){transition-delay:.76s}
+.stat-chips{display:flex; flex-direction:column; gap:12px}
+.stat-chips .sc{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 18px; display:flex; justify-content:space-between; align-items:center}
+.stat-chips .sc .k{font-size:13.5px; color:var(--muted)}
+.stat-chips .sc .v{font-family:var(--fHead); font-weight:800; font-size:22px; color:var(--red)}
+
+/* chart-picker glyph grid */
+.picker{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; flex:1; min-height:0}
+.pick{border:1px solid var(--line); border-radius:14px; padding:18px 20px; display:flex; flex-direction:column; gap:10px; background:var(--surface); transition:transform .25s ease, box-shadow .25s ease, border-color .25s}
+.pick:hover{transform:translateY(-3px); box-shadow:0 18px 34px -22px rgba(0,0,0,.3); border-color:var(--tint-red-2)}
+.pick .pg-glyph{height:46px; display:flex; align-items:flex-end; gap:4px}
+.pick .q{font-family:var(--fMono); font-size:12px; color:var(--red); font-weight:500}
+.pick h4{font-family:var(--fHead); font-weight:700; font-size:16px; color:var(--ink)}
+.pick p{font-size:13px; color:var(--muted); line-height:1.4}
+.pick svg{width:100%; height:46px}
+
+/* insight callout */
+.insight{display:grid; grid-template-columns:1fr 1fr; gap:30px; flex:1; min-height:0; align-items:center}
+.insight .lead-card{background:var(--ink); color:#fff; border-radius:18px; padding:30px 32px; position:relative; overflow:hidden}
+.insight .lead-card::before{content:""; position:absolute; right:-40px; top:-40px; width:160px; height:160px; border-radius:50%; background:radial-gradient(circle,rgba(236,27,35,.4),transparent 70%)}
+.insight .lead-card .so{font-family:var(--fHead); font-weight:700; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#ff6a6f; margin-bottom:14px}
+.insight .lead-card .big-line{font-family:var(--fHead); font-weight:800; font-size:28px; line-height:1.15; letter-spacing:-.01em}
+.insight .lead-card .big-line em{color:#ff8e91; font-style:normal}
+.layer-list{list-style:none; display:flex; flex-direction:column; gap:16px}
+.layer-list li{display:flex; gap:14px; align-items:flex-start}
+.layer-list li .n{flex:none; width:30px; height:30px; border-radius:9px; background:var(--tint-red); color:var(--red); font-family:var(--fHead); font-weight:800; display:grid; place-items:center; font-size:14px}
+.layer-list li b{font-family:var(--fHead); color:var(--ink); font-size:16px}
+.layer-list li p{font-size:14px; color:var(--muted); line-height:1.4; margin-top:2px}
+
+/* closing recap */
+.recap-grid{display:grid; grid-template-columns:1fr 1fr; gap:30px; flex:1; min-height:0; align-items:center}
+.recap-col h4{font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.12em; text-transform:uppercase; margin-bottom:18px; display:flex; align-items:center; gap:10px}
+.recap-col.recap h4{color:#ff6a6f}.recap-col.next h4{color:#fff}
+.recap-col ul{list-style:none; display:flex; flex-direction:column; gap:14px}
+.recap-col li{font-size:16px; line-height:1.45; padding-left:26px; position:relative; color:rgba(255,255,255,.88)}
+.recap-col.recap li::before{content:"✓"; position:absolute; left:0; color:var(--red); font-weight:800}
+.recap-col.next li::before{content:"→"; position:absolute; left:0; color:#ff6a6f; font-weight:800}
+.recap-col.next{background:rgba(236,27,35,.1); border:1px solid rgba(236,27,35,.25); border-radius:18px; padding:26px 28px}
+
+/* big single stat (80%) */
+.megastat{display:flex; align-items:center; gap:60px; margin:auto 0}
+.megastat .num{font-family:var(--fHead); font-weight:800; font-size:200px; line-height:.85; color:var(--red); letter-spacing:-.05em}
+.megastat .num .u{font-size:90px}
+.megastat .copy{max-width:42ch}
+.megastat .copy h3{font-family:var(--fHead); font-weight:800; font-size:30px; color:var(--ink); line-height:1.1; letter-spacing:-.02em; margin-bottom:14px}
+.megastat .copy p{font-size:16px; color:var(--muted); line-height:1.55}
+.megastat .copy .src{font-size:12.5px; color:var(--faint); margin-top:14px}
+
+/* =========================================================================
+   Navigation chrome
+   ========================================================================= */
+.progress{position:fixed; top:0; left:0; height:3px; background:var(--red); z-index:50; transition:width .4s ease; box-shadow:0 0 12px rgba(236,27,35,.6)}
+.hud{position:fixed; bottom:18px; right:22px; z-index:50; display:flex; align-items:center; gap:14px; font-family:var(--fMono); font-size:12px; color:rgba(255,255,255,.55)}
+.hud .dots{display:flex; gap:6px}
+.hud .dot{width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.22); cursor:pointer; transition:all .25s ease}
+.hud .dot.on{background:var(--red); transform:scale(1.35)}
+.hud .dot.sec{background:rgba(255,255,255,.4)}
+.hud .count b{color:#fff}
+.hint{position:fixed; bottom:20px; left:22px; z-index:50; font-size:11.5px; color:rgba(255,255,255,.4); font-family:var(--fMono)}
+.hint kbd{background:rgba(255,255,255,.1); border-radius:4px; padding:1px 6px; color:rgba(255,255,255,.7)}
+/* auto-hide nav chrome when idle or when deck fills the viewport */
+.hud,.hint{transition:opacity .4s ease}
+body.idle .hud, body.idle .hint{opacity:0; pointer-events:none}
+body.static .hud, body.static .hint{display:none}
+
+/* speaker notes drawer */
+.notes{position:fixed; left:0; right:0; bottom:0; z-index:60; transform:translateY(100%); transition:transform .35s cubic-bezier(.16,1,.3,1); background:#16161a; color:#e7e7ea; border-top:3px solid var(--red); max-height:42vh; overflow:auto; padding:22px 30px; box-shadow:0 -20px 50px -20px rgba(0,0,0,.7)}
+.notes.show{transform:none}
+.notes h5{font-family:var(--fHead); font-weight:700; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#ff6a6f; margin-bottom:12px; display:flex; align-items:center; gap:10px}
+.notes ul{margin:0; padding-left:20px; display:flex; flex-direction:column; gap:9px}
+.notes li{font-size:14.5px; line-height:1.55; color:#cfd0d6}
+.notes .close{position:absolute; top:16px; right:22px; color:#888; cursor:pointer; font-size:18px; background:none; border:none}
+
+/* mobile: the deck is a fixed 16:9 stage — prompt rotation when held upright */
+.rotate-cue{position:fixed; inset:0; height:100dvh; z-index:120; display:none;
+  place-items:center; text-align:center; padding:42px;
+  background:radial-gradient(700px 460px at 50% 0%, rgba(236,27,35,.14), transparent 62%), #0a0a0c;
+  color:#e7e7ea; font-family:var(--fHead)}
+.rotate-cue .ic{width:58px; height:58px; margin:0 auto 24px; color:var(--red);
+  animation:rot-tilt 2.2s ease-in-out infinite}
+.rotate-cue h4{font-size:21px; font-weight:800; letter-spacing:-.01em; color:#fff; margin-bottom:10px}
+.rotate-cue p{font-size:14px; line-height:1.55; color:rgba(255,255,255,.6); max-width:34ch; margin:0 auto}
+@keyframes rot-tilt{0%,100%{transform:rotate(-12deg)} 50%{transform:rotate(78deg)}}
+/* show only on small screens held in portrait */
+@media (orientation:portrait) and (max-width:860px){
+  .rotate-cue{display:grid}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important; transition-duration:.2s !important}
+  [data-r]{opacity:1 !important; transform:none !important}
+  .rotate-cue .ic{animation:none; transform:rotate(78deg)}
+}
+/* static mode (QA captures / no-motion): snap everything to final */
+body.static [data-r]{opacity:1 !important; transform:none !important; transition:none !important}
+body.static .code-line{animation:none !important}
+body.static .flow .step,
+body.static .venn .circ,
+body.static .venn .center,
+body.static .venn .danger,
+body.static .jcard::after{opacity:1 !important; transform:none !important; transition:none !important}
+body.static .venn .c3{transform:translateX(-50%) !important}
+body.static .jcard::after{transform:scaleX(1) !important}
+body.static .nb-cell, body.static .nb-out{transition:none !important; transform:none !important; opacity:1 !important}
+body.static .nb-out.shown{max-height:320px !important}
+body.static .pushdown .pd{opacity:1 !important; transform:none !important; transition:none !important}
+/* ============================ Day 2 · Speech (STT & TTS) additions ============================ */
+.fillc{flex:1; min-height:0; display:flex; flex-direction:column; justify-content:center}
+
+/* mini waveform */
+.wv{display:flex; align-items:center; gap:2px; height:34px}
+.wv i{flex:1; background:linear-gradient(180deg,var(--red),var(--red-dark)); border-radius:2px; height:var(--h,40%); transform:scaleY(0); transform-origin:center; transition:transform .5s cubic-bezier(.16,1,.3,1)}
+.slide.active .wv i{transform:scaleY(1)}
+.wv.dk i{background:linear-gradient(180deg,#3a3a40,#1c1c20)}
+
+/* mirror round-trip (STT / TTS) */
+.mirror{display:flex; flex-direction:column; gap:22px; max-width:820px; width:100%; margin:auto auto}
+.mrow{display:grid; grid-template-columns:1fr 132px 1fr; align-items:center; gap:18px; opacity:0; transform:translateY(16px); transition:opacity .55s ease, transform .55s ease}
+.slide.active .mrow{opacity:1; transform:none}
+.slide.active .mrow.r2{transition-delay:.35s}
+.mnode{border:1px solid var(--line); border-radius:14px; padding:15px 18px; background:#fff; min-height:78px; display:flex; flex-direction:column; justify-content:center; gap:6px; box-shadow:0 14px 34px -26px rgba(0,0,0,.4)}
+.mnode .mt{font-family:var(--fHead); font-weight:800; font-size:14px; color:var(--ink); display:flex; align-items:center; gap:8px}
+.mnode .mt svg{width:18px; height:18px; color:var(--red)}
+.mnode .mx{font-family:var(--fMono); font-size:13px; color:var(--muted)}
+.mmid{text-align:center}
+.mmid .mp{font-family:var(--fHead); font-weight:800; font-size:13px; color:#fff; border-radius:99px; padding:8px 0; letter-spacing:.04em}
+.mrow.r1 .mmid .mp{background:var(--red)} .mrow.r2 .mmid .mp{background:var(--ink)}
+.mmid .marr{color:var(--line-strong); font-size:22px; line-height:1; margin-top:5px}
+
+/* three decoding families */
+.fam{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; flex:1; min-height:0; align-items:stretch}
+.famc{border:1px solid var(--line); border-radius:16px; overflow:hidden; display:flex; flex-direction:column; background:var(--surface); opacity:0; transform:translateY(18px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .famc{opacity:1; transform:none}
+.slide.active .famc:nth-child(1){transition-delay:.15s}.slide.active .famc:nth-child(2){transition-delay:.32s}.slide.active .famc:nth-child(3){transition-delay:.49s}
+.famc .fh{padding:13px 16px; color:#fff; font-family:var(--fHead); font-weight:800; font-size:16px}
+.famc:nth-child(1) .fh{background:linear-gradient(120deg,var(--red),var(--red-dark))}
+.famc:nth-child(2) .fh{background:linear-gradient(120deg,#26262b,#161618)}
+.famc:nth-child(3) .fh{background:linear-gradient(120deg,#1C6E9C,#155a80)}
+.famc .fh small{display:block; font-weight:600; font-size:11px; opacity:.85; margin-top:2px; font-family:var(--fBody)}
+.famc .fb{padding:14px 16px; display:flex; flex-direction:column; gap:10px; flex:1}
+.famc .fmech{font-size:13px; color:var(--text); line-height:1.45}
+.famc .fmech b{color:var(--ink)}
+.famc .fchips{display:flex; flex-wrap:wrap; gap:6px; margin-top:auto}
+.famc .fchips span{font-family:var(--fMono); font-size:10px; padding:4px 9px; border-radius:99px; background:var(--card); color:var(--muted)}
+.famc .fchips span.go{background:#E9F7EE; color:#1E8E5A} .famc .fchips span.no{background:var(--tint-red); color:var(--red-dark)}
+
+/* CTC frame collapse */
+.ctc{display:flex; flex-direction:column; gap:20px; max-width:840px; width:100%; margin:auto auto}
+.ctcrow{display:flex; align-items:center; gap:9px; justify-content:center; flex-wrap:wrap}
+.frame{width:46px; height:46px; border-radius:10px; border:1px solid var(--line-strong); background:#fff; display:grid; place-items:center; font-family:var(--fMono); font-weight:700; font-size:17px; color:var(--ink); opacity:0; transform:translateY(10px); transition:opacity .4s ease, transform .4s ease}
+.slide.active .frame{opacity:1; transform:none}
+.frame.blank{color:var(--faint,#9AA1AC); background:var(--card)}
+.frame.dup{color:var(--muted); border-style:dashed}
+.ctc .cdown{text-align:center; color:var(--red); font-weight:800; font-size:13px; opacity:0; transition:opacity .5s ease .8s} .slide.active .ctc .cdown{opacity:1}
+.ctc .cout{margin:0 auto; font-family:var(--fMono); font-weight:700; font-size:26px; color:#fff; background:var(--red); border-radius:12px; padding:12px 28px; letter-spacing:.06em; opacity:0; transform:scale(.9); transition:opacity .5s ease 1s, transform .5s ease 1s} .slide.active .ctc .cout{opacity:1; transform:none}
+
+/* attention matrix mini */
+.attn{display:grid; grid-template-columns:repeat(6,1fr); gap:4px; width:230px; margin:auto}
+.attn .ac{aspect-ratio:1; border-radius:4px; background:var(--ac,rgba(236,27,35,.06)); opacity:0; transition:opacity .35s ease}
+.slide.active .attn .ac{opacity:1}
+
+/* streaming timeline (transducer) */
+.stream{display:flex; flex-direction:column; gap:14px; max-width:840px; width:100%; margin:auto auto}
+.sticks{display:flex; gap:6px; align-items:flex-end; height:60px}
+.sticks i{flex:1; background:linear-gradient(180deg,#3a3a40,#1c1c20); border-radius:2px; height:var(--h,40%)}
+.semit{display:flex; gap:6px}
+.semit .sw{flex:1; display:flex; justify-content:center}
+.semit .tok{font-family:var(--fHead); font-weight:800; font-size:14px; color:#fff; background:var(--red); border-radius:8px; padding:6px 12px; opacity:0; transform:translateY(-8px); transition:opacity .4s ease, transform .4s ease}
+.slide.active .semit .tok{opacity:1; transform:none}
+
+/* TTS three-stage pipeline */
+.tpipe{display:flex; align-items:stretch; justify-content:center; gap:0; width:100%; margin:auto 0}
+.tstage{flex:1; max-width:230px; text-align:center; padding:18px 14px; border-radius:16px; border:1px solid var(--line); background:var(--surface); display:flex; flex-direction:column; align-items:center; gap:8px; opacity:0; transform:translateY(14px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .tstage{opacity:1; transform:none}
+.slide.active .tstage:nth-of-type(1){transition-delay:.15s}
+.tstage .tn{font-family:var(--fMono); font-size:10px; color:var(--red); font-weight:700; letter-spacing:.08em}
+.tstage .ti{width:46px; height:46px; border-radius:13px; background:var(--tint-red); color:var(--red); display:grid; place-items:center}
+.tstage .ti svg{width:24px; height:24px}
+.tstage h4{font-family:var(--fHead); font-weight:800; font-size:15px; color:var(--ink)}
+.tstage p{font-size:11.5px; color:var(--muted); line-height:1.35}
+.tarr{flex:0 0 46px; display:grid; place-items:center; color:var(--red); opacity:0; transition:opacity .5s ease}
+.slide.active .tarr{opacity:1}
+.slide.active .tarr:nth-of-type(2){transition-delay:.3s}.slide.active .tarr:nth-of-type(4){transition-delay:.45s}.slide.active .tarr:nth-of-type(6){transition-delay:.6s}
+.tarr svg{width:26px; height:26px}
+
+/* architecture evolution (sequential vs parallel) */
+.evo{display:flex; flex-direction:column; gap:13px; max-width:900px; width:100%; margin:auto auto}
+.evorow{display:grid; grid-template-columns:152px 1fr; gap:16px; align-items:center; opacity:0; transform:translateX(-14px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .evorow{opacity:1; transform:none}
+.slide.active .evorow:nth-child(2){transition-delay:.3s}.slide.active .evorow:nth-child(3){transition-delay:.55s}
+.evorow .el{font-family:var(--fHead); font-weight:800; font-size:15px; color:var(--ink)}
+.evorow .el small{display:block; font-weight:600; font-size:11px; color:var(--muted)}
+.evobar{display:flex; gap:6px; align-items:center}
+.evobar .blk{height:30px; border-radius:6px; background:var(--card-2)}
+.evorow.seq .blk{background:linear-gradient(180deg,#3a3a40,#1c1c20)}
+.evorow.par .blk{background:linear-gradient(180deg,var(--red),var(--red-dark))}
+.evorow.e2e .blk{background:linear-gradient(120deg,#1C6E9C,#155a80)}
+.evobar .tag{margin-left:8px; font-family:var(--fMono); font-size:10.5px; padding:4px 9px; border-radius:99px}
+.evorow.seq .tag{background:var(--card); color:var(--muted)} .evorow.par .tag,.evorow.e2e .tag{background:var(--tint-red); color:var(--red-dark)}
+
+/* adaptation ladder (cheap -> expensive) */
+.ladder{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; align-items:end; flex:1; min-height:0; padding-top:8px}
+.lstep{display:flex; flex-direction:column; justify-content:flex-end}
+.lstep .lbar{border-radius:13px 13px 0 0; padding:14px 15px; color:#fff; transform-origin:bottom; transform:scaleY(0); opacity:0; transition:transform .6s cubic-bezier(.16,1,.3,1), opacity .4s}
+.slide.active .lstep .lbar{transform:scaleY(1); opacity:1}
+.slide.active .lstep:nth-child(1) .lbar{transition-delay:.15s}.slide.active .lstep:nth-child(2) .lbar{transition-delay:.32s}.slide.active .lstep:nth-child(3) .lbar{transition-delay:.49s}.slide.active .lstep:nth-child(4) .lbar{transition-delay:.66s}
+.lstep:nth-child(1) .lbar{background:#3a3a40; min-height:110px}.lstep:nth-child(2) .lbar{background:#8a1419; min-height:160px}.lstep:nth-child(3) .lbar{background:var(--red-dark); min-height:215px}.lstep:nth-child(4) .lbar{background:var(--red); min-height:265px}
+.lstep .lbar .lk{font-family:var(--fMono); font-size:10px; opacity:.85}
+.lstep .lbar h4{font-family:var(--fHead); font-weight:800; font-size:15px; margin-top:4px}
+.lstep .lbar p{font-size:11px; opacity:.9; margin-top:6px; line-height:1.35}
+
+/* LoRA frozen base + adapter */
+.lora{display:flex; align-items:center; justify-content:center; gap:26px; flex:1; min-height:0}
+.lbase{width:230px; border-radius:18px; background:linear-gradient(155deg,#26262b,#161618); color:#fff; padding:26px 22px; text-align:center; position:relative; box-shadow:0 22px 54px -26px rgba(0,0,0,.55)}
+.lbase .lock{position:absolute; top:12px; right:14px; opacity:.7}
+.lbase .lock svg{width:20px; height:20px}
+.lbase .bt{font-family:var(--fHead); font-weight:800; font-size:20px}
+.lbase .bs{font-size:12px; opacity:.7; margin-top:5px}
+.lbase .frozen{margin-top:12px; display:inline-block; font-family:var(--fMono); font-size:10px; background:rgba(255,255,255,.12); padding:4px 10px; border-radius:99px}
+.ladp{display:flex; flex-direction:column; gap:12px}
+.ladp .ad{border:2px solid var(--red); border-radius:13px; padding:12px 16px; background:var(--tint-red); color:var(--red-dark); font-family:var(--fHead); font-weight:800; font-size:13px; opacity:0; transform:translateX(14px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .ladp .ad{opacity:1; transform:none}
+.slide.active .ladp .ad:nth-child(1){transition-delay:.4s}.slide.active .ladp .ad:nth-child(2){transition-delay:.55s}.slide.active .ladp .ad:nth-child(3){transition-delay:.7s}
+.ladp .ad small{display:block; font-family:var(--fBody); font-weight:600; font-size:10.5px; color:var(--muted)}
+
+/* static snaps */
+body.static .wv i, body.static .mrow, body.static .famc, body.static .frame, body.static .ctc .cdown,
+body.static .ctc .cout, body.static .attn .ac, body.static .semit .tok, body.static .tstage,
+body.static .tarr, body.static .evorow, body.static .lstep .lbar, body.static .ladp .ad{
+  opacity:1 !important; transform:none !important; transition:none !important}
+
+/* function-call round-trip (shared component) */
+.fcall{display:flex; align-items:stretch; justify-content:center; gap:0; margin:auto 0; width:100%}
+.fnode{flex:0 0 150px; text-align:center; padding:20px 14px; border-radius:14px; display:flex; flex-direction:column; align-items:center; gap:8px; opacity:0; transform:translateY(12px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .fnode{opacity:1; transform:none}
+.fnode.model{background:linear-gradient(155deg,#26262b,#161618); color:#fff}
+.fnode.fn{background:linear-gradient(180deg,var(--tint-red),#fff); border:1px solid var(--tint-red-2); color:var(--ink)}
+.fnode .fi{width:40px; height:40px; border-radius:11px; display:grid; place-items:center}
+.fnode.model .fi{background:rgba(255,122,126,.2); color:#ff7a7e} .fnode.fn .fi{background:var(--red); color:#fff}
+.fnode .fi svg{width:21px; height:21px}
+.fnode .ft{font-family:var(--fHead); font-weight:800; font-size:14.5px}
+.fnode .fs{font-size:11px; opacity:.8}
+.fconn{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; opacity:0; transition:opacity .5s ease}
+.slide.active .fconn{opacity:1}
+.slide.active .fconn:nth-of-type(2){transition-delay:.3s}.slide.active .fconn:nth-of-type(4){transition-delay:.6s}
+.fconn .chip{font-family:var(--fMono); font-size:10.5px; background:var(--code-bg); color:#a5d6ff; padding:4px 9px; border-radius:6px; white-space:nowrap}
+.fconn .chip.res{color:#7be0a6}
+.fconn svg{width:28px; height:18px; color:var(--red)}
+
+/* code / schema card (shared component) */
+.schema{background:var(--code-bg); color:var(--code-ink); border-radius:14px; padding:22px 26px; font-family:var(--fMono); font-size:15px; line-height:1.8; max-width:720px; margin:auto 0; box-shadow:0 24px 50px -28px rgba(0,0,0,.5); border:1px solid #2a2d36}
+.schema .k{color:#79c0ff} .schema .s{color:#a5d6ff} .schema .c{color:#7d8590}
+
+body.static .fnode, body.static .fconn{opacity:1 !important; transform:none !important; transition:none !important}
+
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="stage">
+  <main class="deck" id="deck">
+
+  <section class="slide dark cover active" data-notes='["Welcome to Day 2, Session 2. Session 1 turned sound into spectrograms and features and used Whisper to transcribe. Today we open the box: how speech-to-text really works, and the reverse direction, text-to-speech.", "90 minutes, intuition-first: no signal-processing maths. One animated demo. Banking voice examples throughout, and an open-source, self-hostable stance — sensitive customer audio cannot leave the bank.", "Promise: by the end you can reason about an STT and a TTS system end to end, and explain how to adapt them to our languages and accents."]'>
+    <div class="bg"></div><div class="scrim"></div>
+    <div class="inner">
+      <img class="logo" src="assets/ocbc-logo.png" alt="OCBC" />
+      <h1 data-r data-d="1">Speech Technologies<span class="red">STT &amp; TTS</span></h1>
+      <div class="rule" data-r data-d="2"></div>
+      <div class="meta" data-r data-d="3"><strong>Day 2 &middot; Session 2 — Core Mechanisms, Models &amp; Language Adaptation</strong><br/>Teaching machines to listen, and to speak<br/>OCBC CRAYON 2026 · ADM Team · 90 minutes</div>
+      <div class="program" data-r data-d="4">OCBC CRAYON · Day 2</div>
+    </div>
+  </section>
+
+  <section class="slide dark" data-notes='["The whole session in one line. Reading aloud and listening back are mirror images of the same problem.", "Text-to-speech goes text to sound; speech-to-text goes sound to text. Same pipeline, two directions.", "Hold this image — we will literally build it as a mirror on the next slides, and call it back at the close."]'>
+    <div class="body-area">
+      <div class="kicker"><span class="badge"></span>The frame</div>
+      <div class="quote-wrap">
+        <div class="quote-mark" data-r data-d="2">&ldquo;</div>
+        <blockquote data-r data-d="3">Getting a machine to read aloud and to listen back are <em>mirror images</em> of the same problem.</blockquote>
+        <cite data-r data-d="4">A framing principle for speech technology</cite>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">02</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Recap Session 1 in one breath. We learned that a waveform becomes a spectrogram, then Mel and MFCC features, and that Whisper can transcribe a call.", "Today we go deeper: how that transcription actually happens inside the model, and the reverse — turning text back into natural speech.", "We build directly on Session 1 — log-Mel spectrograms reappear as the input to STT and the output of the TTS acoustic model."]'>
+    <div class="kicker"><span class="badge"></span>Session 1 &rarr; today</div>
+    <h2 class="slide-title" data-r data-d="1">From spectrograms to speech systems</h2>
+    <div class="flow" style="margin-top:6px">
+      <div class="step"><div class="node">1</div><h4>Waveform</h4><p>raw audio</p><div class="arrow"></div></div>
+      <div class="step"><div class="node">2</div><h4>Spectrogram</h4><p>Mel / MFCC</p><div class="arrow"></div></div>
+      <div class="step"><div class="node">3</div><h4>Whisper</h4><p>a transcript</p><div class="arrow"></div></div>
+      <div class="step"><div class="node hot">4</div><h4>+ STT &amp; TTS</h4><p>how &amp; reverse</p></div>
+    </div>
+    <div class="flow-cap">Session 1 got us a transcript. Today: <b style="color:var(--red)">how STT works</b>, and the reverse direction &mdash; <b style="color:var(--red)">TTS</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">03</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The core mental model: a voice system is a round-trip. Speech-to-text listens — audio becomes text. Text-to-speech speaks — text becomes audio.", "An interactive voice response (IVR) line or a voice-bot needs both halves: it has to hear the caller and answer out loud.", "Everything today slots into one side of this mirror or the other. Keep the round-trip in your head."]'>
+    <div class="kicker"><span class="badge"></span>The mirror</div>
+    <h2 class="slide-title" data-r data-d="1">Two halves of one voice system</h2>
+    <div class="fillc">
+      <div class="mirror">
+        <div class="mrow r1">
+          <div class="mnode"><div class="mt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg> Speech</div><div class="wv"><i style="--h:40%"></i><i style="--h:70%"></i><i style="--h:50%"></i><i style="--h:85%"></i><i style="--h:45%"></i><i style="--h:75%"></i><i style="--h:55%"></i></div></div>
+          <div class="mmid"><div class="mp">STT / ASR</div><div class="marr">&rarr;</div></div>
+          <div class="mnode"><div class="mt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 6h14M5 12h14M5 18h9"/></svg> Text</div><div class="mx">&ldquo;check my balance&rdquo;</div></div>
+        </div>
+        <div class="mrow r2">
+          <div class="mnode"><div class="mt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 6h14M5 12h14M5 18h9"/></svg> Text</div><div class="mx">&ldquo;your balance is&hellip;&rdquo;</div></div>
+          <div class="mmid"><div class="mp">TTS</div><div class="marr">&rarr;</div></div>
+          <div class="mnode"><div class="mt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H3v6h3l5 4zM16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg> Speech</div><div class="wv dk"><i style="--h:55%"></i><i style="--h:80%"></i><i style="--h:45%"></i><i style="--h:70%"></i><i style="--h:50%"></i><i style="--h:85%"></i><i style="--h:40%"></i></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-cap"><b>STT</b> listens · <b>TTS</b> speaks &mdash; an interactive voice response (IVR) line / voice-bot needs <b style="color:var(--red)">both</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">04</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Map the use cases. On the listening side: transcribe and analyse calls, voice commands, and compliance quality assurance over recorded conversations.", "On the speaking side: voice-bot and IVR replies, accessibility for visually-impaired customers, and proactive voice alerts.", "Almost every voice product a bank ships uses one or both directions. This is why both halves matter."]'>
+    <div class="kicker"><span class="badge"></span>Why a bank needs both</div>
+    <h2 class="slide-title" data-r data-d="1">Listening and speaking, mapped to the bank</h2>
+    <div class="vs" style="margin-top:24px">
+      <div class="panel accent" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9a6 6 0 0 1 12 0c0 4-3 5-3 8a3 3 0 0 1-6 0"/><path d="M9 9a3 3 0 0 1 5 2"/></svg></span>STT &mdash; listening</div>
+        <div class="ps">Turn customer voice into analysable text.</div>
+        <div class="chips"><span class="chip">call transcription</span><span class="chip">voice commands</span><span class="chip">compliance QA</span></div>
+        <div class="where">&ldquo;What did the customer actually say?&rdquo;</div>
+      </div>
+      <div class="panel" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H3v6h3l5 4zM16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg></span>TTS &mdash; speaking</div>
+        <div class="ps">Turn the bank&#39;s answers into natural speech.</div>
+        <div class="chips"><span class="chip">voice-bot / IVR</span><span class="chip">accessibility</span><span class="chip">voice alerts</span></div>
+        <div class="where">&ldquo;How does the bank reply out loud?&rdquo;</div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">05</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The constraint that shapes every recommendation today. Sensitive customer voice cannot be sent to closed cloud speech APIs — that is audio leaving the bank.", "We will explain how the big closed services work, but only for understanding. Everything we recommend is open-source and self-hostable.", "Voice is biometric and deeply personal data. The rule is simple: audio stays inside OCBC infrastructure."]'>
+    <div class="kicker"><span class="badge"></span>The open-source rule (again)</div>
+    <h2 class="slide-title" data-r data-d="1">Sensitive voice never leaves the bank</h2>
+    <div class="two" style="margin-top:18px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">Closed cloud speech APIs mean <b>audio leaves OCBC</b> &mdash; not allowed.</li>
+          <li data-r data-d="3">We explain closed services only <b>for context</b>.</li>
+          <li data-r data-d="4" class="strong">Everything recommended is <b style="color:var(--red)">open-source &amp; self-hostable</b>.</li>
+          <li data-r data-d="5">Voice is biometric &mdash; treat it as sensitive personal data.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="fcall" style="flex-direction:column;gap:14px">
+          <div class="fnode fn" data-r data-d="3" style="flex:none"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7M6 10v9h12v-9"/></svg></div><div class="ft">On-premise</div><div class="fs">models run in-house</div></div>
+          <div class="fnode model" data-r data-d="4" style="flex:none;opacity:.55"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 18a4 4 0 0 1 0-8 5 5 0 0 1 9.6-1.5A3.5 3.5 0 0 1 18 18z"/></svg></div><div class="ft">Closed cloud</div><div class="fs">audio leaves &mdash; avoid</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">06</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["Part 1, about 27 minutes. We define the task and its metric, then the heart of the session: the three architecture families for decoding speech.", "Intuition over maths — no connectionist-temporal-classification equations, just pictures of how each family works.", "End on the open-source landscape and a decision aid for choosing a model."]'>
+    <div class="pillar-no">01</div>
+    <div class="eyebrow"><span class="dot"></span>Part 1</div>
+    <h2>Speech-to-Text — Teaching Machines to Listen</h2>
+    <p class="lead">How audio becomes text: the task, the metric, and the three ways an automatic speech recognition (ASR) model decodes.</p>
+    <div class="prog-rail"><span class="on">STT</span><span>TTS</span><span>Adaptation</span><span>At OCBC</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">07</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The task: audio in, text out. We score quality with Word Error Rate, WER: substitutions plus insertions plus deletions, divided by the number of reference words. Lower is better.", "Worked example: the reference is six words; the model substituted one, inserted one, and deleted one — three errors over six words is fifty percent WER.", "WER governs every model choice in this section. When we say one model is more accurate, we mean lower WER on the audio we care about."]'>
+    <div class="kicker"><span class="badge"></span>The ASR task &amp; how we score it</div>
+    <h2 class="slide-title" data-r data-d="1">Word Error Rate (WER) is the yardstick</h2>
+    <div class="two" style="margin-top:16px">
+      <div class="viz">
+        <div class="schema" data-r data-d="2" style="font-size:13.5px"><span class="c"># reference vs model output</span><br/>REF: please send my <span style="color:#7be0a6">bank</span> statement <span style="color:#7be0a6">now</span><br/>HYP: please send <span style="color:#ff7a7e">a</span> &nbsp;&nbsp;<span style="color:#ff7a7e">balance</span> statement<br/><br/><span class="c"># 1 sub + 1 ins + 1 del = 3 errors</span><br/><span style="color:#79c0ff">WER</span> = 3 / 6 = <b style="color:#fff">50%</b></div>
+      </div>
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="3"><b>WER</b> = (substitutions + insertions + deletions) / words.</li>
+          <li data-r data-d="4" class="strong">Lower is better; <b>0% = perfect</b>.</li>
+          <li data-r data-d="5">The single metric that governs every model choice here.</li>
+          <li data-r data-d="6">Always measured on <b style="color:var(--red)">your</b> audio, not a generic benchmark.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">08</span></div>
+  </section>
+
+  <section class="slide" data-notes='["For context, the classic pipeline. Old automatic-speech-recognition systems stitched together three separate parts: an acoustic model, a pronunciation lexicon, and a language model — Kaldi is the classic toolkit.", "Each part was trained and tuned separately, then glued. Powerful in expert hands, but complex and brittle.", "This complexity is exactly why the field moved to end-to-end neural models, next."]'>
+    <div class="kicker"><span class="badge"></span>The classic pipeline (for context)</div>
+    <h2 class="slide-title" data-r data-d="1">Old automatic speech recognition (ASR): three glued parts</h2>
+    <div class="flow" style="margin-top:8px">
+      <div class="step"><div class="node">1</div><h4>Acoustic model</h4><p>sound &rarr; phonemes</p><div class="arrow"></div></div>
+      <div class="step"><div class="node">2</div><h4>Lexicon</h4><p>phonemes &rarr; words</p><div class="arrow"></div></div>
+      <div class="step"><div class="node">3</div><h4>Language model</h4><p>likely word sequences</p></div>
+    </div>
+    <div class="flow-cap">Powerful but <b>complex &amp; brittle</b> &mdash; three components trained and tuned separately (e.g. Kaldi).</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">09</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The modern shift: one neural network learns audio-to-text directly, replacing the three glued parts. Simpler to train, and far more accurate given data.", "The input is the log-Mel spectrogram from Session 1 — the picture of the sound. The network maps that picture straight to text.", "Everything in the rest of this section is a different way of doing this one end-to-end mapping."]'>
+    <div class="kicker"><span class="badge"></span>The end-to-end shift</div>
+    <h2 class="slide-title" data-r data-d="1">One neural network, audio straight to text</h2>
+    <div class="fcall">
+      <div class="fnode fn" data-r data-d="2"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h2l2-7 3 16 3-12 2 8 2-5h4"/></svg></div><div class="ft">Log-Mel</div><div class="fs">spectrogram (Session 1)</div></div>
+      <div class="fconn"><span class="chip">one model</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="fnode model" data-r data-d="3"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5 3 3 0 0 0 2 4 3 3 0 0 0 5 1V4.5A2.5 2.5 0 0 0 9 4zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5 3 3 0 0 1-2 4 3 3 0 0 1-5 1"/></svg></div><div class="ft">Neural net</div><div class="fs">learns the mapping</div></div>
+      <div class="fconn"><span class="chip res">"check my balance"</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="fnode fn" data-r data-d="4"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 6h14M5 12h14M5 18h9"/></svg></div><div class="ft">Text</div><div class="fs">transcript</div></div>
+    </div>
+    <div class="flow-cap">The three glued parts collapse into <b style="color:var(--red)">one trained network</b> &mdash; simpler and more accurate.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">10</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The key teaching slide. Three architecture families decode speech, and the differences matter for the bank.", "Connectionist temporal classification, CTC, emits a token per audio frame with a blank trick; it is fast and non-autoregressive but has no built-in language modelling. Attention encoder-decoder generates text token by token while attending to the audio — this is Whisper — accurate with built-in language modelling.", "The transducer, such as recurrent-neural-network transducer (RNN-T), emits text as audio arrives — streaming-friendly, the choice for real-time voice-bots. We unpack each next."]'>
+    <div class="kicker"><span class="badge"></span>Three ways to decode &mdash; the core mechanism</div>
+    <h2 class="slide-title" data-r data-d="1">CTC vs. attention vs. transducer</h2>
+    <div class="fillc">
+      <div class="fam">
+        <div class="famc"><div class="fh">CTC<small>per-frame voting</small></div><div class="fb"><div class="fmech"><b>Connectionist temporal classification</b>: emits a token <b>per audio frame</b>, with a &ldquo;blank&rdquo; to handle alignment, then collapses repeats.</div><div class="fchips"><span class="go">fast</span><span class="go">non-autoregressive</span><span class="no">no language model</span></div></div></div>
+        <div class="famc"><div class="fh">Attention<small>encoder&ndash;decoder</small></div><div class="fb"><div class="fmech">A decoder writes text token-by-token, <b>cross-attending</b> to the audio. This is <b>Whisper</b>.</div><div class="fchips"><span class="go">accurate</span><span class="go">built-in language model</span><span class="no">autoregressive</span></div></div></div>
+        <div class="famc"><div class="fh">Transducer<small>streaming family</small></div><div class="fb"><div class="fmech">A <b>recurrent-neural-network transducer (RNN-T)</b> emits text <b>as audio arrives</b> &mdash; no waiting for the end of the clip.</div><div class="fchips"><span class="go">streaming</span><span class="go">low-latency</span><span class="no">trickier to train</span></div></div></div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">11</span></div>
+  </section>
+
+  <section class="slide" data-notes='["CTC, intuitively. Picture each slice of audio voting on a letter. The same sound spans several frames, so you get repeats, and silence votes blank.", "The trick: collapse repeated letters, then drop the blanks. H, H, blank, E, L, L, blank, L, O collapses to hello.", "This is why CTC is fast — every frame is decoded at once, in parallel — but it has no sense of language, so it can misread words that sound alike."]'>
+    <div class="kicker"><span class="badge"></span>CTC, intuitively</div>
+    <h2 class="slide-title" data-r data-d="1">Vote per frame, then collapse</h2>
+    <div class="ctc">
+      <div class="ctcrow">
+        <div class="frame">H</div><div class="frame dup">H</div><div class="frame blank">&empty;</div><div class="frame">E</div><div class="frame dup">L</div><div class="frame">L</div><div class="frame blank">&empty;</div><div class="frame dup">L</div><div class="frame">O</div>
+      </div>
+      <div class="cdown">collapse repeats &amp; drop blanks &darr;</div>
+      <div class="cout">HELLO</div>
+    </div>
+    <div class="flow-cap">Fast (all frames at once) &mdash; but <b style="color:var(--red)">no built-in language model</b>, so similar-sounding words can slip.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">12</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Attention encoder-decoder, intuitively — a callback to the Day 1 transformer. The encoder reads the whole clip into a representation.", "The decoder then writes the transcript one token at a time, and for each token it looks back at, or cross-attends to, the relevant part of the audio — the bright cells in this attention map.", "Because it writes left to right using its own previous words, it has a built-in sense of language and is very accurate — but it is autoregressive, so slower, and it can occasionally hallucinate words that were never said."]'>
+    <div class="kicker"><span class="badge"></span>Attention encoder-decoder, intuitively</div>
+    <h2 class="slide-title" data-r data-d="1">Write text while looking back at the audio</h2>
+    <div class="two" style="margin-top:12px">
+      <div class="viz">
+        <div class="attn" data-r data-d="2">
+          <div class="ac" style="--ac:rgba(236,27,35,.85)"></div><div class="ac"></div><div class="ac"></div><div class="ac"></div><div class="ac"></div><div class="ac"></div>
+          <div class="ac"></div><div class="ac" style="--ac:rgba(236,27,35,.8)"></div><div class="ac" style="--ac:rgba(236,27,35,.2)"></div><div class="ac"></div><div class="ac"></div><div class="ac"></div>
+          <div class="ac"></div><div class="ac"></div><div class="ac" style="--ac:rgba(236,27,35,.85)"></div><div class="ac" style="--ac:rgba(236,27,35,.25)"></div><div class="ac"></div><div class="ac"></div>
+          <div class="ac"></div><div class="ac"></div><div class="ac"></div><div class="ac" style="--ac:rgba(236,27,35,.8)"></div><div class="ac" style="--ac:rgba(236,27,35,.3)"></div><div class="ac"></div>
+          <div class="ac"></div><div class="ac"></div><div class="ac"></div><div class="ac"></div><div class="ac" style="--ac:rgba(236,27,35,.85)"></div><div class="ac" style="--ac:rgba(236,27,35,.4)"></div>
+          <div class="ac"></div><div class="ac"></div><div class="ac"></div><div class="ac"></div><div class="ac"></div><div class="ac" style="--ac:rgba(236,27,35,.9)"></div>
+        </div>
+        <div style="text-align:center;font-family:var(--fMono);font-size:10px;color:var(--muted);margin-top:8px">decoder tokens &times; audio frames</div>
+      </div>
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="3">Encoder reads the <b>whole clip</b> (callback: Day-1 transformer).</li>
+          <li data-r data-d="4" class="strong">Decoder writes text, <b>cross-attending</b> to the audio.</li>
+          <li data-r data-d="5">Built-in language sense &rarr; <b>accurate</b>. This is Whisper.</li>
+          <li data-r data-d="6">Autoregressive &rarr; slower; can <b style="color:var(--red)">hallucinate</b>.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">13</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The transducer, intuitively. Instead of waiting for the whole clip, it emits words as you speak.", "As each chunk of audio arrives, the model decides whether it has heard enough to output the next word — so text streams out in near real-time.", "That low latency is exactly what a live voice-bot needs: the caller should not wait for silence before the system reacts."]'>
+    <div class="kicker"><span class="badge"></span>Transducer, intuitively</div>
+    <h2 class="slide-title" data-r data-d="1">Emit words as you speak</h2>
+    <div class="stream">
+      <div class="sticks"><i style="--h:30%"></i><i style="--h:55%"></i><i style="--h:40%"></i><i style="--h:70%"></i><i style="--h:45%"></i><i style="--h:80%"></i><i style="--h:50%"></i><i style="--h:65%"></i><i style="--h:38%"></i><i style="--h:75%"></i><i style="--h:48%"></i><i style="--h:60%"></i><i style="--h:35%"></i><i style="--h:70%"></i><i style="--h:52%"></i><i style="--h:82%"></i><i style="--h:44%"></i><i style="--h:58%"></i></div>
+      <div class="semit">
+        <div class="sw"><span class="tok" style="transition-delay:.2s">check</span></div>
+        <div class="sw"><span class="tok" style="transition-delay:.5s">my</span></div>
+        <div class="sw"><span class="tok" style="transition-delay:.8s">balance</span></div>
+        <div class="sw"><span class="tok" style="transition-delay:1.1s">now</span></div>
+      </div>
+    </div>
+    <div class="flow-cap">No waiting for the end of the clip &rarr; <b style="color:var(--red)">low-latency streaming</b> for live voice-bots.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">14</span></div>
+  </section>
+
+  <section class="slide" data-notes='["What OCBC can actually self-host, mapped to the three families. Whisper, including large-v3-turbo, is the attention encoder-decoder — multilingual with a huge ecosystem.", "wav2vec2 and XLS-R are CTC, self-supervised, and excellent bases for fine-tuning low-resource languages. NVIDIA Parakeet and Canary are transducer or encoder-decoder, optimised for speed or accuracy. Kaldi remains the classic modular toolkit.", "All open-source. Model names move fast — present these as of 2026 and verify the current best before committing."]'>
+    <div class="kicker"><span class="badge"></span>The open-source STT landscape</div>
+    <h2 class="slide-title" data-r data-d="1">What OCBC can self-host</h2>
+    <div class="cards" style="grid-template-columns:repeat(4,1fr);margin-top:24px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5 3 3 0 0 0 2 4 3 3 0 0 0 5 1V4.5A2.5 2.5 0 0 0 9 4zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5 3 3 0 0 1-2 4 3 3 0 0 1-5 1"/></svg></div><h3>Whisper</h3><p>attention enc-dec · multilingual · large-v3-turbo</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l9 5-9 5-9-5zM3 12l9 5 9-5M3 17l9 5 9-5"/></svg></div><h3>wav2vec2 / XLS-R</h3><p>CTC · self-supervised · great to fine-tune</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></div><h3>Parakeet / Canary</h3><p>transducer / enc-dec · very fast or very accurate</p></div>
+      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></div><h3>Kaldi</h3><p>classic · modular · expert control</p></div>
+    </div>
+    <div class="flow-cap" style="font-style:italic">All open-source &amp; self-hostable. Names move fast &mdash; <b>as of 2026, verify current</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">15</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Production STT is a model plus a toolchain. Around Whisper sits a practical open-source ecosystem.", "faster-whisper speeds inference; WhisperX adds word-level timestamps, alignment and voice-activity detection; whisper.cpp runs on central-processing-unit or on-device; Silero VAD finds where speech actually is.", "The point: do not ship the raw model alone. Real systems combine the model with these tools."]'>
+    <div class="kicker"><span class="badge"></span>The Whisper toolchain</div>
+    <h2 class="slide-title" data-r data-d="1">Model + toolchain = production STT</h2>
+    <div class="cards c2" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></div><h3>faster-whisper</h3><p>Re-implemented for speed &amp; lower memory.</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div><h3>WhisperX</h3><p>Word-level timestamps, alignment &amp; voice-activity detection (VAD).</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7M6 10v9h12v-9"/></svg></div><h3>whisper.cpp</h3><p>Runs on CPU / on-device &mdash; no graphics card needed.</p></div>
+      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h2l2-7 3 16 3-12 2 8 2-5h4"/></svg></div><h3>Silero VAD</h3><p>Voice-activity detection &mdash; find speech vs. silence.</p></div>
+    </div>
+    <div class="flow-cap">Real production is <b style="color:var(--red)">model + toolchain</b>, not the model alone.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">16</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Call analytics needs more than the words. Diarization labels who spoke when — agent versus customer. Voice-activity detection separates speech from silence and hold music.", "Punctuation and casing make a transcript readable; timestamps let you jump to the exact moment a phrase was said, which compliance needs.", "Open-source options exist for each of these. Transcription is the start, not the whole job."]'>
+    <div class="kicker"><span class="badge"></span>Beyond transcription</div>
+    <h2 class="slide-title" data-r data-d="1">What real call analytics adds on top</h2>
+    <div class="cards" style="grid-template-columns:repeat(4,1fr);margin-top:24px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><h3>Diarization</h3><p>who spoke when</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h2l2-7 3 16 3-12 2 8 2-5h4"/></svg></div><h3>VAD</h3><p>speech vs. silence</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 6h14M5 12h14M5 18h9"/></svg></div><h3>Punctuation</h3><p>readable casing</p></div>
+      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div><h3>Timestamps</h3><p>jump to the moment</p></div>
+    </div>
+    <div class="flow-cap">Each has an <b style="color:var(--red)">open-source</b> option &mdash; transcription is the start, not the whole job.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">17</span></div>
+  </section>
+
+  <section class="slide" data-notes='["A decision aid for choosing an STT model. Weigh accuracy, latency, languages and hardware.", "Overnight compliance batch? Accuracy first — Whisper large. Live voice-bot? Streaming transducer for low latency. Mixed Indonesian-English calls? Whisper, for its multilingual strength.", "There is no single best model — match the model to the job."]'>
+    <div class="kicker"><span class="badge"></span>Choosing an STT model</div>
+    <h2 class="slide-title" data-r data-d="1">Match the model to the job</h2>
+    <div class="cards c3" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg></div><h3>Overnight compliance</h3><p>&rarr; accuracy-first (Whisper large)</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></div><h3>Live voice-bot</h3><p>&rarr; streaming transducer</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div><h3>Mixed ID + EN calls</h3><p>&rarr; Whisper (multilingual)</p></div>
+      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 18a8 8 0 1 1 16 0M12 14l4-4"/></svg></div><h3>Tight hardware</h3><p>&rarr; whisper.cpp / faster-whisper</p></div>
+      <div class="card" data-r data-d="6"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div><h3>Need word timing</h3><p>&rarr; WhisperX</p></div>
+      <div class="card" data-r data-d="7"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div><h3>Low-resource accent</h3><p>&rarr; fine-tune wav2vec2 / XLS-R</p></div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">18</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["Part 2, about 25 minutes. Now the mirror image — turning text into natural-sounding audio.", "We assemble the three-stage pipeline, then trace how acoustic models evolved from sequential to parallel to end-to-end.", "Same open-source, self-hostable stance throughout."]'>
+    <div class="pillar-no">02</div>
+    <div class="eyebrow"><span class="dot"></span>Part 2</div>
+    <h2>Text-to-Speech — Teaching Machines to Speak</h2>
+    <p class="lead">The reverse direction: text in, natural speech out, via a three-stage pipeline.</p>
+    <div class="prog-rail"><span>STT</span><span class="on">TTS</span><span>Adaptation</span><span>At OCBC</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">19</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The TTS task: text to natural-sounding audio. We judge it on naturalness — often a one-to-five human rating called Mean Opinion Score, MOS — plus intelligibility and speed.", "It is harder than it looks. The same sentence has infinitely many valid readings: where you pause, stress, and raise pitch all change with intent.", "So TTS is not a lookup — the model must decide a plausible prosody every time."]'>
+    <div class="kicker"><span class="badge"></span>The TTS task</div>
+    <h2 class="slide-title" data-r data-d="1">Text in, natural speech out</h2>
+    <div class="two" style="margin-top:16px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">Judged on <b>naturalness</b> (Mean Opinion Score, MOS, 1&ndash;5).</li>
+          <li data-r data-d="3">Also <b>intelligibility</b> and <b>speed</b>.</li>
+          <li data-r data-d="4" class="strong">Same text &rarr; <b>infinitely many</b> valid prosodies.</li>
+          <li data-r data-d="5">The model must <b style="color:var(--red)">decide</b> a plausible reading every time.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="fcall" style="flex-direction:column;gap:12px">
+          <div class="fnode fn" data-r data-d="3" style="flex:none"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 6h14M5 12h14M5 18h9"/></svg></div><div class="ft">&ldquo;Your balance is $1,250.&rdquo;</div></div>
+          <div class="fconn" style="flex:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 4v15M6 13l6 6 6-6"/></svg></div>
+          <div class="fnode model" data-r data-d="4" style="flex:none"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H3v6h3l5 4zM16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg></div><div class="ft">natural speech</div><div class="wv"><i style="--h:45%"></i><i style="--h:75%"></i><i style="--h:55%"></i><i style="--h:85%"></i><i style="--h:50%"></i><i style="--h:70%"></i><i style="--h:60%"></i></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">20</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The TTS spine, three stages. First the text frontend normalises the input — dollar-1,250 becomes one thousand two hundred fifty — and grapheme-to-phoneme, G2P, turns letters into sound units.", "Second, the acoustic model turns those phonemes into a Mel spectrogram — the picture of the sound from Session 1, now with decided rhythm and pitch.", "Third, the vocoder turns that spectrogram into an actual waveform you can hear. Text, to phonemes, to spectrogram, to wave."]'>
+    <div class="kicker"><span class="badge"></span>The three-stage pipeline &mdash; core mechanism</div>
+    <h2 class="slide-title" data-r data-d="1">Text &rarr; frontend &rarr; acoustic model &rarr; vocoder</h2>
+    <div class="fillc">
+      <div class="tpipe">
+        <div class="tstage"><div class="tn">STAGE 1</div><div class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 6h14M5 12h14M5 18h9"/></svg></div><h4>Text frontend</h4><p>normalize + grapheme-to-phoneme (G2P)</p></div>
+        <div class="tarr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+        <div class="tstage"><div class="tn">STAGE 2</div><div class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h2l2-7 3 16 3-12 2 8 2-5h4"/></svg></div><h4>Acoustic model</h4><p>phonemes &rarr; Mel spectrogram</p></div>
+        <div class="tarr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+        <div class="tstage"><div class="tn">STAGE 3</div><div class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H3v6h3l5 4zM16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg></div><h4>Vocoder</h4><p>spectrogram &rarr; waveform</p></div>
+      </div>
+    </div>
+    <div class="flow-cap">Three stages: <b>normalize &rarr; predict the picture &rarr; make it audible</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">21</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Stage one: the unglamorous but critical text frontend. Normalization expands numbers, dates, currency and abbreviations into spoken words.", "Then grapheme-to-phoneme maps letters to sound units — how c-a-t becomes the phonemes K AE T. This is deeply language-dependent.", "Flag it now: this stage is where language adaptation begins, because every language pronounces letters differently."]'>
+    <div class="kicker"><span class="badge"></span>Stage 1 &mdash; text frontend &amp; G2P</div>
+    <h2 class="slide-title" data-r data-d="1">Normalize the text, then map letters to sounds</h2>
+    <div class="two" style="margin-top:16px">
+      <div class="viz">
+        <div class="schema" data-r data-d="2" style="font-size:13.5px"><span class="c"># normalization</span><br/>&ldquo;$1,250 on 3/4&rdquo;<br/>&rarr; &ldquo;one thousand two hundred<br/>&nbsp;&nbsp;&nbsp;fifty dollars on March fourth&rdquo;<br/><br/><span class="c"># grapheme-to-phoneme (G2P)</span><br/>cat &rarr; <span style="color:#7be0a6">K AE T</span></div>
+      </div>
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="3"><b>Normalize</b>: numbers, dates, currency, abbreviations.</li>
+          <li data-r data-d="4" class="strong"><b>G2P</b>: letters &rarr; phonemes (sound units).</li>
+          <li data-r data-d="5">Deeply <b>language-dependent</b>.</li>
+          <li data-r data-d="6">Where <b style="color:var(--red)">language adaptation begins</b> (Part 3).</li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">22</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Stage two: the acoustic model predicts the Mel spectrogram from the phonemes — the same picture we met in Session 1, but now generated rather than measured.", "This is where prosody lives: rhythm, stress and pitch are all decided here, frame by frame.", "Get this stage wrong and speech sounds robotic or mis-stressed, even if every word is correct."]'>
+    <div class="kicker"><span class="badge"></span>Stage 2 &mdash; acoustic model</div>
+    <h2 class="slide-title" data-r data-d="1">Phonemes become the spectrogram picture</h2>
+    <div class="fcall">
+      <div class="fnode fn" data-r data-d="2"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 6h14M5 12h14M5 18h9"/></svg></div><div class="ft">Phonemes</div><div class="fs">K AE T &hellip;</div></div>
+      <div class="fconn"><span class="chip">acoustic model</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="fnode model" data-r data-d="3"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h2l2-7 3 16 3-12 2 8 2-5h4"/></svg></div><div class="ft">Mel spectrogram</div><div class="fs">rhythm + pitch decided</div></div>
+    </div>
+    <div class="flow-cap">This is where <b style="color:var(--red)">prosody</b> &mdash; rhythm, stress, pitch &mdash; is decided. (The Session 1 picture, now generated.)</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">23</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Stage three: the vocoder turns the spectrogram into an audible waveform. This is the final mile, and its quality makes or breaks naturalness.", "A modern open-source vocoder like HiFi-GAN produces clean, natural audio fast.", "A great acoustic model with a poor vocoder still sounds buzzy — naturalness lives in both stages two and three."]'>
+    <div class="kicker"><span class="badge"></span>Stage 3 &mdash; vocoder</div>
+    <h2 class="slide-title" data-r data-d="1">Turn the picture into sound</h2>
+    <div class="fcall">
+      <div class="fnode fn" data-r data-d="2"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h2l2-7 3 16 3-12 2 8 2-5h4"/></svg></div><div class="ft">Mel spectrogram</div><div class="fs">the picture</div></div>
+      <div class="fconn"><span class="chip">vocoder (HiFi-GAN)</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="fnode model" data-r data-d="3"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H3v6h3l5 4zM16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg></div><div class="ft">Waveform</div><div class="wv"><i style="--h:40%"></i><i style="--h:70%"></i><i style="--h:50%"></i><i style="--h:85%"></i><i style="--h:45%"></i><i style="--h:75%"></i><i style="--h:55%"></i><i style="--h:65%"></i></div></div>
+    </div>
+    <div class="flow-cap">Quality here <b style="color:var(--red)">makes or breaks</b> naturalness &mdash; e.g. HiFi-GAN.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">24</span></div>
+  </section>
+
+  <section class="slide" data-notes='["How acoustic models matured. Tacotron 2 is an attention sequence-to-sequence model that generates frames one after another — natural, but slow, and it can skip or repeat words.", "FastSpeech 2 predicts durations up front and generates the whole spectrogram in parallel — fast and stable.", "VITS and other end-to-end models fuse the acoustic model and vocoder into one network: text straight to wave. The trend is sequential, to parallel, to one unified model."]'>
+    <div class="kicker"><span class="badge"></span>Architecture evolution</div>
+    <h2 class="slide-title" data-r data-d="1">Sequential &rarr; parallel &rarr; end-to-end</h2>
+    <div class="fillc">
+      <div class="evo">
+        <div class="evorow seq"><div class="el">Tacotron 2<small>attention seq2seq</small></div><div class="evobar"><div class="blk" style="width:30px"></div><div class="blk" style="width:30px"></div><div class="blk" style="width:30px"></div><div class="blk" style="width:30px"></div><div class="blk" style="width:30px"></div><span class="tag">frame-by-frame · slow</span></div></div>
+        <div class="evorow par"><div class="el">FastSpeech 2<small>duration + parallel</small></div><div class="evobar"><div class="blk" style="flex:1"></div><span class="tag">all at once · fast &amp; stable</span></div></div>
+        <div class="evorow e2e"><div class="el">VITS<small>end-to-end</small></div><div class="evobar"><div class="blk" style="flex:1"></div><span class="tag">text &rarr; wave · one model</span></div></div>
+      </div>
+    </div>
+    <div class="flow-cap">Tacotron generates <b>one frame at a time</b>; FastSpeech generates the <b style="color:var(--red)">whole spectrogram at once</b>; VITS fuses both stages.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">25</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Newer open models can clone a voice from seconds of audio — zero-shot TTS, including LLM-style speech models like XTTS v2.", "That is powerful for a consistent branded voice across every IVR prompt. But for a bank it carries real risk.", "Cloning is a deepfake and voice-biometrics threat. Flag consent and misuse explicitly — capability here outruns comfort, and governance must keep up."]'>
+    <div class="kicker"><span class="badge"></span>Modern voice cloning &amp; zero-shot TTS</div>
+    <h2 class="slide-title" data-r data-d="1">Mimic a voice from seconds of audio</h2>
+    <div class="two" style="margin-top:18px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">Open models (e.g. <b>XTTS v2</b>) clone a voice from a short sample.</li>
+          <li data-r data-d="3">Great for a consistent <b>branded voice</b>.</li>
+          <li data-r data-d="4" class="strong">But: <b style="color:var(--red)">deepfake &amp; voice-biometrics risk</b>.</li>
+          <li data-r data-d="5">Requires <b>consent</b> and strict misuse controls.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="fcall" style="flex-direction:column;gap:12px">
+          <div class="fnode fn" data-r data-d="3" style="flex:none"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></div><div class="ft">6 seconds of a voice</div></div>
+          <div class="fconn" style="flex:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 4v15M6 13l6 6 6-6"/></svg><span class="chip">zero-shot clone</span></div>
+          <div class="fnode model" data-r data-d="4" style="flex:none"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3zM12 10v4M12 17h.01"/></svg></div><div class="ft">any text, that voice</div><div class="fs" style="color:#ff7a7e">consent &amp; deepfake risk</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">26</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Self-hostable TTS options. Piper is fast and lightweight, runs on-device, and is ideal for IVR prompts. Coqui TTS and XTTS are multilingual with voice cloning.", "ESPnet and PaddleSpeech are research toolkits with many recipes; VITS is the end-to-end option.", "All open-source. As with STT, names move fast — present as of 2026 and verify."]'>
+    <div class="kicker"><span class="badge"></span>The open-source TTS landscape</div>
+    <h2 class="slide-title" data-r data-d="1">What OCBC can self-host</h2>
+    <div class="cards" style="grid-template-columns:repeat(4,1fr);margin-top:24px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7M6 10v9h12v-9"/></svg></div><h3>Piper</h3><p>fast · lightweight · on-device IVR</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div><h3>Coqui / XTTS</h3><p>multilingual · voice cloning</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></div><h3>ESPnet / PaddleSpeech</h3><p>research toolkits · many recipes</p></div>
+      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l9 5-9 5-9-5zM3 12l9 5 9-5M3 17l9 5 9-5"/></svg></div><h3>VITS</h3><p>end-to-end · text &rarr; wave</p></div>
+    </div>
+    <div class="flow-cap" style="font-style:italic">All open-source &amp; self-hostable. <b>As of 2026, verify current</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">27</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Choosing a TTS model: weigh naturalness, latency, footprint, and languages or voices.", "On-device IVR prompts that must be instant and tiny? Piper. An expressive, multilingual voice-bot? XTTS or VITS.", "Again, no single winner — pick by the constraint that dominates the use case."]'>
+    <div class="kicker"><span class="badge"></span>Choosing a TTS model</div>
+    <h2 class="slide-title" data-r data-d="1">Match the voice to the use case</h2>
+    <div class="cards c3" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7M6 10v9h12v-9"/></svg></div><h3>On-device IVR prompts</h3><p>&rarr; Piper (fast, tiny)</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div><h3>Expressive voice-bot</h3><p>&rarr; XTTS / VITS</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><h3>Branded voice</h3><p>&rarr; cloning (+ consent)</p></div>
+      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 18a8 8 0 1 1 16 0M12 14l4-4"/></svg></div><h3>Tight footprint</h3><p>&rarr; Piper</p></div>
+      <div class="card" data-r data-d="6"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l9 5-9 5-9-5zM3 12l9 5 9-5M3 17l9 5 9-5"/></svg></div><h3>Many languages</h3><p>&rarr; XTTS / Coqui</p></div>
+      <div class="card" data-r data-d="7"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg></div><h3>Top naturalness</h3><p>&rarr; VITS / end-to-end</p></div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">28</span></div>
+  </section>
+
+  <section class="slide" data-notes='["An honest comparison. Closed cloud TTS and STT can be a touch more turnkey and occasionally a notch more natural.", "But they send audio off-premise — disqualifying for sensitive banking voice. That single fact, data residency, decides it.", "Open models have closed the gap and keep every byte of audio inside OCBC. Frame it as a deliberate, well-understood trade-off, not a compromise."]'>
+    <div class="kicker"><span class="badge"></span>Closed vs. open, honestly</div>
+    <h2 class="slide-title" data-r data-d="1">Data residency decides it</h2>
+    <div class="vs" style="margin-top:24px">
+      <div class="panel" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 18a4 4 0 0 1 0-8 5 5 0 0 1 9.6-1.5A3.5 3.5 0 0 1 18 18z"/></svg></span>Closed cloud</div>
+        <div class="ps">A touch more turnkey; sometimes a notch more natural.</div>
+        <div class="chips"><span class="chip">managed</span><span class="chip">no infra</span><span class="chip" style="background:var(--tint-red);color:var(--red-dark)">audio leaves the bank</span></div>
+        <div class="where" style="color:var(--red)">Disqualified for sensitive voice.</div>
+      </div>
+      <div class="panel accent" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7M6 10v9h12v-9"/></svg></span>Open &amp; self-hosted</div>
+        <div class="ps">Gap has closed; audio stays in OCBC infrastructure.</div>
+        <div class="chips"><span class="chip">data stays in-house</span><span class="chip">full control</span><span class="chip">no per-call fee</span></div>
+        <div class="where">The deliberate choice for a bank.</div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">29</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["Part 3, about 18 minutes. Base models stumble on our accents, our code-switching, and our product names.", "We climb the adaptation ladder from cheap prompting to full fine-tuning, with LoRA as the practical default.", "The concrete case throughout: Indonesian-English code-switched banking calls."]'>
+    <div class="pillar-no">03</div>
+    <div class="eyebrow"><span class="dot"></span>Part 3</div>
+    <h2>Making It Work for Our Languages &amp; Voices</h2>
+    <p class="lead">Adapting base models to accents, code-switching and banking jargon &mdash; cheapest first.</p>
+    <div class="prog-rail"><span>STT</span><span>TTS</span><span class="on">Adaptation</span><span>At OCBC</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">30</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Why adaptation is needed. Base models drop accuracy on accents, on code-switching between Indonesian and English mid-sentence, on local terms, on product names, and on noisy phone audio.", "Banking piles on jargon and proper nouns the model never saw in training.", "This is the Indonesian and Bahasa reality for our audience — the gap is real and measurable in WER."]'>
+    <div class="kicker"><span class="badge"></span>Why adaptation is needed</div>
+    <h2 class="slide-title" data-r data-d="1">Base models stumble on our audio</h2>
+    <div class="cards c2" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div><h3>Accents &amp; code-switching</h3><p>Indonesian &harr; English mid-sentence trips the model.</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 21V4h11l-1.5 4L16 12H5"/></svg></div><h3>Local terms &amp; names</h3><p>Product names &amp; proper nouns it never saw.</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h2l2-7 3 16 3-12 2 8 2-5h4"/></svg></div><h3>Noisy phone audio</h3><p>Call-center lines are far from clean studio audio.</p></div>
+      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></div><h3>Banking jargon</h3><p>Domain vocabulary absent from training data.</p></div>
+    </div>
+    <div class="flow-cap" style="color:var(--red)">The Indonesian / Bahasa reality &mdash; a real, measurable WER gap.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">31</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The adaptation ladder, cheapest to most expensive. Rung one: prompting, biasing and a custom vocabulary — bias the model toward product names and jargon. Almost free.", "Rung two: a better frontend or lexicon — fix G2P pronunciations and add domain terms, mainly for TTS. Rung three: parameter-efficient fine-tuning with LoRA or adapters — small added weights, little data, avoids forgetting.", "Rung four: full fine-tuning — retrain on labelled domain and accent audio. Most powerful, most data and compute. Climb only as high as the gap demands."]'>
+    <div class="kicker"><span class="badge"></span>The adaptation ladder</div>
+    <h2 class="slide-title" data-r data-d="1">Cheap &rarr; expensive: climb only as needed</h2>
+    <div class="fillc">
+      <div class="ladder">
+        <div class="lstep"><div class="lbar"><div class="lk">cheapest</div><h4>Custom vocabulary</h4><p>bias toward names &amp; jargon</p></div></div>
+        <div class="lstep"><div class="lbar"><div class="lk">low cost</div><h4>Frontend / lexicon</h4><p>fix G2P, add domain terms</p></div></div>
+        <div class="lstep"><div class="lbar"><div class="lk">moderate</div><h4>LoRA / adapters</h4><p>small added weights, little data</p></div></div>
+        <div class="lstep"><div class="lbar"><div class="lk">most effort</div><h4>Full fine-tuning</h4><p>retrain on labelled audio</p></div></div>
+      </div>
+    </div>
+    <div class="flow-cap">Effort &amp; impact rise left &rarr; right &mdash; <b style="color:var(--red)">start at the cheapest rung that works</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">32</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Fine-tuning, intuitively. Start from a multilingual base such as Whisper or XLS-R, then continue training on your own audio.", "You do not start from scratch — you nudge a model that already knows speech toward your accent and vocabulary.", "Even ten minutes to twenty hours of in-domain data can sharply cut WER on a specific accent. A little targeted data goes a long way."]'>
+    <div class="kicker"><span class="badge"></span>Fine-tuning, intuitively</div>
+    <h2 class="slide-title" data-r data-d="1">Nudge a base model toward our audio</h2>
+    <div class="fcall">
+      <div class="fnode model" data-r data-d="2"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5 3 3 0 0 0 2 4 3 3 0 0 0 5 1V4.5A2.5 2.5 0 0 0 9 4zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5 3 3 0 0 1-2 4 3 3 0 0 1-5 1"/></svg></div><div class="ft">Multilingual base</div><div class="fs">Whisper / XLS-R</div></div>
+      <div class="fconn"><span class="chip">+ our audio</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="fnode fn" data-r data-d="3"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8h4M12 8h8M4 16h8M16 16h4"/><circle cx="10" cy="8" r="2"/><circle cx="14" cy="16" r="2"/></svg></div><div class="ft">Continue training</div><div class="fs">10 min &ndash; 20 hrs</div></div>
+      <div class="fconn"><span class="chip res">lower WER</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="fnode model" data-r data-d="4"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg></div><div class="ft">Adapted model</div><div class="fs">our accent &amp; terms</div></div>
+    </div>
+    <div class="flow-cap">Even <b style="color:var(--red)">a little in-domain data</b> sharply cuts WER on a specific accent.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">33</span></div>
+  </section>
+
+  <section class="slide" data-notes='["LoRA and adapters — the practical default, and a callback to Day 1 fine-tuning. Freeze the big base model and train only tiny inserted matrices.", "That is cheap, fast, and swappable: you can keep a separate small adapter per accent and load the right one on demand.", "Because the base stays frozen, you avoid catastrophic forgetting — the model keeps its general ability while gaining your specialism."]'>
+    <div class="kicker"><span class="badge"></span>LoRA / adapters</div>
+    <h2 class="slide-title" data-r data-d="1">Freeze the base, train a tiny adapter</h2>
+    <div class="fillc">
+      <div class="lora">
+        <div class="lbase"><div class="lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div><div class="bt">Base model</div><div class="bs">Whisper / XLS-R</div><div class="frozen">frozen &mdash; unchanged</div></div>
+        <div style="font-size:26px;color:var(--red);font-weight:800">+</div>
+        <div class="ladp">
+          <div class="ad">ID accent adapter<small>a few MB</small></div>
+          <div class="ad">Jargon adapter<small>swappable</small></div>
+          <div class="ad">Noisy-line adapter<small>per use case</small></div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-cap">Cheap, fast, <b>swappable per accent</b>, and <b style="color:var(--red)">no catastrophic forgetting</b> (callback: Day-1 fine-tuning).</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">34</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Data is the real bottleneck. Adaptation needs labelled audio — transcribed calls — and that is the hard part to get.", "Tactics: transcribe a sample of in-house calls, use public Indonesian corpora like Common Voice, and use TTS data augmentation — synthesise accented audio to bootstrap STT training.", "Flag privacy and consent before using any real customer calls. Data sourcing is a governance question as much as a technical one."]'>
+    <div class="kicker"><span class="badge"></span>Data is the bottleneck</div>
+    <h2 class="slide-title" data-r data-d="1">Adaptation needs labelled audio</h2>
+    <div class="cards c3" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></div><h3>In-house calls</h3><p>transcribe a sample (with consent)</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div><h3>Public corpora</h3><p>e.g. Common Voice (Indonesian)</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H3v6h3l5 4zM16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg></div><h3>TTS augmentation</h3><p>synthesize accented audio to bootstrap</p></div>
+    </div>
+    <div class="flow-cap" style="color:var(--red)">&#9888; Privacy &amp; consent first before using any real customer calls.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">35</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Evaluate adaptation properly. Measure WER on a held-out set of our own calls and accents — not a generic leaderboard.", "Track error per accent and per term, so you know whether product names specifically improved. For TTS, run MOS listening tests with real listeners.", "Do not trust leaderboard numbers for your audio. The only score that matters is on data that looks like production."]'>
+    <div class="kicker"><span class="badge"></span>Evaluate adaptation properly</div>
+    <h2 class="slide-title" data-r data-d="1">Measure on our data, not a leaderboard</h2>
+    <div class="cards c2" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 18a8 8 0 1 1 16 0M12 14l4-4"/></svg></div><h3>WER on our calls</h3><p>held-out set of real OCBC-style audio</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div><h3>Per-accent &amp; per-term</h3><p>did product names actually improve?</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><h3>MOS for TTS</h3><p>human listening tests for naturalness</p></div>
+      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3zM12 10v4M12 17h.01"/></svg></div><h3>Distrust leaderboards</h3><p>generic numbers &ne; your audio</p></div>
+    </div>
+    <div class="flow-cap">The only score that matters is on data that <b style="color:var(--red)">looks like production</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">36</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Governance for voice — bank-specific guardrails. Get explicit consent for voice biometrics, and treat cloning as a deepfake risk to control.", "Transcripts contain personally identifiable information, so apply retention limits and access controls. Keep a human in the loop for any compliance decision.", "Capability is not permission. Responsible-use framing is non-negotiable for customer voice."]'>
+    <div class="kicker"><span class="badge"></span>Governance for voice</div>
+    <h2 class="slide-title" data-r data-d="1">Capability is not permission</h2>
+    <div class="cards" style="grid-template-columns:repeat(4,1fr);margin-top:24px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><h3>Biometrics consent</h3><p>explicit opt-in for voice ID</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3zM12 10v4M12 17h.01"/></svg></div><h3>Deepfake / cloning</h3><p>control &amp; watermark synthetic voice</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg></div><h3>PII in transcripts</h3><p>personally identifiable information &mdash; retention &amp; access controls</p></div>
+      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg></div><h3>Human review</h3><p>for any compliance decision</p></div>
+    </div>
+    <div class="flow-cap" style="color:var(--red)">Responsible-use framing is <b>non-negotiable</b> for customer voice.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">37</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["The last stretch, about 8 minutes. We tie both directions into one end-to-end voice-bot.", "Everything open-source and on-premise — audio never leaves OCBC.", "Then recap the mirror, the mechanisms, and the adaptation ladder."]'>
+    <div class="pillar-no">04</div>
+    <div class="eyebrow"><span class="dot"></span>Part 4</div>
+    <h2>Speech Tech at OCBC</h2>
+    <p class="lead">Wiring STT and TTS into one open-source, on-premise voice system &mdash; with the Day-1 retrieval-augmented generation (RAG) and large language model (LLM) stack.</p>
+    <div class="prog-rail"><span>STT</span><span>TTS</span><span>Adaptation</span><span class="on">At OCBC</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">38</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Tie the day together: an end-to-end voice-bot, entirely open-source and on-premise. The caller speaks; voice-activity detection plus streaming STT — a transducer or Whisper — turns it into text.", "That text goes to the Day-1 RAG and LLM stack, which picks an answer. TTS — Piper or XTTS — speaks the answer back.", "Every block is self-hosted; audio never leaves OCBC. Specifics here are illustrative unless we have real internal details."]'>
+    <div class="kicker"><span class="badge"></span>End-to-end voice-bot, all open-source</div>
+    <h2 class="slide-title" data-r data-d="1">Listen &rarr; understand &rarr; speak, on-prem</h2>
+    <div class="flow" style="margin-top:6px">
+      <div class="step"><div class="node">1</div><h4>Caller speaks</h4><p>VAD + audio in</p><div class="arrow"></div></div>
+      <div class="step"><div class="node">2</div><h4>Streaming STT</h4><p>transducer / Whisper</p><div class="arrow"></div></div>
+      <div class="step"><div class="node">3</div><h4>RAG / LLM</h4><p>Day-1 stack picks answer</p><div class="arrow"></div></div>
+      <div class="step"><div class="node hot">4</div><h4>TTS speaks</h4><p>Piper / XTTS</p></div>
+    </div>
+    <div class="flow-cap" style="font-style:italic">All self-hosted &mdash; <b style="color:var(--red)">audio never leaves OCBC</b>. Blocks illustrative unless real details apply.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">39</span></div>
+  </section>
+
+  <section class="slide demo-slide" data-demo="1" data-notes='["Recorded demo, replayed live. The voice round-trip in a few lines of open-source Python — listen with Whisper, speak with Piper, both on-prem.", "Cell 1 loads faster-whisper. Cell 2 transcribes a call, returning Indonesian-English code-switched text. Cell 3 loads a Piper voice. Cell 4 synthesizes a reply to a .wav — shown as a small mock waveform.", "Press R to replay. That is the whole mirror in code: audio to text, then text back to audio, never leaving the bank."]'>
+    <div class="kicker" data-r><span class="badge"></span>Recorded Demo · the voice round-trip</div>
+    <h2 class="slide-title" data-r data-d="1">Listen with Whisper, speak with Piper</h2>
+    <div class="body-area">
+      <div class="demo-stage">
+        <div class="nb" id="nb1">
+          <div class="nb-top"><span class="t-ic r"></span><span class="t-ic"></span><span class="t-ic g"></span><span class="nb-name">voice_roundtrip.ipynb</span><span class="nb-kernel">Python 3</span></div>
+          <div class="nb-body">
+            <div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[1]</div><div class="nb-code"><span class="tok-kw">from</span> faster_whisper <span class="tok-kw">import</span> WhisperModel
+stt = WhisperModel(<span style="color:#0a7">"large-v3-turbo"</span>)  <span style="color:#7d8590"># on-prem</span></div></div><div class="nb-out"><span class="muted"># model loaded locally</span></div></div>
+            <div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[2]</div><div class="nb-code">segs, _ = stt.transcribe(<span style="color:#0a7">"call.wav"</span>, language=<span style="color:#0a7">"id"</span>)
+text = <span style="color:#0a7">" "</span>.join(s.text <span class="tok-kw">for</span> s <span class="tok-kw">in</span> segs)</div></div><div class="nb-out"><span style="color:#7be0a6">"Tolong cek balance saya please"</span></div></div>
+            <div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[3]</div><div class="nb-code"><span class="tok-kw">from</span> piper <span class="tok-kw">import</span> PiperVoice
+voice = PiperVoice.load(<span style="color:#0a7">"id_ID-voice.onnx"</span>)</div></div><div class="nb-out"><span class="muted"># Indonesian voice loaded</span></div></div>
+            <div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[4]</div><div class="nb-code">reply = <span style="color:#0a7">"Saldo Anda Rp 1.250.000."</span>
+voice.synthesize(reply, <span style="color:#0a7">"reply.wav"</span>)</div></div><div class="nb-out"><span style="color:#7be0a6">reply.wav · 2.4s</span> &nbsp; <div class="wv"><i style="--h:40%"></i><i style="--h:70%"></i><i style="--h:50%"></i><i style="--h:85%"></i><i style="--h:45%"></i><i style="--h:75%"></i><i style="--h:55%"></i><i style="--h:65%"></i><i style="--h:48%"></i><i style="--h:80%"></i><i style="--h:42%"></i><i style="--h:60%"></i></div></div></div>
+          </div>
+        </div>
+        <div class="demo-side">
+          <div class="demo-card" data-r data-d="2"><div class="dk">&#9654; Demo · learning goal</div><h3>The mirror, in code</h3><p>Audio &rarr; text with Whisper, then text &rarr; audio with Piper. Both <b>open-source</b>, both <b>on-prem</b>.</p></div>
+          <ul class="demo-steps" id="demo1steps" data-r data-d="3">
+            <li data-step="0"><span class="sn">1</span>Load faster-whisper (local)</li>
+            <li data-step="1"><span class="sn">2</span>Transcribe a call (ID + EN)</li>
+            <li data-step="2"><span class="sn">3</span>Load a Piper voice</li>
+            <li data-step="3"><span class="sn">4</span>Synthesize the reply &rarr; .wav</li>
+          </ul>
+          <button class="replay" data-replay="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 109-9 9 9 0 00-7 3.3M3 3v4h4"/></svg>Replay demo</button>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">40</span></div>
+  </section>
+
+  <section class="slide dark" data-notes='["Land the plane. The mirror: STT listens, TTS speaks — two directions of one pipeline.", "The mechanisms: STT decodes via CTC, attention, or transducer; TTS runs frontend, then acoustic model, then vocoder. Adaptation climbs from prompting to frontend to LoRA to full fine-tuning — always open-source.", "Three takeaways: pick the STT architecture by latency versus accuracy; naturalness lives in the acoustic model plus vocoder; adapt to our languages and measure on our data. Pointers: the Whisper repo, Coqui and Piper, and the Hugging Face Open ASR leaderboard. Questions."]'>
+    <div class="body-area" style="justify-content:center">
+      <div class="kicker" data-r><span class="badge"></span>Wrap &amp; Q&amp;A</div>
+      <h2 class="slide-title" data-r data-d="1" style="font-size:44px;margin-bottom:6px">Listen, and speak &mdash; on our terms</h2>
+      <p class="slide-sub" data-r data-d="2" style="color:rgba(255,255,255,.65);margin-bottom:26px">Mirror images of one problem: STT listens, TTS speaks &mdash; and we adapt both to our voices.</p>
+      <div class="recap-grid" style="flex:none">
+        <div class="recap-col recap" data-r data-d="3">
+          <h4><span style="width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block"></span>What we covered</h4>
+          <ul>
+            <li>The mirror: STT listens, TTS speaks</li>
+            <li>STT: CTC / attention / transducer</li>
+            <li>TTS: frontend &rarr; acoustic &rarr; vocoder</li>
+            <li>Adaptation: prompt &rarr; frontend &rarr; LoRA &rarr; full FT</li>
+          </ul>
+        </div>
+        <div class="recap-col next" data-r data-d="4">
+          <h4><span style="width:8px;height:8px;border-radius:50%;background:#ff6a6f;display:inline-block"></span>Three takeaways</h4>
+          <ul>
+            <li><b style="color:#fff">Pick STT by latency vs. accuracy</b></li>
+            <li>Naturalness = acoustic model + vocoder</li>
+            <li>Adapt to our languages; measure on our data</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">41</span></div>
+  </section>
+
+  </main>
+</div>
+
+<div class="hud">
+  <div class="dots" id="dots"></div>
+  <div class="count">slide <b id="cur">1</b> / <span id="tot">34</span></div>
+</div>
+<div class="hint"><kbd>→</kbd> next &nbsp; <kbd>←</kbd> back &nbsp; <kbd>N</kbd> notes &nbsp; <kbd>F</kbd> full</div>
+
+<div class="rotate-cue" aria-hidden="true">
+  <div>
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="7" y="2" width="10" height="20" rx="2.2"/><path d="M11 18.5h2"/></svg>
+    <h4>Rotate your device</h4>
+    <p>This deck is built for a wide 16:9 stage — turn your phone to landscape for the full view.</p>
+  </div>
+</div>
+
+<div class="notes" id="notes">
+  <button class="close" id="notesClose">&times;</button>
+  <h5><span style="width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block"></span>Speaker notes</h5>
+  <ul id="notesBody"></ul>
+</div>
+
+<script>
+/* ---- fit fixed 1280x720 stage to viewport ---- */
+const STATIC = location.search.includes('static');
+if(STATIC) document.body.classList.add('static');
+const deck = document.getElementById('deck');
+function fit(){
+  const vv = window.visualViewport;
+  const w = (vv && vv.width)  || innerWidth  || document.documentElement.clientWidth  || 1280;
+  const h = (vv && vv.height) || innerHeight || document.documentElement.clientHeight || 720;
+  const s = Math.min(w/1280, h/720) || 1;
+  // anchor top-left and centre with an explicit pixel offset — robust even when
+  // the deck is larger than the viewport (small mobile-landscape screens)
+  const x = (w - 1280*s) / 2, y = (h - 720*s) / 2;
+  deck.style.transform = `translate(${x}px, ${y}px) scale(${s>0?s:1})`;
+}
+addEventListener('resize', fit);
+addEventListener('load', fit);
+// mobile: re-fit when rotating or when the browser chrome resizes the visible area
+addEventListener('orientationchange', ()=>{ fit(); setTimeout(fit,200); setTimeout(fit,500); });
+if(window.visualViewport){ visualViewport.addEventListener('resize', fit); }
+fit(); requestAnimationFrame(fit); setTimeout(fit,120);
+
+/* ---- presentation controller ---- */
+const slides = [...document.querySelectorAll('.slide')];
+const TOT = slides.length;
+let i = 0;
+document.getElementById('tot').textContent = TOT;
+
+const dotsEl = document.getElementById('dots');
+slides.forEach((sl,idx)=>{
+  const d = document.createElement('span');
+  d.className='dot'+(sl.classList.contains('dark')?' sec':'');
+  d.addEventListener('click',()=>go(idx));
+  dotsEl.appendChild(d);
+});
+const dots=[...dotsEl.children];
+// page numbers follow slide order (so slides can be inserted freely)
+slides.forEach((s,idx)=>{const pg=s.querySelector('.foot .pg'); if(pg)pg.textContent=String(idx+1).padStart(2,'0');});
+
+const notesEl=document.getElementById('notes');
+const notesBody=document.getElementById('notesBody');
+function renderNotes(){
+  let data=[]; try{data=JSON.parse(slides[i].dataset.notes||'[]')}catch(e){}
+  notesBody.innerHTML='';
+  if(!data.length){notesBody.innerHTML='<li style="color:#777">No notes for this slide.</li>';}
+  data.forEach(t=>{const li=document.createElement('li');li.textContent=t;notesBody.appendChild(li);});
+}
+function go(n){
+  n=Math.max(0,Math.min(TOT-1,n));
+  if(n===i) return;
+  slides[i].classList.remove('active'); slides[i].classList.add('prev');
+  slides[n].classList.remove('prev'); slides[n].classList.add('active');
+  i=n; sync();
+}
+function sync(){
+  document.getElementById('progress').style.width=((i+1)/TOT*100)+'%';
+  document.getElementById('cur').textContent=i+1;
+  dots.forEach((d,x)=>d.classList.toggle('on',x===i));
+  location.hash=i+1;
+  if(notesEl.classList.contains('show')) renderNotes();
+  // (re)trigger counters on the active slide
+  triggerCounters(slides[i]);
+  playDemo(slides[i]);
+}
+function next(){go(i+1)} function prev(){go(i-1)}
+
+/* keyboard */
+addEventListener('keydown',e=>{
+  if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();next();}
+  else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();prev();}
+  else if(e.key==='Home'){go(0)} else if(e.key==='End'){go(TOT-1)}
+  else if(e.key.toLowerCase()==='n'){notesEl.classList.toggle('show'); renderNotes();}
+  else if(e.key.toLowerCase()==='f'){if(!document.fullscreenElement)document.documentElement.requestFullscreen();else document.exitFullscreen();}
+});
+document.getElementById('notesClose').addEventListener('click',()=>notesEl.classList.remove('show'));
+
+/* wheel (debounced) */
+let wlock=false;
+addEventListener('wheel',e=>{
+  if(wlock) return; if(Math.abs(e.deltaY)<18) return;
+  wlock=true; e.deltaY>0?next():prev();
+  setTimeout(()=>wlock=false,650);
+},{passive:true});
+
+/* touch */
+let tx=0,ty=0;
+addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
+addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty;
+  if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)) dx<0?next():prev();
+},{passive:true});
+
+/* counters */
+function triggerCounters(slide){
+  slide.querySelectorAll('[data-count]').forEach(el=>{
+    if(el.dataset.done) return; el.dataset.done='1';
+    const end=+el.dataset.count, pre=el.dataset.prefix||'', suf=el.dataset.suffix||'';
+    if(STATIC){el.innerHTML=pre+end+(suf?'<span class="unit">'+suf+'</span>':'');return;}
+    const dur=1100, t0=performance.now();
+    function tick(t){
+      const p=Math.min(1,(t-t0)/dur), e=1-Math.pow(1-p,3);
+      const v=Math.round(end*e);
+      el.innerHTML=pre+v+(suf?'<span class="unit">'+suf+'</span>':'');
+      if(p<1)requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+  // progress rings
+  slide.querySelectorAll('[data-ring]').forEach(el=>{
+    if(el.dataset.done) return; el.dataset.done='1';
+    const circle=el.querySelector('.fg'); if(!circle)return;
+    const pct=+el.dataset.ring, len=circle.getTotalLength();
+    if(STATIC){circle.style.strokeDasharray=len;circle.style.strokeDashoffset=len*(1-pct/100);const o=el.querySelector('.pct');if(o)o.textContent=pct+'%';return;}
+    circle.style.strokeDasharray=len; circle.style.strokeDashoffset=len;
+    requestAnimationFrame(()=>{circle.style.transition='stroke-dashoffset 1.3s cubic-bezier(.16,1,.3,1)';circle.style.strokeDashoffset=len*(1-pct/100);});
+    const out=el.querySelector('.pct'); if(out){const t0=performance.now();(function tk(t){const p=Math.min(1,(t-t0)/1300);out.textContent=Math.round(pct*(1-Math.pow(1-p,3)))+'%';if(p<1)requestAnimationFrame(tk);})(performance.now());}
+  });
+}
+
+/* notebook demo player */
+const demoTimers=[];
+function clearDemo(){demoTimers.forEach(clearTimeout); demoTimers.length=0;}
+function playDemo(slide){
+  if(!slide.classList.contains('demo-slide')) return;
+  clearDemo();
+  const cells=[...slide.querySelectorAll('.nb-cell')];
+  const steps=[...slide.querySelectorAll('.demo-steps li')];
+  cells.forEach(c=>{c.classList.remove('shown','running'); const o=c.querySelector('.nb-out'); if(o)o.classList.remove('shown'); const p=c.querySelector('.nb-prompt'); if(p){p.classList.remove('busy'); p.textContent='['+(cells.indexOf(c)+1)+']';}});
+  steps.forEach(s=>s.classList.remove('on'));
+  if(STATIC){cells.forEach(c=>{c.classList.add('shown'); const o=c.querySelector('.nb-out'); if(o)o.classList.add('shown');}); steps.forEach(s=>s.classList.add('on')); const body=slide.querySelector('.nb-body'); if(body){body.style.scrollBehavior='auto'; const snap=()=>body.scrollTop=body.scrollHeight; snap(); requestAnimationFrame(snap); setTimeout(snap,80);} return;}
+  let t=420;
+  cells.forEach((cell,idx)=>{
+    const prompt=cell.querySelector('.nb-prompt');
+    const out=cell.querySelector('.nb-out');
+    demoTimers.push(setTimeout(()=>{cell.classList.add('shown','running'); if(prompt){prompt.classList.add('busy'); prompt.textContent='[*]';} const body=cell.parentElement; body.scrollTop=Math.max(0,cell.offsetTop-90);},t));
+    t+=720;
+    demoTimers.push(setTimeout(()=>{
+      cell.classList.remove('running');
+      if(prompt){prompt.classList.remove('busy'); prompt.textContent='['+(idx+1)+']';}
+      if(out)out.classList.add('shown');
+      if(steps[idx])steps[idx].classList.add('on');
+    },t));
+    t+=820;
+  });
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-replay]'); if(!b) return;
+  playDemo(b.closest('.slide'));
+});
+addEventListener('keydown',e=>{if(e.key.toLowerCase()==='r'){const s=slides[i]; if(s.classList.contains('demo-slide'))playDemo(s);}});
+
+/* auto-hide chrome when idle */
+let idleT; function poke(){document.body.classList.remove('idle'); clearTimeout(idleT); idleT=setTimeout(()=>document.body.classList.add('idle'),3200);}
+['mousemove','keydown','touchstart','wheel','click'].forEach(ev=>addEventListener(ev,poke,{passive:true})); poke();
+
+/* deep link */
+if(location.hash){const n=parseInt(location.hash.slice(1));if(n>=1&&n<=TOT){slides[0].classList.remove('active');i=n-1;slides[i].classList.add('active');}}
+sync();
+</script>
+</body>
+</html>
