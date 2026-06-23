@@ -739,6 +739,18 @@ body.static .lstep .bar,
 body.static .clink,body.static .carrow{opacity:1 !important; transform:none !important; transition:none !important}
 body.static .lstep .bar{transform:none !important}
 
+/* on-premise deployment card */
+.deploy{background:linear-gradient(155deg,#26262b,#161618); color:#fff; border-radius:18px; padding:26px 30px; position:relative; overflow:hidden; height:100%; display:flex; flex-direction:column; justify-content:center}
+.deploy::after{content:""; position:absolute; right:-50px; top:-50px; width:180px; height:180px; border-radius:50%; background:radial-gradient(circle,rgba(236,27,35,.45),transparent 70%)}
+.deploy .dk{font-family:var(--fHead); font-weight:700; font-size:12px; letter-spacing:.13em; text-transform:uppercase; color:#ff6a6f; margin-bottom:12px}
+.deploy .model{font-family:var(--fMono); font-weight:700; font-size:25px; color:#fff; letter-spacing:-.01em}
+.deploy .host{font-size:14px; color:rgba(255,255,255,.72); margin-top:8px}
+.deploy .host b{color:#fff; font-weight:600}
+.deploy ul{list-style:none; display:flex; flex-direction:column; gap:11px; margin-top:20px}
+.deploy li{position:relative; padding-left:22px; font-size:13.5px; line-height:1.4; color:rgba(255,255,255,.88)}
+.deploy li::before{content:"\2192"; position:absolute; left:0; color:#ff6a6f; font-weight:800}
+.deploy li b{color:#fff; font-weight:600}
+
 </style>
 </head>
 <body>
@@ -1312,6 +1324,36 @@ Use plain English; flag if unclear.</code></pre></div>
     </div>
     <div class="flow-cap" style="font-style:italic">Illustrative &mdash; real products, simplified to show the concept.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">36</span></div>
+  </section>
+
+  <section class="slide" data-notes='["OCBC now runs its own open-weight model in-house: Qwen3.5-35B-A3B, served on NVIDIA H200 GPUs. Open-weights means the parameters are published, so we can download and host the model ourselves instead of calling an external API.", "The A3B in the name means mixture-of-experts: of about 35 billion parameters, only around 3 billion are active for any given token. You get large-model quality at small-model inference cost and speed, which is why it serves efficiently on H200s, each carrying 141 GB of memory.", "Why on-premise: customer and bank data never leaves our environment, which is essential for privacy, data residency and regulation. We also gain full control to fine-tune and guardrail, predictable cost at scale, and independence from any single provider.", "Tie back to the theory: this is still a decoder-only transformer doing next-token prediction. The difference is open weights running on our own hardware."]'>
+    <div class="kicker"><span class="badge"></span>On-premise GenAI</div>
+    <h2 class="slide-title" data-r data-d="1">OCBC runs its own open model, in-house</h2>
+    <div class="two" style="margin-top:18px">
+      <div class="viz">
+        <div class="deploy" data-r data-d="2">
+          <div class="dk">Open-weight &middot; self-hosted</div>
+          <div class="model">Qwen3.5-35B-A3B</div>
+          <div class="host">on <b>NVIDIA H200</b> GPUs &middot; <b>OCBC data centre</b></div>
+          <ul>
+            <li><b>Open-weights:</b> the parameters are public &mdash; we run them ourselves, no external API</li>
+            <li><b>Mixture-of-experts (A3B):</b> only ~3B of 35B params active per token &mdash; strong, yet cheap to run</li>
+            <li><b>H200:</b> 141 GB of GPU memory, built to serve large models fast</li>
+          </ul>
+        </div>
+      </div>
+      <div class="txt">
+        <h3 style="font-family:var(--fHead); font-weight:800; font-size:18px; color:var(--ink); margin-bottom:14px; letter-spacing:-.01em">Why on-premise?</h3>
+        <ul class="bullets">
+          <li data-r data-d="3"><b>Data never leaves the bank</b> &mdash; privacy, residency, regulation.</li>
+          <li data-r data-d="4">Full <b>control</b> &mdash; fine-tune and guardrail on our own terms.</li>
+          <li data-r data-d="5"><b>Predictable cost</b> at scale &mdash; no per-token API bill.</li>
+          <li data-r data-d="6">No dependency on an outside provider.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="flow-cap">Still a <b style="color:var(--red)">decoder transformer</b> doing next-token prediction &mdash; just open-weights, and ours.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">37</span></div>
   </section>
 
   <section class="slide" data-notes='["Replay the three spines. What an LLM is: next-token prediction, trained in three stages.", "The transformer: attention, processed in parallel, stacked deep. Prompting: the ladder from clear-and-direct up to chaining.", "Three takeaways: it is prediction not magic; steer with prompts before fine-tuning; verify and use responsibly."]'>

@@ -65,7 +65,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
 <header class="bar">
   <div>
     <div class="ttl">Speaker notes</div>
-    <div class="sub">Generative AI &amp; LLMs · 38 slides</div>
+    <div class="sub">Generative AI &amp; LLMs · 39 slides</div>
   </div>
   <div class="right">
     <a class="btn ghost" href="index.html">&larr; Back</a>
@@ -411,6 +411,16 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
     </article>
     <article class="s">
       <div class="n">Slide 37</div>
+      <h2>OCBC runs its own open model, in-house</h2>
+      <ul>
+        <li>OCBC now runs its own open-weight model in-house: Qwen3.5-35B-A3B, served on NVIDIA H200 GPUs. Open-weights means the parameters are published, so we can download and host the model ourselves instead of calling an external API.</li>
+        <li>The A3B in the name means mixture-of-experts: of about 35 billion parameters, only around 3 billion are active for any given token. You get large-model quality at small-model inference cost and speed, which is why it serves efficiently on H200s, each carrying 141 GB of memory.</li>
+        <li>Why on-premise: customer and bank data never leaves our environment, which is essential for privacy, data residency and regulation. We also gain full control to fine-tune and guardrail, predictable cost at scale, and independence from any single provider.</li>
+        <li>Tie back to the theory: this is still a decoder-only transformer doing next-token prediction. The difference is open weights running on our own hardware.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 38</div>
       <h2>Three things to remember</h2>
       <ul>
         <li>Replay the three spines. What an LLM is: next-token prediction, trained in three stages.</li>
@@ -419,7 +429,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 38</div>
+      <div class="n">Slide 39</div>
       <h2>Wrap — You can now read a GenAI system end to end.</h2>
       <ul>
         <li>Close it. They can now read a GenAI system end to end — and recognise it in OCBC's own tools.</li>

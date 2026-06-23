@@ -1,5 +1,5 @@
 OCBC CRAYON 2026 — Generative AI & LLMs: Theory
-Speaker notes · 38 slides
+Speaker notes · 39 slides
 ================================================
 
 Slide 1 — Generative AI & LLMs · Theory
@@ -182,12 +182,18 @@ Slide 36 — Spot today's concepts at OCBC
   • The RM-support chatbot is RAG plus prompting — grounded answers from policy and product knowledge.
   • The customer assistant is a decoder LLM with grounding and guardrails. Illustrative — real products, simplified.
 
-Slide 37 — Three things to remember
+Slide 37 — OCBC runs its own open model, in-house
+  • OCBC now runs its own open-weight model in-house: Qwen3.5-35B-A3B, served on NVIDIA H200 GPUs. Open-weights means the parameters are published, so we can download and host the model ourselves instead of calling an external API.
+  • The A3B in the name means mixture-of-experts: of about 35 billion parameters, only around 3 billion are active for any given token. You get large-model quality at small-model inference cost and speed, which is why it serves efficiently on H200s, each carrying 141 GB of memory.
+  • Why on-premise: customer and bank data never leaves our environment, which is essential for privacy, data residency and regulation. We also gain full control to fine-tune and guardrail, predictable cost at scale, and independence from any single provider.
+  • Tie back to the theory: this is still a decoder-only transformer doing next-token prediction. The difference is open weights running on our own hardware.
+
+Slide 38 — Three things to remember
   • Replay the three spines. What an LLM is: next-token prediction, trained in three stages.
   • The transformer: attention, processed in parallel, stacked deep. Prompting: the ladder from clear-and-direct up to chaining.
   • Three takeaways: it is prediction not magic; steer with prompts before fine-tuning; verify and use responsibly.
 
-Slide 38 — Wrap — You can now read a GenAI system end to end.
+Slide 39 — Wrap — You can now read a GenAI system end to end.
   • Close it. They can now read a GenAI system end to end — and recognise it in OCBC's own tools.
   • Pointers to go deeper: Anthropic's prompt-engineering docs for practice, and the original paper for the brave.
   • Thank them and open the floor for questions.
