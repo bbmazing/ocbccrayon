@@ -73,6 +73,17 @@ h1 .red{color:var(--red)}
   .act.primary .tx span{display:block;font-size:10px;margin-top:3px}
 }
 
+/* per-topic blocks */
+.topic{margin-top:30px}
+.topic.first{margin-top:4px}
+.t-head{display:flex;align-items:center;gap:11px;margin-bottom:13px;flex-wrap:wrap}
+.t-no{font-family:var(--fHead);font-weight:800;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--faint);background:var(--card);border:1px solid var(--line);border-radius:99px;padding:5px 11px}
+.t-title{font-family:var(--fHead);font-weight:800;font-size:19px;letter-spacing:-.015em;color:var(--ink)}
+.t-badge{font-family:var(--fHead);font-weight:700;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;
+  color:#1E8E5A;background:#E9F7EE;border:1px solid #cdebd8;border-radius:99px;padding:4px 10px}
+@media(max-width:560px){.t-title{font-size:16px}.t-no{font-size:10px}}
+
 /* up-next curriculum */
 .next{margin-top:40px}
 .next .hd{font-family:var(--fHead);font-weight:700;font-size:12px;letter-spacing:.13em;text-transform:uppercase;
@@ -111,25 +122,45 @@ a.soon.live .go{color:var(--red);font-weight:700;font-size:11.5px;letter-spacing
     It starts with <b>Python data foundations</b> and expands across the programme into machine learning,
     generative AI and retrieval. New topics are added as we go.</p>
 
-  <section class="actions">
-    <a class="act primary" href="web/python-data-foundations.standalone.html">
-      <span class="ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
-      <span class="tx"><b>Python Data Foundations</b><span>Topic 1 · 36 slides</span></span>
-    </a>
-    <a class="act" href="web/components.standalone.html">
-      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
-      <span class="tx"><b>Components</b><span>Animated widgets</span></span>
-    </a>
-    <a class="act" href="speaker-notes.html" target="_blank" rel="noopener">
-      <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16M4 10h16M4 15h10"/></svg></span>
-      <span class="tx"><b>Speaker notes</b><span>Preview &amp; download</span></span>
-    </a>
+  <section class="topic first">
+    <div class="t-head"><span class="t-no">Topic 1</span><span class="t-title">Python Data Foundations</span><span class="t-badge">Available</span></div>
+    <div class="actions">
+      <a class="act primary" href="web/python-data-foundations.standalone.html">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+        <span class="tx"><b>Open the deck</b><span>36 animated slides</span></span>
+      </a>
+      <a class="act" href="web/components.standalone.html">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
+        <span class="tx"><b>Components</b><span>Animated widgets</span></span>
+      </a>
+      <a class="act" href="speaker-notes.html" target="_blank" rel="noopener">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16M4 10h16M4 15h10"/></svg></span>
+        <span class="tx"><b>Speaker notes</b><span>Preview &amp; download</span></span>
+      </a>
+    </div>
+  </section>
+
+  <section class="topic">
+    <div class="t-head"><span class="t-no">Topic 2</span><span class="t-title">Machine Learning &amp; MLOps</span><span class="t-badge">Available</span></div>
+    <div class="actions">
+      <a class="act primary" href="web/machine-learning-mlops.standalone.html">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+        <span class="tx"><b>Open the deck</b><span>36 animated slides</span></span>
+      </a>
+      <a class="act" href="web/components-mlops.standalone.html">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
+        <span class="tx"><b>Components</b><span>ML &amp; MLOps widgets</span></span>
+      </a>
+      <a class="act" href="speaker-notes-mlops.html" target="_blank" rel="noopener">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16M4 10h16M4 15h10"/></svg></span>
+        <span class="tx"><b>Speaker notes</b><span>Preview &amp; download</span></span>
+      </a>
+    </div>
   </section>
 
   <section class="next">
-    <div class="hd">More in the series</div>
+    <div class="hd">Coming next in the series</div>
     <div class="track">
-      <a class="soon live" href="web/machine-learning-mlops.standalone.html"><div class="n">02</div><h3>Machine Learning &amp; MLOps</h3><span class="go">Available · open the deck <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
       <div class="soon"><div class="n">03</div><h3>Generative AI &amp; LLMs</h3><span>Coming soon</span></div>
       <div class="soon"><div class="n">04</div><h3>Knowledge Retrieval (RAG)</h3><span>Coming soon</span></div>
     </div>

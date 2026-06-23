@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Speaker notes · Machine Learning &amp; MLOps · OCBC CRAYON</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root{--red:#EC1B23;--ink:#1A1A1A;--text:#1F2937;--muted:#5b626d;--faint:#9AA1AC;
+  --line:#E7E8EB;--tint:#FCEEEF;--tint2:#FBE2E3;
+  --fHead:'Manrope',system-ui,sans-serif;--fBody:'Inter',system-ui,sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--fBody);color:var(--text);background:
+    radial-gradient(900px 500px at 100% -10%, rgba(236,27,35,.10), transparent 60%), #fbfbfc;
+  -webkit-font-smoothing:antialiased;padding-bottom:60px}
+.bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;
+  gap:14px;padding:14px 22px;background:rgba(251,251,252,.86);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line)}
+.bar .ttl{font-family:var(--fHead);font-weight:800;font-size:16px;letter-spacing:-.01em;color:var(--ink)}
+.bar .sub{font-size:12px;color:var(--faint);margin-top:2px}
+.bar .right{display:flex;align-items:center;gap:8px;flex:none;flex-wrap:wrap;justify-content:flex-end}
+.btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--fHead);font-weight:700;
+  font-size:12.5px;text-decoration:none;border-radius:99px;padding:8px 14px;white-space:nowrap;
+  cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease}
+.btn svg{width:14px;height:14px}
+.btn.ghost{color:var(--muted);border:1px solid var(--line);background:#fff}
+.btn.ghost:hover{border-color:var(--tint2);color:var(--ink)}
+.btn.red{color:var(--red);background:var(--tint);border:1px solid var(--tint2)}
+.btn.red:hover{background:var(--red);color:#fff;border-color:var(--red)}
+.btn.on{background:var(--red);color:#fff;border-color:var(--red)}
+.banner{display:none;align-items:center;gap:8px;font-size:13px;color:#8a1015;
+  background:var(--tint);border-bottom:1px solid var(--tint2);padding:10px 22px}
+.banner b{color:var(--red)}
+body.editing .banner{display:flex}
+main{max-width:820px;margin:0 auto;padding:8px 22px}
+.lead{font-family:var(--fHead);font-weight:800;letter-spacing:-.02em;font-size:clamp(1.7rem,5vw,2.4rem);
+  color:var(--ink);margin:26px 0 6px}
+.lead .red{color:var(--red)}
+.intro{color:var(--muted);font-size:14.5px;line-height:1.6;margin-bottom:14px;max-width:60ch}
+.s{padding:20px 0;border-bottom:1px solid var(--line)}
+.s:last-child{border-bottom:none}
+.s .n{font-family:var(--fHead);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--red)}
+.s h2{font-family:var(--fHead);font-weight:700;font-size:18px;letter-spacing:-.015em;color:var(--ink);margin:4px 0 11px}
+.s ul{margin:0;padding-left:19px;display:flex;flex-direction:column;gap:9px}
+.s li{font-size:14.5px;line-height:1.6;color:var(--text)}
+/* edit affordances */
+body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:1px dashed var(--tint2);
+  outline-offset:4px;border-radius:4px}
+.s h2[contenteditable]:focus,.s li[contenteditable]:focus{outline:2px solid var(--red);
+  outline-offset:4px;background:#fff}
+@media(max-width:560px){
+  .bar{padding:11px 14px}
+  .bar .sub{display:none}
+  .btn{padding:7px 10px;font-size:11.5px}
+  .btn .lbl-long{display:none}
+  .banner{padding:9px 14px;font-size:12px}
+  main{padding:6px 16px}
+  .s li{font-size:14px}
+}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div>
+    <div class="ttl">Speaker notes</div>
+    <div class="sub">Machine Learning &amp; MLOps · 36 slides</div>
+  </div>
+  <div class="right">
+    <a class="btn ghost" href="index.html">&larr; Back</a>
+    <button class="btn ghost" id="edit" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+      <span id="editLbl">Edit</span>
+    </button>
+    <button class="btn ghost" id="reset" type="button" style="display:none">Reset</button>
+    <a class="btn red" id="dl" href="speaker-notes-mlops.txt" download="OCBC-CRAYON-Machine-Learning-MLOps-speaker-notes.txt">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3v12M7 11l5 5 5-5M5 21h14"/></svg>
+      <span class="lbl-long">Download&nbsp;</span>.txt
+    </a>
+  </div>
+</header>
+<div class="banner" id="banner">✎&nbsp; Editing — your changes are saved in this browser. Use <b>Download .txt</b> to keep a copy.</div>
+<main>
+  <h1 class="lead">Talk track <span class="red">&middot; every slide</span></h1>
+  <p class="intro">Speaker notes for the OCBC CRAYON 2026 &mdash; Machine Learning 101 &amp; MLOps Basics deck. 36 slides, in order. Press <b>Edit</b> to tweak the wording inline (saved to this browser), or <b>Download .txt</b> for a copy.</p>
+  <div id="notes">
+    <article class="s">
+      <div class="n">Slide 1</div>
+      <h2>Machine Learning 101 &amp; MLOps Basics</h2>
+      <ul>
+        <li>Welcome back. This is Session 2 — it assumes Topic 1 (Python, wrangling, analytics). We move from describing data to making it predict.</li>
+        <li>90 minutes, intuition-first: no calculus. Two animated code demos, and a banking flavour throughout — fraud, AML, credit, recommendations.</li>
+        <li>Tell them the goal: by the end they can read an ML project end to end and talk to data scientists in their own language.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 2</div>
+      <h2>From exploring data to making it predict</h2>
+      <ul>
+        <li>Anchor the new material in the familiar workflow. They already do Ask, Acquire, Wrangle, Explore from Topic 1.</li>
+        <li>Today is the highlighted node — Model — plus what nobody teaches: keeping it alive in production (that is the MLOps half).</li>
+        <li>One sentence bridge: wrangling made the data trustworthy; now we let it predict.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 3</div>
+      <h2>Learning patterns, not hand-coding rules</h2>
+      <ul>
+        <li>Plain definition: ML learns patterns from data to make predictions, instead of a human hand-coding the rules.</li>
+        <li>The contrast is the whole point. Rules-based fraud detection is a maintenance nightmare and always one step behind.</li>
+        <li>A learned model generalises from examples and improves as you feed it more labeled data — the same fraud task, a fundamentally different approach.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 4</div>
+      <h2>Four anchor examples we return to all session</h2>
+      <ul>
+        <li>These four flagship OCBC use cases are the running examples for the whole deck. Name each and where it lives in the bank.</li>
+        <li>Recommendation lives in the app investment tab; AML and fraud watch transactions; credit scores loan applications.</li>
+        <li>Flag now: fraud, AML and credit are supervised (we have past labeled outcomes); recommendation leans unsupervised. We will formalise that next.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 5</div>
+      <h2>The loop the rest of the talk follows</h2>
+      <ul>
+        <li>This is the ML lifecycle in miniature: Frame, Data, Train, Evaluate, Deploy, Monitor.</li>
+        <li>Section 2 zooms into Evaluate (metrics). Section 3 zooms into Deploy and Monitor (MLOps).</li>
+        <li>Emphasise the arrow back: a deployed model is never done — drift sends you back to data and retraining.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 6</div>
+      <h2>Part 1 — Supervised vs Unsupervised</h2>
+      <ul>
+        <li>Part 1, about 25 minutes. The single most useful mental model in ML: the supervised / unsupervised split.</li>
+        <li>Keep it concrete by slotting the four anchor cases onto the split as we go.</li>
+        <li>Mention reinforcement learning exists in one line, then declare it out of scope.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 7</div>
+      <h2>Do you have labels? That decides everything</h2>
+      <ul>
+        <li>The one mental model to keep: labeled data goes to supervised; no labels and you want structure goes to unsupervised.</li>
+        <li>Slot the anchors: fraud, AML and credit are supervised — we have past labeled outcomes. Recommendation and segmentation are often unsupervised first.</li>
+        <li>Reinforcement learning gets one sentence and a wave — not today.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 8</div>
+      <h2>Rows, features (X), and a label (y)</h2>
+      <ul>
+        <li>Shared vocabulary for everything after. Rows are examples (here, customers). Columns are features, capital X.</li>
+        <li>One special column is the label or target, lower-case y — the thing we predict. Here it is the fraud flag.</li>
+        <li>Supervised learning is just: learn the mapping from X to y. Keep pointing back to this table.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 9</div>
+      <h2>Supervised learning has two flavors</h2>
+      <ul>
+        <li>Supervised splits into classification (discrete labels) and regression (continuous numbers).</li>
+        <li>Classification: fraud or not, alert or clear, approve or decline. Regression: a credit limit, a probability of default.</li>
+        <li>Note credit approval uses both — a regression score for risk, then a classification decision to approve or decline.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 10</div>
+      <h2>Classification draws a boundary</h2>
+      <ul>
+        <li>Classification, visually: points are transactions; the model finds a line (or curve) that best separates fraud from legit.</li>
+        <li>Do not teach the math. Name the common models in one breath — logistic regression, trees, random forests, gradient boosting.</li>
+        <li>A new transaction is classified by which side of the boundary it falls on.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 11</div>
+      <h2>Regression fits a line to predict a number</h2>
+      <ul>
+        <li>Regression fits a continuous relationship. Animate the line settling through the cloud of points.</li>
+        <li>Anchor on credit: predict a number — a credit limit or a probability of default.</li>
+        <li>That number is what feeds the approve/decline gate and risk-based pricing — the link to the loan-approval anchor.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 12</div>
+      <h2>No labels — find the structure</h2>
+      <ul>
+        <li>Unsupervised has no labels; the goal is structure. Two workhorses: clustering and dimensionality reduction.</li>
+        <li>Clustering groups similar customers — the engine behind segmentation and the investment-tab recommendations.</li>
+        <li>Anomaly detection falls out of this: a transaction in no normal cluster is suspicious — the AML link.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 13</div>
+      <h2>Cluster customers, then recommend</h2>
+      <ul>
+        <li>Animate scattered customers snapping into colour-coded segments — the k-means intuition, no math.</li>
+        <li>The big idea: real recommendation blends families. Segments (unsupervised) plus collaborative filtering plus a supervised propensity model.</li>
+        <li>Same clustering view also gives anomaly detection for AML — anything far from every cluster is worth a look.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 14</div>
+      <h2>Which family? Two questions decide</h2>
+      <ul>
+        <li>A simple decision aid: first ask if you have labels; then ask what the question is — a value, a class, or groups.</li>
+        <li>Walk the four anchors as worked answers so the framework sticks.</li>
+        <li>Recommendation is the honest one — real systems blend supervised and unsupervised.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 15</div>
+      <h2>A model is .fit() then .predict()</h2>
+      <ul>
+        <li>Demo 1, replayed in-deck — press R or Replay to run it again. The point lands in one line: a model is fit then predict.</li>
+        <li>Cell 1 splits data 80/20 so we can grade honestly later. Cell 2 trains a random forest. Cell 3 predicts on unseen rows.</li>
+        <li>Do not dwell on the algorithm — emphasise the shape of the API. This is identical across almost every sklearn model.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 16</div>
+      <h2>Part 2 — Model Evaluation Metrics</h2>
+      <ul>
+        <li>Part 2, about 28 minutes — the most practically useful section. The metric you pick changes the whole story.</li>
+        <li>We climb a ladder: accuracy is a lie, then confusion matrix, precision/recall, F1, ROC-AUC, and finally overfitting.</li>
+        <li>Keep grounding every metric in the fraud anchor — rare events break naive accuracy.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 17</div>
+      <h2>A useless model can score 98%</h2>
+      <ul>
+        <li>The hook. A model that predicts never-fraud is about 98 percent accurate because fraud is rare — and it catches nothing.</li>
+        <li>Accuracy is misleading on imbalanced problems, which is most interesting banking problems: fraud, AML, default.</li>
+        <li>This sets up why we need precision and recall — metrics that look at the rare class.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 18</div>
+      <h2>Never grade a model on data it trained on</h2>
+      <ul>
+        <li>Golden rule of evaluation: hold out data. A model graded on what it memorised always looks better than it is.</li>
+        <li>Animate the split — 80 percent to train, 20 percent held back to test. The test set is your honest estimate.</li>
+        <li>Mention cross-validation as the more robust version; we use it in Demo 2.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 19</div>
+      <h2>The confusion matrix: four outcomes</h2>
+      <ul>
+        <li>The 2x2 that everything derives from. In banking terms: caught fraud (TP), false alarm (FP), missed fraud (FN), correct clear (TN).</li>
+        <li>Animate the cells filling in. Point out FN — missed fraud — is usually the expensive mistake.</li>
+        <li>Precision, recall, F1, ROC all come from these four numbers. Get comfortable here.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 20</div>
+      <h2>Precision vs recall — two questions</h2>
+      <ul>
+        <li>Plain words first. Precision is about the alerts you raised — what fraction were right. Recall is about all the real fraud — what fraction you caught.</li>
+        <li>Show which cells each uses: precision is the predicted-fraud column (TP+FP), recall is the actual-fraud row (TP+FN).</li>
+        <li>Different costs pull them apart, which is the trade-off on the next slide.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 21</div>
+      <h2>Move the threshold, trade precision for recall</h2>
+      <ul>
+        <li>This is interactive — drag the slider. As the cutoff rises, precision climbs and recall falls, and vice versa.</li>
+        <li>Tie it to the business: in fraud/AML the cost is false alarms versus missed losses; in lending it is bad approvals versus lost good customers.</li>
+        <li>F1 is the harmonic mean — one balanced number when you cannot decide which way to lean.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 22</div>
+      <h2>ROC curve and AUC</h2>
+      <ul>
+        <li>ROC sweeps every threshold and plots true-positive rate against false-positive rate. Animate the curve drawing in.</li>
+        <li>AUC summarises it: 0.5 is a coin flip, 1.0 is perfect. It measures how well the model ranks fraud above legit.</li>
+        <li>Important caveat for the bank: on very rare events the precision-recall curve is more honest than ROC.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 23</div>
+      <h2>Metrics for predicting a number</h2>
+      <ul>
+        <li>For regression you measure error size, not right-or-wrong. MAE is the average miss in real units — most intuitive.</li>
+        <li>RMSE penalises large errors more, which matters when a few big misses are expensive. R-squared is variance explained.</li>
+        <li>Tie back to the credit anchor: this is how you grade the probability-of-default model feeding loan approval.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 24</div>
+      <h2>Overfitting and the bias-variance trade-off</h2>
+      <ul>
+        <li>The core failure mode. Underfitting is too simple. Overfitting memorises noise — perfect on training, bad on new data.</li>
+        <li>Animate the U: training error keeps falling, but total error on new data turns back up. The minimum is the sweet spot.</li>
+        <li>Cross-validation is the robust way to find that spot without fooling yourself.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 25</div>
+      <h2>Same model, different metric, different story</h2>
+      <ul>
+        <li>Demo 2 evaluates the Demo-1 model. Same model — watch the story change with the metric.</li>
+        <li>The confusion matrix and classification report expose the truth: high accuracy and AUC, but fraud recall is poor.</li>
+        <li>This is the payoff of the whole section: always ask which metric, and whether it matches the business cost.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 26</div>
+      <h2>Part 3 — MLOps Fundamentals</h2>
+      <ul>
+        <li>Part 3, about 20 minutes. The half that beginners skip and production teams obsess over.</li>
+        <li>MLOps is how a model leaves the notebook and stays useful — deployment, monitoring, retraining, governance.</li>
+        <li>Keep it bank-flavoured: regulated, audited, and never set-and-forget.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 27</div>
+      <h2>The notebook is not the finish line</h2>
+      <ul>
+        <li>Blunt truth: a notebook model delivers zero value. Value starts when it runs reliably against real transactions.</li>
+        <li>Define MLOps: the discipline that blends ML, software engineering, DevOps and data engineering.</li>
+        <li>Frame the rest of the section as crossing that arrow — and staying on the right side of it.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 28</div>
+      <h2>Why ML is harder than normal software</h2>
+      <ul>
+        <li>Traditional software is deterministic — you test it once and it behaves. ML breaks that assumption.</li>
+        <li>An ML system depends on data and a learned model as well as code, and the data keeps changing under you.</li>
+        <li>So MLOps manages three interlocking moving parts: data, model, code. The gears turning together is the mental image.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 29</div>
+      <h2>The MLOps lifecycle is a loop</h2>
+      <ul>
+        <li>The canonical loop: Design, Data, Train, Evaluate, Deploy, Monitor — and Monitor feeds back to retraining.</li>
+        <li>Animate it advancing node by node. The key idea is the feedback arrow: deployment is the middle, not the end.</li>
+        <li>This loop is the spine of the whole section; the next slides zoom into pieces of it.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 30</div>
+      <h2>Track experiments, version everything</h2>
+      <ul>
+        <li>ML has too many runs to track in your head. Log parameters and metrics for every run automatically.</li>
+        <li>Reproducibility means versioning all three: data, model, and code. Run 43 should be re-creatable months later.</li>
+        <li>Name tools lightly — MLflow or Weights and Biases for tracking and a registry, DVC or Git for versioning.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 31</div>
+      <h2>How a model reaches users</h2>
+      <ul>
+        <li>Two main serving modes. Real-time API scores each event — fraud at the moment of payment, recommendations in the app.</li>
+        <li>Batch scores on a schedule — overnight AML screening and credit risk runs. Pick by how fresh the decision must be.</li>
+        <li>Before full launch, de-risk with shadow (run silently and compare) and canary (a small traffic slice first).</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 32</div>
+      <h2>Models decay — monitor and retrain</h2>
+      <ul>
+        <li>The part beginners miss: models decay. Two kinds of drift — data drift (inputs move) and concept drift (the relationship moves).</li>
+        <li>Performance slides quietly below acceptable. You only catch it if you monitor metrics and data and alert on them.</li>
+        <li>Then you retrain — the bump back up. OCBC examples: spending shifts stale the fraud model; new products dull recommendations.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 33</div>
+      <h2>In a regulated bank, the loop has checkpoints</h2>
+      <ul>
+        <li>A bank-relevant note, not a compliance lecture. In a regulated environment the lifecycle carries checkpoints.</li>
+        <li>Explainability is the headline: if you decline a loan, you must be able to say why. Fairness and audit trails matter too.</li>
+        <li>Human-in-the-loop oversight stays on the highest-stakes calls — AML and credit. These set expectations for production ML here.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 34</div>
+      <h2>Three things to remember</h2>
+      <ul>
+        <li>Replay the two spines: the workflow Frame-to-Monitor, and the metric ladder from confusion matrix up to ROC-AUC.</li>
+        <li>Land the three takeaways: pick the right metric, beware overfitting, treat the model as a product that needs maintenance.</li>
+        <li>These three are what separates a notebook experiment from a system the bank can trust.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 35</div>
+      <h2>The takeaway</h2>
+      <ul>
+        <li>Closing callback to how we framed the session: a model is a simplification, judged by usefulness, not truth.</li>
+        <li>For a bank, a fraud model misses some cases and false-alarms on others — we accept that and optimise for business value, while monitoring it.</li>
+        <li>Leads straight into the recap-free close and Q&amp;A.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 36</div>
+      <h2>Wrap — You can now read an ML project end to end.</h2>
+      <ul>
+        <li>Close the loop: they can now read an ML project end to end and talk to data scientists in their language.</li>
+        <li>Pointers to go deeper — Andrew Ng for the math foundations, an MLOps hands-on track for the production side.</li>
+        <li>Call back the Box quote, then open the floor for questions.</li>
+      </ul>
+    </article>
+  </div>
+</main>
+<script>
+(function(){
+  var KEY = 'ocbc-crayon-mlops-notes-v1';
+  var arts = [].slice.call(document.querySelectorAll('#notes .s'));
+  var fields = [].slice.call(document.querySelectorAll('#notes h2, #notes li'));
+  var resetBtn = document.getElementById('reset');
+
+  function collect(){
+    return arts.map(function(s){
+      return { t: (s.querySelector('h2')||{}).textContent || '',
+               n: [].slice.call(s.querySelectorAll('li')).map(function(li){ return li.textContent; }) };
+    });
+  }
+  function showReset(on){ resetBtn.style.display = on ? '' : 'none'; }
+
+  // apply any saved edits
+  try{
+    var raw = localStorage.getItem(KEY);
+    if(raw){
+      var data = JSON.parse(raw);
+      arts.forEach(function(s,i){
+        var rec = data[i]; if(!rec) return;
+        var h = s.querySelector('h2'); if(h && rec.t != null) h.textContent = rec.t;
+        var lis = [].slice.call(s.querySelectorAll('li'));
+        (rec.n||[]).forEach(function(t,k){ if(lis[k]) lis[k].textContent = t; });
+      });
+      showReset(true);
+    }
+  }catch(e){}
+
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(collect())); showReset(true); }catch(e){} }
+
+  // edit toggle
+  var editing = false, editBtn = document.getElementById('edit'), editLbl = document.getElementById('editLbl');
+  editBtn.addEventListener('click', function(){
+    editing = !editing;
+    document.body.classList.toggle('editing', editing);
+    editBtn.classList.toggle('on', editing);
+    editLbl.textContent = editing ? 'Done' : 'Edit';
+    fields.forEach(function(el){ el.contentEditable = editing ? 'true' : 'false'; });
+    if(editing){ if(fields[0]) fields[0].focus(); } else { save(); }
+  });
+  document.addEventListener('input', function(){ if(editing) save(); });
+
+  // download current (edited) content as .txt
+  function buildTxt(){
+    var L = ['OCBC CRAYON 2026 — Machine Learning 101 & MLOps Basics', 'Speaker notes · ' + arts.length + ' slides',
+             '================================================', ''];
+    collect().forEach(function(r,i){
+      L.push('Slide ' + (i+1) + ' — ' + r.t);
+      r.n.forEach(function(n){ L.push('  \u2022 ' + n); });
+      L.push('');
+    });
+    return L.join('\n').replace(/\s+$/, '') + '\n';
+  }
+  document.getElementById('dl').addEventListener('click', function(ev){
+    ev.preventDefault();
+    var blob = new Blob([buildTxt()], { type: 'text/plain;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'OCBC-CRAYON-Machine-Learning-MLOps-speaker-notes.txt';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+  });
+
+  resetBtn.addEventListener('click', function(){
+    if(!confirm('Discard your edits and restore the original notes?')) return;
+    try{ localStorage.removeItem(KEY); }catch(e){}
+    location.reload();
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,183 @@
+OCBC CRAYON 2026 — Machine Learning 101 & MLOps Basics
+Speaker notes · 36 slides
+================================================
+
+Slide 1 — Machine Learning 101 & MLOps Basics
+  • Welcome back. This is Session 2 — it assumes Topic 1 (Python, wrangling, analytics). We move from describing data to making it predict.
+  • 90 minutes, intuition-first: no calculus. Two animated code demos, and a banking flavour throughout — fraud, AML, credit, recommendations.
+  • Tell them the goal: by the end they can read an ML project end to end and talk to data scientists in their own language.
+
+Slide 2 — From exploring data to making it predict
+  • Anchor the new material in the familiar workflow. They already do Ask, Acquire, Wrangle, Explore from Topic 1.
+  • Today is the highlighted node — Model — plus what nobody teaches: keeping it alive in production (that is the MLOps half).
+  • One sentence bridge: wrangling made the data trustworthy; now we let it predict.
+
+Slide 3 — Learning patterns, not hand-coding rules
+  • Plain definition: ML learns patterns from data to make predictions, instead of a human hand-coding the rules.
+  • The contrast is the whole point. Rules-based fraud detection is a maintenance nightmare and always one step behind.
+  • A learned model generalises from examples and improves as you feed it more labeled data — the same fraud task, a fundamentally different approach.
+
+Slide 4 — Four anchor examples we return to all session
+  • These four flagship OCBC use cases are the running examples for the whole deck. Name each and where it lives in the bank.
+  • Recommendation lives in the app investment tab; AML and fraud watch transactions; credit scores loan applications.
+  • Flag now: fraud, AML and credit are supervised (we have past labeled outcomes); recommendation leans unsupervised. We will formalise that next.
+
+Slide 5 — The loop the rest of the talk follows
+  • This is the ML lifecycle in miniature: Frame, Data, Train, Evaluate, Deploy, Monitor.
+  • Section 2 zooms into Evaluate (metrics). Section 3 zooms into Deploy and Monitor (MLOps).
+  • Emphasise the arrow back: a deployed model is never done — drift sends you back to data and retraining.
+
+Slide 6 — Part 1 — Supervised vs Unsupervised
+  • Part 1, about 25 minutes. The single most useful mental model in ML: the supervised / unsupervised split.
+  • Keep it concrete by slotting the four anchor cases onto the split as we go.
+  • Mention reinforcement learning exists in one line, then declare it out of scope.
+
+Slide 7 — Do you have labels? That decides everything
+  • The one mental model to keep: labeled data goes to supervised; no labels and you want structure goes to unsupervised.
+  • Slot the anchors: fraud, AML and credit are supervised — we have past labeled outcomes. Recommendation and segmentation are often unsupervised first.
+  • Reinforcement learning gets one sentence and a wave — not today.
+
+Slide 8 — Rows, features (X), and a label (y)
+  • Shared vocabulary for everything after. Rows are examples (here, customers). Columns are features, capital X.
+  • One special column is the label or target, lower-case y — the thing we predict. Here it is the fraud flag.
+  • Supervised learning is just: learn the mapping from X to y. Keep pointing back to this table.
+
+Slide 9 — Supervised learning has two flavors
+  • Supervised splits into classification (discrete labels) and regression (continuous numbers).
+  • Classification: fraud or not, alert or clear, approve or decline. Regression: a credit limit, a probability of default.
+  • Note credit approval uses both — a regression score for risk, then a classification decision to approve or decline.
+
+Slide 10 — Classification draws a boundary
+  • Classification, visually: points are transactions; the model finds a line (or curve) that best separates fraud from legit.
+  • Do not teach the math. Name the common models in one breath — logistic regression, trees, random forests, gradient boosting.
+  • A new transaction is classified by which side of the boundary it falls on.
+
+Slide 11 — Regression fits a line to predict a number
+  • Regression fits a continuous relationship. Animate the line settling through the cloud of points.
+  • Anchor on credit: predict a number — a credit limit or a probability of default.
+  • That number is what feeds the approve/decline gate and risk-based pricing — the link to the loan-approval anchor.
+
+Slide 12 — No labels — find the structure
+  • Unsupervised has no labels; the goal is structure. Two workhorses: clustering and dimensionality reduction.
+  • Clustering groups similar customers — the engine behind segmentation and the investment-tab recommendations.
+  • Anomaly detection falls out of this: a transaction in no normal cluster is suspicious — the AML link.
+
+Slide 13 — Cluster customers, then recommend
+  • Animate scattered customers snapping into colour-coded segments — the k-means intuition, no math.
+  • The big idea: real recommendation blends families. Segments (unsupervised) plus collaborative filtering plus a supervised propensity model.
+  • Same clustering view also gives anomaly detection for AML — anything far from every cluster is worth a look.
+
+Slide 14 — Which family? Two questions decide
+  • A simple decision aid: first ask if you have labels; then ask what the question is — a value, a class, or groups.
+  • Walk the four anchors as worked answers so the framework sticks.
+  • Recommendation is the honest one — real systems blend supervised and unsupervised.
+
+Slide 15 — A model is .fit() then .predict()
+  • Demo 1, replayed in-deck — press R or Replay to run it again. The point lands in one line: a model is fit then predict.
+  • Cell 1 splits data 80/20 so we can grade honestly later. Cell 2 trains a random forest. Cell 3 predicts on unseen rows.
+  • Do not dwell on the algorithm — emphasise the shape of the API. This is identical across almost every sklearn model.
+
+Slide 16 — Part 2 — Model Evaluation Metrics
+  • Part 2, about 28 minutes — the most practically useful section. The metric you pick changes the whole story.
+  • We climb a ladder: accuracy is a lie, then confusion matrix, precision/recall, F1, ROC-AUC, and finally overfitting.
+  • Keep grounding every metric in the fraud anchor — rare events break naive accuracy.
+
+Slide 17 — A useless model can score 98%
+  • The hook. A model that predicts never-fraud is about 98 percent accurate because fraud is rare — and it catches nothing.
+  • Accuracy is misleading on imbalanced problems, which is most interesting banking problems: fraud, AML, default.
+  • This sets up why we need precision and recall — metrics that look at the rare class.
+
+Slide 18 — Never grade a model on data it trained on
+  • Golden rule of evaluation: hold out data. A model graded on what it memorised always looks better than it is.
+  • Animate the split — 80 percent to train, 20 percent held back to test. The test set is your honest estimate.
+  • Mention cross-validation as the more robust version; we use it in Demo 2.
+
+Slide 19 — The confusion matrix: four outcomes
+  • The 2x2 that everything derives from. In banking terms: caught fraud (TP), false alarm (FP), missed fraud (FN), correct clear (TN).
+  • Animate the cells filling in. Point out FN — missed fraud — is usually the expensive mistake.
+  • Precision, recall, F1, ROC all come from these four numbers. Get comfortable here.
+
+Slide 20 — Precision vs recall — two questions
+  • Plain words first. Precision is about the alerts you raised — what fraction were right. Recall is about all the real fraud — what fraction you caught.
+  • Show which cells each uses: precision is the predicted-fraud column (TP+FP), recall is the actual-fraud row (TP+FN).
+  • Different costs pull them apart, which is the trade-off on the next slide.
+
+Slide 21 — Move the threshold, trade precision for recall
+  • This is interactive — drag the slider. As the cutoff rises, precision climbs and recall falls, and vice versa.
+  • Tie it to the business: in fraud/AML the cost is false alarms versus missed losses; in lending it is bad approvals versus lost good customers.
+  • F1 is the harmonic mean — one balanced number when you cannot decide which way to lean.
+
+Slide 22 — ROC curve and AUC
+  • ROC sweeps every threshold and plots true-positive rate against false-positive rate. Animate the curve drawing in.
+  • AUC summarises it: 0.5 is a coin flip, 1.0 is perfect. It measures how well the model ranks fraud above legit.
+  • Important caveat for the bank: on very rare events the precision-recall curve is more honest than ROC.
+
+Slide 23 — Metrics for predicting a number
+  • For regression you measure error size, not right-or-wrong. MAE is the average miss in real units — most intuitive.
+  • RMSE penalises large errors more, which matters when a few big misses are expensive. R-squared is variance explained.
+  • Tie back to the credit anchor: this is how you grade the probability-of-default model feeding loan approval.
+
+Slide 24 — Overfitting and the bias-variance trade-off
+  • The core failure mode. Underfitting is too simple. Overfitting memorises noise — perfect on training, bad on new data.
+  • Animate the U: training error keeps falling, but total error on new data turns back up. The minimum is the sweet spot.
+  • Cross-validation is the robust way to find that spot without fooling yourself.
+
+Slide 25 — Same model, different metric, different story
+  • Demo 2 evaluates the Demo-1 model. Same model — watch the story change with the metric.
+  • The confusion matrix and classification report expose the truth: high accuracy and AUC, but fraud recall is poor.
+  • This is the payoff of the whole section: always ask which metric, and whether it matches the business cost.
+
+Slide 26 — Part 3 — MLOps Fundamentals
+  • Part 3, about 20 minutes. The half that beginners skip and production teams obsess over.
+  • MLOps is how a model leaves the notebook and stays useful — deployment, monitoring, retraining, governance.
+  • Keep it bank-flavoured: regulated, audited, and never set-and-forget.
+
+Slide 27 — The notebook is not the finish line
+  • Blunt truth: a notebook model delivers zero value. Value starts when it runs reliably against real transactions.
+  • Define MLOps: the discipline that blends ML, software engineering, DevOps and data engineering.
+  • Frame the rest of the section as crossing that arrow — and staying on the right side of it.
+
+Slide 28 — Why ML is harder than normal software
+  • Traditional software is deterministic — you test it once and it behaves. ML breaks that assumption.
+  • An ML system depends on data and a learned model as well as code, and the data keeps changing under you.
+  • So MLOps manages three interlocking moving parts: data, model, code. The gears turning together is the mental image.
+
+Slide 29 — The MLOps lifecycle is a loop
+  • The canonical loop: Design, Data, Train, Evaluate, Deploy, Monitor — and Monitor feeds back to retraining.
+  • Animate it advancing node by node. The key idea is the feedback arrow: deployment is the middle, not the end.
+  • This loop is the spine of the whole section; the next slides zoom into pieces of it.
+
+Slide 30 — Track experiments, version everything
+  • ML has too many runs to track in your head. Log parameters and metrics for every run automatically.
+  • Reproducibility means versioning all three: data, model, and code. Run 43 should be re-creatable months later.
+  • Name tools lightly — MLflow or Weights and Biases for tracking and a registry, DVC or Git for versioning.
+
+Slide 31 — How a model reaches users
+  • Two main serving modes. Real-time API scores each event — fraud at the moment of payment, recommendations in the app.
+  • Batch scores on a schedule — overnight AML screening and credit risk runs. Pick by how fresh the decision must be.
+  • Before full launch, de-risk with shadow (run silently and compare) and canary (a small traffic slice first).
+
+Slide 32 — Models decay — monitor and retrain
+  • The part beginners miss: models decay. Two kinds of drift — data drift (inputs move) and concept drift (the relationship moves).
+  • Performance slides quietly below acceptable. You only catch it if you monitor metrics and data and alert on them.
+  • Then you retrain — the bump back up. OCBC examples: spending shifts stale the fraud model; new products dull recommendations.
+
+Slide 33 — In a regulated bank, the loop has checkpoints
+  • A bank-relevant note, not a compliance lecture. In a regulated environment the lifecycle carries checkpoints.
+  • Explainability is the headline: if you decline a loan, you must be able to say why. Fairness and audit trails matter too.
+  • Human-in-the-loop oversight stays on the highest-stakes calls — AML and credit. These set expectations for production ML here.
+
+Slide 34 — Three things to remember
+  • Replay the two spines: the workflow Frame-to-Monitor, and the metric ladder from confusion matrix up to ROC-AUC.
+  • Land the three takeaways: pick the right metric, beware overfitting, treat the model as a product that needs maintenance.
+  • These three are what separates a notebook experiment from a system the bank can trust.
+
+Slide 35 — The takeaway
+  • Closing callback to how we framed the session: a model is a simplification, judged by usefulness, not truth.
+  • For a bank, a fraud model misses some cases and false-alarms on others — we accept that and optimise for business value, while monitoring it.
+  • Leads straight into the recap-free close and Q&A.
+
+Slide 36 — Wrap — You can now read an ML project end to end.
+  • Close the loop: they can now read an ML project end to end and talk to data scientists in their language.
+  • Pointers to go deeper — Andrew Ng for the math foundations, an MLOps hands-on track for the production side.
+  • Call back the Box quote, then open the floor for questions.

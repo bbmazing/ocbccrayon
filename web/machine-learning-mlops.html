@@ -757,17 +757,7 @@ body.static .chart-svg .mk{opacity:1 !important; transition:none !important}
     </div>
   </section>
 
-  <section class="slide dark" data-notes='["Box frames the whole lecture: a model is a simplification of reality, never the truth. The question is never is it correct but is it useful enough to act on.", "For a bank this is the right posture: a fraud model will miss some cases and false-alarm on others. We judge it on business value, not perfection.", "We will call this back on the closing slide."]'>
-    <div class="body-area">
-      <div class="kicker"><span class="badge"></span>The frame</div>
-      <div class="quote-wrap">
-        <div class="quote-mark" data-r data-d="2">&ldquo;</div>
-        <blockquote data-r data-d="3">All models are wrong, but some are <em>useful</em>.</blockquote>
-        <cite data-r data-d="4"><b>George Box</b> &middot; statistician</cite>
-      </div>
-    </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">02</span></div>
-  </section>
+  
 
   <section class="slide" data-notes='["Anchor the new material in the familiar workflow. They already do Ask, Acquire, Wrangle, Explore from Topic 1.", "Today is the highlighted node — Model — plus what nobody teaches: keeping it alive in production (that is the MLOps half).", "One sentence bridge: wrangling made the data trustworthy; now we let it predict."]'>
     <div class="kicker"><span class="badge"></span>Topic 1 &rarr; Topic 2</div>
@@ -1388,11 +1378,24 @@ cross_val_score(model, X, y, cv=5).mean()</div></div><div class="nb-out"><span c
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">35</span></div>
   </section>
 
-  <section class="slide dark divider" data-notes='["Close the loop: they can now read an ML project end to end and talk to data scientists in their language.", "Pointers to go deeper — Andrew Ng for the math foundations, an MLOps hands-on track for the production side.", "Call back the Box quote, then open the floor for questions."]'>
+    <section class="slide dark" data-notes='["Closing callback to how we framed the session: a model is a simplification, judged by usefulness, not truth.", "For a bank, a fraud model misses some cases and false-alarms on others — we accept that and optimise for business value, while monitoring it.", "Leads straight into the recap-free close and Q&A."]'>
+    <div class="body-area">
+      <div class="kicker"><span class="badge"></span>The takeaway</div>
+      <div class="quote-wrap">
+        <div class="quote-mark" data-r data-d="2">&ldquo;</div>
+        <blockquote data-r data-d="3">All models are wrong, but some are <em>useful</em>.</blockquote>
+        <cite data-r data-d="4"><b>George Box</b> &middot; statistician</cite>
+        <p data-r data-d="5" style="font-size:17px;color:rgba(255,255,255,.72);line-height:1.6;max-width:62ch;margin-top:24px">Every model is a simplification &mdash; none captures reality perfectly. The goal is never a &ldquo;true&rdquo; model but a <b style="color:#fff">useful</b> one: catch enough fraud, price risk well enough to act on, and keep it monitored as the world shifts.</p>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON &middot; Machine Learning &amp; MLOps</div><span class="pg">35</span></div>
+  </section>
+
+<section class="slide dark divider" data-notes='["Close the loop: they can now read an ML project end to end and talk to data scientists in their language.", "Pointers to go deeper — Andrew Ng for the math foundations, an MLOps hands-on track for the production side.", "Call back the Box quote, then open the floor for questions."]'>
     <div class="pillar-no">&#10003;</div>
     <div class="eyebrow"><span class="dot"></span>Wrap</div>
     <h2>You can now read an ML project end to end.</h2>
-    <p class="lead">Keep going: <b>Andrew Ng&#39;s ML Specialization</b> for the math, and a hands-on <b>MLOps track</b> for production. And remember Box &mdash; all models are wrong, but some are useful. Your job is to keep them useful.</p>
+    <p class="lead">Keep going: <b>Andrew Ng&#39;s ML Specialization</b> for the math, and a hands-on <b>MLOps track</b> for production. And keep that final idea close: the model is a <b>product</b>, useful only as long as you keep it monitored and retrained.</p>
     <div class="prog-rail"><span class="on">Supervised vs Unsupervised</span><span class="on">Evaluation metrics</span><span class="on">MLOps</span></div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">36</span></div>
   </section>
