@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Speaker notes · Generative AI &amp; LLMs · OCBC CRAYON</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root{--red:#EC1B23;--ink:#1A1A1A;--text:#1F2937;--muted:#5b626d;--faint:#9AA1AC;
+  --line:#E7E8EB;--tint:#FCEEEF;--tint2:#FBE2E3;
+  --fHead:'Manrope',system-ui,sans-serif;--fBody:'Inter',system-ui,sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--fBody);color:var(--text);background:
+    radial-gradient(900px 500px at 100% -10%, rgba(236,27,35,.10), transparent 60%), #fbfbfc;
+  -webkit-font-smoothing:antialiased;padding-bottom:60px}
+.bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;
+  gap:14px;padding:14px 22px;background:rgba(251,251,252,.86);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line)}
+.bar .ttl{font-family:var(--fHead);font-weight:800;font-size:16px;letter-spacing:-.01em;color:var(--ink)}
+.bar .sub{font-size:12px;color:var(--faint);margin-top:2px}
+.bar .right{display:flex;align-items:center;gap:8px;flex:none;flex-wrap:wrap;justify-content:flex-end}
+.btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--fHead);font-weight:700;
+  font-size:12.5px;text-decoration:none;border-radius:99px;padding:8px 14px;white-space:nowrap;
+  cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease}
+.btn svg{width:14px;height:14px}
+.btn.ghost{color:var(--muted);border:1px solid var(--line);background:#fff}
+.btn.ghost:hover{border-color:var(--tint2);color:var(--ink)}
+.btn.red{color:var(--red);background:var(--tint);border:1px solid var(--tint2)}
+.btn.red:hover{background:var(--red);color:#fff;border-color:var(--red)}
+.btn.on{background:var(--red);color:#fff;border-color:var(--red)}
+.banner{display:none;align-items:center;gap:8px;font-size:13px;color:#8a1015;
+  background:var(--tint);border-bottom:1px solid var(--tint2);padding:10px 22px}
+.banner b{color:var(--red)}
+body.editing .banner{display:flex}
+main{max-width:820px;margin:0 auto;padding:8px 22px}
+.lead{font-family:var(--fHead);font-weight:800;letter-spacing:-.02em;font-size:clamp(1.7rem,5vw,2.4rem);
+  color:var(--ink);margin:26px 0 6px}
+.lead .red{color:var(--red)}
+.intro{color:var(--muted);font-size:14.5px;line-height:1.6;margin-bottom:14px;max-width:60ch}
+.s{padding:20px 0;border-bottom:1px solid var(--line)}
+.s:last-child{border-bottom:none}
+.s .n{font-family:var(--fHead);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--red)}
+.s h2{font-family:var(--fHead);font-weight:700;font-size:18px;letter-spacing:-.015em;color:var(--ink);margin:4px 0 11px}
+.s ul{margin:0;padding-left:19px;display:flex;flex-direction:column;gap:9px}
+.s li{font-size:14.5px;line-height:1.6;color:var(--text)}
+/* edit affordances */
+body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:1px dashed var(--tint2);
+  outline-offset:4px;border-radius:4px}
+.s h2[contenteditable]:focus,.s li[contenteditable]:focus{outline:2px solid var(--red);
+  outline-offset:4px;background:#fff}
+@media(max-width:560px){
+  .bar{padding:11px 14px}
+  .bar .sub{display:none}
+  .btn{padding:7px 10px;font-size:11.5px}
+  .btn .lbl-long{display:none}
+  .banner{padding:9px 14px;font-size:12px}
+  main{padding:6px 16px}
+  .s li{font-size:14px}
+}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div>
+    <div class="ttl">Speaker notes</div>
+    <div class="sub">Generative AI &amp; LLMs · 38 slides</div>
+  </div>
+  <div class="right">
+    <a class="btn ghost" href="index.html">&larr; Back</a>
+    <button class="btn ghost" id="edit" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+      <span id="editLbl">Edit</span>
+    </button>
+    <button class="btn ghost" id="reset" type="button" style="display:none">Reset</button>
+    <a class="btn red" id="dl" href="speaker-notes-genai.txt" download="OCBC-CRAYON-Generative-AI-LLMs-speaker-notes.txt">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3v12M7 11l5 5 5-5M5 21h14"/></svg>
+      <span class="lbl-long">Download&nbsp;</span>.txt
+    </a>
+  </div>
+</header>
+<div class="banner" id="banner">✎&nbsp; Editing — your changes are saved in this browser. Use <b>Download .txt</b> to keep a copy.</div>
+<main>
+  <h1 class="lead">Talk track <span class="red">&middot; every slide</span></h1>
+  <p class="intro">Speaker notes for the OCBC CRAYON 2026 &mdash; Generative AI &amp; LLMs: Theory deck. 36 slides, in order. Press <b>Edit</b> to tweak the wording inline (saved to this browser), or <b>Download .txt</b> for a copy.</p>
+  <div id="notes">
+    <article class="s">
+      <div class="n">Slide 1</div>
+      <h2>Generative AI &amp; LLMs · Theory</h2>
+      <ul>
+        <li>Welcome to Session 3. This assumes Topics 1 and 2 — you can wrangle data and make it predict. Today: making machines generate language.</li>
+        <li>90 minutes, intuition-first: no matrix math. One animated demo, banking flavour, and we close by spotting today's theory inside OCBC's own AI products.</li>
+        <li>Promise: by the end you can read a GenAI system end to end and talk to the people building them.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 2</div>
+      <h2>The idea that started it</h2>
+      <ul>
+        <li>Open on the single most important idea in modern AI — the 2017 paper title. It doubles as a teaser for Part 2.</li>
+        <li>Everything today — GPT, Claude, Gemini, Llama — descends from this one architectural idea: attention.</li>
+        <li>We will unpack exactly what attention means, with pictures, in the transformer section.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 3</div>
+      <h2>From predicting data to generating language</h2>
+      <ul>
+        <li>Bridge from Topic 2. There we made data predict a label or a number. GenAI goes one step further: it generates new content.</li>
+        <li>Predictive ML answers is this fraud? Generative AI writes the suspicious-activity summary. Same data foundation, a new capability.</li>
+        <li>Frame today as adding generation on top of the prediction skills they already have.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 4</div>
+      <h2>Discriminative labels · generative produces</h2>
+      <ul>
+        <li>The core distinction. Discriminative models draw boundaries and label — that was Topic 2.</li>
+        <li>Generative models produce new content that resembles their training data — text, here.</li>
+        <li>Banking pair: a discriminative model flags a suspicious transaction; a generative model drafts the SAR narrative for the analyst to review.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 5</div>
+      <h2>LLMs are the language engine of GenAI</h2>
+      <ul>
+        <li>Place LLMs in the landscape. Generative AI is the umbrella — it spans text, images, audio and code.</li>
+        <li>LLMs are the text/language engine of that umbrella. Today is entirely about the text branch.</li>
+        <li>Many bank use cases are multimodal at the edges, but the language model is the core we are studying.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 6</div>
+      <h2>The theory you will see in our own tools</h2>
+      <ul>
+        <li>One grounding slide before the theory. LLMs are already inside the bank — these three are the running showcase.</li>
+        <li>Document extraction reads KYC forms; an internal assistant helps relationship managers; a customer assistant answers in-app.</li>
+        <li>Promise: every concept today shows up in one of these. We revisit them at the end.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 7</div>
+      <h2>Part 1 — Large Language Models</h2>
+      <ul>
+        <li>Part 1, about 25 minutes. We define a language model, show next-token prediction, and walk the history.</li>
+        <li>Keep it concrete: tokens, embeddings, scale, the three-stage training recipe, and where LLMs fail.</li>
+        <li>Ends with a live demo of a single API call, then grounding with RAG.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 8</div>
+      <h2>Autocomplete on steroids</h2>
+      <ul>
+        <li>Plainest possible definition: a model that assigns probabilities to sequences and predicts the next token.</li>
+        <li>The one-liner that sticks: autocomplete on steroids. Your phone keyboard does a tiny version of this.</li>
+        <li>All the apparent intelligence is doing this one thing extremely well, over and over.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 9</div>
+      <h2>It predicts a distribution, then picks</h2>
+      <ul>
+        <li>Make it concrete. Given the prompt, the model produces a probability for every possible next token.</li>
+        <li>Here the top candidate is balance, then frozen, overdrawn. It samples from this distribution to pick a word.</li>
+        <li>Repeat token by token and you get fluent text. The whole magic is doing this distribution well.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 10</div>
+      <h2>Words become numbers the model can do math on</h2>
+      <ul>
+        <li>Two ideas. First, text is broken into tokens — roughly word-pieces — because models work in fixed units.</li>
+        <li>Second, each token maps to a vector, an embedding, where similar meanings sit near each other.</li>
+        <li>Why numbers: models do arithmetic, not words. debit and credit land close; king and queen close — geometry captures meaning.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 11</div>
+      <h2>Scale unlocked learning from the prompt</h2>
+      <ul>
+        <li>Large is three things multiplied: parameters, training data, and compute. GPT-3 was 175 billion parameters.</li>
+        <li>Scale did something surprising — it unlocked in-context learning: the model learns from examples in the prompt, with no retraining.</li>
+        <li>A few abilities appear only past a size threshold — emergent abilities. We exploit in-context learning in the prompting section.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 12</div>
+      <h2>Sixty years to an overnight success</h2>
+      <ul>
+        <li>Sixty years in one minute. ELIZA faked conversation with rules; statistical NLP counted word frequencies.</li>
+        <li>word2vec (2013) gave words vectors; the Transformer (2017) changed everything; GPT and BERT (2018) started the pretraining era.</li>
+        <li>GPT-3 (2020) showed in-context learning at 175B; ChatGPT (2022) brought it to everyone. Today: GPT, Claude, Gemini, Llama — multimodal and reasoning.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 13</div>
+      <h2>Three stages: pretrain, fine-tune, align</h2>
+      <ul>
+        <li>How a modern LLM is actually made — three stages. Pretraining: predict the next token on massive text. It learns language and world knowledge, but not how to behave.</li>
+        <li>Fine-tuning / instruction-tuning: train on examples of following instructions, so it answers rather than just continues text.</li>
+        <li>RLHF: align to human preferences using feedback — helpful, honest, harmless. This is what makes a raw model into an assistant.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 14</div>
+      <h2>A brilliant drafter, an unreliable oracle</h2>
+      <ul>
+        <li>Honest framing for a risk-aware audience. Strengths: drafting, summarising, extraction, translation, code.</li>
+        <li>Limits: hallucination — confidently wrong; no live knowledge without retrieval; weak at exact math; can inherit bias.</li>
+        <li>The point: treat output as a capable draft to verify, never as ground truth. This sets up RAG and guardrails.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 15</div>
+      <h2>RAG: retrieve, augment, generate</h2>
+      <ul>
+        <li>The fix for hallucination and stale knowledge: retrieval-augmented generation. Do not rely on the model's memory.</li>
+        <li>Retrieve relevant passages from a trusted knowledge base, augment the prompt with them, then generate the answer from that context.</li>
+        <li>Banking framing: answer from our policy documents, with citations — not from whatever the model happened to memorise.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 16</div>
+      <h2>The model is one API call</h2>
+      <ul>
+        <li>Demo 1, replayed in-deck — press R or Replay. The model itself is a single API call.</li>
+        <li>Cell 2 is a bare call: prompt in, completion out. Cell 3 prepends a retrieved policy snippet — the RAG pattern — and the answer becomes grounded and specific.</li>
+        <li>The lesson: the model is one API call; the engineering is the context and prompt you wrap around it.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 17</div>
+      <h2>Part 2 — The Transformer</h2>
+      <ul>
+        <li>Part 2, about 25 minutes. Pure intuition — attention links, parallel heads, stacked blocks. No matrix math.</li>
+        <li>Start with why older models hit a wall, then the 2017 breakthrough, then self-attention shown visually.</li>
+        <li>End by connecting the architecture back to reading and drafting bank text.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 18</div>
+      <h2>Reading word-by-word hits a wall</h2>
+      <ul>
+        <li>Set up the problem the transformer solved. Older models — RNNs — read one word at a time, in order.</li>
+        <li>That is slow, and they forget long-range context: by the end of a long paragraph the start has faded.</li>
+        <li>The transformer's move: read the whole sequence at once, in parallel, and let every word see every other.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 19</div>
+      <h2>Attention Is All You Need</h2>
+      <ul>
+        <li>The landmark. Vaswani and colleagues at Google, 2017. The radical claim in the title: you can drop recurrence entirely.</li>
+        <li>Replace it with attention, and process the sequence in parallel. Simpler, faster, and it scaled far better.</li>
+        <li>This single architecture underlies GPT, BERT, Claude, Gemini and Llama. The rest of Part 2 is what is inside it.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 20</div>
+      <h2>Every word weighs every other word</h2>
+      <ul>
+        <li>The heart of the transformer, shown. Every word looks at every other word and weighs how relevant each is.</li>
+        <li>Here the focus word is charge. Attention links it most strongly to disputed, also to customer and card — it builds context.</li>
+        <li>No matrix math today — just the picture: thicker link means more attention. This is how the model resolves what a word means in context.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 21</div>
+      <h2>Many readers, each tracking one thing</h2>
+      <ul>
+        <li>One attention pass catches one kind of relationship. Real transformers run many in parallel — heads.</li>
+        <li>Each head learns to track something different: grammar, meaning, or reference. Then their reads are combined.</li>
+        <li>Analogy: a panel of readers, each following one thread, pooling notes for a richer understanding.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 22</div>
+      <h2>What else is in a transformer block</h2>
+      <ul>
+        <li>Round out the block in plain terms. Positional encoding tags each token with its order, since attention alone is order-blind.</li>
+        <li>Feed-forward layers process each token a bit more on their own. Residual connections and layer norm keep training stable as you stack.</li>
+        <li>Attention plus these pieces is the transformer block — the unit you repeat.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 23</div>
+      <h2>Stack the block, deepen the model</h2>
+      <ul>
+        <li>Now repeat. Stack many identical blocks and you get a deep network — each layer refines the representation.</li>
+        <li>More layers, more parameters, more data — more capability. GPT-3 stacked 96 of these blocks.</li>
+        <li>This is the concrete meaning of large from Part 1 — depth times width times data.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 24</div>
+      <h2>Encoder understands · decoder generates</h2>
+      <ul>
+        <li>One clean contrast. Encoder models like BERT read the whole text to understand it — great for classification and search.</li>
+        <li>Decoder models like GPT, Claude and Gemini generate text left to right — great for writing and chat.</li>
+        <li>Most chat LLMs today are decoder-only. That is the family behind the customer assistant.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 25</div>
+      <h2>The same machinery reads our bank text</h2>
+      <ul>
+        <li>Zoom back out before prompting. The very same attention machinery is what reads bank text and drafts summaries.</li>
+        <li>Read the note, attend to what matters, generate the summary token by token — that is the whole pipeline.</li>
+        <li>This is the bridge to Part 3: now that we have a capable model, how do we steer it?</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 26</div>
+      <h2>Part 3 — Prompt Engineering</h2>
+      <ul>
+        <li>Part 3, about 23 minutes — the most immediately useful section for everyone in the room.</li>
+        <li>We climb the lab-recommended ladder of techniques, with a banking example for each.</li>
+        <li>End on responsible use in a bank: hallucination, injection, privacy, human-in-the-loop.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 27</div>
+      <h2>Steer the model with words, not retraining</h2>
+      <ul>
+        <li>Define it. Prompt engineering is steering a fixed model with the words you give it — no weight changes.</li>
+        <li>It is far faster and cheaper than fine-tuning, preserves the model's general knowledge, and keeps working across model updates.</li>
+        <li>Reach for prompting first; fine-tuning is a later, heavier tool.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 28</div>
+      <h2>Climb only as high as you need</h2>
+      <ul>
+        <li>The spine of the section — the lab-recommended ladder, in impact order. Start simple, add only what you need.</li>
+        <li>Be clear and direct, then give examples, then ask for step-by-step reasoning, then add structure, a role, and finally chain prompts.</li>
+        <li>Most tasks are solved by the first two or three rungs. Climb only as far as the problem demands.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 29</div>
+      <h2>Specific beats clever</h2>
+      <ul>
+        <li>Rung 1, the highest-leverage. Vague prompts get vague answers. Say exactly what you want, with context and motivation.</li>
+        <li>The colleague test: if a new colleague would be confused by your instruction, so is the model.</li>
+        <li>Here, the specific version names the role, the format, and the goal — and gets a usable answer first time.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 30</div>
+      <h2>Show, don't just tell</h2>
+      <ul>
+        <li>Rung 2. Do not just tell — show. Three to five diverse, canonical examples teach the format and tone better than any description.</li>
+        <li>Banking example: a couple of labelled transaction-to-category pairs, then the new one to classify.</li>
+        <li>The model copies the pattern. Keep examples varied so it generalises rather than memorising.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 31</div>
+      <h2>Ask it to think step by step</h2>
+      <ul>
+        <li>Rung 3. For multi-step problems, ask the model to reason step by step before answering — accuracy jumps.</li>
+        <li>Also give it permission to say I don't know, which reduces confident guessing.</li>
+        <li>Trade-off: it is slower and uses more tokens, so reserve it for genuinely complex tasks.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 32</div>
+      <h2>Separate the parts, set the persona</h2>
+      <ul>
+        <li>Rungs 4 and 5 together. Structure your prompt with clear sections or tags so the model never mixes instructions with data.</li>
+        <li>Assign a role — you are a compliance analyst — to set tone, vocabulary and expertise.</li>
+        <li>Tags like context, instructions and data are especially useful when you paste in documents.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 33</div>
+      <h2>Break big tasks into a chain</h2>
+      <ul>
+        <li>Rung 6. For big tasks, do not ask for everything at once. Break it into a chain of focused steps.</li>
+        <li>Draft, then review, then improve — each step gets the model's full attention, and the self-review catches errors.</li>
+        <li>Chaining trades a little latency for markedly higher quality on complex work.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 34</div>
+      <h2>Use it responsibly in a bank</h2>
+      <ul>
+        <li>Close Part 3 with responsible use — guardrails, not a compliance lecture. Hallucination: verify facts before acting.</li>
+        <li>Prompt injection: untrusted text can carry hidden instructions, so never trust pasted content blindly.</li>
+        <li>Privacy: no sensitive customer data into unapproved tools. And keep a human in the loop for any real decision.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 35</div>
+      <h2>Showcase — GenAI at OCBC</h2>
+      <ul>
+        <li>Bring it home. Everything today shows up in OCBC's own AI products.</li>
+        <li>Three illustrative examples, mapped to the exact concepts we covered.</li>
+        <li>Where internal details are unknown, we describe generically and label as illustrative.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 36</div>
+      <h2>Spot today's concepts at OCBC</h2>
+      <ul>
+        <li>Map each product back to a concept. Document extraction is tokens and embeddings turning forms into structured fields.</li>
+        <li>The RM-support chatbot is RAG plus prompting — grounded answers from policy and product knowledge.</li>
+        <li>The customer assistant is a decoder LLM with grounding and guardrails. Illustrative — real products, simplified.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 37</div>
+      <h2>Three things to remember</h2>
+      <ul>
+        <li>Replay the three spines. What an LLM is: next-token prediction, trained in three stages.</li>
+        <li>The transformer: attention, processed in parallel, stacked deep. Prompting: the ladder from clear-and-direct up to chaining.</li>
+        <li>Three takeaways: it is prediction not magic; steer with prompts before fine-tuning; verify and use responsibly.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 38</div>
+      <h2>Wrap — You can now read a GenAI system end to end.</h2>
+      <ul>
+        <li>Close it. They can now read a GenAI system end to end — and recognise it in OCBC's own tools.</li>
+        <li>Pointers to go deeper: Anthropic's prompt-engineering docs for practice, and the original paper for the brave.</li>
+        <li>Thank them and open the floor for questions.</li>
+      </ul>
+    </article>
+  </div>
+</main>
+<script>
+(function(){
+  var KEY = 'ocbc-crayon-genai-notes-v1';
+  var arts = [].slice.call(document.querySelectorAll('#notes .s'));
+  var fields = [].slice.call(document.querySelectorAll('#notes h2, #notes li'));
+  var resetBtn = document.getElementById('reset');
+
+  function collect(){
+    return arts.map(function(s){
+      return { t: (s.querySelector('h2')||{}).textContent || '',
+               n: [].slice.call(s.querySelectorAll('li')).map(function(li){ return li.textContent; }) };
+    });
+  }
+  function showReset(on){ resetBtn.style.display = on ? '' : 'none'; }
+
+  // apply any saved edits
+  try{
+    var raw = localStorage.getItem(KEY);
+    if(raw){
+      var data = JSON.parse(raw);
+      arts.forEach(function(s,i){
+        var rec = data[i]; if(!rec) return;
+        var h = s.querySelector('h2'); if(h && rec.t != null) h.textContent = rec.t;
+        var lis = [].slice.call(s.querySelectorAll('li'));
+        (rec.n||[]).forEach(function(t,k){ if(lis[k]) lis[k].textContent = t; });
+      });
+      showReset(true);
+    }
+  }catch(e){}
+
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(collect())); showReset(true); }catch(e){} }
+
+  // edit toggle
+  var editing = false, editBtn = document.getElementById('edit'), editLbl = document.getElementById('editLbl');
+  editBtn.addEventListener('click', function(){
+    editing = !editing;
+    document.body.classList.toggle('editing', editing);
+    editBtn.classList.toggle('on', editing);
+    editLbl.textContent = editing ? 'Done' : 'Edit';
+    fields.forEach(function(el){ el.contentEditable = editing ? 'true' : 'false'; });
+    if(editing){ if(fields[0]) fields[0].focus(); } else { save(); }
+  });
+  document.addEventListener('input', function(){ if(editing) save(); });
+
+  // download current (edited) content as .txt
+  function buildTxt(){
+    var L = ['OCBC CRAYON 2026 — Generative AI & LLMs: Theory', 'Speaker notes · ' + arts.length + ' slides',
+             '================================================', ''];
+    collect().forEach(function(r,i){
+      L.push('Slide ' + (i+1) + ' — ' + r.t);
+      r.n.forEach(function(n){ L.push('  \u2022 ' + n); });
+      L.push('');
+    });
+    return L.join('\n').replace(/\s+$/, '') + '\n';
+  }
+  document.getElementById('dl').addEventListener('click', function(ev){
+    ev.preventDefault();
+    var blob = new Blob([buildTxt()], { type: 'text/plain;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'OCBC-CRAYON-Generative-AI-LLMs-speaker-notes.txt';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+  });
+
+  resetBtn.addEventListener('click', function(){
+    if(!confirm('Discard your edits and restore the original notes?')) return;
+    try{ localStorage.removeItem(KEY); }catch(e){}
+    location.reload();
+  });
+})();
+</script>
+</body>
+</html>

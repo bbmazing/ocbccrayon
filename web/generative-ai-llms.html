@@ -1,0 +1,1532 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Generative AI &amp; LLMs · Theory · OCBC CRAYON</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+/* =========================================================================
+   OCBC CRAYON · Python Data Foundations
+   Self-contained animated deck. Fixed 16:9 stage, one slide at a time.
+   ========================================================================= */
+:root{
+  /* OCBC brand */
+  --red:#EC1B23; --red-dark:#B3141A; --red-deep:#7A0E12;
+  --ink:#1A1A1A; --charcoal:#202024; --charcoal-2:#2A2A2F;
+  --text:#1F2937; --muted:#6B7280; --faint:#9AA1AC;
+  --surface:#FFFFFF; --card:#F5F5F6; --card-2:#EFEFF1;
+  --line:#E4E7EB; --line-strong:#D6D9DE;
+  --tint-red:#FCEEEF; --tint-red-2:#FBE2E3;
+  --code-bg:#1A1C22; --code-ink:#E7E9EE;
+  /* supporting diagram hues (used sparingly) */
+  --blue:#1C6E9C; --teal:#0E7C6B; --amber:#C9851A; --green:#1E8E5A; --violet:#6C4FB3;
+  /* stage geometry */
+  --stageW:1280px; --stageH:720px;
+  --fHead:'Manrope',system-ui,sans-serif;
+  --fBody:'Inter',system-ui,sans-serif;
+  --fMono:'JetBrains Mono',ui-monospace,monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:#0c0c0e;
+  font-family:var(--fBody);
+  color:var(--text);
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+/* ---- Stage: scale a fixed 1280x720 deck to fit the viewport ---- */
+.stage{
+  position:fixed; inset:0; height:100dvh; display:grid; place-items:center;
+  background:
+    radial-gradient(1200px 700px at 80% -10%, rgba(236,27,35,.10), transparent 60%),
+    #0a0a0c;
+}
+.deck{
+  position:absolute; left:0; top:0;
+  width:var(--stageW); height:var(--stageH);
+  transform-origin:top left;
+  box-shadow:0 40px 120px -30px rgba(0,0,0,.8);
+  border-radius:4px; overflow:hidden;
+  background:#fff;
+}
+
+/* ---- Slides ---- */
+.slide{
+  position:absolute; inset:0;
+  width:var(--stageW); height:var(--stageH);
+  opacity:0; visibility:hidden; pointer-events:none;
+  transition:opacity .5s ease;
+  display:flex; flex-direction:column;
+  padding:62px 76px 58px;
+  background:var(--surface);
+}
+.slide.active{opacity:1; visibility:visible; pointer-events:auto; z-index:2}
+.slide.prev{z-index:1}
+
+/* dark slides (cover, dividers, close) */
+.slide.dark{
+  color:#fff;
+  background:
+    radial-gradient(900px 600px at 78% -8%, rgba(236,27,35,.30), transparent 55%),
+    radial-gradient(700px 500px at -5% 110%, rgba(236,27,35,.12), transparent 60%),
+    linear-gradient(160deg,#202024 0%,#161618 60%,#121214 100%);
+}
+.slide.dark::after{ /* fine grain texture */
+  content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
+  background-image:radial-gradient(rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size:3px 3px; mix-blend-mode:screen;
+}
+
+/* =========================================================================
+   Shared chrome: kicker, badge, footer, titles
+   ========================================================================= */
+.kicker{
+  display:inline-flex; align-items:center; gap:11px;
+  font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--red); margin-bottom:16px;
+}
+.kicker .badge{
+  width:24px; height:24px; border-radius:50%;
+  background:var(--red); position:relative; flex:none;
+  box-shadow:0 0 0 4px var(--tint-red);
+  overflow:hidden;
+}
+.kicker .badge::before{ /* rising-sun rays motif */
+  content:""; position:absolute; left:50%; bottom:5px; width:0; height:0;
+  border-left:7px solid transparent; border-right:7px solid transparent;
+  border-bottom:9px solid #fff; transform:translateX(-50%); opacity:.95;
+}
+.kicker .badge::after{
+  content:""; position:absolute; left:0; right:0; bottom:6px; height:1.5px;
+  background:rgba(255,255,255,.85);
+}
+.dark .kicker{color:#ff6a6f}
+.dark .kicker .badge{box-shadow:0 0 0 4px rgba(236,27,35,.25)}
+
+.slide-title{
+  font-family:var(--fHead); font-weight:800; color:var(--ink);
+  font-size:38px; line-height:1.08; letter-spacing:-.02em; max-width:24ch;
+}
+.dark .slide-title{color:#fff}
+.slide-sub{font-size:17px; color:var(--muted); margin-top:12px; max-width:60ch; line-height:1.5}
+
+.foot{
+  position:absolute; left:76px; right:76px; bottom:26px;
+  display:flex; align-items:center; justify-content:space-between;
+  font-size:12px; color:var(--faint); letter-spacing:.02em;
+}
+.foot .mark{display:flex; align-items:center; gap:9px; font-weight:600; color:var(--muted)}
+.foot .mark img{height:18px; width:auto; display:block}
+.foot .pg{font-family:var(--fMono); font-weight:500}
+.dark .foot{color:rgba(255,255,255,.5)}
+.dark .foot .mark{color:rgba(255,255,255,.7)}
+
+.body-area{flex:1; min-height:0; display:flex; flex-direction:column; margin-top:8px}
+
+/* =========================================================================
+   Reveal system — children animate in when slide becomes active
+   ========================================================================= */
+[data-r]{opacity:0; transform:translateY(16px); transition:opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1);}
+.slide.active [data-r]{opacity:1; transform:none}
+[data-r][data-d="1"]{transition-delay:.08s}[data-r][data-d="2"]{transition-delay:.16s}
+[data-r][data-d="3"]{transition-delay:.24s}[data-r][data-d="4"]{transition-delay:.32s}
+[data-r][data-d="5"]{transition-delay:.40s}[data-r][data-d="6"]{transition-delay:.48s}
+[data-r][data-d="7"]{transition-delay:.56s}[data-r][data-d="8"]{transition-delay:.64s}
+[data-r][data-d="9"]{transition-delay:.72s}[data-r][data-d="10"]{transition-delay:.80s}
+[data-r][data-d="11"]{transition-delay:.88s}[data-r][data-d="12"]{transition-delay:.96s}
+
+/* =========================================================================
+   COVER (slide 1)
+   ========================================================================= */
+.cover{padding:0}
+.cover .bg{
+  position:absolute; inset:0;
+  background:url('assets/bg_title_skyline.png') center/cover no-repeat;
+}
+.cover .scrim{position:absolute; inset:0; background:linear-gradient(100deg, rgba(255,255,255,.96) 0%, rgba(255,255,255,.82) 34%, rgba(255,255,255,0) 56%);}
+.cover .inner{position:relative; height:100%; display:flex; flex-direction:column; justify-content:center; padding:0 76px;}
+.cover .logo{height:34px; width:auto; position:absolute; top:48px; left:76px}
+.cover h1{font-family:var(--fHead); font-weight:800; letter-spacing:-.025em; line-height:1.02; font-size:66px; color:var(--ink)}
+.cover h1 .red{color:var(--red); display:block}
+.cover .rule{width:64px; height:5px; background:var(--red); border-radius:3px; margin:26px 0 22px}
+.cover .meta{font-size:15px; color:var(--muted); line-height:1.7}
+.cover .meta strong{color:var(--text); font-weight:600}
+.cover .program{position:absolute; bottom:46px; left:76px; font-size:12.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); font-weight:600}
+
+/* =========================================================================
+   QUOTE (slide 2)
+   ========================================================================= */
+.quote-wrap{flex:1; display:flex; flex-direction:column; justify-content:center; max-width:70ch}
+.quote-mark{font-family:var(--fHead); font-size:120px; line-height:.6; color:var(--red); font-weight:800; height:54px}
+.quote-wrap blockquote{font-family:var(--fHead); font-weight:600; font-size:46px; line-height:1.18; letter-spacing:-.02em; color:#fff; margin:18px 0 26px}
+.quote-wrap blockquote em{color:#ff6a6f; font-style:normal}
+.quote-wrap cite{font-style:normal; font-size:16px; color:rgba(255,255,255,.65); letter-spacing:.04em}
+.quote-wrap cite b{color:#fff; font-weight:600}
+
+/* =========================================================================
+   DIVIDER (section openers)
+   ========================================================================= */
+.divider{justify-content:center}
+.divider .pillar-no{font-family:var(--fHead); font-weight:800; font-size:200px; line-height:.8; color:rgba(255,255,255,.06); position:absolute; right:60px; top:50%; transform:translateY(-50%); letter-spacing:-.04em}
+.divider .eyebrow{font-family:var(--fHead); font-weight:700; letter-spacing:.18em; text-transform:uppercase; font-size:14px; color:#ff6a6f; display:flex; align-items:center; gap:12px}
+.divider .eyebrow .dot{width:26px;height:26px;border-radius:50%;background:var(--red);position:relative;overflow:hidden}
+.divider .eyebrow .dot::before{content:"";position:absolute;left:50%;bottom:5px;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:9px solid #fff;transform:translateX(-50%)}
+.divider h2{font-family:var(--fHead); font-weight:800; font-size:64px; letter-spacing:-.025em; color:#fff; margin:20px 0 18px; line-height:1.02; max-width:18ch}
+.divider .lead{font-size:18px; color:rgba(255,255,255,.7); max-width:54ch; line-height:1.55}
+.divider .prog-rail{display:flex; gap:10px; margin-top:34px}
+.divider .prog-rail span{font-size:12.5px; font-weight:600; letter-spacing:.04em; color:rgba(255,255,255,.4); padding:7px 14px; border:1px solid rgba(255,255,255,.14); border-radius:99px}
+.divider .prog-rail span.on{color:#fff; border-color:var(--red); background:rgba(236,27,35,.18)}
+
+/* =========================================================================
+   Generic building blocks
+   ========================================================================= */
+.cards{display:grid; gap:16px; flex:1; min-height:0}
+.cards.c3{grid-template-columns:repeat(3,1fr)}
+.cards.c2{grid-template-columns:repeat(2,1fr)}
+.card{
+  background:var(--card); border:1px solid var(--line); border-radius:14px;
+  padding:20px 22px; display:flex; flex-direction:column; gap:8px;
+  transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.card:hover{transform:translateY(-3px); box-shadow:0 18px 36px -22px rgba(0,0,0,.3); border-color:var(--line-strong)}
+.card .ic{width:40px; height:40px; border-radius:11px; background:var(--tint-red); color:var(--red); display:grid; place-items:center; flex:none}
+.card .ic svg{width:22px; height:22px}
+.card .num{font-family:var(--fHead); font-weight:800; font-size:15px; color:var(--red); width:30px; height:30px; border-radius:8px; background:var(--tint-red); display:grid; place-items:center}
+.card h3{font-family:var(--fHead); font-weight:700; font-size:18px; color:var(--ink); letter-spacing:-.01em}
+.card p{font-size:14px; color:var(--muted); line-height:1.5}
+.card .tag{font-family:var(--fMono); font-size:12px; color:var(--red); font-weight:500}
+
+/* two-column: text + visual */
+.two{display:grid; grid-template-columns:1fr 1fr; gap:40px; flex:1; min-height:0; align-items:center}
+.two.wide-r{grid-template-columns:0.86fr 1.14fr}
+.two .txt{display:flex; flex-direction:column; justify-content:center}
+.bullets{list-style:none; display:flex; flex-direction:column; gap:14px; margin-top:6px}
+.bullets li{position:relative; padding-left:28px; font-size:16.5px; line-height:1.5; color:var(--text)}
+.bullets li::before{content:""; position:absolute; left:0; top:9px; width:9px; height:9px; border-radius:3px; background:var(--red)}
+.bullets li.strong{font-weight:600; color:var(--ink)}
+.bullets li b{color:var(--ink); font-weight:600}
+.viz{position:relative; height:100%; display:flex; flex-direction:column; justify-content:center}
+
+/* rail (side panel) */
+.rail{background:var(--ink); color:#fff; border-radius:16px; padding:24px 26px; align-self:stretch; display:flex; flex-direction:column; justify-content:center}
+.rail h4{font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.12em; text-transform:uppercase; color:#ff6a6f; margin-bottom:16px}
+.rail ul{list-style:none; display:flex; flex-direction:column; gap:13px}
+.rail li{font-size:15px; color:rgba(255,255,255,.86); padding-left:22px; position:relative; line-height:1.4}
+.rail li::before{content:""; position:absolute; left:0; top:7px; width:7px; height:7px; border-radius:50%; background:var(--red)}
+
+.bullets-rail{display:grid; grid-template-columns:1.55fr 1fr; gap:32px; flex:1; min-height:0; align-items:stretch}
+.bullets-rail .txt{display:flex; flex-direction:column; justify-content:center}
+
+/* =========================================================================
+   Code block (typing reveal + syntax tint)
+   ========================================================================= */
+.codewrap{background:var(--code-bg); border-radius:14px; overflow:hidden; box-shadow:0 24px 50px -28px rgba(0,0,0,.5); border:1px solid #2a2d36; display:flex; flex-direction:column}
+.codewrap .bar{display:flex; align-items:center; gap:7px; padding:12px 16px; border-bottom:1px solid #272a33; background:#15171c}
+.codewrap .bar i{width:11px; height:11px; border-radius:50%; display:block}
+.codewrap .bar i:nth-child(1){background:#ff5f57}.codewrap .bar i:nth-child(2){background:#febc2e}.codewrap .bar i:nth-child(3){background:#28c840}
+.codewrap .bar .fn{margin-left:10px; font-family:var(--fMono); font-size:12.5px; color:#8b909c}
+.codewrap pre{margin:0; padding:20px 22px; overflow:hidden; flex:1}
+.codewrap code{font-family:var(--fMono); font-size:14.5px; line-height:1.65; color:var(--code-ink); white-space:pre; display:block}
+.tok-kw{color:#ff7b72}.tok-fn{color:#d2a8ff}.tok-str{color:#a5d6ff}.tok-num{color:#79c0ff}.tok-com{color:#7d8590; font-style:italic}.tok-op{color:#ff7b72}.tok-var{color:#ffa657}
+.code-line{display:block}
+.slide.active .code-line{animation:codeLine .42s both}
+.slide.active .code-line:nth-child(1){animation-delay:.15s}.slide.active .code-line:nth-child(2){animation-delay:.22s}
+.slide.active .code-line:nth-child(3){animation-delay:.29s}.slide.active .code-line:nth-child(4){animation-delay:.36s}
+.slide.active .code-line:nth-child(5){animation-delay:.43s}.slide.active .code-line:nth-child(6){animation-delay:.50s}
+.slide.active .code-line:nth-child(7){animation-delay:.57s}.slide.active .code-line:nth-child(8){animation-delay:.64s}
+.slide.active .code-line:nth-child(9){animation-delay:.71s}.slide.active .code-line:nth-child(10){animation-delay:.78s}
+.slide.active .code-line:nth-child(11){animation-delay:.85s}.slide.active .code-line:nth-child(12){animation-delay:.92s}
+.slide.active .code-line:nth-child(13){animation-delay:.99s}.slide.active .code-line:nth-child(14){animation-delay:1.06s}
+@keyframes codeLine{from{opacity:0; transform:translateX(-8px)}to{opacity:1; transform:none}}
+.code-note{font-size:14px; color:var(--muted); margin-top:14px; line-height:1.5; font-style:italic}
+.code-points{list-style:none; display:flex; flex-direction:column; gap:12px}
+.code-points li{position:relative; padding-left:24px; font-size:15.5px; line-height:1.45; color:var(--text)}
+.code-points li::before{content:"›"; position:absolute; left:0; top:-1px; color:var(--red); font-weight:800; font-size:18px}
+
+/* =========================================================================
+   Conway Venn (slide 4)
+   ========================================================================= */
+.venn{position:relative; width:430px; height:380px; margin:auto}
+.venn .circ{position:absolute; width:250px; height:250px; border-radius:50%; mix-blend-mode:multiply; display:grid; place-items:center; opacity:0; transform:scale(.6); transition:opacity .7s ease, transform .7s cubic-bezier(.34,1.56,.64,1)}
+.venn .c1{background:rgba(236,27,35,.40); left:0; top:0}
+.venn .c2{background:rgba(28,110,156,.40); right:0; top:0}
+.venn .c3{background:rgba(30,142,90,.42); left:50%; bottom:0; transform:translateX(-50%) scale(.6)}
+.slide.active .venn .c1{opacity:1; transform:scale(1); transition-delay:.2s}
+.slide.active .venn .c2{opacity:1; transform:scale(1); transition-delay:.45s}
+.slide.active .venn .c3{opacity:1; transform:translateX(-50%) scale(1); transition-delay:.7s}
+.venn .lbl{font-family:var(--fHead); font-weight:700; font-size:14px; color:var(--ink); text-align:center; line-height:1.2; pointer-events:none; padding:0 30px}
+.venn .center{position:absolute; left:50%; top:48%; transform:translate(-50%,-50%); z-index:5; background:var(--ink); color:#fff; font-family:var(--fHead); font-weight:800; font-size:13px; padding:8px 14px; border-radius:99px; white-space:nowrap; opacity:0; transition:opacity .5s ease .95s; box-shadow:0 8px 20px -8px rgba(0,0,0,.5)}
+.slide.active .venn .center{opacity:1}
+.venn .danger{position:absolute; left:14%; bottom:30%; z-index:6; font-family:var(--fHead); font-weight:800; font-size:11px; color:#fff; background:var(--red); padding:5px 10px; border-radius:6px; transform:rotate(-8deg); opacity:0; transition:opacity .5s ease 1.2s; box-shadow:0 6px 16px -6px rgba(236,27,35,.7)}
+.slide.active .venn .danger{opacity:1}
+
+/* =========================================================================
+   Stat counters (slide 5 + others)
+   ========================================================================= */
+.stat-row{display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin:auto 0}
+.stat{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:30px 26px; text-align:left; position:relative; overflow:hidden}
+.stat .big{font-family:var(--fHead); font-weight:800; font-size:62px; line-height:1; color:var(--red); letter-spacing:-.03em}
+.stat .big .unit{font-size:32px; vertical-align:super; margin-left:2px}
+.stat .lab{font-size:15px; color:var(--text); margin-top:12px; line-height:1.45; font-weight:500}
+.stat .sub{font-size:12.5px; color:var(--faint); margin-top:8px}
+.stat::before{content:""; position:absolute; left:0; top:0; bottom:0; width:5px; background:var(--red)}
+
+/* progress ring (80% stat) */
+.ring-wrap{display:flex; align-items:center; gap:40px; margin:auto 0}
+.ring{position:relative; width:230px; height:230px; flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring .pct{position:absolute; inset:0; display:grid; place-items:center; font-family:var(--fHead); font-weight:800; font-size:56px; color:var(--ink)}
+.ring-copy{max-width:46ch}
+.ring-copy h3{font-family:var(--fHead); font-weight:800; font-size:28px; color:var(--ink); letter-spacing:-.02em; line-height:1.1; margin-bottom:14px}
+.ring-copy p{font-size:16px; color:var(--muted); line-height:1.55}
+
+/* =========================================================================
+   Step strip (5 facets / workflow)
+   ========================================================================= */
+.flow{display:flex; align-items:stretch; gap:0; margin:auto 0; width:100%}
+.flow .step{flex:1; position:relative; display:flex; flex-direction:column; gap:8px; padding:0 6px}
+.flow .step .node{width:54px; height:54px; border-radius:14px; background:var(--ink); color:#fff; font-family:var(--fHead); font-weight:800; font-size:20px; display:grid; place-items:center; position:relative; z-index:2}
+.flow .step:nth-child(odd) .node{background:var(--red)}
+.flow .step h4{font-family:var(--fHead); font-weight:700; font-size:16.5px; color:var(--ink); margin-top:10px}
+.flow .step p{font-size:13.5px; color:var(--muted); line-height:1.45}
+.flow .arrow{position:absolute; top:27px; left:46px; right:-8px; height:2px; background:var(--line-strong); z-index:1}
+.flow .arrow::after{content:""; position:absolute; right:0; top:-4px; border-left:8px solid var(--line-strong); border-top:5px solid transparent; border-bottom:5px solid transparent}
+.flow .step:last-child .arrow{display:none}
+/* sequential build for flow */
+.flow .step{opacity:0; transform:translateY(14px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .flow .step{opacity:1; transform:none}
+.slide.active .flow .step:nth-child(1){transition-delay:.15s}.slide.active .flow .step:nth-child(2){transition-delay:.35s}
+.slide.active .flow .step:nth-child(3){transition-delay:.55s}.slide.active .flow .step:nth-child(4){transition-delay:.75s}
+.slide.active .flow .step:nth-child(5){transition-delay:.95s}.slide.active .flow .step:nth-child(6){transition-delay:1.15s}
+.flow.compact .node{width:46px;height:46px;border-radius:12px;font-size:17px}
+.flow-cap{font-size:14px; color:var(--muted); font-style:italic; text-align:center; margin-top:26px}
+
+/* journey / agenda */
+.journey{display:grid; grid-template-columns:repeat(4,1fr); gap:18px; flex:1; min-height:0; align-items:stretch}
+.jcard{border:1px solid var(--line); border-radius:16px; padding:24px 22px; display:flex; flex-direction:column; position:relative; background:var(--surface); overflow:hidden}
+.jcard .pn{font-family:var(--fHead); font-weight:800; font-size:46px; color:var(--card-2); line-height:1; letter-spacing:-.03em}
+.jcard .ph{font-family:var(--fHead); font-weight:700; font-size:18.5px; color:var(--ink); margin:14px 0 8px; letter-spacing:-.01em}
+.jcard p{font-size:13.5px; color:var(--muted); line-height:1.5; flex:1}
+.jcard .demo{margin-top:14px; font-family:var(--fMono); font-size:11px; font-weight:600; color:var(--red); background:var(--tint-red); padding:5px 10px; border-radius:6px; align-self:flex-start; display:inline-flex; gap:6px; align-items:center}
+.jcard::after{content:""; position:absolute; left:0; right:0; bottom:0; height:4px; background:var(--red); transform:scaleX(0); transform-origin:left; transition:transform .5s ease}
+.slide.active .jcard::after{transform:scaleX(1)}
+.slide.active .jcard:nth-child(1)::after{transition-delay:.3s}.slide.active .jcard:nth-child(2)::after{transition-delay:.45s}
+.slide.active .jcard:nth-child(3)::after{transition-delay:.6s}.slide.active .jcard:nth-child(4)::after{transition-delay:.75s}
+
+/* =========================================================================
+   Layered stack diagram (Python data stack)
+   ========================================================================= */
+.stack{display:flex; flex-direction:column; gap:12px; margin:auto 0; width:100%}
+.layer{display:grid; grid-template-columns:200px 1fr; align-items:center; gap:22px; border-radius:14px; padding:18px 24px; color:#fff; position:relative; overflow:hidden; opacity:0; transform:translateX(-18px); transition:opacity .55s ease, transform .55s cubic-bezier(.16,1,.3,1)}
+.slide.active .layer{opacity:1; transform:none}
+.slide.active .layer:nth-child(1){transition-delay:.5s}.slide.active .layer:nth-child(2){transition-delay:.38s}
+.slide.active .layer:nth-child(3){transition-delay:.26s}.slide.active .layer:nth-child(4){transition-delay:.14s}
+.layer .lname{font-family:var(--fHead); font-weight:800; font-size:21px; letter-spacing:-.01em; display:flex; align-items:baseline; gap:9px}
+.layer .lname code{font-family:var(--fMono); font-size:13px; opacity:.7; font-weight:500}
+.layer .ldesc{font-size:14.5px; line-height:1.4; opacity:.95}
+.layer.l1{background:linear-gradient(100deg,#2A2A2F,#1c1c20)}
+.layer.l2{background:linear-gradient(100deg,var(--red-dark),var(--red))}
+.layer.l3{background:linear-gradient(100deg,#1C6E9C,#2487bf)}
+.layer.l4{background:linear-gradient(100deg,#0E7C6B,#13a08a)}
+.stack .scaffold{font-size:12.5px; color:var(--muted); text-align:center; font-style:italic}
+
+/* container / building-block cards */
+.mini-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:14px}
+.mini{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:15px 18px}
+.mini .mh{font-family:var(--fMono); font-size:14px; font-weight:700; color:var(--red)}
+.mini .md{font-size:13.5px; color:var(--muted); margin-top:4px; line-height:1.4}
+.mini code{font-family:var(--fMono); font-size:12.5px; color:var(--ink); background:var(--card-2); padding:1px 5px; border-radius:4px}
+
+/* before / after code columns */
+.ba{display:grid; grid-template-columns:1fr 1fr; gap:22px; flex:1; min-height:0; align-items:stretch}
+.ba .col{display:flex; flex-direction:column}
+.ba .ba-h{font-family:var(--fHead); font-weight:700; font-size:14px; margin-bottom:10px; display:flex; align-items:center; gap:9px}
+.ba .ba-h .tagx{font-size:11px; padding:3px 9px; border-radius:99px; font-weight:700; letter-spacing:.04em}
+.ba .before .tagx{background:var(--card-2); color:var(--muted)}
+.ba .after .tagx{background:var(--tint-red); color:var(--red)}
+.ba .codewrap{flex:1}
+/* optimisation pushdown strip (eager vs lazy slide) */
+.pushdown{display:flex; gap:12px; margin-top:16px; justify-content:center; flex-wrap:wrap}
+.pushdown .pd{display:flex; align-items:center; gap:9px; background:var(--tint-red); border:1px solid var(--tint-red-2); border-radius:99px; padding:8px 16px; font-size:13px; color:var(--ink); opacity:0; transform:translateY(10px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .pushdown .pd{opacity:1; transform:none}
+.slide.active .pushdown .pd:nth-child(1){transition-delay:.5s}.slide.active .pushdown .pd:nth-child(2){transition-delay:.66s}.slide.active .pushdown .pd:nth-child(3){transition-delay:.82s}
+.pushdown .pd b{color:var(--red); font-weight:700}
+.pushdown .pd .ck{width:18px;height:18px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-size:11px;flex:none}
+
+/* =========================================================================
+   Notebook-playback demo component
+   ========================================================================= */
+.demo-stage{flex:1; min-height:0; display:grid; grid-template-columns:1.62fr 1fr; gap:26px; align-items:stretch}
+.nb{background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 24px 50px -30px rgba(0,0,0,.35); display:flex; flex-direction:column; overflow:hidden}
+.nb-top{display:flex; align-items:center; gap:8px; padding:11px 16px; border-bottom:1px solid var(--line); background:var(--card)}
+.nb-top .t-ic{width:9px;height:9px;border-radius:50%;background:#e0a800}
+.nb-top .t-ic.r{background:var(--red)} .nb-top .t-ic.g{background:#28a745}
+.nb-top .nb-name{font-family:var(--fMono); font-size:12.5px; color:var(--muted); margin-left:8px}
+.nb-top .nb-kernel{margin-left:auto; font-size:11.5px; color:var(--faint); display:flex; align-items:center; gap:6px}
+.nb-top .nb-kernel::after{content:"";width:8px;height:8px;border-radius:50%;background:#28a745}
+.nb-body{flex:1; overflow:hidden; padding:6px 0; scroll-behavior:smooth}
+.nb-cell{padding:5px 16px; opacity:0; transform:translateY(8px); transition:opacity .4s ease, transform .4s ease}
+.nb-cell.shown{opacity:1; transform:none}
+.nb-in{display:grid; grid-template-columns:54px 1fr; gap:10px; align-items:start}
+.nb-prompt{font-family:var(--fMono); font-size:12.5px; color:#3b6fb0; text-align:right; padding-top:9px; user-select:none}
+.nb-prompt.busy{color:var(--red)}
+.nb-code{position:relative; background:#f6f7f9; border:1px solid #eceef1; border-left:3px solid var(--red); border-radius:6px; padding:9px 12px; font-family:var(--fMono); font-size:13px; line-height:1.55; color:#1f2430; white-space:pre; overflow:hidden; transition:box-shadow .3s ease, border-left-color .3s ease}
+.nb-cell.running .nb-code{box-shadow:0 0 0 2px var(--tint-red-2), 0 8px 22px -12px rgba(236,27,35,.5); border-left-color:var(--red-dark)}
+.nb-cell.running .nb-code::after{content:"▋"; color:var(--red); animation:caret .7s steps(1) infinite; margin-left:1px}
+@keyframes caret{50%{opacity:0}}
+.nb-out{margin:6px 0 0 64px; font-family:var(--fMono); font-size:12px; line-height:1.5; color:#333; max-height:0; opacity:0; overflow:hidden; transition:max-height .5s ease, opacity .4s ease}
+.nb-out.shown{max-height:240px; opacity:1}
+.nb-out .otable{border-collapse:collapse; font-size:11px}
+.nb-out .otable th{background:var(--ink); color:#fff; font-weight:600; padding:2px 9px; text-align:right; font-family:var(--fMono)}
+.nb-out .otable td{padding:2px 9px; border-bottom:1px solid #eee; text-align:right; color:#444}
+.nb-out .otable tr:nth-child(even) td{background:#fafafa}
+.nb-out .muted{color:#8a9099}
+.nb-out .ok{color:#1E8E5A}
+.demo-side{display:flex; flex-direction:column; gap:16px; justify-content:center}
+.demo-card{border-radius:16px; padding:22px 24px; background:var(--ink); color:#fff}
+.demo-card .dk{font-family:var(--fHead); font-weight:700; font-size:12px; letter-spacing:.13em; text-transform:uppercase; color:#ff6a6f; margin-bottom:10px}
+.demo-card h3{font-family:var(--fHead); font-weight:800; font-size:22px; line-height:1.12; letter-spacing:-.01em; margin-bottom:10px}
+.demo-card p{font-size:14px; line-height:1.5; color:rgba(255,255,255,.82)}
+.demo-steps{list-style:none; display:flex; flex-direction:column; gap:11px}
+.demo-steps li{display:flex; gap:11px; align-items:flex-start; font-size:14px; color:var(--text); line-height:1.4}
+.demo-steps li .sn{flex:none; width:24px; height:24px; border-radius:7px; background:var(--tint-red); color:var(--red); font-family:var(--fHead); font-weight:800; font-size:12px; display:grid; place-items:center}
+.demo-steps li.on .sn{background:var(--red); color:#fff}
+.replay{align-self:flex-start; display:inline-flex; align-items:center; gap:8px; background:var(--tint-red); color:var(--red); border:1px solid var(--tint-red-2); font-family:var(--fHead); font-weight:700; font-size:13px; padding:9px 16px; border-radius:99px; cursor:pointer; transition:all .2s ease}
+.replay:hover{background:var(--red); color:#fff}
+.replay svg{width:14px;height:14px}
+.demo-take{background:var(--tint-red); border:1px solid var(--tint-red-2); border-radius:12px; padding:14px 18px; font-size:13.5px; color:var(--ink); line-height:1.45}
+.demo-take b{color:var(--red)}
+
+/* =========================================================================
+   VS compare panels (structured vs unstructured, good vs bad)
+   ========================================================================= */
+.vs{display:grid; grid-template-columns:1fr 1fr; gap:24px; flex:1; min-height:0}
+.vs .panel{border:1px solid var(--line); border-radius:16px; padding:24px 26px; display:flex; flex-direction:column; background:var(--surface); position:relative; overflow:hidden}
+.vs .panel.accent{background:linear-gradient(180deg,var(--tint-red),#fff); border-color:var(--tint-red-2)}
+.vs .panel .ph{font-family:var(--fHead); font-weight:800; font-size:21px; color:var(--ink); letter-spacing:-.01em; display:flex; align-items:center; gap:12px}
+.vs .panel .ph .glyph{width:42px; height:42px; border-radius:11px; display:grid; place-items:center; flex:none}
+.vs .panel.accent .ph .glyph{background:var(--red); color:#fff}
+.vs .panel:not(.accent) .ph .glyph{background:var(--ink); color:#fff}
+.vs .panel .ps{font-size:14px; color:var(--muted); margin:8px 0 16px; line-height:1.45}
+.vs .chips{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px}
+.vs .chip{font-family:var(--fMono); font-size:12px; padding:6px 11px; border-radius:8px; background:var(--card); border:1px solid var(--line); color:var(--text)}
+.vs .panel.accent .chip{background:#fff; border-color:var(--tint-red-2)}
+.vs .where{margin-top:auto; font-size:13.5px; color:var(--text); line-height:1.45; padding-top:14px; border-top:1px dashed var(--line-strong)}
+.vs .where b{color:var(--red)}
+
+/* annotated "shape of data" table */
+.shape-tbl{display:grid; grid-template-columns:auto 1fr; gap:0 18px; align-items:center; margin:auto 0}
+.dtable{border-collapse:separate; border-spacing:0; border-radius:12px; overflow:hidden; box-shadow:0 18px 40px -28px rgba(0,0,0,.3); width:100%}
+.dtable th{background:var(--ink); color:#fff; font-family:var(--fMono); font-size:13px; font-weight:600; padding:11px 16px; text-align:left}
+.dtable th.target{background:var(--red)}
+.dtable td{padding:10px 16px; font-family:var(--fMono); font-size:13.5px; color:var(--text); background:#fff; border-bottom:1px solid var(--line)}
+.dtable td.target{background:var(--tint-red); color:var(--red-dark); font-weight:600}
+.dtable tr:nth-child(even) td{background:#fafafb}
+.dtable tr:nth-child(even) td.target{background:var(--tint-red-2)}
+.annot{font-family:var(--fHead); font-weight:700; font-size:14px; color:var(--red); display:flex; align-items:center; gap:8px}
+.annot.muted{color:var(--muted)}
+.shape-legend{display:flex; gap:26px; justify-content:center; margin-top:22px; flex-wrap:wrap}
+.shape-legend .item{display:flex; align-items:center; gap:9px; font-size:14px; color:var(--text)}
+.shape-legend .sw{width:16px; height:16px; border-radius:5px}
+
+/* analytics staircase (ascending) */
+.stair{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; align-items:end; flex:1; min-height:0; padding-top:8px}
+.rung{display:flex; flex-direction:column; justify-content:flex-end}
+.rung .box{border-radius:14px 14px 0 0; padding:20px 20px 22px; color:#fff; position:relative; transform-origin:bottom; transform:scaleY(0); opacity:0; transition:transform .6s cubic-bezier(.16,1,.3,1), opacity .4s ease}
+.slide.active .rung .box{transform:scaleY(1); opacity:1}
+.slide.active .rung:nth-child(1) .box{transition-delay:.2s}.slide.active .rung:nth-child(2) .box{transition-delay:.42s}
+.slide.active .rung:nth-child(3) .box{transition-delay:.64s}.slide.active .rung:nth-child(4) .box{transition-delay:.86s}
+.rung:nth-child(1) .box{background:#3a3a40; min-height:150px}
+.rung:nth-child(2) .box{background:#8a1419; min-height:215px}
+.rung:nth-child(3) .box{background:var(--red-dark); min-height:280px}
+.rung:nth-child(4) .box{background:var(--red); min-height:345px}
+.rung .q{font-family:var(--fMono); font-size:12px; opacity:.85; margin-bottom:6px}
+.rung .box h4{font-family:var(--fHead); font-weight:800; font-size:21px; letter-spacing:-.01em}
+.rung .box p{font-size:13px; line-height:1.4; opacity:.92; margin-top:8px}
+.rung .box .step-i{position:absolute; top:14px; right:16px; font-family:var(--fHead); font-weight:800; font-size:14px; opacity:.35}
+.stair-axis{display:flex; justify-content:space-between; font-size:13px; color:var(--muted); margin-top:14px; font-style:italic}
+.stair-axis b{color:var(--red); font-style:normal; font-weight:700}
+
+/* animated SVG charts (scatter, dual-line) */
+.svg-card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px 22px; height:100%; display:flex; flex-direction:column}
+.svg-card .ct{font-family:var(--fHead); font-weight:700; font-size:15px; color:var(--ink); margin-bottom:6px}
+.chart-svg{width:100%; flex:1}
+.chart-svg .dot{opacity:0; transition:opacity .5s ease}
+.slide.active .chart-svg .dot{opacity:.78}
+.chart-svg .trend{stroke:var(--red); stroke-width:3; fill:none; stroke-dasharray:600; stroke-dashoffset:600; transition:stroke-dashoffset 1.3s ease .6s}
+.slide.active .chart-svg .trend{stroke-dashoffset:0}
+.chart-svg .ln{fill:none; stroke-width:3; stroke-dasharray:900; stroke-dashoffset:900; transition:stroke-dashoffset 1.5s ease}
+.slide.active .chart-svg .ln1{stroke-dashoffset:0; transition-delay:.3s}
+.slide.active .chart-svg .ln2{stroke-dashoffset:0; transition-delay:.7s}
+.chart-svg .axis{stroke:var(--line-strong); stroke-width:1.5}
+.chart-svg .glab{font-family:var(--fBody); font-size:11px; fill:var(--muted)}
+
+/* problem -> fix table */
+.pf-table{display:flex; flex-direction:column; border:1px solid var(--line); border-radius:14px; overflow:hidden; flex:1; min-height:0}
+.pf-row{display:grid; grid-template-columns:1.1fr 1fr 1.25fr; align-items:center; padding:0; border-bottom:1px solid var(--line); opacity:0; transform:translateX(-12px); transition:opacity .45s ease, transform .45s ease}
+.slide.active .pf-row{opacity:1; transform:none}
+.slide.active .pf-row:nth-child(1){transition-delay:.1s}.slide.active .pf-row:nth-child(2){transition-delay:.2s}
+.slide.active .pf-row:nth-child(3){transition-delay:.3s}.slide.active .pf-row:nth-child(4){transition-delay:.4s}
+.slide.active .pf-row:nth-child(5){transition-delay:.5s}.slide.active .pf-row:nth-child(6){transition-delay:.6s}
+.slide.active .pf-row:nth-child(7){transition-delay:.7s}
+.pf-row:last-child{border-bottom:none}
+.pf-row.head{background:var(--ink); color:#fff; opacity:1; transform:none}
+.pf-row.head>div{font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.04em; text-transform:uppercase; padding:12px 20px; color:rgba(255,255,255,.85)}
+.pf-row>div{padding:13px 20px; font-size:14.5px}
+.pf-row .prob{font-weight:600; color:var(--ink); display:flex; align-items:center; gap:10px}
+.pf-row .prob .d{width:8px;height:8px;border-radius:50%;background:var(--red);flex:none}
+.pf-row .fix code{font-family:var(--fMono); font-size:13px; background:var(--tint-red); color:var(--red-dark); padding:3px 9px; border-radius:6px; font-weight:500}
+.pf-row .desc{color:var(--muted); font-size:13.5px; line-height:1.4}
+.pf-row:nth-child(even):not(.head){background:#fafafb}
+
+/* tidy before/after tables */
+.tidy{display:grid; grid-template-columns:1fr auto 1fr; gap:20px; align-items:center; flex:1; min-height:0}
+.tidy .tcol{display:flex; flex-direction:column}
+.tidy .tlabel{font-family:var(--fHead); font-weight:800; font-size:14px; letter-spacing:.06em; text-transform:uppercase; margin-bottom:12px; display:flex; align-items:center; gap:9px}
+.tidy .messy .tlabel{color:var(--muted)} .tidy .clean .tlabel{color:var(--red)}
+.tidy .arrow-mid{font-size:34px; color:var(--red); font-weight:800}
+.tidy .note{font-size:12.5px; color:var(--muted); margin-top:10px; font-style:italic; line-height:1.4}
+
+/* histogram (EDA) */
+.hist{display:flex; align-items:flex-end; gap:7px; height:230px; padding:0 4px; border-bottom:2px solid var(--line-strong)}
+.hist .bar{flex:1; background:linear-gradient(180deg,var(--red),var(--red-dark)); border-radius:5px 5px 0 0; height:0; transition:height .8s cubic-bezier(.16,1,.3,1); position:relative}
+.hist .bar.med{background:linear-gradient(180deg,#3a3a40,#222)}
+.slide.active .hist .bar{height:var(--h)}
+.slide.active .hist .bar:nth-child(1){transition-delay:.1s}.slide.active .hist .bar:nth-child(2){transition-delay:.16s}
+.slide.active .hist .bar:nth-child(3){transition-delay:.22s}.slide.active .hist .bar:nth-child(4){transition-delay:.28s}
+.slide.active .hist .bar:nth-child(5){transition-delay:.34s}.slide.active .hist .bar:nth-child(6){transition-delay:.40s}
+.slide.active .hist .bar:nth-child(7){transition-delay:.46s}.slide.active .hist .bar:nth-child(8){transition-delay:.52s}
+.slide.active .hist .bar:nth-child(9){transition-delay:.58s}.slide.active .hist .bar:nth-child(10){transition-delay:.64s}
+.slide.active .hist .bar:nth-child(11){transition-delay:.70s}.slide.active .hist .bar:nth-child(12){transition-delay:.76s}
+.stat-chips{display:flex; flex-direction:column; gap:12px}
+.stat-chips .sc{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 18px; display:flex; justify-content:space-between; align-items:center}
+.stat-chips .sc .k{font-size:13.5px; color:var(--muted)}
+.stat-chips .sc .v{font-family:var(--fHead); font-weight:800; font-size:22px; color:var(--red)}
+
+/* chart-picker glyph grid */
+.picker{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; flex:1; min-height:0}
+.pick{border:1px solid var(--line); border-radius:14px; padding:18px 20px; display:flex; flex-direction:column; gap:10px; background:var(--surface); transition:transform .25s ease, box-shadow .25s ease, border-color .25s}
+.pick:hover{transform:translateY(-3px); box-shadow:0 18px 34px -22px rgba(0,0,0,.3); border-color:var(--tint-red-2)}
+.pick .pg-glyph{height:46px; display:flex; align-items:flex-end; gap:4px}
+.pick .q{font-family:var(--fMono); font-size:12px; color:var(--red); font-weight:500}
+.pick h4{font-family:var(--fHead); font-weight:700; font-size:16px; color:var(--ink)}
+.pick p{font-size:13px; color:var(--muted); line-height:1.4}
+.pick svg{width:100%; height:46px}
+
+/* insight callout */
+.insight{display:grid; grid-template-columns:1fr 1fr; gap:30px; flex:1; min-height:0; align-items:center}
+.insight .lead-card{background:var(--ink); color:#fff; border-radius:18px; padding:30px 32px; position:relative; overflow:hidden}
+.insight .lead-card::before{content:""; position:absolute; right:-40px; top:-40px; width:160px; height:160px; border-radius:50%; background:radial-gradient(circle,rgba(236,27,35,.4),transparent 70%)}
+.insight .lead-card .so{font-family:var(--fHead); font-weight:700; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#ff6a6f; margin-bottom:14px}
+.insight .lead-card .big-line{font-family:var(--fHead); font-weight:800; font-size:28px; line-height:1.15; letter-spacing:-.01em}
+.insight .lead-card .big-line em{color:#ff8e91; font-style:normal}
+.layer-list{list-style:none; display:flex; flex-direction:column; gap:16px}
+.layer-list li{display:flex; gap:14px; align-items:flex-start}
+.layer-list li .n{flex:none; width:30px; height:30px; border-radius:9px; background:var(--tint-red); color:var(--red); font-family:var(--fHead); font-weight:800; display:grid; place-items:center; font-size:14px}
+.layer-list li b{font-family:var(--fHead); color:var(--ink); font-size:16px}
+.layer-list li p{font-size:14px; color:var(--muted); line-height:1.4; margin-top:2px}
+
+/* closing recap */
+.recap-grid{display:grid; grid-template-columns:1fr 1fr; gap:30px; flex:1; min-height:0; align-items:center}
+.recap-col h4{font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.12em; text-transform:uppercase; margin-bottom:18px; display:flex; align-items:center; gap:10px}
+.recap-col.recap h4{color:#ff6a6f}.recap-col.next h4{color:#fff}
+.recap-col ul{list-style:none; display:flex; flex-direction:column; gap:14px}
+.recap-col li{font-size:16px; line-height:1.45; padding-left:26px; position:relative; color:rgba(255,255,255,.88)}
+.recap-col.recap li::before{content:"✓"; position:absolute; left:0; color:var(--red); font-weight:800}
+.recap-col.next li::before{content:"→"; position:absolute; left:0; color:#ff6a6f; font-weight:800}
+.recap-col.next{background:rgba(236,27,35,.1); border:1px solid rgba(236,27,35,.25); border-radius:18px; padding:26px 28px}
+
+/* big single stat (80%) */
+.megastat{display:flex; align-items:center; gap:60px; margin:auto 0}
+.megastat .num{font-family:var(--fHead); font-weight:800; font-size:200px; line-height:.85; color:var(--red); letter-spacing:-.05em}
+.megastat .num .u{font-size:90px}
+.megastat .copy{max-width:42ch}
+.megastat .copy h3{font-family:var(--fHead); font-weight:800; font-size:30px; color:var(--ink); line-height:1.1; letter-spacing:-.02em; margin-bottom:14px}
+.megastat .copy p{font-size:16px; color:var(--muted); line-height:1.55}
+.megastat .copy .src{font-size:12.5px; color:var(--faint); margin-top:14px}
+
+/* =========================================================================
+   Navigation chrome
+   ========================================================================= */
+.progress{position:fixed; top:0; left:0; height:3px; background:var(--red); z-index:50; transition:width .4s ease; box-shadow:0 0 12px rgba(236,27,35,.6)}
+.hud{position:fixed; bottom:18px; right:22px; z-index:50; display:flex; align-items:center; gap:14px; font-family:var(--fMono); font-size:12px; color:rgba(255,255,255,.55)}
+.hud .dots{display:flex; gap:6px}
+.hud .dot{width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.22); cursor:pointer; transition:all .25s ease}
+.hud .dot.on{background:var(--red); transform:scale(1.35)}
+.hud .dot.sec{background:rgba(255,255,255,.4)}
+.hud .count b{color:#fff}
+.hint{position:fixed; bottom:20px; left:22px; z-index:50; font-size:11.5px; color:rgba(255,255,255,.4); font-family:var(--fMono)}
+.hint kbd{background:rgba(255,255,255,.1); border-radius:4px; padding:1px 6px; color:rgba(255,255,255,.7)}
+/* auto-hide nav chrome when idle or when deck fills the viewport */
+.hud,.hint{transition:opacity .4s ease}
+body.idle .hud, body.idle .hint{opacity:0; pointer-events:none}
+body.static .hud, body.static .hint{display:none}
+
+/* speaker notes drawer */
+.notes{position:fixed; left:0; right:0; bottom:0; z-index:60; transform:translateY(100%); transition:transform .35s cubic-bezier(.16,1,.3,1); background:#16161a; color:#e7e7ea; border-top:3px solid var(--red); max-height:42vh; overflow:auto; padding:22px 30px; box-shadow:0 -20px 50px -20px rgba(0,0,0,.7)}
+.notes.show{transform:none}
+.notes h5{font-family:var(--fHead); font-weight:700; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#ff6a6f; margin-bottom:12px; display:flex; align-items:center; gap:10px}
+.notes ul{margin:0; padding-left:20px; display:flex; flex-direction:column; gap:9px}
+.notes li{font-size:14.5px; line-height:1.55; color:#cfd0d6}
+.notes .close{position:absolute; top:16px; right:22px; color:#888; cursor:pointer; font-size:18px; background:none; border:none}
+
+/* mobile: the deck is a fixed 16:9 stage — prompt rotation when held upright */
+.rotate-cue{position:fixed; inset:0; height:100dvh; z-index:120; display:none;
+  place-items:center; text-align:center; padding:42px;
+  background:radial-gradient(700px 460px at 50% 0%, rgba(236,27,35,.14), transparent 62%), #0a0a0c;
+  color:#e7e7ea; font-family:var(--fHead)}
+.rotate-cue .ic{width:58px; height:58px; margin:0 auto 24px; color:var(--red);
+  animation:rot-tilt 2.2s ease-in-out infinite}
+.rotate-cue h4{font-size:21px; font-weight:800; letter-spacing:-.01em; color:#fff; margin-bottom:10px}
+.rotate-cue p{font-size:14px; line-height:1.55; color:rgba(255,255,255,.6); max-width:34ch; margin:0 auto}
+@keyframes rot-tilt{0%,100%{transform:rotate(-12deg)} 50%{transform:rotate(78deg)}}
+/* show only on small screens held in portrait */
+@media (orientation:portrait) and (max-width:860px){
+  .rotate-cue{display:grid}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important; transition-duration:.2s !important}
+  [data-r]{opacity:1 !important; transform:none !important}
+  .rotate-cue .ic{animation:none; transform:rotate(78deg)}
+}
+/* static mode (QA captures / no-motion): snap everything to final */
+body.static [data-r]{opacity:1 !important; transform:none !important; transition:none !important}
+body.static .code-line{animation:none !important}
+body.static .flow .step,
+body.static .venn .circ,
+body.static .venn .center,
+body.static .venn .danger,
+body.static .jcard::after{opacity:1 !important; transform:none !important; transition:none !important}
+body.static .venn .c3{transform:translateX(-50%) !important}
+body.static .jcard::after{transform:scaleX(1) !important}
+body.static .nb-cell, body.static .nb-out{transition:none !important; transform:none !important; opacity:1 !important}
+body.static .nb-out.shown{max-height:320px !important}
+body.static .pushdown .pd{opacity:1 !important; transform:none !important; transition:none !important}
+/* ============================ Topic 3 (GenAI) additions ============================ */
+.fillc{flex:1; min-height:0; display:flex; flex-direction:column; justify-content:center}
+.fillrow{flex:1; min-height:0; display:flex; align-items:center; gap:40px}
+
+/* next-token prediction + probability bars */
+.ntp{display:grid; grid-template-columns:1fr 1fr; gap:36px; flex:1; min-height:0; align-items:center}
+.prompt-box{background:var(--code-bg); border-radius:14px; padding:26px 28px; color:var(--code-ink);
+  font-family:var(--fMono); font-size:20px; line-height:1.7; box-shadow:0 24px 50px -28px rgba(0,0,0,.5)}
+.prompt-box .blank{color:#ff8e91; border-bottom:2px solid var(--red); padding:0 8px}
+.prompt-box .caret{display:inline-block; width:2px; height:1em; background:var(--red); vertical-align:-3px; margin-left:3px; animation:cb .8s steps(1) infinite}
+@keyframes cb{50%{opacity:0}}
+.tok-bars{display:flex; flex-direction:column; gap:11px}
+.tok-bar{display:flex; align-items:center; gap:12px}
+.tok-bar .w{width:104px; font-family:var(--fMono); font-size:14px; color:var(--ink); text-align:right}
+.tok-bar.top .w{color:var(--red); font-weight:700}
+.tok-bar .tk{flex:1; height:22px; background:var(--card-2); border-radius:7px; overflow:hidden}
+.tok-bar .fl{height:100%; width:0; border-radius:7px; background:linear-gradient(90deg,var(--red-dark),var(--red)); transition:width 1s cubic-bezier(.16,1,.3,1)}
+.tok-bar:not(.top) .fl{background:#9aa1ac}
+.slide.active .tok-bar .fl{width:var(--w)}
+.slide.active .tok-bar:nth-child(1) .fl{transition-delay:.2s}.slide.active .tok-bar:nth-child(2) .fl{transition-delay:.34s}
+.slide.active .tok-bar:nth-child(3) .fl{transition-delay:.48s}.slide.active .tok-bar:nth-child(4) .fl{transition-delay:.62s}
+.slide.active .tok-bar:nth-child(5) .fl{transition-delay:.76s}
+.tok-bar .p{width:48px; text-align:right; font-family:var(--fMono); font-size:13px; color:var(--muted)}
+
+/* self-attention links */
+.att{position:relative; width:940px; height:280px; margin:auto}
+.att .word{position:absolute; transform:translate(-50%,-50%); font-family:var(--fHead); font-weight:700; font-size:19px;
+  padding:9px 14px; border-radius:11px; background:var(--card); border:1px solid var(--line); color:var(--ink); z-index:2; white-space:nowrap}
+.att .word.focus{background:var(--ink); color:#fff; border-color:var(--ink); box-shadow:0 0 0 4px var(--tint-red-2)}
+.att svg{position:absolute; inset:0; z-index:1; overflow:visible}
+.att .lk{fill:none; stroke:var(--red); stroke-linecap:round; opacity:0; transition:opacity .7s ease, stroke-width .7s ease}
+.slide.active .att .lk{opacity:.5}
+.slide.active .att .lk:nth-of-type(1){transition-delay:.35s}.slide.active .att .lk:nth-of-type(2){transition-delay:.55s}
+.slide.active .att .lk:nth-of-type(3){transition-delay:.75s}.slide.active .att .lk:nth-of-type(4){transition-delay:.95s}
+.att .cap{position:absolute; bottom:-2px; left:0; right:0; text-align:center; font-size:14px; color:var(--muted); font-style:italic}
+
+/* history timeline */
+.tl{position:relative; display:flex; justify-content:space-between; align-items:flex-start; margin:auto 0; padding-top:38px; width:100%}
+.tl::before{content:""; position:absolute; top:46px; left:2%; right:2%; height:2px; background:var(--line-strong)}
+.tl .ev{position:relative; flex:1; text-align:center; padding:0 5px; opacity:0; transform:translateY(14px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .tl .ev{opacity:1; transform:none}
+.slide.active .tl .ev:nth-child(1){transition-delay:.1s}.slide.active .tl .ev:nth-child(2){transition-delay:.22s}
+.slide.active .tl .ev:nth-child(3){transition-delay:.34s}.slide.active .tl .ev:nth-child(4){transition-delay:.46s}
+.slide.active .tl .ev:nth-child(5){transition-delay:.58s}.slide.active .tl .ev:nth-child(6){transition-delay:.7s}
+.slide.active .tl .ev:nth-child(7){transition-delay:.82s}.slide.active .tl .ev:nth-child(8){transition-delay:.94s}
+.tl .ev .dot{width:14px; height:14px; border-radius:50%; background:var(--red); margin:0 auto 14px; box-shadow:0 0 0 4px var(--tint-red); position:relative; z-index:2}
+.tl .ev:nth-child(even) .dot{background:var(--ink); box-shadow:0 0 0 4px var(--card-2)}
+.tl .ev .yr{font-family:var(--fHead); font-weight:800; font-size:15px; color:var(--red)}
+.tl .ev .nm{font-family:var(--fHead); font-weight:700; font-size:12.5px; color:var(--ink); margin-top:3px; line-height:1.2}
+.tl .ev .ds{font-size:10.5px; color:var(--muted); margin-top:5px; line-height:1.3}
+
+/* 3-stage pipeline */
+.pipe{display:flex; align-items:stretch; gap:0; margin:auto 0; width:100%}
+.pstage{flex:1; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:22px 22px; opacity:0; transform:translateY(16px); transition:opacity .55s ease, transform .55s ease}
+.slide.active .pstage{opacity:1; transform:none}
+.slide.active .pstage:nth-child(1){transition-delay:.15s}.slide.active .pstage:nth-child(3){transition-delay:.45s}.slide.active .pstage:nth-child(5){transition-delay:.75s}
+.pstage .pn{font-family:var(--fHead); font-weight:800; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--red)}
+.pstage h3{font-family:var(--fHead); font-weight:800; font-size:19px; color:var(--ink); margin:9px 0 8px; letter-spacing:-.01em}
+.pstage p{font-size:13.5px; color:var(--muted); line-height:1.45}
+.pstage .tagx{display:inline-block; margin-top:12px; font-family:var(--fMono); font-size:11px; color:var(--red); background:var(--tint-red); border:1px solid var(--tint-red-2); padding:4px 9px; border-radius:6px}
+.parrow{flex:0 0 46px; display:flex; align-items:center; justify-content:center; color:var(--red); opacity:0; transition:opacity .4s ease}
+.slide.active .parrow{opacity:1}
+.slide.active .parrow:nth-child(2){transition-delay:.35s}.slide.active .parrow:nth-child(4){transition-delay:.65s}
+.parrow svg{width:30px; height:30px}
+
+/* nested set: GenAI umbrella -> LLM */
+.nest{background:linear-gradient(160deg,var(--card),#fff); border:1px solid var(--line); border-radius:20px; padding:26px 30px; margin:auto 0}
+.nest .nh{font-family:var(--fHead); font-weight:800; font-size:20px; color:var(--ink); display:flex; align-items:center; gap:12px; margin-bottom:18px}
+.nest .nh .tagx{font-family:var(--fMono); font-size:12px; color:var(--red); background:var(--tint-red); padding:4px 10px; border-radius:99px; font-weight:600}
+.nest .chips{display:grid; grid-template-columns:repeat(4,1fr); gap:14px}
+.nchip{border:1px solid var(--line); border-radius:14px; padding:18px 16px; text-align:center; background:#fff; opacity:0; transform:translateY(12px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .nchip{opacity:1; transform:none}
+.slide.active .nchip:nth-child(1){transition-delay:.15s}.slide.active .nchip:nth-child(2){transition-delay:.28s}.slide.active .nchip:nth-child(3){transition-delay:.41s}.slide.active .nchip:nth-child(4){transition-delay:.54s}
+.nchip.on{background:linear-gradient(160deg,var(--red),var(--red-dark)); border-color:var(--red); color:#fff; box-shadow:0 16px 36px -20px rgba(236,27,35,.6)}
+.nchip .ni{font-size:22px; margin-bottom:8px}
+.nchip .nn{font-family:var(--fHead); font-weight:800; font-size:15px; color:var(--ink)}
+.nchip.on .nn{color:#fff}
+.nchip .nl{font-size:11.5px; color:var(--muted); margin-top:4px}
+.nchip.on .nl{color:rgba(255,255,255,.85)}
+
+/* prompt ladder */
+.ladder{display:grid; grid-template-columns:repeat(6,1fr); gap:12px; align-items:end; flex:1; min-height:0; padding-top:10px}
+.lstep{display:flex; flex-direction:column; justify-content:flex-end}
+.lstep .bar{border-radius:13px 13px 0 0; padding:14px 14px 16px; color:#fff; transform-origin:bottom; transform:scaleY(0); opacity:0; transition:transform .6s cubic-bezier(.16,1,.3,1), opacity .4s ease}
+.slide.active .lstep .bar{transform:scaleY(1); opacity:1}
+.slide.active .lstep:nth-child(1) .bar{transition-delay:.12s}.slide.active .lstep:nth-child(2) .bar{transition-delay:.26s}.slide.active .lstep:nth-child(3) .bar{transition-delay:.4s}
+.slide.active .lstep:nth-child(4) .bar{transition-delay:.54s}.slide.active .lstep:nth-child(5) .bar{transition-delay:.68s}.slide.active .lstep:nth-child(6) .bar{transition-delay:.82s}
+.lstep:nth-child(1) .bar{background:#3a3a40; min-height:120px}.lstep:nth-child(2) .bar{background:#6b1115; min-height:150px}
+.lstep:nth-child(3) .bar{background:#8a1419; min-height:185px}.lstep:nth-child(4) .bar{background:var(--red-dark); min-height:215px}
+.lstep:nth-child(5) .bar{background:#cf161d; min-height:248px}.lstep:nth-child(6) .bar{background:var(--red); min-height:280px}
+.lstep .bar .num{font-family:var(--fMono); font-size:12px; opacity:.8}
+.lstep .bar .ln{font-family:var(--fHead); font-weight:800; font-size:15px; margin-top:4px; letter-spacing:-.01em; line-height:1.1}
+.lstep .bar .ld{font-size:11px; opacity:.9; margin-top:6px; line-height:1.3}
+
+/* landmark paper card */
+.paper{max-width:680px; margin:auto; background:linear-gradient(155deg,#26262b,#161618); color:#fff; border-radius:20px; padding:34px 38px; position:relative; overflow:hidden; box-shadow:0 36px 80px -36px rgba(0,0,0,.6)}
+.paper::after{content:""; position:absolute; right:-50px; top:-50px; width:200px; height:200px; border-radius:50%; background:radial-gradient(circle,rgba(236,27,35,.45),transparent 70%)}
+.paper .pk{font-family:var(--fMono); font-size:12.5px; color:#ff8e91; letter-spacing:.04em}
+.paper h3{font-family:var(--fHead); font-weight:800; font-size:34px; letter-spacing:-.02em; margin:10px 0 6px; line-height:1.05}
+.paper .auth{font-size:14.5px; color:rgba(255,255,255,.7)}
+.paper .pts{list-style:none; display:flex; flex-direction:column; gap:10px; margin-top:20px}
+.paper .pts li{position:relative; padding-left:24px; font-size:15px; color:rgba(255,255,255,.9); line-height:1.4}
+.paper .pts li::before{content:"\2192"; position:absolute; left:0; color:#ff6a6f; font-weight:800}
+
+/* chain flow (prompt chaining) */
+.chain{display:flex; align-items:center; justify-content:center; gap:0; margin:auto 0; width:100%}
+.clink{flex:1; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:20px 20px; text-align:center; opacity:0; transform:translateY(14px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .clink{opacity:1; transform:none}
+.slide.active .clink:nth-child(1){transition-delay:.15s}.slide.active .clink:nth-child(3){transition-delay:.45s}.slide.active .clink:nth-child(5){transition-delay:.75s}
+.clink .ci{width:42px; height:42px; border-radius:12px; background:var(--tint-red); color:var(--red); display:grid; place-items:center; margin:0 auto 10px; font-family:var(--fHead); font-weight:800}
+.clink h4{font-family:var(--fHead); font-weight:800; font-size:17px; color:var(--ink)}
+.clink p{font-size:12.5px; color:var(--muted); margin-top:5px; line-height:1.4}
+.carrow{flex:0 0 40px; color:var(--red); display:flex; justify-content:center; opacity:0; transition:opacity .4s ease}
+.slide.active .carrow{opacity:1}.slide.active .carrow:nth-child(2){transition-delay:.35s}.slide.active .carrow:nth-child(4){transition-delay:.65s}
+.carrow svg{width:26px; height:26px}
+
+/* product showcase concept tag */
+.card .ctag{margin-top:auto; font-family:var(--fMono); font-size:11px; font-weight:600; color:var(--red); background:var(--tint-red); border:1px solid var(--tint-red-2); padding:5px 10px; border-radius:6px; align-self:flex-start; display:inline-block}
+
+/* static-mode snaps */
+body.static .tok-bar .fl{transition:none !important}
+body.static .prompt-box .caret{animation:none}
+body.static .att .lk{transition:none !important; opacity:.5 !important}
+body.static .tl .ev,
+body.static .pstage,body.static .parrow,
+body.static .nchip,
+body.static .lstep .bar,
+body.static .clink,body.static .carrow{opacity:1 !important; transform:none !important; transition:none !important}
+body.static .lstep .bar{transform:none !important}
+
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="stage">
+  <main class="deck" id="deck">
+
+  <section class="slide dark cover active" data-notes='["Welcome to Session 3. This assumes Topics 1 and 2 — you can wrangle data and make it predict. Today: making machines generate language.", "90 minutes, intuition-first: no matrix math. One animated demo, banking flavour, and we close by spotting today&#39;s theory inside OCBC&#39;s own AI products.", "Promise: by the end you can read a GenAI system end to end and talk to the people building them."]'>
+    <div class="bg"></div><div class="scrim"></div>
+    <div class="inner">
+      <img class="logo" src="assets/ocbc-logo.png" alt="OCBC" />
+      <h1 data-r data-d="1">Generative AI<span class="red">&amp; LLMs · Theory</span></h1>
+      <div class="rule" data-r data-d="2"></div>
+      <div class="meta" data-r data-d="3"><strong>Session 3 of the Data series</strong><br/>OCBC CRAYON 2026 · ADM Team<br/>90 minutes · lecture + 1 animated demo</div>
+      <div class="program" data-r data-d="4">OCBC CRAYON · Topic 3</div>
+    </div>
+  </section>
+
+  <section class="slide dark" data-notes='["Open on the single most important idea in modern AI — the 2017 paper title. It doubles as a teaser for Part 2.", "Everything today — GPT, Claude, Gemini, Llama — descends from this one architectural idea: attention.", "We will unpack exactly what attention means, with pictures, in the transformer section."]'>
+    <div class="body-area">
+      <div class="kicker"><span class="badge"></span>The idea that started it</div>
+      <div class="quote-wrap">
+        <div class="quote-mark" data-r data-d="2">&ldquo;</div>
+        <blockquote data-r data-d="3">Attention is all you <em>need</em>.</blockquote>
+        <cite data-r data-d="4"><b>Vaswani et al.</b> &middot; Google, 2017 &middot; the paper behind every modern LLM</cite>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">02</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Bridge from Topic 2. There we made data predict a label or a number. GenAI goes one step further: it generates new content.", "Predictive ML answers is this fraud? Generative AI writes the suspicious-activity summary. Same data foundation, a new capability.", "Frame today as adding generation on top of the prediction skills they already have."]'>
+    <div class="kicker"><span class="badge"></span>Topic 2 &rarr; Topic 3</div>
+    <h2 class="slide-title" data-r data-d="1">From predicting data to generating language</h2>
+    <p class="slide-sub" data-r data-d="2">Topic 2 made data <b style="color:var(--ink)">predict</b>. Generative AI makes machines <b style="color:var(--ink)">produce</b> — text, summaries, code.</p>
+    <div class="flow" style="margin-top:6px">
+      <div class="step"><div class="node">1</div><h4>Predict</h4><p>fraud / not-fraud</p><div class="arrow"></div>
+      <div class="step"><div class="node">2</div><h4>Score</h4><p>a risk number</p><div class="arrow"></div>
+      <div class="step"><div class="node hot">3</div><h4>Generate</h4><p>write the summary</p>
+    </div>
+    <div class="flow-cap">Same data foundation &mdash; a new capability: <b style="color:var(--red)">generation</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">03</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The core distinction. Discriminative models draw boundaries and label — that was Topic 2.", "Generative models produce new content that resembles their training data — text, here.", "Banking pair: a discriminative model flags a suspicious transaction; a generative model drafts the SAR narrative for the analyst to review."]'>
+    <div class="kicker"><span class="badge"></span>The core distinction</div>
+    <h2 class="slide-title" data-r data-d="1">Discriminative labels &middot; generative produces</h2>
+    <div class="vs" style="margin-top:24px">
+      <div class="panel" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 12l9 4 9-4M3 17l9 4 9-4"/></svg></span>Discriminative</div>
+        <div class="ps">Learns a boundary &mdash; assigns a label.</div>
+        <div class="chips"><span class="chip">is this fraud?</span><span class="chip">approve / decline</span><span class="chip">spam / not</span></div>
+        <div class="where">This was <b>Topic 2</b> — predict a class or a number.</div>
+      </div>
+      <div class="panel accent" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/></svg></span>Generative</div>
+        <div class="ps">Produces new content that fits the data.</div>
+        <div class="chips"><span class="chip">write the SAR summary</span><span class="chip">draft the email</span><span class="chip">explain the decline</span></div>
+        <div class="where"><b>Today</b> — generate language, grounded in bank text.</div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">04</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Place LLMs in the landscape. Generative AI is the umbrella — it spans text, images, audio and code.", "LLMs are the text/language engine of that umbrella. Today is entirely about the text branch.", "Many bank use cases are multimodal at the edges, but the language model is the core we are studying."]'>
+    <div class="kicker"><span class="badge"></span>Where LLMs fit</div>
+    <h2 class="slide-title" data-r data-d="1">LLMs are the language engine of GenAI</h2>
+    <div class="fillc">
+      <div class="nest" data-r data-d="2">
+        <div class="nh">Generative AI<span class="tagx">produces new content</span></div>
+        <div class="chips">
+          <div class="nchip on"><div class="ni">&#128172;</div><div class="nn">Text</div><div class="nl">LLMs live here</div></div>
+          <div class="nchip"><div class="ni">&#127912;</div><div class="nn">Images</div><div class="nl">diffusion models</div></div>
+          <div class="nchip"><div class="ni">&#127925;</div><div class="nn">Audio</div><div class="nl">speech, music</div></div>
+          <div class="nchip"><div class="ni">&#128187;</div><div class="nn">Code</div><div class="nl">also text, really</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">05</span></div>
+  </section>
+
+  <section class="slide" data-notes='["One grounding slide before the theory. LLMs are already inside the bank — these three are the running showcase.", "Document extraction reads KYC forms; an internal assistant helps relationship managers; a customer assistant answers in-app.", "Promise: every concept today shows up in one of these. We revisit them at the end."]'>
+    <div class="kicker"><span class="badge"></span>Why this matters now</div>
+    <h2 class="slide-title" data-r data-d="1">The theory you will see in our own tools</h2>
+    <div class="cards c3" style="margin-top:24px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></div><h3>Document extraction</h3><p>Pull fields from KYC docs, forms and statements.</p><div class="ctag">tokens · embeddings</div></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg></div><h3>RM-support chatbot</h3><p>Help relationship managers find policy answers.</p><div class="ctag">RAG · prompting</div></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 7V3M8 13h.01M16 13h.01"/></svg></div><h3>Customer assistant</h3><p>In-app answers and investment guidance.</p><div class="ctag">decoder LLM · guardrails</div></div>
+    </div>
+    <div class="flow-cap">We return to these three in the closing showcase &mdash; theory, in our own products.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">06</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["Part 1, about 25 minutes. We define a language model, show next-token prediction, and walk the history.", "Keep it concrete: tokens, embeddings, scale, the three-stage training recipe, and where LLMs fail.", "Ends with a live demo of a single API call, then grounding with RAG."]'>
+    <div class="pillar-no">01</div>
+    <div class="eyebrow"><span class="dot"></span>Part 1</div>
+    <h2>Large Language Models</h2>
+    <p class="lead">What they are, and where they came from.</p>
+    <div class="prog-rail"><span class="on">Intro to LLMs</span><span>Transformer</span><span>Prompt engineering</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">07</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Plainest possible definition: a model that assigns probabilities to sequences and predicts the next token.", "The one-liner that sticks: autocomplete on steroids. Your phone keyboard does a tiny version of this.", "All the apparent intelligence is doing this one thing extremely well, over and over."]'>
+    <div class="kicker"><span class="badge"></span>What is a language model</div>
+    <h2 class="slide-title" data-r data-d="1">Autocomplete on steroids</h2>
+    <div class="two" style="margin-top:18px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">A language model assigns <b>probabilities to sequences of words</b>.</li>
+          <li data-r data-d="3" class="strong">Its one job: <b>predict the next token</b>, given everything so far.</li>
+          <li data-r data-d="4">Generate text by doing that repeatedly, feeding each pick back in.</li>
+          <li data-r data-d="5">Everything else is this, done very well, at scale.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="prompt-box" data-r data-d="3">Dear customer, your loan application has been<span class="blank">approved</span><span class="caret"></span></div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">08</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Make it concrete. Given the prompt, the model produces a probability for every possible next token.", "Here the top candidate is balance, then frozen, overdrawn. It samples from this distribution to pick a word.", "Repeat token by token and you get fluent text. The whole magic is doing this distribution well."]'>
+    <div class="kicker"><span class="badge"></span>Next-token prediction, shown</div>
+    <h2 class="slide-title" data-r data-d="1">It predicts a distribution, then picks</h2>
+    <div class="ntp">
+      <div class="prompt-box" data-r data-d="2">The customer&#39;s account was<span class="blank">&nbsp;___</span><span class="caret"></span></div>
+      <div class="tok-bars" data-r data-d="3">
+        <div class="tok-bar top" style="--w:31%"><div class="w">balance</div><div class="tk"><div class="fl"></div></div><div class="p">31%</div></div>
+        <div class="tok-bar" style="--w:18%"><div class="w">frozen</div><div class="tk"><div class="fl"></div></div><div class="p">18%</div></div>
+        <div class="tok-bar" style="--w:13%"><div class="w">overdrawn</div><div class="tk"><div class="fl"></div></div><div class="p">13%</div></div>
+        <div class="tok-bar" style="--w:9%"><div class="w">closed</div><div class="tk"><div class="fl"></div></div><div class="p">9%</div></div>
+        <div class="tok-bar" style="--w:6%"><div class="w">credited</div><div class="tk"><div class="fl"></div></div><div class="p">6%</div></div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">09</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Two ideas. First, text is broken into tokens — roughly word-pieces — because models work in fixed units.", "Second, each token maps to a vector, an embedding, where similar meanings sit near each other.", "Why numbers: models do arithmetic, not words. debit and credit land close; king and queen close — geometry captures meaning."]'>
+    <div class="kicker"><span class="badge"></span>Tokens and embeddings</div>
+    <h2 class="slide-title" data-r data-d="1">Words become numbers the model can do math on</h2>
+    <div class="two" style="margin-top:18px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">Text is split into <b>tokens</b> — word-pieces, not whole words.</li>
+          <li data-r data-d="3" class="strong">Each token maps to a vector — an <b>embedding</b>.</li>
+          <li data-r data-d="4">Similar meanings sit <b>nearby</b> in that space.</li>
+          <li data-r data-d="5">Geometry captures meaning: debit~credit, king~queen.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="svg-card" data-r data-d="3">
+          <div class="ct">Embedding space &mdash; meaning becomes distance</div>
+          <svg class="chart-svg" viewBox="0 0 320 210" preserveAspectRatio="xMidYMid meet">
+            <circle cx="80" cy="70" r="6" fill="#1C6E9C"/><text class="glab" x="48" y="58">debit</text>
+            <circle cx="110" cy="92" r="6" fill="#1C6E9C"/><text class="glab" x="118" y="96">credit</text>
+            <circle cx="86" cy="116" r="6" fill="#1C6E9C"/><text class="glab" x="40" y="120">deposit</text>
+            <circle cx="232" cy="150" r="6" fill="#EC1B23"/><text class="glab" x="208" y="172">king</text>
+            <circle cx="262" cy="128" r="6" fill="#EC1B23"/><text class="glab" x="270" y="124">queen</text>
+            <text class="glab" x="60" y="40" style="fill:#1C6E9C;font-weight:700">banking terms</text>
+            <text class="glab" x="210" y="100" style="fill:var(--red);font-weight:700">royalty terms</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">10</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Large is three things multiplied: parameters, training data, and compute. GPT-3 was 175 billion parameters.", "Scale did something surprising — it unlocked in-context learning: the model learns from examples in the prompt, with no retraining.", "A few abilities appear only past a size threshold — emergent abilities. We exploit in-context learning in the prompting section."]'>
+    <div class="kicker"><span class="badge"></span>What &ldquo;large&rdquo; means</div>
+    <h2 class="slide-title" data-r data-d="1">Scale unlocked learning from the prompt</h2>
+    <div class="cards c3" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="num">P</div><h3>Parameters</h3><p>The model&#39;s learned weights — billions of them (GPT-3: 175B).</p></div>
+      <div class="card" data-r data-d="3"><div class="num">D</div><h3>Data</h3><p>Trillions of tokens of text — much of the public web.</p></div>
+      <div class="card" data-r data-d="4"><div class="num">C</div><h3>Compute</h3><p>Thousands of GPUs for weeks — the expensive part.</p></div>
+    </div>
+    <div class="flow-cap"><b style="color:var(--red)">In-context learning:</b> past a certain scale, the model learns from examples in the prompt &mdash; no retraining.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">11</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Sixty years in one minute. ELIZA faked conversation with rules; statistical NLP counted word frequencies.", "word2vec (2013) gave words vectors; the Transformer (2017) changed everything; GPT and BERT (2018) started the pretraining era.", "GPT-3 (2020) showed in-context learning at 175B; ChatGPT (2022) brought it to everyone. Today: GPT, Claude, Gemini, Llama — multimodal and reasoning."]'>
+    <div class="kicker"><span class="badge"></span>A brief history</div>
+    <h2 class="slide-title" data-r data-d="1">Sixty years to an overnight success</h2>
+    <div class="tl">
+      <div class="ev"><div class="dot"></div><div class="yr">1966</div><div class="nm">ELIZA</div><div class="ds">rule-based chatbot</div></div>
+      <div class="ev"><div class="dot"></div><div class="yr">80s&ndash;90s</div><div class="nm">Statistical NLP</div><div class="ds">n-grams, counting</div></div>
+      <div class="ev"><div class="dot"></div><div class="yr">2013</div><div class="nm">word2vec</div><div class="ds">words as vectors</div></div>
+      <div class="ev"><div class="dot"></div><div class="yr">2017</div><div class="nm">Transformer</div><div class="ds">&ldquo;Attention is all you need&rdquo;</div></div>
+      <div class="ev"><div class="dot"></div><div class="yr">2018</div><div class="nm">GPT-1 / BERT</div><div class="ds">pretraining era</div></div>
+      <div class="ev"><div class="dot"></div><div class="yr">2020</div><div class="nm">GPT-3</div><div class="ds">175B · in-context learning</div></div>
+      <div class="ev"><div class="dot"></div><div class="yr">2022</div><div class="nm">ChatGPT</div><div class="ds">mass adoption</div></div>
+      <div class="ev"><div class="dot"></div><div class="yr">today</div><div class="nm">GPT · Claude · Gemini</div><div class="ds">multimodal · reasoning</div></div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">12</span></div>
+  </section>
+
+  <section class="slide" data-notes='["How a modern LLM is actually made — three stages. Pretraining: predict the next token on massive text. It learns language and world knowledge, but not how to behave.", "Fine-tuning / instruction-tuning: train on examples of following instructions, so it answers rather than just continues text.", "RLHF: align to human preferences using feedback — helpful, honest, harmless. This is what makes a raw model into an assistant."]'>
+    <div class="kicker"><span class="badge"></span>How an LLM is made</div>
+    <h2 class="slide-title" data-r data-d="1">Three stages: pretrain, fine-tune, align</h2>
+    <div class="pipe">
+      <div class="pstage"><div class="pn">Stage 1</div><h3>Pretraining</h3><p>Predict the next token across trillions of words. Learns language and world knowledge.</p><span class="tagx">self-supervised</span></div>
+      <div class="parrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="pstage"><div class="pn">Stage 2</div><h3>Instruction tuning</h3><p>Fine-tune on examples of following instructions — so it answers, not just continues.</p><span class="tagx">supervised</span></div>
+      <div class="parrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="pstage"><div class="pn">Stage 3</div><h3>RLHF</h3><p>Align to human preferences with feedback — helpful, honest, harmless.</p><span class="tagx">human feedback</span></div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">13</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Honest framing for a risk-aware audience. Strengths: drafting, summarising, extraction, translation, code.", "Limits: hallucination — confidently wrong; no live knowledge without retrieval; weak at exact math; can inherit bias.", "The point: treat output as a capable draft to verify, never as ground truth. This sets up RAG and guardrails."]'>
+    <div class="kicker"><span class="badge"></span>Strengths and limits</div>
+    <h2 class="slide-title" data-r data-d="1">A brilliant drafter, an unreliable oracle</h2>
+    <div class="vs" style="margin-top:24px">
+      <div class="panel accent" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/></svg></span>Great at</div>
+        <div class="chips"><span class="chip">drafting</span><span class="chip">summarising</span><span class="chip">extraction</span><span class="chip">translation</span><span class="chip">code</span></div>
+        <div class="where">Language tasks where a strong first draft saves time.</div>
+      </div>
+      <div class="panel" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 12l9 4 9-4M3 17l9 4 9-4"/></svg></span>Watch out for</div>
+        <div class="chips"><span class="chip">hallucination</span><span class="chip">no live facts</span><span class="chip">exact math</span><span class="chip">bias</span></div>
+        <div class="where"><b>Verify facts</b> — it is a confident drafter, not an oracle.</div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">14</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The fix for hallucination and stale knowledge: retrieval-augmented generation. Do not rely on the model&#39;s memory.", "Retrieve relevant passages from a trusted knowledge base, augment the prompt with them, then generate the answer from that context.", "Banking framing: answer from our policy documents, with citations — not from whatever the model happened to memorise."]'>
+    <div class="kicker"><span class="badge"></span>Grounding LLMs</div>
+    <h2 class="slide-title" data-r data-d="1">RAG: retrieve, augment, generate</h2>
+    <div class="flow" style="margin-top:6px">
+      <div class="step"><div class="node">1</div><h4>Retrieve</h4><p>find relevant policy passages</p><div class="arrow"></div>
+      <div class="step"><div class="node">2</div><h4>Augment</h4><p>add them to the prompt</p><div class="arrow"></div>
+      <div class="step"><div class="node hot">3</div><h4>Generate</h4><p>answer from that context</p>
+    </div>
+    <div class="flow-cap">Answer from <b style="color:var(--red)">our</b> knowledge base — current and citable — not the model&#39;s memory.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">15</span></div>
+  </section>
+
+  <section class="slide demo-slide" data-demo="1" data-notes='["Demo 1, replayed in-deck — press R or Replay. The model itself is a single API call.", "Cell 2 is a bare call: prompt in, completion out. Cell 3 prepends a retrieved policy snippet — the RAG pattern — and the answer becomes grounded and specific.", "The lesson: the model is one API call; the engineering is the context and prompt you wrap around it."]'>
+    <div class="kicker"><span class="badge"></span>Part 1 &middot; Live Demo</div>
+    <h2 class="slide-title" data-r data-d="1">The model is one API call</h2>
+    <div class="demo-stage">
+      <div class="nb">
+        <div class="nb-top"><span class="t-ic r"></span><span class="t-ic"></span><span class="t-ic g"></span><span class="nb-name">llm_call.ipynb</span><span class="nb-kernel">Python 3</span></div>
+        <div class="nb-body"><div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[1]</div><div class="nb-code">from anthropic import Anthropic
+client = Anthropic(api_key="sk-...")  # placeholder</div></div><div class="nb-out"><span class="ok">&#10003; client ready</span></div></div><div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[2]</div><div class="nb-code">msg = client.messages.create(
+    model="claude-...",
+    messages=[{"role":"user",
+        "content":"Summarise this transaction note."}])
+print(msg.content)</div></div><div class="nb-out">&ldquo;Customer disputed a $420 card charge as unauthorised.&rdquo;</div></div><div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[3]</div><div class="nb-code"># RAG: prepend a retrieved policy snippet
+ctx = retrieve("dispute policy")
+msg = client.messages.create(model="claude-...",
+    messages=[{"role":"user",
+        "content": ctx + question}])</div></div><div class="nb-out"><span class="ok">&ldquo;Per Policy 7.2, raise a chargeback within 60 days...&rdquo;</span></div></div></div>
+      </div>
+      <div class="demo-side">
+        <div class="demo-card"><div class="dk">Live Demo</div><h3>Prompt in, answer out</h3><p>One call — then the same call, grounded with a retrieved snippet.</p></div>
+        <ul class="demo-steps"><li><span class="sn">1</span>Create the client</li><li><span class="sn">2</span>A bare completion</li><li><span class="sn">3</span>Add retrieved context (RAG)</li></ul>
+        <button class="replay" data-replay><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v4h4"/></svg>Replay</button>
+        <div class="demo-take"><b>Takeaway:</b> the model is one API call &mdash; the skill is the <b>context and prompt</b> around it.</div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">16</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["Part 2, about 25 minutes. Pure intuition — attention links, parallel heads, stacked blocks. No matrix math.", "Start with why older models hit a wall, then the 2017 breakthrough, then self-attention shown visually.", "End by connecting the architecture back to reading and drafting bank text."]'>
+    <div class="pillar-no">02</div>
+    <div class="eyebrow"><span class="dot"></span>Part 2</div>
+    <h2>The Transformer</h2>
+    <p class="lead">The architecture under every modern LLM — in pictures, not equations.</p>
+    <div class="prog-rail"><span>Intro to LLMs</span><span class="on">Transformer</span><span>Prompt engineering</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">17</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Set up the problem the transformer solved. Older models — RNNs — read one word at a time, in order.", "That is slow, and they forget long-range context: by the end of a long paragraph the start has faded.", "The transformer&#39;s move: read the whole sequence at once, in parallel, and let every word see every other."]'>
+    <div class="kicker"><span class="badge"></span>Before transformers</div>
+    <h2 class="slide-title" data-r data-d="1">Reading word-by-word hits a wall</h2>
+    <div class="vs" style="margin-top:24px">
+      <div class="panel" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 12l9 4 9-4M3 17l9 4 9-4"/></svg></span>RNNs (older)</div>
+        <div class="ps">Process one word at a time, in sequence.</div>
+        <div class="chips"><span class="chip">sequential</span><span class="chip">slow</span><span class="chip">forgets long range</span></div>
+        <div class="where">Long-range context fades by the end of the text.</div>
+      </div>
+      <div class="panel accent" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/></svg></span>Transformers</div>
+        <div class="ps">Process the whole sequence at once.</div>
+        <div class="chips"><span class="chip">parallel</span><span class="chip">fast on GPUs</span><span class="chip">every word sees every word</span></div>
+        <div class="where"><b>Attention</b> connects any two words directly, near or far.</div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">18</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The landmark. Vaswani and colleagues at Google, 2017. The radical claim in the title: you can drop recurrence entirely.", "Replace it with attention, and process the sequence in parallel. Simpler, faster, and it scaled far better.", "This single architecture underlies GPT, BERT, Claude, Gemini and Llama. The rest of Part 2 is what is inside it."]'>
+    <div class="kicker"><span class="badge"></span>The 2017 breakthrough</div>
+    <h2 class="slide-title" data-r data-d="1">Attention Is All You Need</h2>
+    <div class="fillc">
+      <div class="paper" data-r data-d="2">
+        <div class="pk">NeurIPS 2017 &middot; Vaswani, Shazeer, Parmar et al. &middot; Google</div>
+        <h3>Attention Is All You Need</h3>
+        <div class="auth">Drop recurrence. Use attention. Process the whole sequence in parallel.</div>
+        <ul class="pts">
+          <li>No more reading word-by-word &mdash; everything at once</li>
+          <li>Scales beautifully on modern GPUs</li>
+          <li>The architecture behind GPT, BERT, Claude, Gemini, Llama</li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">19</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The heart of the transformer, shown. Every word looks at every other word and weighs how relevant each is.", "Here the focus word is charge. Attention links it most strongly to disputed, also to customer and card — it builds context.", "No matrix math today — just the picture: thicker link means more attention. This is how the model resolves what a word means in context."]'>
+    <div class="kicker"><span class="badge"></span>Self-attention, intuitively</div>
+    <h2 class="slide-title" data-r data-d="1">Every word weighs every other word</h2>
+    <div class="fillc">
+      <div class="att" data-r data-d="2">
+        <svg viewBox="0 0 940 280" preserveAspectRatio="xMidYMid meet"><path class="lk" stroke-width="6" d="M 595 130 Q 470 240 350 130"/><path class="lk" stroke-width="4" d="M 595 130 Q 390 256 195 130"/><path class="lk" stroke-width="4" d="M 595 130 Q 730 236 865 130"/><path class="lk" stroke-width="2.5" d="M 595 132 Q 535 196 475 130"/></svg>
+        <div class="word" style="left:70px;top:108px">the</div><div class="word" style="left:195px;top:108px">customer</div><div class="word" style="left:350px;top:108px">disputed</div><div class="word" style="left:475px;top:108px">the</div><div class="word focus" style="left:595px;top:108px">charge</div><div class="word" style="left:695px;top:108px">on</div><div class="word" style="left:775px;top:108px">her</div><div class="word" style="left:865px;top:108px">card</div>
+        <div class="cap">&ldquo;the customer disputed the <b style="color:var(--ink)">charge</b> on her card&rdquo; &mdash; <b style="color:var(--red)">charge</b> attends most to <b>disputed</b></div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">20</span></div>
+  </section>
+
+  <section class="slide" data-notes='["One attention pass catches one kind of relationship. Real transformers run many in parallel — heads.", "Each head learns to track something different: grammar, meaning, or reference. Then their reads are combined.", "Analogy: a panel of readers, each following one thread, pooling notes for a richer understanding."]'>
+    <div class="kicker"><span class="badge"></span>Multi-head attention</div>
+    <h2 class="slide-title" data-r data-d="1">Many readers, each tracking one thing</h2>
+    <div class="cards c3" style="margin-top:24px">
+      <div class="card" data-r data-d="2"><div class="num">H1</div><h3>Grammar</h3><p>Links subjects to verbs, plurals to articles — sentence structure.</p></div>
+      <div class="card" data-r data-d="3"><div class="num">H2</div><h3>Meaning</h3><p>Connects words by topic — &ldquo;charge&rdquo; near &ldquo;dispute&rdquo;, &ldquo;refund&rdquo;.</p></div>
+      <div class="card" data-r data-d="4"><div class="num">H3</div><h3>Reference</h3><p>Resolves &ldquo;her&rdquo;, &ldquo;it&rdquo;, &ldquo;the account&rdquo; back to who or what.</p></div>
+    </div>
+    <div class="flow-cap">Run many heads <b>in parallel</b>, then combine &mdash; a richer read than any single one.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">21</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Round out the block in plain terms. Positional encoding tags each token with its order, since attention alone is order-blind.", "Feed-forward layers process each token a bit more on their own. Residual connections and layer norm keep training stable as you stack.", "Attention plus these pieces is the transformer block — the unit you repeat."]'>
+    <div class="kicker"><span class="badge"></span>The rest of the block</div>
+    <h2 class="slide-title" data-r data-d="1">What else is in a transformer block</h2>
+    <div class="stack" style="margin-top:8px">
+      <div class="layer l4" data-r><div class="lname">Add &amp; Norm <code>×</code></div><div class="ldesc">residual connections + layer norm &mdash; stable training when stacked deep</div></div>
+      <div class="layer l3" data-r><div class="lname">Feed-forward</div><div class="ldesc">processes each token a little further, on its own</div></div>
+      <div class="layer l2" data-r><div class="lname">Multi-head attention</div><div class="ldesc">every token weighs every other token (Part 2 so far)</div></div>
+      <div class="layer l1" data-r><div class="lname">Input + positional encoding</div><div class="ldesc">token embeddings, tagged with their order in the sequence</div></div>
+    </div>
+    <div class="flow-cap">Attention + these pieces = one <b style="color:var(--red)">transformer block</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">22</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Now repeat. Stack many identical blocks and you get a deep network — each layer refines the representation.", "More layers, more parameters, more data — more capability. GPT-3 stacked 96 of these blocks.", "This is the concrete meaning of large from Part 1 — depth times width times data."]'>
+    <div class="kicker"><span class="badge"></span>Stacking and scale</div>
+    <h2 class="slide-title" data-r data-d="1">Stack the block, deepen the model</h2>
+    <div class="two" style="margin-top:18px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">Stack many identical blocks &mdash; a <b>deep</b> network.</li>
+          <li data-r data-d="3" class="strong">Each layer refines the representation a little more.</li>
+          <li data-r data-d="4">More layers + parameters + data = more capability.</li>
+          <li data-r data-d="5">GPT-3 stacked <b>96</b> of these blocks.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="stack" data-r data-d="3">
+          <div class="layer l1"><div class="lname">Transformer block</div><div class="ldesc">attention + feed-forward</div></div>
+          <div class="layer l2"><div class="lname">Transformer block</div><div class="ldesc">attention + feed-forward</div></div>
+          <div class="layer l3"><div class="lname">Transformer block</div><div class="ldesc">attention + feed-forward</div></div>
+          <div class="layer l4"><div class="lname">&times; 96 layers</div><div class="ldesc">depth is where capability comes from</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">23</span></div>
+  </section>
+
+  <section class="slide" data-notes='["One clean contrast. Encoder models like BERT read the whole text to understand it — great for classification and search.", "Decoder models like GPT, Claude and Gemini generate text left to right — great for writing and chat.", "Most chat LLMs today are decoder-only. That is the family behind the customer assistant."]'>
+    <div class="kicker"><span class="badge"></span>Two families</div>
+    <h2 class="slide-title" data-r data-d="1">Encoder understands &middot; decoder generates</h2>
+    <div class="vs" style="margin-top:24px">
+      <div class="panel" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 12l9 4 9-4M3 17l9 4 9-4"/></svg></span>Encoder &mdash; BERT</div>
+        <div class="ps">Reads the whole text to understand it.</div>
+        <div class="chips"><span class="chip">classification</span><span class="chip">search</span><span class="chip">extraction</span></div>
+        <div class="where">Good for: is this complaint about fraud?</div>
+      </div>
+      <div class="panel accent" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/></svg></span>Decoder &mdash; GPT / Claude / Gemini</div>
+        <div class="ps">Generates text, one token at a time.</div>
+        <div class="chips"><span class="chip">writing</span><span class="chip">chat</span><span class="chip">summaries</span></div>
+        <div class="where"><b>Most chat LLMs today are decoder-only.</b></div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">24</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Zoom back out before prompting. The very same attention machinery is what reads bank text and drafts summaries.", "Read the note, attend to what matters, generate the summary token by token — that is the whole pipeline.", "This is the bridge to Part 3: now that we have a capable model, how do we steer it?"]'>
+    <div class="kicker"><span class="badge"></span>From architecture to product</div>
+    <h2 class="slide-title" data-r data-d="1">The same machinery reads our bank text</h2>
+    <div class="insight" style="margin-top:18px">
+      <div class="lead-card" data-r data-d="2">
+        <div class="so">Why it works on bank text</div>
+        <div class="big-line">The same attention that links <em>charge</em> to <em>disputed</em> lets an LLM read a transaction note and draft a <em>summary</em>.</div>
+      </div>
+      <ul class="layer-list" data-r data-d="3">
+        <li><span class="n">1</span><div><b>Read</b><p>tokenise the transaction note</p></div></li>
+        <li><span class="n">2</span><div><b>Attend</b><p>weigh which words matter in context</p></div></li>
+        <li><span class="n">3</span><div><b>Generate</b><p>draft the summary, token by token</p></div></li>
+      </ul>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">25</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["Part 3, about 23 minutes — the most immediately useful section for everyone in the room.", "We climb the lab-recommended ladder of techniques, with a banking example for each.", "End on responsible use in a bank: hallucination, injection, privacy, human-in-the-loop."]'>
+    <div class="pillar-no">03</div>
+    <div class="eyebrow"><span class="dot"></span>Part 3</div>
+    <h2>Prompt Engineering</h2>
+    <p class="lead">You cannot retrain the model — but you can steer it with words.</p>
+    <div class="prog-rail"><span>Intro to LLMs</span><span>Transformer</span><span class="on">Prompt engineering</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">26</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Define it. Prompt engineering is steering a fixed model with the words you give it — no weight changes.", "It is far faster and cheaper than fine-tuning, preserves the model&#39;s general knowledge, and keeps working across model updates.", "Reach for prompting first; fine-tuning is a later, heavier tool."]'>
+    <div class="kicker"><span class="badge"></span>What it is</div>
+    <h2 class="slide-title" data-r data-d="1">Steer the model with words, not retraining</h2>
+    <div class="two" style="margin-top:18px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">You cannot retrain it &mdash; but you control the <b>prompt</b>.</li>
+          <li data-r data-d="3" class="strong">Far <b>faster and cheaper</b> than fine-tuning.</li>
+          <li data-r data-d="4">Preserves general knowledge; survives model updates.</li>
+          <li data-r data-d="5">Reach for prompting <b>first</b>.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="prompt-box" data-r data-d="3">You are a compliance analyst.<br/>Summarise the note in 2 bullets:<br/>(1) what happened, (2) the risk.<span class="caret"></span></div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">27</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The spine of the section — the lab-recommended ladder, in impact order. Start simple, add only what you need.", "Be clear and direct, then give examples, then ask for step-by-step reasoning, then add structure, a role, and finally chain prompts.", "Most tasks are solved by the first two or three rungs. Climb only as far as the problem demands."]'>
+    <div class="kicker"><span class="badge"></span>The hierarchy of techniques</div>
+    <h2 class="slide-title" data-r data-d="1">Climb only as high as you need</h2>
+    <div class="ladder">
+      <div class="lstep"><div class="bar"><div class="num">1</div><div class="ln">Clear &amp; direct</div><div class="ld">say exactly what you want</div></div></div>
+      <div class="lstep"><div class="bar"><div class="num">2</div><div class="ln">Examples</div><div class="ld">few-shot — show the format</div></div></div>
+      <div class="lstep"><div class="bar"><div class="num">3</div><div class="ln">Chain-of-thought</div><div class="ld">think step by step</div></div></div>
+      <div class="lstep"><div class="bar"><div class="num">4</div><div class="ln">Structure</div><div class="ld">tags and sections</div></div></div>
+      <div class="lstep"><div class="bar"><div class="num">5</div><div class="ln">Role</div><div class="ld">assign a persona</div></div></div>
+      <div class="lstep"><div class="bar"><div class="num">6</div><div class="ln">Chain prompts</div><div class="ld">split into steps</div></div></div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">28</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Rung 1, the highest-leverage. Vague prompts get vague answers. Say exactly what you want, with context and motivation.", "The colleague test: if a new colleague would be confused by your instruction, so is the model.", "Here, the specific version names the role, the format, and the goal — and gets a usable answer first time."]'>
+    <div class="kicker"><span class="badge"></span>1 &middot; Be clear and direct</div>
+    <h2 class="slide-title" data-r data-d="1">Specific beats clever</h2>
+    <div class="ba" style="margin-top:18px">
+      <div class="col before">
+        <div class="ba-h"><span class="tagx">Vague</span></div>
+        <div class="codewrap"><div class="bar"><i></i><i></i><i></i><span class="fn">prompt</span></div><pre><code>Summarise this transaction note.</code></pre></div>
+      </div>
+      <div class="col after">
+        <div class="ba-h"><span class="tagx">Clear &amp; direct</span></div>
+        <div class="codewrap"><div class="bar"><i></i><i></i><i></i><span class="fn">prompt</span></div><pre><code>You are a compliance analyst.
+Summarise the note below in 2 bullets:
+(1) what happened, (2) the risk.
+Use plain English; flag if unclear.</code></pre></div>
+      </div>
+    </div>
+    <div class="flow-cap">The <b>colleague test</b>: if a colleague would be confused, so is the model.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">29</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Rung 2. Do not just tell — show. Three to five diverse, canonical examples teach the format and tone better than any description.", "Banking example: a couple of labelled transaction-to-category pairs, then the new one to classify.", "The model copies the pattern. Keep examples varied so it generalises rather than memorising."]'>
+    <div class="kicker"><span class="badge"></span>2 &middot; Few-shot examples</div>
+    <h2 class="slide-title" data-r data-d="1">Show, don&#39;t just tell</h2>
+    <div class="two" style="margin-top:18px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">Give <b>3&ndash;5 diverse examples</b> of the task done right.</li>
+          <li data-r data-d="3" class="strong">Teaches <b>format and tone</b> better than instructions.</li>
+          <li data-r data-d="4">The model copies the pattern on the new input.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="prompt-box" data-r data-d="3" style="font-size:16px">&ldquo;Starbucks $6.50&rdquo; &rarr; <b style="color:#ff8e91">Dining</b><br/>&ldquo;SP Group $88&rdquo; &rarr; <b style="color:#ff8e91">Utilities</b><br/>&ldquo;Grab $14&rdquo; &rarr; <b style="color:#ff8e91">Transport</b><br/>&ldquo;NTUC $52&rdquo; &rarr;<span class="caret"></span></div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">30</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Rung 3. For multi-step problems, ask the model to reason step by step before answering — accuracy jumps.", "Also give it permission to say I don&#39;t know, which reduces confident guessing.", "Trade-off: it is slower and uses more tokens, so reserve it for genuinely complex tasks."]'>
+    <div class="kicker"><span class="badge"></span>3 &middot; Chain-of-thought</div>
+    <h2 class="slide-title" data-r data-d="1">Ask it to think step by step</h2>
+    <div class="two" style="margin-top:18px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">For multi-step tasks, request <b>reasoning before the answer</b>.</li>
+          <li data-r data-d="3" class="strong">Accuracy improves on anything that needs working-out.</li>
+          <li data-r data-d="4">Let it say <b>&ldquo;I don&#39;t know&rdquo;</b> — fewer confident guesses.</li>
+          <li data-r data-d="5">Trade-off: slower, longer. Use it when it earns its keep.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="prompt-box" data-r data-d="3" style="font-size:16px"><span style="color:#7d8590">Think step by step:</span><br/>1. Fees this month: $12 + $30<br/>2. Last month: $25<br/>3. Change: +$17, a 68% rise<br/><b style="color:#ff8e91">&rarr; Flag: fees up 68%</b><span class="caret"></span></div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">31</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Rungs 4 and 5 together. Structure your prompt with clear sections or tags so the model never mixes instructions with data.", "Assign a role — you are a compliance analyst — to set tone, vocabulary and expertise.", "Tags like context, instructions and data are especially useful when you paste in documents."]'>
+    <div class="kicker"><span class="badge"></span>4 &middot; Structure &nbsp;+&nbsp; 5 &middot; Role</div>
+    <h2 class="slide-title" data-r data-d="1">Separate the parts, set the persona</h2>
+    <div class="two" style="margin-top:18px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">Use <b>tags / sections</b> so instructions and data don&#39;t blur.</li>
+          <li data-r data-d="3" class="strong">Especially when you paste in documents.</li>
+          <li data-r data-d="4">Assign a <b>role</b> to set tone and expertise.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="prompt-box" data-r data-d="3" style="font-size:15px"><span style="color:#79c0ff">&lt;role&gt;</span> compliance analyst <span style="color:#79c0ff">&lt;/role&gt;</span><br/><span style="color:#79c0ff">&lt;instructions&gt;</span><br/> summarise risks in 2 bullets<br/><span style="color:#79c0ff">&lt;/instructions&gt;</span><br/><span style="color:#79c0ff">&lt;data&gt;</span> [transaction note] <span style="color:#79c0ff">&lt;/data&gt;</span><span class="caret"></span></div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">32</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Rung 6. For big tasks, do not ask for everything at once. Break it into a chain of focused steps.", "Draft, then review, then improve — each step gets the model&#39;s full attention, and the self-review catches errors.", "Chaining trades a little latency for markedly higher quality on complex work."]'>
+    <div class="kicker"><span class="badge"></span>6 &middot; Prompt chaining</div>
+    <h2 class="slide-title" data-r data-d="1">Break big tasks into a chain</h2>
+    <div class="chain" style="margin-top:8px">
+      <div class="clink"><div class="ci">1</div><h4>Draft</h4><p>produce a first version</p></div>
+      <div class="carrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="clink"><div class="ci">2</div><h4>Review</h4><p>critique it against the rules</p></div>
+      <div class="carrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="clink"><div class="ci">3</div><h4>Improve</h4><p>rewrite using the critique</p></div>
+    </div>
+    <div class="flow-cap">Each step gets <b style="color:var(--red)">full attention</b>; the self-review catches what one pass misses.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">33</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Close Part 3 with responsible use — guardrails, not a compliance lecture. Hallucination: verify facts before acting.", "Prompt injection: untrusted text can carry hidden instructions, so never trust pasted content blindly.", "Privacy: no sensitive customer data into unapproved tools. And keep a human in the loop for any real decision."]'>
+    <div class="kicker"><span class="badge"></span>Pitfalls and safe use</div>
+    <h2 class="slide-title" data-r data-d="1">Use it responsibly in a bank</h2>
+    <div class="cards c2" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg></div><h3>Hallucination</h3><p>Confidently wrong. Verify facts and figures before you act on them.</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v6M12 22v-6M4.9 4.9l4.2 4.2M19.1 19.1l-4.2-4.2"/><circle cx="12" cy="12" r="3"/></svg></div><h3>Prompt injection</h3><p>Untrusted text can hide instructions. Don&#39;t blindly trust pasted content.</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div><h3>Data privacy</h3><p>No sensitive customer data into unapproved tools.</p></div>
+      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><h3>Human in the loop</h3><p>People make the final call on any real decision.</p></div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">34</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["Bring it home. Everything today shows up in OCBC&#39;s own AI products.", "Three illustrative examples, mapped to the exact concepts we covered.", "Where internal details are unknown, we describe generically and label as illustrative."]'>
+    <div class="pillar-no">&#9733;</div>
+    <div class="eyebrow"><span class="dot"></span>Showcase</div>
+    <h2>GenAI at OCBC</h2>
+    <p class="lead">The day&#39;s theory, running in our own products.</p>
+    <div class="prog-rail"><span class="on">Intro to LLMs</span><span class="on">Transformer</span><span class="on">Prompt engineering</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">35</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Map each product back to a concept. Document extraction is tokens and embeddings turning forms into structured fields.", "The RM-support chatbot is RAG plus prompting — grounded answers from policy and product knowledge.", "The customer assistant is a decoder LLM with grounding and guardrails. Illustrative — real products, simplified."]'>
+    <div class="kicker"><span class="badge"></span>Theory in our own products</div>
+    <h2 class="slide-title" data-r data-d="1">Spot today&#39;s concepts at OCBC</h2>
+    <div class="cards c3" style="margin-top:24px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></div><h3>Document extraction</h3><p>Reads KYC docs, forms and statements into structured fields.</p><div class="ctag">tokens · embeddings · extraction</div></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg></div><h3>RM-support chatbot</h3><p>Finds answers from policy and product knowledge for RMs.</p><div class="ctag">RAG · prompting</div></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 7V3M8 13h.01M16 13h.01"/></svg></div><h3>Customer assistant</h3><p>In-app answers and investment guidance, safely.</p><div class="ctag">decoder LLM · grounding · guardrails</div></div>
+    </div>
+    <div class="flow-cap" style="font-style:italic">Illustrative &mdash; real products, simplified to show the concept.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">36</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Replay the three spines. What an LLM is: next-token prediction, trained in three stages.", "The transformer: attention, processed in parallel, stacked deep. Prompting: the ladder from clear-and-direct up to chaining.", "Three takeaways: it is prediction not magic; steer with prompts before fine-tuning; verify and use responsibly."]'>
+    <div class="kicker"><span class="badge"></span>Recap</div>
+    <h2 class="slide-title" data-r data-d="1">Three things to remember</h2>
+    <div class="bullets-rail" style="margin-top:18px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2"><b>What an LLM is:</b> next-token prediction, trained in 3 stages.</li>
+          <li data-r data-d="3"><b>The transformer:</b> attention, in parallel, stacked deep.</li>
+          <li data-r data-d="4"><b>Prompting ladder:</b> clear &rarr; examples &rarr; CoT &rarr; structure &rarr; role &rarr; chain.</li>
+        </ul>
+      </div>
+      <div class="rail" data-r data-d="3">
+        <h4>Take these away</h4>
+        <ul>
+          <li>It&#39;s <b style="color:#fff">prediction</b>, not magic.</li>
+          <li>Steer with <b style="color:#fff">prompts</b> before fine-tuning.</li>
+          <li><b style="color:#fff">Verify</b> and use responsibly.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">37</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["Close it. They can now read a GenAI system end to end — and recognise it in OCBC&#39;s own tools.", "Pointers to go deeper: Anthropic&#39;s prompt-engineering docs for practice, and the original paper for the brave.", "Thank them and open the floor for questions."]'>
+    <div class="pillar-no">&#10003;</div>
+    <div class="eyebrow"><span class="dot"></span>Wrap</div>
+    <h2>You can now read a GenAI system end to end.</h2>
+    <p class="lead">Keep going: <b>Anthropic&#39;s prompt-engineering docs</b> for hands-on practice, and <b>&ldquo;Attention Is All You Need&rdquo;</b> for the brave. And you can now spot all of this inside our own products.</p>
+    <div class="prog-rail"><span class="on">Intro to LLMs</span><span class="on">Transformer</span><span class="on">Prompt engineering</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">38</span></div>
+  </section>
+
+  </main>
+</div>
+
+<div class="hud">
+  <div class="dots" id="dots"></div>
+  <div class="count">slide <b id="cur">1</b> / <span id="tot">34</span></div>
+</div>
+<div class="hint"><kbd>→</kbd> next &nbsp; <kbd>←</kbd> back &nbsp; <kbd>N</kbd> notes &nbsp; <kbd>F</kbd> full</div>
+
+<div class="rotate-cue" aria-hidden="true">
+  <div>
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="7" y="2" width="10" height="20" rx="2.2"/><path d="M11 18.5h2"/></svg>
+    <h4>Rotate your device</h4>
+    <p>This deck is built for a wide 16:9 stage — turn your phone to landscape for the full view.</p>
+  </div>
+</div>
+
+<div class="notes" id="notes">
+  <button class="close" id="notesClose">&times;</button>
+  <h5><span style="width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block"></span>Speaker notes</h5>
+  <ul id="notesBody"></ul>
+</div>
+
+<script>
+/* ---- fit fixed 1280x720 stage to viewport ---- */
+const STATIC = location.search.includes('static');
+if(STATIC) document.body.classList.add('static');
+const deck = document.getElementById('deck');
+function fit(){
+  const vv = window.visualViewport;
+  const w = (vv && vv.width)  || innerWidth  || document.documentElement.clientWidth  || 1280;
+  const h = (vv && vv.height) || innerHeight || document.documentElement.clientHeight || 720;
+  const s = Math.min(w/1280, h/720) || 1;
+  // anchor top-left and centre with an explicit pixel offset — robust even when
+  // the deck is larger than the viewport (small mobile-landscape screens)
+  const x = (w - 1280*s) / 2, y = (h - 720*s) / 2;
+  deck.style.transform = `translate(${x}px, ${y}px) scale(${s>0?s:1})`;
+}
+addEventListener('resize', fit);
+addEventListener('load', fit);
+// mobile: re-fit when rotating or when the browser chrome resizes the visible area
+addEventListener('orientationchange', ()=>{ fit(); setTimeout(fit,200); setTimeout(fit,500); });
+if(window.visualViewport){ visualViewport.addEventListener('resize', fit); }
+fit(); requestAnimationFrame(fit); setTimeout(fit,120);
+
+/* ---- presentation controller ---- */
+const slides = [...document.querySelectorAll('.slide')];
+const TOT = slides.length;
+let i = 0;
+document.getElementById('tot').textContent = TOT;
+
+const dotsEl = document.getElementById('dots');
+slides.forEach((sl,idx)=>{
+  const d = document.createElement('span');
+  d.className='dot'+(sl.classList.contains('dark')?' sec':'');
+  d.addEventListener('click',()=>go(idx));
+  dotsEl.appendChild(d);
+});
+const dots=[...dotsEl.children];
+// page numbers follow slide order (so slides can be inserted freely)
+slides.forEach((s,idx)=>{const pg=s.querySelector('.foot .pg'); if(pg)pg.textContent=String(idx+1).padStart(2,'0');});
+
+const notesEl=document.getElementById('notes');
+const notesBody=document.getElementById('notesBody');
+function renderNotes(){
+  let data=[]; try{data=JSON.parse(slides[i].dataset.notes||'[]')}catch(e){}
+  notesBody.innerHTML='';
+  if(!data.length){notesBody.innerHTML='<li style="color:#777">No notes for this slide.</li>';}
+  data.forEach(t=>{const li=document.createElement('li');li.textContent=t;notesBody.appendChild(li);});
+}
+function go(n){
+  n=Math.max(0,Math.min(TOT-1,n));
+  if(n===i) return;
+  slides[i].classList.remove('active'); slides[i].classList.add('prev');
+  slides[n].classList.remove('prev'); slides[n].classList.add('active');
+  i=n; sync();
+}
+function sync(){
+  document.getElementById('progress').style.width=((i+1)/TOT*100)+'%';
+  document.getElementById('cur').textContent=i+1;
+  dots.forEach((d,x)=>d.classList.toggle('on',x===i));
+  location.hash=i+1;
+  if(notesEl.classList.contains('show')) renderNotes();
+  // (re)trigger counters on the active slide
+  triggerCounters(slides[i]);
+  playDemo(slides[i]);
+}
+function next(){go(i+1)} function prev(){go(i-1)}
+
+/* keyboard */
+addEventListener('keydown',e=>{
+  if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();next();}
+  else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();prev();}
+  else if(e.key==='Home'){go(0)} else if(e.key==='End'){go(TOT-1)}
+  else if(e.key.toLowerCase()==='n'){notesEl.classList.toggle('show'); renderNotes();}
+  else if(e.key.toLowerCase()==='f'){if(!document.fullscreenElement)document.documentElement.requestFullscreen();else document.exitFullscreen();}
+});
+document.getElementById('notesClose').addEventListener('click',()=>notesEl.classList.remove('show'));
+
+/* wheel (debounced) */
+let wlock=false;
+addEventListener('wheel',e=>{
+  if(wlock) return; if(Math.abs(e.deltaY)<18) return;
+  wlock=true; e.deltaY>0?next():prev();
+  setTimeout(()=>wlock=false,650);
+},{passive:true});
+
+/* touch */
+let tx=0,ty=0;
+addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
+addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty;
+  if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)) dx<0?next():prev();
+},{passive:true});
+
+/* counters */
+function triggerCounters(slide){
+  slide.querySelectorAll('[data-count]').forEach(el=>{
+    if(el.dataset.done) return; el.dataset.done='1';
+    const end=+el.dataset.count, pre=el.dataset.prefix||'', suf=el.dataset.suffix||'';
+    if(STATIC){el.innerHTML=pre+end+(suf?'<span class="unit">'+suf+'</span>':'');return;}
+    const dur=1100, t0=performance.now();
+    function tick(t){
+      const p=Math.min(1,(t-t0)/dur), e=1-Math.pow(1-p,3);
+      const v=Math.round(end*e);
+      el.innerHTML=pre+v+(suf?'<span class="unit">'+suf+'</span>':'');
+      if(p<1)requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+  // progress rings
+  slide.querySelectorAll('[data-ring]').forEach(el=>{
+    if(el.dataset.done) return; el.dataset.done='1';
+    const circle=el.querySelector('.fg'); if(!circle)return;
+    const pct=+el.dataset.ring, len=circle.getTotalLength();
+    if(STATIC){circle.style.strokeDasharray=len;circle.style.strokeDashoffset=len*(1-pct/100);const o=el.querySelector('.pct');if(o)o.textContent=pct+'%';return;}
+    circle.style.strokeDasharray=len; circle.style.strokeDashoffset=len;
+    requestAnimationFrame(()=>{circle.style.transition='stroke-dashoffset 1.3s cubic-bezier(.16,1,.3,1)';circle.style.strokeDashoffset=len*(1-pct/100);});
+    const out=el.querySelector('.pct'); if(out){const t0=performance.now();(function tk(t){const p=Math.min(1,(t-t0)/1300);out.textContent=Math.round(pct*(1-Math.pow(1-p,3)))+'%';if(p<1)requestAnimationFrame(tk);})(performance.now());}
+  });
+}
+
+/* notebook demo player */
+const demoTimers=[];
+function clearDemo(){demoTimers.forEach(clearTimeout); demoTimers.length=0;}
+function playDemo(slide){
+  if(!slide.classList.contains('demo-slide')) return;
+  clearDemo();
+  const cells=[...slide.querySelectorAll('.nb-cell')];
+  const steps=[...slide.querySelectorAll('.demo-steps li')];
+  cells.forEach(c=>{c.classList.remove('shown','running'); const o=c.querySelector('.nb-out'); if(o)o.classList.remove('shown'); const p=c.querySelector('.nb-prompt'); if(p){p.classList.remove('busy'); p.textContent='['+(cells.indexOf(c)+1)+']';}});
+  steps.forEach(s=>s.classList.remove('on'));
+  if(STATIC){cells.forEach(c=>{c.classList.add('shown'); const o=c.querySelector('.nb-out'); if(o)o.classList.add('shown');}); steps.forEach(s=>s.classList.add('on')); const body=slide.querySelector('.nb-body'); if(body){body.style.scrollBehavior='auto'; const snap=()=>body.scrollTop=body.scrollHeight; snap(); requestAnimationFrame(snap); setTimeout(snap,80);} return;}
+  let t=420;
+  cells.forEach((cell,idx)=>{
+    const prompt=cell.querySelector('.nb-prompt');
+    const out=cell.querySelector('.nb-out');
+    demoTimers.push(setTimeout(()=>{cell.classList.add('shown','running'); if(prompt){prompt.classList.add('busy'); prompt.textContent='[*]';} const body=cell.parentElement; body.scrollTop=Math.max(0,cell.offsetTop-90);},t));
+    t+=720;
+    demoTimers.push(setTimeout(()=>{
+      cell.classList.remove('running');
+      if(prompt){prompt.classList.remove('busy'); prompt.textContent='['+(idx+1)+']';}
+      if(out)out.classList.add('shown');
+      if(steps[idx])steps[idx].classList.add('on');
+    },t));
+    t+=820;
+  });
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-replay]'); if(!b) return;
+  playDemo(b.closest('.slide'));
+});
+addEventListener('keydown',e=>{if(e.key.toLowerCase()==='r'){const s=slides[i]; if(s.classList.contains('demo-slide'))playDemo(s);}});
+
+/* auto-hide chrome when idle */
+let idleT; function poke(){document.body.classList.remove('idle'); clearTimeout(idleT); idleT=setTimeout(()=>document.body.classList.add('idle'),3200);}
+['mousemove','keydown','touchstart','wheel','click'].forEach(ev=>addEventListener(ev,poke,{passive:true})); poke();
+
+/* deep link */
+if(location.hash){const n=parseInt(location.hash.slice(1));if(n>=1&&n<=TOT){slides[0].classList.remove('active');i=n-1;slides[i].classList.add('active');}}
+sync();
+</script>
+</body>
+</html>

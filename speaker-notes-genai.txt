@@ -1,0 +1,193 @@
+OCBC CRAYON 2026 — Generative AI & LLMs: Theory
+Speaker notes · 38 slides
+================================================
+
+Slide 1 — Generative AI & LLMs · Theory
+  • Welcome to Session 3. This assumes Topics 1 and 2 — you can wrangle data and make it predict. Today: making machines generate language.
+  • 90 minutes, intuition-first: no matrix math. One animated demo, banking flavour, and we close by spotting today's theory inside OCBC's own AI products.
+  • Promise: by the end you can read a GenAI system end to end and talk to the people building them.
+
+Slide 2 — The idea that started it
+  • Open on the single most important idea in modern AI — the 2017 paper title. It doubles as a teaser for Part 2.
+  • Everything today — GPT, Claude, Gemini, Llama — descends from this one architectural idea: attention.
+  • We will unpack exactly what attention means, with pictures, in the transformer section.
+
+Slide 3 — From predicting data to generating language
+  • Bridge from Topic 2. There we made data predict a label or a number. GenAI goes one step further: it generates new content.
+  • Predictive ML answers is this fraud? Generative AI writes the suspicious-activity summary. Same data foundation, a new capability.
+  • Frame today as adding generation on top of the prediction skills they already have.
+
+Slide 4 — Discriminative labels · generative produces
+  • The core distinction. Discriminative models draw boundaries and label — that was Topic 2.
+  • Generative models produce new content that resembles their training data — text, here.
+  • Banking pair: a discriminative model flags a suspicious transaction; a generative model drafts the SAR narrative for the analyst to review.
+
+Slide 5 — LLMs are the language engine of GenAI
+  • Place LLMs in the landscape. Generative AI is the umbrella — it spans text, images, audio and code.
+  • LLMs are the text/language engine of that umbrella. Today is entirely about the text branch.
+  • Many bank use cases are multimodal at the edges, but the language model is the core we are studying.
+
+Slide 6 — The theory you will see in our own tools
+  • One grounding slide before the theory. LLMs are already inside the bank — these three are the running showcase.
+  • Document extraction reads KYC forms; an internal assistant helps relationship managers; a customer assistant answers in-app.
+  • Promise: every concept today shows up in one of these. We revisit them at the end.
+
+Slide 7 — Part 1 — Large Language Models
+  • Part 1, about 25 minutes. We define a language model, show next-token prediction, and walk the history.
+  • Keep it concrete: tokens, embeddings, scale, the three-stage training recipe, and where LLMs fail.
+  • Ends with a live demo of a single API call, then grounding with RAG.
+
+Slide 8 — Autocomplete on steroids
+  • Plainest possible definition: a model that assigns probabilities to sequences and predicts the next token.
+  • The one-liner that sticks: autocomplete on steroids. Your phone keyboard does a tiny version of this.
+  • All the apparent intelligence is doing this one thing extremely well, over and over.
+
+Slide 9 — It predicts a distribution, then picks
+  • Make it concrete. Given the prompt, the model produces a probability for every possible next token.
+  • Here the top candidate is balance, then frozen, overdrawn. It samples from this distribution to pick a word.
+  • Repeat token by token and you get fluent text. The whole magic is doing this distribution well.
+
+Slide 10 — Words become numbers the model can do math on
+  • Two ideas. First, text is broken into tokens — roughly word-pieces — because models work in fixed units.
+  • Second, each token maps to a vector, an embedding, where similar meanings sit near each other.
+  • Why numbers: models do arithmetic, not words. debit and credit land close; king and queen close — geometry captures meaning.
+
+Slide 11 — Scale unlocked learning from the prompt
+  • Large is three things multiplied: parameters, training data, and compute. GPT-3 was 175 billion parameters.
+  • Scale did something surprising — it unlocked in-context learning: the model learns from examples in the prompt, with no retraining.
+  • A few abilities appear only past a size threshold — emergent abilities. We exploit in-context learning in the prompting section.
+
+Slide 12 — Sixty years to an overnight success
+  • Sixty years in one minute. ELIZA faked conversation with rules; statistical NLP counted word frequencies.
+  • word2vec (2013) gave words vectors; the Transformer (2017) changed everything; GPT and BERT (2018) started the pretraining era.
+  • GPT-3 (2020) showed in-context learning at 175B; ChatGPT (2022) brought it to everyone. Today: GPT, Claude, Gemini, Llama — multimodal and reasoning.
+
+Slide 13 — Three stages: pretrain, fine-tune, align
+  • How a modern LLM is actually made — three stages. Pretraining: predict the next token on massive text. It learns language and world knowledge, but not how to behave.
+  • Fine-tuning / instruction-tuning: train on examples of following instructions, so it answers rather than just continues text.
+  • RLHF: align to human preferences using feedback — helpful, honest, harmless. This is what makes a raw model into an assistant.
+
+Slide 14 — A brilliant drafter, an unreliable oracle
+  • Honest framing for a risk-aware audience. Strengths: drafting, summarising, extraction, translation, code.
+  • Limits: hallucination — confidently wrong; no live knowledge without retrieval; weak at exact math; can inherit bias.
+  • The point: treat output as a capable draft to verify, never as ground truth. This sets up RAG and guardrails.
+
+Slide 15 — RAG: retrieve, augment, generate
+  • The fix for hallucination and stale knowledge: retrieval-augmented generation. Do not rely on the model's memory.
+  • Retrieve relevant passages from a trusted knowledge base, augment the prompt with them, then generate the answer from that context.
+  • Banking framing: answer from our policy documents, with citations — not from whatever the model happened to memorise.
+
+Slide 16 — The model is one API call
+  • Demo 1, replayed in-deck — press R or Replay. The model itself is a single API call.
+  • Cell 2 is a bare call: prompt in, completion out. Cell 3 prepends a retrieved policy snippet — the RAG pattern — and the answer becomes grounded and specific.
+  • The lesson: the model is one API call; the engineering is the context and prompt you wrap around it.
+
+Slide 17 — Part 2 — The Transformer
+  • Part 2, about 25 minutes. Pure intuition — attention links, parallel heads, stacked blocks. No matrix math.
+  • Start with why older models hit a wall, then the 2017 breakthrough, then self-attention shown visually.
+  • End by connecting the architecture back to reading and drafting bank text.
+
+Slide 18 — Reading word-by-word hits a wall
+  • Set up the problem the transformer solved. Older models — RNNs — read one word at a time, in order.
+  • That is slow, and they forget long-range context: by the end of a long paragraph the start has faded.
+  • The transformer's move: read the whole sequence at once, in parallel, and let every word see every other.
+
+Slide 19 — Attention Is All You Need
+  • The landmark. Vaswani and colleagues at Google, 2017. The radical claim in the title: you can drop recurrence entirely.
+  • Replace it with attention, and process the sequence in parallel. Simpler, faster, and it scaled far better.
+  • This single architecture underlies GPT, BERT, Claude, Gemini and Llama. The rest of Part 2 is what is inside it.
+
+Slide 20 — Every word weighs every other word
+  • The heart of the transformer, shown. Every word looks at every other word and weighs how relevant each is.
+  • Here the focus word is charge. Attention links it most strongly to disputed, also to customer and card — it builds context.
+  • No matrix math today — just the picture: thicker link means more attention. This is how the model resolves what a word means in context.
+
+Slide 21 — Many readers, each tracking one thing
+  • One attention pass catches one kind of relationship. Real transformers run many in parallel — heads.
+  • Each head learns to track something different: grammar, meaning, or reference. Then their reads are combined.
+  • Analogy: a panel of readers, each following one thread, pooling notes for a richer understanding.
+
+Slide 22 — What else is in a transformer block
+  • Round out the block in plain terms. Positional encoding tags each token with its order, since attention alone is order-blind.
+  • Feed-forward layers process each token a bit more on their own. Residual connections and layer norm keep training stable as you stack.
+  • Attention plus these pieces is the transformer block — the unit you repeat.
+
+Slide 23 — Stack the block, deepen the model
+  • Now repeat. Stack many identical blocks and you get a deep network — each layer refines the representation.
+  • More layers, more parameters, more data — more capability. GPT-3 stacked 96 of these blocks.
+  • This is the concrete meaning of large from Part 1 — depth times width times data.
+
+Slide 24 — Encoder understands · decoder generates
+  • One clean contrast. Encoder models like BERT read the whole text to understand it — great for classification and search.
+  • Decoder models like GPT, Claude and Gemini generate text left to right — great for writing and chat.
+  • Most chat LLMs today are decoder-only. That is the family behind the customer assistant.
+
+Slide 25 — The same machinery reads our bank text
+  • Zoom back out before prompting. The very same attention machinery is what reads bank text and drafts summaries.
+  • Read the note, attend to what matters, generate the summary token by token — that is the whole pipeline.
+  • This is the bridge to Part 3: now that we have a capable model, how do we steer it?
+
+Slide 26 — Part 3 — Prompt Engineering
+  • Part 3, about 23 minutes — the most immediately useful section for everyone in the room.
+  • We climb the lab-recommended ladder of techniques, with a banking example for each.
+  • End on responsible use in a bank: hallucination, injection, privacy, human-in-the-loop.
+
+Slide 27 — Steer the model with words, not retraining
+  • Define it. Prompt engineering is steering a fixed model with the words you give it — no weight changes.
+  • It is far faster and cheaper than fine-tuning, preserves the model's general knowledge, and keeps working across model updates.
+  • Reach for prompting first; fine-tuning is a later, heavier tool.
+
+Slide 28 — Climb only as high as you need
+  • The spine of the section — the lab-recommended ladder, in impact order. Start simple, add only what you need.
+  • Be clear and direct, then give examples, then ask for step-by-step reasoning, then add structure, a role, and finally chain prompts.
+  • Most tasks are solved by the first two or three rungs. Climb only as far as the problem demands.
+
+Slide 29 — Specific beats clever
+  • Rung 1, the highest-leverage. Vague prompts get vague answers. Say exactly what you want, with context and motivation.
+  • The colleague test: if a new colleague would be confused by your instruction, so is the model.
+  • Here, the specific version names the role, the format, and the goal — and gets a usable answer first time.
+
+Slide 30 — Show, don't just tell
+  • Rung 2. Do not just tell — show. Three to five diverse, canonical examples teach the format and tone better than any description.
+  • Banking example: a couple of labelled transaction-to-category pairs, then the new one to classify.
+  • The model copies the pattern. Keep examples varied so it generalises rather than memorising.
+
+Slide 31 — Ask it to think step by step
+  • Rung 3. For multi-step problems, ask the model to reason step by step before answering — accuracy jumps.
+  • Also give it permission to say I don't know, which reduces confident guessing.
+  • Trade-off: it is slower and uses more tokens, so reserve it for genuinely complex tasks.
+
+Slide 32 — Separate the parts, set the persona
+  • Rungs 4 and 5 together. Structure your prompt with clear sections or tags so the model never mixes instructions with data.
+  • Assign a role — you are a compliance analyst — to set tone, vocabulary and expertise.
+  • Tags like context, instructions and data are especially useful when you paste in documents.
+
+Slide 33 — Break big tasks into a chain
+  • Rung 6. For big tasks, do not ask for everything at once. Break it into a chain of focused steps.
+  • Draft, then review, then improve — each step gets the model's full attention, and the self-review catches errors.
+  • Chaining trades a little latency for markedly higher quality on complex work.
+
+Slide 34 — Use it responsibly in a bank
+  • Close Part 3 with responsible use — guardrails, not a compliance lecture. Hallucination: verify facts before acting.
+  • Prompt injection: untrusted text can carry hidden instructions, so never trust pasted content blindly.
+  • Privacy: no sensitive customer data into unapproved tools. And keep a human in the loop for any real decision.
+
+Slide 35 — Showcase — GenAI at OCBC
+  • Bring it home. Everything today shows up in OCBC's own AI products.
+  • Three illustrative examples, mapped to the exact concepts we covered.
+  • Where internal details are unknown, we describe generically and label as illustrative.
+
+Slide 36 — Spot today's concepts at OCBC
+  • Map each product back to a concept. Document extraction is tokens and embeddings turning forms into structured fields.
+  • The RM-support chatbot is RAG plus prompting — grounded answers from policy and product knowledge.
+  • The customer assistant is a decoder LLM with grounding and guardrails. Illustrative — real products, simplified.
+
+Slide 37 — Three things to remember
+  • Replay the three spines. What an LLM is: next-token prediction, trained in three stages.
+  • The transformer: attention, processed in parallel, stacked deep. Prompting: the ladder from clear-and-direct up to chaining.
+  • Three takeaways: it is prediction not magic; steer with prompts before fine-tuning; verify and use responsibly.
+
+Slide 38 — Wrap — You can now read a GenAI system end to end.
+  • Close it. They can now read a GenAI system end to end — and recognise it in OCBC's own tools.
+  • Pointers to go deeper: Anthropic's prompt-engineering docs for practice, and the original paper for the brave.
+  • Thank them and open the floor for questions.
