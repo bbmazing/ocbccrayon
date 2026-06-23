@@ -1,0 +1,193 @@
+OCBC CRAYON 2026 — Knowledge Retrieval & Context (RAG)
+Speaker notes · 38 slides
+================================================
+
+Slide 1 — Knowledge Retrieval Grounding AI in Your Data
+  • Welcome to Session 4, the final core topic. This builds directly on Topic 3 — you know what an LLM is, and that it hallucinates and has no live knowledge.
+  • Today we fix that: retrieval. Give the model the right context, from our own documents, at the right moment. 90 minutes, one demo, all banking examples.
+  • Promise: by the end you can reason about a RAG system end to end and explain why our chatbots can cite a real policy.
+
+Slide 2 — Why retrieval matters
+  • The framing principle for the whole session. Capability is not the bottleneck — access to the right information is.
+  • A frontier model that cannot see OCBC's product sheets will confidently invent the early-withdrawal penalty. Retrieval is what closes that gap.
+  • We will call this back at the close.
+
+Slide 3 — From a confident guesser to a grounded one
+  • Bridge from Topic 3. We established two hard limits: LLMs hallucinate, and they have no live or internal knowledge — they only know their training data.
+  • RAG is the fix. Instead of trusting the model's memory, we hand it the relevant facts at question time.
+  • Frame the session as turning a confident guesser into a grounded, citable assistant.
+
+Slide 4 — Confident, fluent — and wrong
+  • Make the failure visceral. Ask a specific, real OCBC question — the early-withdrawal penalty on a 6-month time deposit.
+  • The model never read our product sheet, so it produces a fluent, plausible, and wrong number. That is the danger: it looks authoritative.
+  • This is exactly what retrieval prevents — and why a bank cannot ship an ungrounded assistant.
+
+Slide 5 — Why retrieval wins for bank knowledge
+  • Three ways to give a model knowledge. Fine-tuning bakes facts into the weights — expensive, slow to update, and wrong the moment a policy changes.
+  • Stuffing everything into the prompt hits context limits and gets costly fast — you cannot paste the whole policy library every time.
+  • Retrieval fetches just the relevant passages on demand. For knowledge that is large, changing, and sensitive, RAG wins.
+
+Slide 6 — An open-book exam for the model
+  • Define it. RAG — Retrieval-Augmented Generation: find relevant text from a trusted source, add it to the prompt, then generate.
+  • The analogy that sticks: an open-book exam instead of a closed-book one. The model does not have to memorise; it looks things up.
+  • Three moves — retrieve, augment, generate. The rest of the deck is how each is done well.
+
+Slide 7 — Index once, retrieve every time
+  • This diagram is the spine of the entire deck. RAG has two phases. Indexing happens offline, once: documents are chunked, embedded, and stored in a vector database.
+  • Retrieval happens online, per question: embed the query, search the index, optionally rerank, stuff the top chunks into the prompt, and answer.
+  • Every later section zooms into one box: embeddings, chunking, and retrieval mechanics. Keep returning to this map.
+
+Slide 8 — Grounded, private, and auditable
+  • Make the bank case explicit. Answers are grounded in our own policies — current and citable, not the model's vague memory.
+  • Sensitive documents stay inside our infrastructure; nothing is shipped to a third party. That is decisive in a regulated environment.
+  • And every answer carries a source, which means less hallucination and real auditability — you can show where it came from.
+
+Slide 9 — Part 1 — Vector Embeddings
+  • Part 1, about 22 minutes. Embeddings are the load-bearing idea of retrieval — meaning as coordinates.
+  • We anchor on OCBC's actual embedding model, Qwen3-Embedding-8B, and the real tuning levers around it.
+  • End on the golden rule: one model, one space, for queries and documents alike.
+
+Slide 10 — Text becomes a vector of meaning
+  • Recap from Topic 3, now load-bearing. An embedding turns a piece of text into a list of numbers — a vector — that captures its meaning.
+  • The key property: texts with similar meaning get similar vectors, so they sit close together in space.
+  • Everything in retrieval reduces to comparing these vectors. Numbers, because computers compare numbers, not words.
+
+Slide 11 — Meaning becomes geometry
+  • Make it visual. Picture every text as a point in space. Texts about the same thing cluster together.
+  • Time deposit and fixed deposit land right next to each other — same concept, different words. Credit card sits far away.
+  • Meaning becomes geometry. This is the whole reason retrieval can match on sense rather than exact words.
+
+Slide 12 — Match meaning, not exact words
+  • Why bother with embeddings over plain keyword search? Keyword search matches exact words, so it misses synonyms and paraphrases.
+  • Early withdrawal and breaking your deposit early mean the same thing but share no keywords — keyword search whiffs; embeddings match on meaning.
+  • Foreshadow the catch: embeddings can miss exact identifiers like a product code. We fix that later with hybrid search.
+
+Slide 13 — Qwen3-Embedding-8B, self-hosted
+  • The concrete tool OCBC uses: Qwen3-Embedding-8B. Walk the specs that actually matter in practice.
+  • 8B parameters and up to 32K-token context; flexible output dimensions from 32 up to 4096 via Matryoshka; over 100 languages including Bahasa Indonesia and code.
+  • It is instruction-aware, and we self-host it — so sensitive documents never leave our infrastructure.
+
+Slide 14 — Top of the multilingual leaderboard
+  • Why this model. As of June 2025 it ranked number one on the MTEB multilingual leaderboard with a score of 70.58 — present that as a 2025 snapshot, verify current.
+  • Multilingual strength matters for us — Indonesian and English banking documents in one consistent space.
+  • And self-hosting keeps data inside OCBC. Strong, multilingual, and ours.
+
+Slide 15 — Tell the embedder what the query is for
+  • A cheap, practical lever. Qwen3 lets you prepend a short task instruction to the query before embedding.
+  • For example: Represent this banking-policy question for retrieval. This nudges the vector toward the retrieval task.
+  • Typical gain is one to five percent in retrieval quality — small effort, free improvement. Instruct queries; documents usually stay plain.
+
+Slide 16 — Trade a little accuracy for big savings
+  • Dimension choice is a real tuning decision. Bigger vectors capture more nuance but cost more storage and slow search.
+  • Matryoshka representation learning lets you truncate the same vector to fewer dimensions — say 1024 — keeping most of the accuracy for a fraction of the cost.
+  • Drag it: as you cut dimensions, storage and latency fall fast while accuracy dips only a little. There is no single right value — you tune it.
+
+Slide 17 — One model, one space
+  • The one rule people break. Queries and documents must be embedded with the same model, so they live in the same geometric space.
+  • Mix two models and the coordinates are not comparable — distances become meaningless and retrieval silently degrades.
+  • Corollary: if you ever switch embedding models, you must re-embed everything. One model, one space.
+
+Slide 18 — Part 2 — Chunking
+  • Part 2, about 20 minutes. Chunking is the least glamorous and often highest-leverage knob in RAG.
+  • We compare fixed, recursive and semantic splitting, then overlap, metadata, and contextual retrieval.
+  • Defaults to remember: recursive, roughly 256 to 512 tokens, 10 to 20 percent overlap.
+
+Slide 19 — Split the document into passages
+  • Why chunk at all? You cannot embed a 50-page policy as a single vector — the meaning gets averaged into mush and it will not fit retrieval context.
+  • So you split the document into passages and embed each one. Now a query can match the specific paragraph that answers it.
+  • Chunking is frequently the highest-leverage decision in the whole pipeline — get it wrong and nothing downstream can recover.
+
+Slide 20 — Too big, too small, or just right
+  • The Goldilocks problem. Chunk too big and the embedding is diluted with off-topic text, so match quality drops.
+  • Chunk too small and the fragment loses the context needed to actually answer the question.
+  • You want it just right: one coherent idea per chunk. Same passage, three ways — the middle one retrieves best.
+
+Slide 21 — Cut every N tokens — the blunt baseline
+  • Strategy one: fixed-size. Cut every N tokens — say 256 to 512 — regardless of meaning. Simple and fast.
+  • The downside is obvious: it happily slices through the middle of a sentence or a table, ignoring natural boundaries.
+  • It is the blunt baseline. Fine to start, but you can almost always do better.
+
+Slide 22 — Split along natural boundaries
+  • Strategy two: recursive — the pragmatic default. Split along natural boundaries: sections, then paragraphs, then sentences, until chunks fit.
+  • It respects the document's structure, so chunks stay coherent. This is the recommended starting point.
+  • Defaults to remember: roughly 256 to 512 tokens with 10 to 20 percent overlap.
+
+Slide 23 — Cut where the meaning shifts
+  • Strategy three: semantic. Embed sentences, then place a boundary wherever the meaning shifts — where cosine distance between neighbours spikes.
+  • It produces the most coherent chunks, but it costs an extra embedding pass and yields variable sizes.
+  • Higher accuracy in principle — but benchmark it on your own docs before adopting; it is not always worth the cost.
+
+Slide 24 — Overlap stops orphans; metadata enables citations
+  • Two practical add-ons. Overlap: let adjacent chunks share 10 to 20 percent of text, so a key sentence at a boundary is not orphaned.
+  • Metadata: store source doc, section, page and effective date with every chunk.
+  • In a bank that metadata is not optional — it is what lets every answer cite a real, dated source for audit.
+
+Slide 25 — Give each chunk its context before embedding
+  • The best-practice upgrade, from Anthropic. A bare chunk that says the penalty is 1% is context-less — the index does not know which product or year.
+  • Contextual retrieval prepends a short context blurb to each chunk before embedding: this is from OCBC's 2025 Time Deposit T&Cs, regarding early withdrawal.
+  • Reported around 35 percent fewer retrieval failures, and it pairs well with hybrid search. Cheap to add, big win.
+
+Slide 26 — Part 3 — Retrieval Mechanics
+  • Part 3, about 24 minutes — how retrieval actually works under the hood, intuition only.
+  • Cosine similarity, nearest neighbours, approximate search, then the two upgrades that matter: hybrid and reranking.
+  • End with the full pipeline and how you measure that it works.
+
+Slide 27 — Closeness is the angle between arrows
+  • How do we measure closeness? Cosine similarity: the angle between two vectors. Small angle means similar meaning.
+  • A score near 1 means the directions almost line up — near-identical meaning. Near 0 means unrelated.
+  • Watch the query vector swing toward the closest chunk. We never use the length, only the direction — that is what cosine captures.
+
+Slide 28 — Grab the k closest chunks to the query
+  • Retrieval in one line: embed the query, drop it into the same vector space, and grab the k closest chunks — say the top 5.
+  • Watch the query land in the cloud; its nearest neighbours light up. Those are the passages we hand to the model.
+  • Top-k is a knob: too few and you miss the answer; too many and you add noise and cost.
+
+Slide 29 — A smart shortcut through millions of vectors
+  • Scale problem: comparing the query to millions of vectors one by one is too slow for a live chatbot.
+  • Vector databases use Approximate Nearest Neighbour indexes — like HNSW — that take smart shortcuts to get near-instant results with a tiny accuracy trade-off.
+  • Name a few lightly: pgvector, FAISS, Milvus. The idea to keep: ANN is a smart shortcut, not exact search.
+
+Slide 30 — Semantic search blurs exact tokens
+  • Pure semantic search has a real blind spot: exact matches. Embeddings blur precise tokens.
+  • Ask for product code TD-6M or a specific clause number, and semantic search may return something that means roughly the same but is the wrong exact item.
+  • Error codes, account types, product codes, clause numbers — these need exact matching. That is the motivation for hybrid.
+
+Slide 31 — Meaning and exact strings, together
+  • The fix is to use both. Hybrid search runs semantic vector search and keyword search — BM25 — in parallel, then merges the rankings.
+  • A common merge is Reciprocal Rank Fusion. Semantic catches meaning and paraphrase; keyword nails the exact code or clause number.
+  • Hybrid is the current best-practice default — it catches both the sense and the exact string.
+
+Slide 32 — Re-read the shortlist for precision
+  • Reranking is the precision step. First retrieve a broad top-k cheaply — say 20 candidates.
+  • Then a reranker, a cross-encoder, re-reads each candidate against the query and scores true relevance, reordering them.
+  • Keep the top few for the prompt. It is slower per item, so you only run it on the shortlist. Qwen3 ships a reranker too.
+
+Slide 33 — Query to grounded answer, end to end
+  • Put it all together, end to end. A query gets an instruction and is embedded, then hybrid search pulls candidates by meaning and by keyword.
+  • The reranker sharpens the order; the top chunks plus their citations go into the prompt; the LLM generates a grounded answer.
+  • This is the payoff diagram — every piece we built, in one flow.
+
+Slide 34 — Measure retrieval, don't vibe it
+  • You must measure retrieval, not vibe-check it. Three metrics. Context recall: did we fetch the chunks that contain the answer?
+  • Context precision: of what we fetched, how much is actually relevant? Faithfulness: is the final answer grounded in those chunks, or did the model drift?
+  • Build a small golden set of real questions with known answers, and tune chunking, dimensions and top-k against it. Measure, then change one thing at a time.
+
+Slide 35 — Showcase — Grounding at OCBC
+  • Bring it home to OCBC. Everything today powers tools you already met in Topic 3.
+  • Three products, mapped to the pipeline stage each leans on.
+  • Where internal details are unknown, we describe generically and label as illustrative.
+
+Slide 36 — RAG behind OCBC's assistants
+  • Map the products to the pipeline. The RM-support chatbot is RAG over the policy and product knowledge base — chunk, embed, hybrid search, answer with citations.
+  • The customer assistant is grounded in approved FAQs and product info, with tight guardrails on what it can say.
+  • Document Q&A runs retrieval over KYC and AML guidelines. Illustrative — real products, simplified to the concept.
+
+Slide 37 — Three things to remember
+  • Replay the spine. Index: chunk, embed, store. Retrieve: embed the query, hybrid search, rerank, generate with citations.
+  • Safe defaults: recursive chunks around 256 to 512 tokens with 10 to 20 percent overlap, contextual retrieval, hybrid plus rerank, Qwen3-Embedding-8B in one consistent space, and always keep citations.
+  • Three takeaways: chunking is the highest-leverage knob, hybrid beats pure vectors, and you must always measure.
+
+Slide 38 — Wrap — You can now reason about RAG end to end.
+  • Close it. They can now reason about a RAG system end to end — and explain why our chatbots can cite a real policy clause.
+  • Pointers to go deeper: Anthropic's Contextual Retrieval write-up, and the Qwen3-Embedding model card.
+  • Call back the opening line — the smartest model is useless if it cannot see your data — then open for questions.

@@ -1,0 +1,1594 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Knowledge Retrieval (RAG) · OCBC CRAYON</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+/* =========================================================================
+   OCBC CRAYON · Python Data Foundations
+   Self-contained animated deck. Fixed 16:9 stage, one slide at a time.
+   ========================================================================= */
+:root{
+  /* OCBC brand */
+  --red:#EC1B23; --red-dark:#B3141A; --red-deep:#7A0E12;
+  --ink:#1A1A1A; --charcoal:#202024; --charcoal-2:#2A2A2F;
+  --text:#1F2937; --muted:#6B7280; --faint:#9AA1AC;
+  --surface:#FFFFFF; --card:#F5F5F6; --card-2:#EFEFF1;
+  --line:#E4E7EB; --line-strong:#D6D9DE;
+  --tint-red:#FCEEEF; --tint-red-2:#FBE2E3;
+  --code-bg:#1A1C22; --code-ink:#E7E9EE;
+  /* supporting diagram hues (used sparingly) */
+  --blue:#1C6E9C; --teal:#0E7C6B; --amber:#C9851A; --green:#1E8E5A; --violet:#6C4FB3;
+  /* stage geometry */
+  --stageW:1280px; --stageH:720px;
+  --fHead:'Manrope',system-ui,sans-serif;
+  --fBody:'Inter',system-ui,sans-serif;
+  --fMono:'JetBrains Mono',ui-monospace,monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:#0c0c0e;
+  font-family:var(--fBody);
+  color:var(--text);
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+/* ---- Stage: scale a fixed 1280x720 deck to fit the viewport ---- */
+.stage{
+  position:fixed; inset:0; height:100dvh; display:grid; place-items:center;
+  background:
+    radial-gradient(1200px 700px at 80% -10%, rgba(236,27,35,.10), transparent 60%),
+    #0a0a0c;
+}
+.deck{
+  position:absolute; left:0; top:0;
+  width:var(--stageW); height:var(--stageH);
+  transform-origin:top left;
+  box-shadow:0 40px 120px -30px rgba(0,0,0,.8);
+  border-radius:4px; overflow:hidden;
+  background:#fff;
+}
+
+/* ---- Slides ---- */
+.slide{
+  position:absolute; inset:0;
+  width:var(--stageW); height:var(--stageH);
+  opacity:0; visibility:hidden; pointer-events:none;
+  transition:opacity .5s ease;
+  display:flex; flex-direction:column;
+  padding:62px 76px 58px;
+  background:var(--surface);
+}
+.slide.active{opacity:1; visibility:visible; pointer-events:auto; z-index:2}
+.slide.prev{z-index:1}
+
+/* dark slides (cover, dividers, close) */
+.slide.dark{
+  color:#fff;
+  background:
+    radial-gradient(900px 600px at 78% -8%, rgba(236,27,35,.30), transparent 55%),
+    radial-gradient(700px 500px at -5% 110%, rgba(236,27,35,.12), transparent 60%),
+    linear-gradient(160deg,#202024 0%,#161618 60%,#121214 100%);
+}
+.slide.dark::after{ /* fine grain texture */
+  content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
+  background-image:radial-gradient(rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size:3px 3px; mix-blend-mode:screen;
+}
+
+/* =========================================================================
+   Shared chrome: kicker, badge, footer, titles
+   ========================================================================= */
+.kicker{
+  display:inline-flex; align-items:center; gap:11px;
+  font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--red); margin-bottom:16px;
+}
+.kicker .badge{
+  width:24px; height:24px; border-radius:50%;
+  background:var(--red); position:relative; flex:none;
+  box-shadow:0 0 0 4px var(--tint-red);
+  overflow:hidden;
+}
+.kicker .badge::before{ /* rising-sun rays motif */
+  content:""; position:absolute; left:50%; bottom:5px; width:0; height:0;
+  border-left:7px solid transparent; border-right:7px solid transparent;
+  border-bottom:9px solid #fff; transform:translateX(-50%); opacity:.95;
+}
+.kicker .badge::after{
+  content:""; position:absolute; left:0; right:0; bottom:6px; height:1.5px;
+  background:rgba(255,255,255,.85);
+}
+.dark .kicker{color:#ff6a6f}
+.dark .kicker .badge{box-shadow:0 0 0 4px rgba(236,27,35,.25)}
+
+.slide-title{
+  font-family:var(--fHead); font-weight:800; color:var(--ink);
+  font-size:38px; line-height:1.08; letter-spacing:-.02em; max-width:24ch;
+}
+.dark .slide-title{color:#fff}
+.slide-sub{font-size:17px; color:var(--muted); margin-top:12px; max-width:60ch; line-height:1.5}
+
+.foot{
+  position:absolute; left:76px; right:76px; bottom:26px;
+  display:flex; align-items:center; justify-content:space-between;
+  font-size:12px; color:var(--faint); letter-spacing:.02em;
+}
+.foot .mark{display:flex; align-items:center; gap:9px; font-weight:600; color:var(--muted)}
+.foot .mark img{height:18px; width:auto; display:block}
+.foot .pg{font-family:var(--fMono); font-weight:500}
+.dark .foot{color:rgba(255,255,255,.5)}
+.dark .foot .mark{color:rgba(255,255,255,.7)}
+
+.body-area{flex:1; min-height:0; display:flex; flex-direction:column; margin-top:8px}
+
+/* =========================================================================
+   Reveal system — children animate in when slide becomes active
+   ========================================================================= */
+[data-r]{opacity:0; transform:translateY(16px); transition:opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1);}
+.slide.active [data-r]{opacity:1; transform:none}
+[data-r][data-d="1"]{transition-delay:.08s}[data-r][data-d="2"]{transition-delay:.16s}
+[data-r][data-d="3"]{transition-delay:.24s}[data-r][data-d="4"]{transition-delay:.32s}
+[data-r][data-d="5"]{transition-delay:.40s}[data-r][data-d="6"]{transition-delay:.48s}
+[data-r][data-d="7"]{transition-delay:.56s}[data-r][data-d="8"]{transition-delay:.64s}
+[data-r][data-d="9"]{transition-delay:.72s}[data-r][data-d="10"]{transition-delay:.80s}
+[data-r][data-d="11"]{transition-delay:.88s}[data-r][data-d="12"]{transition-delay:.96s}
+
+/* =========================================================================
+   COVER (slide 1)
+   ========================================================================= */
+.cover{padding:0}
+.cover .bg{
+  position:absolute; inset:0;
+  background:url('assets/bg_title_skyline.png') center/cover no-repeat;
+}
+.cover .scrim{position:absolute; inset:0; background:linear-gradient(100deg, rgba(255,255,255,.96) 0%, rgba(255,255,255,.82) 34%, rgba(255,255,255,0) 56%);}
+.cover .inner{position:relative; height:100%; display:flex; flex-direction:column; justify-content:center; padding:0 76px;}
+.cover .logo{height:34px; width:auto; position:absolute; top:48px; left:76px}
+.cover h1{font-family:var(--fHead); font-weight:800; letter-spacing:-.025em; line-height:1.02; font-size:66px; color:var(--ink)}
+.cover h1 .red{color:var(--red); display:block}
+.cover .rule{width:64px; height:5px; background:var(--red); border-radius:3px; margin:26px 0 22px}
+.cover .meta{font-size:15px; color:var(--muted); line-height:1.7}
+.cover .meta strong{color:var(--text); font-weight:600}
+.cover .program{position:absolute; bottom:46px; left:76px; font-size:12.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); font-weight:600}
+
+/* =========================================================================
+   QUOTE (slide 2)
+   ========================================================================= */
+.quote-wrap{flex:1; display:flex; flex-direction:column; justify-content:center; max-width:70ch}
+.quote-mark{font-family:var(--fHead); font-size:120px; line-height:.6; color:var(--red); font-weight:800; height:54px}
+.quote-wrap blockquote{font-family:var(--fHead); font-weight:600; font-size:46px; line-height:1.18; letter-spacing:-.02em; color:#fff; margin:18px 0 26px}
+.quote-wrap blockquote em{color:#ff6a6f; font-style:normal}
+.quote-wrap cite{font-style:normal; font-size:16px; color:rgba(255,255,255,.65); letter-spacing:.04em}
+.quote-wrap cite b{color:#fff; font-weight:600}
+
+/* =========================================================================
+   DIVIDER (section openers)
+   ========================================================================= */
+.divider{justify-content:center}
+.divider .pillar-no{font-family:var(--fHead); font-weight:800; font-size:200px; line-height:.8; color:rgba(255,255,255,.06); position:absolute; right:60px; top:50%; transform:translateY(-50%); letter-spacing:-.04em}
+.divider .eyebrow{font-family:var(--fHead); font-weight:700; letter-spacing:.18em; text-transform:uppercase; font-size:14px; color:#ff6a6f; display:flex; align-items:center; gap:12px}
+.divider .eyebrow .dot{width:26px;height:26px;border-radius:50%;background:var(--red);position:relative;overflow:hidden}
+.divider .eyebrow .dot::before{content:"";position:absolute;left:50%;bottom:5px;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:9px solid #fff;transform:translateX(-50%)}
+.divider h2{font-family:var(--fHead); font-weight:800; font-size:64px; letter-spacing:-.025em; color:#fff; margin:20px 0 18px; line-height:1.02; max-width:18ch}
+.divider .lead{font-size:18px; color:rgba(255,255,255,.7); max-width:54ch; line-height:1.55}
+.divider .prog-rail{display:flex; gap:10px; margin-top:34px}
+.divider .prog-rail span{font-size:12.5px; font-weight:600; letter-spacing:.04em; color:rgba(255,255,255,.4); padding:7px 14px; border:1px solid rgba(255,255,255,.14); border-radius:99px}
+.divider .prog-rail span.on{color:#fff; border-color:var(--red); background:rgba(236,27,35,.18)}
+
+/* =========================================================================
+   Generic building blocks
+   ========================================================================= */
+.cards{display:grid; gap:16px; flex:1; min-height:0}
+.cards.c3{grid-template-columns:repeat(3,1fr)}
+.cards.c2{grid-template-columns:repeat(2,1fr)}
+.card{
+  background:var(--card); border:1px solid var(--line); border-radius:14px;
+  padding:20px 22px; display:flex; flex-direction:column; gap:8px;
+  transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.card:hover{transform:translateY(-3px); box-shadow:0 18px 36px -22px rgba(0,0,0,.3); border-color:var(--line-strong)}
+.card .ic{width:40px; height:40px; border-radius:11px; background:var(--tint-red); color:var(--red); display:grid; place-items:center; flex:none}
+.card .ic svg{width:22px; height:22px}
+.card .num{font-family:var(--fHead); font-weight:800; font-size:15px; color:var(--red); width:30px; height:30px; border-radius:8px; background:var(--tint-red); display:grid; place-items:center}
+.card h3{font-family:var(--fHead); font-weight:700; font-size:18px; color:var(--ink); letter-spacing:-.01em}
+.card p{font-size:14px; color:var(--muted); line-height:1.5}
+.card .tag{font-family:var(--fMono); font-size:12px; color:var(--red); font-weight:500}
+
+/* two-column: text + visual */
+.two{display:grid; grid-template-columns:1fr 1fr; gap:40px; flex:1; min-height:0; align-items:center}
+.two.wide-r{grid-template-columns:0.86fr 1.14fr}
+.two .txt{display:flex; flex-direction:column; justify-content:center}
+.bullets{list-style:none; display:flex; flex-direction:column; gap:14px; margin-top:6px}
+.bullets li{position:relative; padding-left:28px; font-size:16.5px; line-height:1.5; color:var(--text)}
+.bullets li::before{content:""; position:absolute; left:0; top:9px; width:9px; height:9px; border-radius:3px; background:var(--red)}
+.bullets li.strong{font-weight:600; color:var(--ink)}
+.bullets li b{color:var(--ink); font-weight:600}
+.viz{position:relative; height:100%; display:flex; flex-direction:column; justify-content:center}
+
+/* rail (side panel) */
+.rail{background:var(--ink); color:#fff; border-radius:16px; padding:24px 26px; align-self:stretch; display:flex; flex-direction:column; justify-content:center}
+.rail h4{font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.12em; text-transform:uppercase; color:#ff6a6f; margin-bottom:16px}
+.rail ul{list-style:none; display:flex; flex-direction:column; gap:13px}
+.rail li{font-size:15px; color:rgba(255,255,255,.86); padding-left:22px; position:relative; line-height:1.4}
+.rail li::before{content:""; position:absolute; left:0; top:7px; width:7px; height:7px; border-radius:50%; background:var(--red)}
+
+.bullets-rail{display:grid; grid-template-columns:1.55fr 1fr; gap:32px; flex:1; min-height:0; align-items:stretch}
+.bullets-rail .txt{display:flex; flex-direction:column; justify-content:center}
+
+/* =========================================================================
+   Code block (typing reveal + syntax tint)
+   ========================================================================= */
+.codewrap{background:var(--code-bg); border-radius:14px; overflow:hidden; box-shadow:0 24px 50px -28px rgba(0,0,0,.5); border:1px solid #2a2d36; display:flex; flex-direction:column}
+.codewrap .bar{display:flex; align-items:center; gap:7px; padding:12px 16px; border-bottom:1px solid #272a33; background:#15171c}
+.codewrap .bar i{width:11px; height:11px; border-radius:50%; display:block}
+.codewrap .bar i:nth-child(1){background:#ff5f57}.codewrap .bar i:nth-child(2){background:#febc2e}.codewrap .bar i:nth-child(3){background:#28c840}
+.codewrap .bar .fn{margin-left:10px; font-family:var(--fMono); font-size:12.5px; color:#8b909c}
+.codewrap pre{margin:0; padding:20px 22px; overflow:hidden; flex:1}
+.codewrap code{font-family:var(--fMono); font-size:14.5px; line-height:1.65; color:var(--code-ink); white-space:pre; display:block}
+.tok-kw{color:#ff7b72}.tok-fn{color:#d2a8ff}.tok-str{color:#a5d6ff}.tok-num{color:#79c0ff}.tok-com{color:#7d8590; font-style:italic}.tok-op{color:#ff7b72}.tok-var{color:#ffa657}
+.code-line{display:block}
+.slide.active .code-line{animation:codeLine .42s both}
+.slide.active .code-line:nth-child(1){animation-delay:.15s}.slide.active .code-line:nth-child(2){animation-delay:.22s}
+.slide.active .code-line:nth-child(3){animation-delay:.29s}.slide.active .code-line:nth-child(4){animation-delay:.36s}
+.slide.active .code-line:nth-child(5){animation-delay:.43s}.slide.active .code-line:nth-child(6){animation-delay:.50s}
+.slide.active .code-line:nth-child(7){animation-delay:.57s}.slide.active .code-line:nth-child(8){animation-delay:.64s}
+.slide.active .code-line:nth-child(9){animation-delay:.71s}.slide.active .code-line:nth-child(10){animation-delay:.78s}
+.slide.active .code-line:nth-child(11){animation-delay:.85s}.slide.active .code-line:nth-child(12){animation-delay:.92s}
+.slide.active .code-line:nth-child(13){animation-delay:.99s}.slide.active .code-line:nth-child(14){animation-delay:1.06s}
+@keyframes codeLine{from{opacity:0; transform:translateX(-8px)}to{opacity:1; transform:none}}
+.code-note{font-size:14px; color:var(--muted); margin-top:14px; line-height:1.5; font-style:italic}
+.code-points{list-style:none; display:flex; flex-direction:column; gap:12px}
+.code-points li{position:relative; padding-left:24px; font-size:15.5px; line-height:1.45; color:var(--text)}
+.code-points li::before{content:"›"; position:absolute; left:0; top:-1px; color:var(--red); font-weight:800; font-size:18px}
+
+/* =========================================================================
+   Conway Venn (slide 4)
+   ========================================================================= */
+.venn{position:relative; width:430px; height:380px; margin:auto}
+.venn .circ{position:absolute; width:250px; height:250px; border-radius:50%; mix-blend-mode:multiply; display:grid; place-items:center; opacity:0; transform:scale(.6); transition:opacity .7s ease, transform .7s cubic-bezier(.34,1.56,.64,1)}
+.venn .c1{background:rgba(236,27,35,.40); left:0; top:0}
+.venn .c2{background:rgba(28,110,156,.40); right:0; top:0}
+.venn .c3{background:rgba(30,142,90,.42); left:50%; bottom:0; transform:translateX(-50%) scale(.6)}
+.slide.active .venn .c1{opacity:1; transform:scale(1); transition-delay:.2s}
+.slide.active .venn .c2{opacity:1; transform:scale(1); transition-delay:.45s}
+.slide.active .venn .c3{opacity:1; transform:translateX(-50%) scale(1); transition-delay:.7s}
+.venn .lbl{font-family:var(--fHead); font-weight:700; font-size:14px; color:var(--ink); text-align:center; line-height:1.2; pointer-events:none; padding:0 30px}
+.venn .center{position:absolute; left:50%; top:48%; transform:translate(-50%,-50%); z-index:5; background:var(--ink); color:#fff; font-family:var(--fHead); font-weight:800; font-size:13px; padding:8px 14px; border-radius:99px; white-space:nowrap; opacity:0; transition:opacity .5s ease .95s; box-shadow:0 8px 20px -8px rgba(0,0,0,.5)}
+.slide.active .venn .center{opacity:1}
+.venn .danger{position:absolute; left:14%; bottom:30%; z-index:6; font-family:var(--fHead); font-weight:800; font-size:11px; color:#fff; background:var(--red); padding:5px 10px; border-radius:6px; transform:rotate(-8deg); opacity:0; transition:opacity .5s ease 1.2s; box-shadow:0 6px 16px -6px rgba(236,27,35,.7)}
+.slide.active .venn .danger{opacity:1}
+
+/* =========================================================================
+   Stat counters (slide 5 + others)
+   ========================================================================= */
+.stat-row{display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin:auto 0}
+.stat{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:30px 26px; text-align:left; position:relative; overflow:hidden}
+.stat .big{font-family:var(--fHead); font-weight:800; font-size:62px; line-height:1; color:var(--red); letter-spacing:-.03em}
+.stat .big .unit{font-size:32px; vertical-align:super; margin-left:2px}
+.stat .lab{font-size:15px; color:var(--text); margin-top:12px; line-height:1.45; font-weight:500}
+.stat .sub{font-size:12.5px; color:var(--faint); margin-top:8px}
+.stat::before{content:""; position:absolute; left:0; top:0; bottom:0; width:5px; background:var(--red)}
+
+/* progress ring (80% stat) */
+.ring-wrap{display:flex; align-items:center; gap:40px; margin:auto 0}
+.ring{position:relative; width:230px; height:230px; flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring .pct{position:absolute; inset:0; display:grid; place-items:center; font-family:var(--fHead); font-weight:800; font-size:56px; color:var(--ink)}
+.ring-copy{max-width:46ch}
+.ring-copy h3{font-family:var(--fHead); font-weight:800; font-size:28px; color:var(--ink); letter-spacing:-.02em; line-height:1.1; margin-bottom:14px}
+.ring-copy p{font-size:16px; color:var(--muted); line-height:1.55}
+
+/* =========================================================================
+   Step strip (5 facets / workflow)
+   ========================================================================= */
+.flow{display:flex; align-items:stretch; gap:0; margin:auto 0; width:100%}
+.flow .step{flex:1; position:relative; display:flex; flex-direction:column; gap:8px; padding:0 6px}
+.flow .step .node{width:54px; height:54px; border-radius:14px; background:var(--ink); color:#fff; font-family:var(--fHead); font-weight:800; font-size:20px; display:grid; place-items:center; position:relative; z-index:2}
+.flow .step:nth-child(odd) .node{background:var(--red)}
+.flow .step h4{font-family:var(--fHead); font-weight:700; font-size:16.5px; color:var(--ink); margin-top:10px}
+.flow .step p{font-size:13.5px; color:var(--muted); line-height:1.45}
+.flow .arrow{position:absolute; top:27px; left:46px; right:-8px; height:2px; background:var(--line-strong); z-index:1}
+.flow .arrow::after{content:""; position:absolute; right:0; top:-4px; border-left:8px solid var(--line-strong); border-top:5px solid transparent; border-bottom:5px solid transparent}
+.flow .step:last-child .arrow{display:none}
+/* sequential build for flow */
+.flow .step{opacity:0; transform:translateY(14px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .flow .step{opacity:1; transform:none}
+.slide.active .flow .step:nth-child(1){transition-delay:.15s}.slide.active .flow .step:nth-child(2){transition-delay:.35s}
+.slide.active .flow .step:nth-child(3){transition-delay:.55s}.slide.active .flow .step:nth-child(4){transition-delay:.75s}
+.slide.active .flow .step:nth-child(5){transition-delay:.95s}.slide.active .flow .step:nth-child(6){transition-delay:1.15s}
+.flow.compact .node{width:46px;height:46px;border-radius:12px;font-size:17px}
+.flow-cap{font-size:14px; color:var(--muted); font-style:italic; text-align:center; margin-top:26px}
+
+/* journey / agenda */
+.journey{display:grid; grid-template-columns:repeat(4,1fr); gap:18px; flex:1; min-height:0; align-items:stretch}
+.jcard{border:1px solid var(--line); border-radius:16px; padding:24px 22px; display:flex; flex-direction:column; position:relative; background:var(--surface); overflow:hidden}
+.jcard .pn{font-family:var(--fHead); font-weight:800; font-size:46px; color:var(--card-2); line-height:1; letter-spacing:-.03em}
+.jcard .ph{font-family:var(--fHead); font-weight:700; font-size:18.5px; color:var(--ink); margin:14px 0 8px; letter-spacing:-.01em}
+.jcard p{font-size:13.5px; color:var(--muted); line-height:1.5; flex:1}
+.jcard .demo{margin-top:14px; font-family:var(--fMono); font-size:11px; font-weight:600; color:var(--red); background:var(--tint-red); padding:5px 10px; border-radius:6px; align-self:flex-start; display:inline-flex; gap:6px; align-items:center}
+.jcard::after{content:""; position:absolute; left:0; right:0; bottom:0; height:4px; background:var(--red); transform:scaleX(0); transform-origin:left; transition:transform .5s ease}
+.slide.active .jcard::after{transform:scaleX(1)}
+.slide.active .jcard:nth-child(1)::after{transition-delay:.3s}.slide.active .jcard:nth-child(2)::after{transition-delay:.45s}
+.slide.active .jcard:nth-child(3)::after{transition-delay:.6s}.slide.active .jcard:nth-child(4)::after{transition-delay:.75s}
+
+/* =========================================================================
+   Layered stack diagram (Python data stack)
+   ========================================================================= */
+.stack{display:flex; flex-direction:column; gap:12px; margin:auto 0; width:100%}
+.layer{display:grid; grid-template-columns:200px 1fr; align-items:center; gap:22px; border-radius:14px; padding:18px 24px; color:#fff; position:relative; overflow:hidden; opacity:0; transform:translateX(-18px); transition:opacity .55s ease, transform .55s cubic-bezier(.16,1,.3,1)}
+.slide.active .layer{opacity:1; transform:none}
+.slide.active .layer:nth-child(1){transition-delay:.5s}.slide.active .layer:nth-child(2){transition-delay:.38s}
+.slide.active .layer:nth-child(3){transition-delay:.26s}.slide.active .layer:nth-child(4){transition-delay:.14s}
+.layer .lname{font-family:var(--fHead); font-weight:800; font-size:21px; letter-spacing:-.01em; display:flex; align-items:baseline; gap:9px}
+.layer .lname code{font-family:var(--fMono); font-size:13px; opacity:.7; font-weight:500}
+.layer .ldesc{font-size:14.5px; line-height:1.4; opacity:.95}
+.layer.l1{background:linear-gradient(100deg,#2A2A2F,#1c1c20)}
+.layer.l2{background:linear-gradient(100deg,var(--red-dark),var(--red))}
+.layer.l3{background:linear-gradient(100deg,#1C6E9C,#2487bf)}
+.layer.l4{background:linear-gradient(100deg,#0E7C6B,#13a08a)}
+.stack .scaffold{font-size:12.5px; color:var(--muted); text-align:center; font-style:italic}
+
+/* container / building-block cards */
+.mini-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:14px}
+.mini{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:15px 18px}
+.mini .mh{font-family:var(--fMono); font-size:14px; font-weight:700; color:var(--red)}
+.mini .md{font-size:13.5px; color:var(--muted); margin-top:4px; line-height:1.4}
+.mini code{font-family:var(--fMono); font-size:12.5px; color:var(--ink); background:var(--card-2); padding:1px 5px; border-radius:4px}
+
+/* before / after code columns */
+.ba{display:grid; grid-template-columns:1fr 1fr; gap:22px; flex:1; min-height:0; align-items:stretch}
+.ba .col{display:flex; flex-direction:column}
+.ba .ba-h{font-family:var(--fHead); font-weight:700; font-size:14px; margin-bottom:10px; display:flex; align-items:center; gap:9px}
+.ba .ba-h .tagx{font-size:11px; padding:3px 9px; border-radius:99px; font-weight:700; letter-spacing:.04em}
+.ba .before .tagx{background:var(--card-2); color:var(--muted)}
+.ba .after .tagx{background:var(--tint-red); color:var(--red)}
+.ba .codewrap{flex:1}
+/* optimisation pushdown strip (eager vs lazy slide) */
+.pushdown{display:flex; gap:12px; margin-top:16px; justify-content:center; flex-wrap:wrap}
+.pushdown .pd{display:flex; align-items:center; gap:9px; background:var(--tint-red); border:1px solid var(--tint-red-2); border-radius:99px; padding:8px 16px; font-size:13px; color:var(--ink); opacity:0; transform:translateY(10px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .pushdown .pd{opacity:1; transform:none}
+.slide.active .pushdown .pd:nth-child(1){transition-delay:.5s}.slide.active .pushdown .pd:nth-child(2){transition-delay:.66s}.slide.active .pushdown .pd:nth-child(3){transition-delay:.82s}
+.pushdown .pd b{color:var(--red); font-weight:700}
+.pushdown .pd .ck{width:18px;height:18px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-size:11px;flex:none}
+
+/* =========================================================================
+   Notebook-playback demo component
+   ========================================================================= */
+.demo-stage{flex:1; min-height:0; display:grid; grid-template-columns:1.62fr 1fr; gap:26px; align-items:stretch}
+.nb{background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 24px 50px -30px rgba(0,0,0,.35); display:flex; flex-direction:column; overflow:hidden}
+.nb-top{display:flex; align-items:center; gap:8px; padding:11px 16px; border-bottom:1px solid var(--line); background:var(--card)}
+.nb-top .t-ic{width:9px;height:9px;border-radius:50%;background:#e0a800}
+.nb-top .t-ic.r{background:var(--red)} .nb-top .t-ic.g{background:#28a745}
+.nb-top .nb-name{font-family:var(--fMono); font-size:12.5px; color:var(--muted); margin-left:8px}
+.nb-top .nb-kernel{margin-left:auto; font-size:11.5px; color:var(--faint); display:flex; align-items:center; gap:6px}
+.nb-top .nb-kernel::after{content:"";width:8px;height:8px;border-radius:50%;background:#28a745}
+.nb-body{flex:1; overflow:hidden; padding:6px 0; scroll-behavior:smooth}
+.nb-cell{padding:5px 16px; opacity:0; transform:translateY(8px); transition:opacity .4s ease, transform .4s ease}
+.nb-cell.shown{opacity:1; transform:none}
+.nb-in{display:grid; grid-template-columns:54px 1fr; gap:10px; align-items:start}
+.nb-prompt{font-family:var(--fMono); font-size:12.5px; color:#3b6fb0; text-align:right; padding-top:9px; user-select:none}
+.nb-prompt.busy{color:var(--red)}
+.nb-code{position:relative; background:#f6f7f9; border:1px solid #eceef1; border-left:3px solid var(--red); border-radius:6px; padding:9px 12px; font-family:var(--fMono); font-size:13px; line-height:1.55; color:#1f2430; white-space:pre; overflow:hidden; transition:box-shadow .3s ease, border-left-color .3s ease}
+.nb-cell.running .nb-code{box-shadow:0 0 0 2px var(--tint-red-2), 0 8px 22px -12px rgba(236,27,35,.5); border-left-color:var(--red-dark)}
+.nb-cell.running .nb-code::after{content:"▋"; color:var(--red); animation:caret .7s steps(1) infinite; margin-left:1px}
+@keyframes caret{50%{opacity:0}}
+.nb-out{margin:6px 0 0 64px; font-family:var(--fMono); font-size:12px; line-height:1.5; color:#333; max-height:0; opacity:0; overflow:hidden; transition:max-height .5s ease, opacity .4s ease}
+.nb-out.shown{max-height:240px; opacity:1}
+.nb-out .otable{border-collapse:collapse; font-size:11px}
+.nb-out .otable th{background:var(--ink); color:#fff; font-weight:600; padding:2px 9px; text-align:right; font-family:var(--fMono)}
+.nb-out .otable td{padding:2px 9px; border-bottom:1px solid #eee; text-align:right; color:#444}
+.nb-out .otable tr:nth-child(even) td{background:#fafafa}
+.nb-out .muted{color:#8a9099}
+.nb-out .ok{color:#1E8E5A}
+.demo-side{display:flex; flex-direction:column; gap:16px; justify-content:center}
+.demo-card{border-radius:16px; padding:22px 24px; background:var(--ink); color:#fff}
+.demo-card .dk{font-family:var(--fHead); font-weight:700; font-size:12px; letter-spacing:.13em; text-transform:uppercase; color:#ff6a6f; margin-bottom:10px}
+.demo-card h3{font-family:var(--fHead); font-weight:800; font-size:22px; line-height:1.12; letter-spacing:-.01em; margin-bottom:10px}
+.demo-card p{font-size:14px; line-height:1.5; color:rgba(255,255,255,.82)}
+.demo-steps{list-style:none; display:flex; flex-direction:column; gap:11px}
+.demo-steps li{display:flex; gap:11px; align-items:flex-start; font-size:14px; color:var(--text); line-height:1.4}
+.demo-steps li .sn{flex:none; width:24px; height:24px; border-radius:7px; background:var(--tint-red); color:var(--red); font-family:var(--fHead); font-weight:800; font-size:12px; display:grid; place-items:center}
+.demo-steps li.on .sn{background:var(--red); color:#fff}
+.replay{align-self:flex-start; display:inline-flex; align-items:center; gap:8px; background:var(--tint-red); color:var(--red); border:1px solid var(--tint-red-2); font-family:var(--fHead); font-weight:700; font-size:13px; padding:9px 16px; border-radius:99px; cursor:pointer; transition:all .2s ease}
+.replay:hover{background:var(--red); color:#fff}
+.replay svg{width:14px;height:14px}
+.demo-take{background:var(--tint-red); border:1px solid var(--tint-red-2); border-radius:12px; padding:14px 18px; font-size:13.5px; color:var(--ink); line-height:1.45}
+.demo-take b{color:var(--red)}
+
+/* =========================================================================
+   VS compare panels (structured vs unstructured, good vs bad)
+   ========================================================================= */
+.vs{display:grid; grid-template-columns:1fr 1fr; gap:24px; flex:1; min-height:0}
+.vs .panel{border:1px solid var(--line); border-radius:16px; padding:24px 26px; display:flex; flex-direction:column; background:var(--surface); position:relative; overflow:hidden}
+.vs .panel.accent{background:linear-gradient(180deg,var(--tint-red),#fff); border-color:var(--tint-red-2)}
+.vs .panel .ph{font-family:var(--fHead); font-weight:800; font-size:21px; color:var(--ink); letter-spacing:-.01em; display:flex; align-items:center; gap:12px}
+.vs .panel .ph .glyph{width:42px; height:42px; border-radius:11px; display:grid; place-items:center; flex:none}
+.vs .panel.accent .ph .glyph{background:var(--red); color:#fff}
+.vs .panel:not(.accent) .ph .glyph{background:var(--ink); color:#fff}
+.vs .panel .ps{font-size:14px; color:var(--muted); margin:8px 0 16px; line-height:1.45}
+.vs .chips{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px}
+.vs .chip{font-family:var(--fMono); font-size:12px; padding:6px 11px; border-radius:8px; background:var(--card); border:1px solid var(--line); color:var(--text)}
+.vs .panel.accent .chip{background:#fff; border-color:var(--tint-red-2)}
+.vs .where{margin-top:auto; font-size:13.5px; color:var(--text); line-height:1.45; padding-top:14px; border-top:1px dashed var(--line-strong)}
+.vs .where b{color:var(--red)}
+
+/* annotated "shape of data" table */
+.shape-tbl{display:grid; grid-template-columns:auto 1fr; gap:0 18px; align-items:center; margin:auto 0}
+.dtable{border-collapse:separate; border-spacing:0; border-radius:12px; overflow:hidden; box-shadow:0 18px 40px -28px rgba(0,0,0,.3); width:100%}
+.dtable th{background:var(--ink); color:#fff; font-family:var(--fMono); font-size:13px; font-weight:600; padding:11px 16px; text-align:left}
+.dtable th.target{background:var(--red)}
+.dtable td{padding:10px 16px; font-family:var(--fMono); font-size:13.5px; color:var(--text); background:#fff; border-bottom:1px solid var(--line)}
+.dtable td.target{background:var(--tint-red); color:var(--red-dark); font-weight:600}
+.dtable tr:nth-child(even) td{background:#fafafb}
+.dtable tr:nth-child(even) td.target{background:var(--tint-red-2)}
+.annot{font-family:var(--fHead); font-weight:700; font-size:14px; color:var(--red); display:flex; align-items:center; gap:8px}
+.annot.muted{color:var(--muted)}
+.shape-legend{display:flex; gap:26px; justify-content:center; margin-top:22px; flex-wrap:wrap}
+.shape-legend .item{display:flex; align-items:center; gap:9px; font-size:14px; color:var(--text)}
+.shape-legend .sw{width:16px; height:16px; border-radius:5px}
+
+/* analytics staircase (ascending) */
+.stair{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; align-items:end; flex:1; min-height:0; padding-top:8px}
+.rung{display:flex; flex-direction:column; justify-content:flex-end}
+.rung .box{border-radius:14px 14px 0 0; padding:20px 20px 22px; color:#fff; position:relative; transform-origin:bottom; transform:scaleY(0); opacity:0; transition:transform .6s cubic-bezier(.16,1,.3,1), opacity .4s ease}
+.slide.active .rung .box{transform:scaleY(1); opacity:1}
+.slide.active .rung:nth-child(1) .box{transition-delay:.2s}.slide.active .rung:nth-child(2) .box{transition-delay:.42s}
+.slide.active .rung:nth-child(3) .box{transition-delay:.64s}.slide.active .rung:nth-child(4) .box{transition-delay:.86s}
+.rung:nth-child(1) .box{background:#3a3a40; min-height:150px}
+.rung:nth-child(2) .box{background:#8a1419; min-height:215px}
+.rung:nth-child(3) .box{background:var(--red-dark); min-height:280px}
+.rung:nth-child(4) .box{background:var(--red); min-height:345px}
+.rung .q{font-family:var(--fMono); font-size:12px; opacity:.85; margin-bottom:6px}
+.rung .box h4{font-family:var(--fHead); font-weight:800; font-size:21px; letter-spacing:-.01em}
+.rung .box p{font-size:13px; line-height:1.4; opacity:.92; margin-top:8px}
+.rung .box .step-i{position:absolute; top:14px; right:16px; font-family:var(--fHead); font-weight:800; font-size:14px; opacity:.35}
+.stair-axis{display:flex; justify-content:space-between; font-size:13px; color:var(--muted); margin-top:14px; font-style:italic}
+.stair-axis b{color:var(--red); font-style:normal; font-weight:700}
+
+/* animated SVG charts (scatter, dual-line) */
+.svg-card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px 22px; height:100%; display:flex; flex-direction:column}
+.svg-card .ct{font-family:var(--fHead); font-weight:700; font-size:15px; color:var(--ink); margin-bottom:6px}
+.chart-svg{width:100%; flex:1}
+.chart-svg .dot{opacity:0; transition:opacity .5s ease}
+.slide.active .chart-svg .dot{opacity:.78}
+.chart-svg .trend{stroke:var(--red); stroke-width:3; fill:none; stroke-dasharray:600; stroke-dashoffset:600; transition:stroke-dashoffset 1.3s ease .6s}
+.slide.active .chart-svg .trend{stroke-dashoffset:0}
+.chart-svg .ln{fill:none; stroke-width:3; stroke-dasharray:900; stroke-dashoffset:900; transition:stroke-dashoffset 1.5s ease}
+.slide.active .chart-svg .ln1{stroke-dashoffset:0; transition-delay:.3s}
+.slide.active .chart-svg .ln2{stroke-dashoffset:0; transition-delay:.7s}
+.chart-svg .axis{stroke:var(--line-strong); stroke-width:1.5}
+.chart-svg .glab{font-family:var(--fBody); font-size:11px; fill:var(--muted)}
+
+/* problem -> fix table */
+.pf-table{display:flex; flex-direction:column; border:1px solid var(--line); border-radius:14px; overflow:hidden; flex:1; min-height:0}
+.pf-row{display:grid; grid-template-columns:1.1fr 1fr 1.25fr; align-items:center; padding:0; border-bottom:1px solid var(--line); opacity:0; transform:translateX(-12px); transition:opacity .45s ease, transform .45s ease}
+.slide.active .pf-row{opacity:1; transform:none}
+.slide.active .pf-row:nth-child(1){transition-delay:.1s}.slide.active .pf-row:nth-child(2){transition-delay:.2s}
+.slide.active .pf-row:nth-child(3){transition-delay:.3s}.slide.active .pf-row:nth-child(4){transition-delay:.4s}
+.slide.active .pf-row:nth-child(5){transition-delay:.5s}.slide.active .pf-row:nth-child(6){transition-delay:.6s}
+.slide.active .pf-row:nth-child(7){transition-delay:.7s}
+.pf-row:last-child{border-bottom:none}
+.pf-row.head{background:var(--ink); color:#fff; opacity:1; transform:none}
+.pf-row.head>div{font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.04em; text-transform:uppercase; padding:12px 20px; color:rgba(255,255,255,.85)}
+.pf-row>div{padding:13px 20px; font-size:14.5px}
+.pf-row .prob{font-weight:600; color:var(--ink); display:flex; align-items:center; gap:10px}
+.pf-row .prob .d{width:8px;height:8px;border-radius:50%;background:var(--red);flex:none}
+.pf-row .fix code{font-family:var(--fMono); font-size:13px; background:var(--tint-red); color:var(--red-dark); padding:3px 9px; border-radius:6px; font-weight:500}
+.pf-row .desc{color:var(--muted); font-size:13.5px; line-height:1.4}
+.pf-row:nth-child(even):not(.head){background:#fafafb}
+
+/* tidy before/after tables */
+.tidy{display:grid; grid-template-columns:1fr auto 1fr; gap:20px; align-items:center; flex:1; min-height:0}
+.tidy .tcol{display:flex; flex-direction:column}
+.tidy .tlabel{font-family:var(--fHead); font-weight:800; font-size:14px; letter-spacing:.06em; text-transform:uppercase; margin-bottom:12px; display:flex; align-items:center; gap:9px}
+.tidy .messy .tlabel{color:var(--muted)} .tidy .clean .tlabel{color:var(--red)}
+.tidy .arrow-mid{font-size:34px; color:var(--red); font-weight:800}
+.tidy .note{font-size:12.5px; color:var(--muted); margin-top:10px; font-style:italic; line-height:1.4}
+
+/* histogram (EDA) */
+.hist{display:flex; align-items:flex-end; gap:7px; height:230px; padding:0 4px; border-bottom:2px solid var(--line-strong)}
+.hist .bar{flex:1; background:linear-gradient(180deg,var(--red),var(--red-dark)); border-radius:5px 5px 0 0; height:0; transition:height .8s cubic-bezier(.16,1,.3,1); position:relative}
+.hist .bar.med{background:linear-gradient(180deg,#3a3a40,#222)}
+.slide.active .hist .bar{height:var(--h)}
+.slide.active .hist .bar:nth-child(1){transition-delay:.1s}.slide.active .hist .bar:nth-child(2){transition-delay:.16s}
+.slide.active .hist .bar:nth-child(3){transition-delay:.22s}.slide.active .hist .bar:nth-child(4){transition-delay:.28s}
+.slide.active .hist .bar:nth-child(5){transition-delay:.34s}.slide.active .hist .bar:nth-child(6){transition-delay:.40s}
+.slide.active .hist .bar:nth-child(7){transition-delay:.46s}.slide.active .hist .bar:nth-child(8){transition-delay:.52s}
+.slide.active .hist .bar:nth-child(9){transition-delay:.58s}.slide.active .hist .bar:nth-child(10){transition-delay:.64s}
+.slide.active .hist .bar:nth-child(11){transition-delay:.70s}.slide.active .hist .bar:nth-child(12){transition-delay:.76s}
+.stat-chips{display:flex; flex-direction:column; gap:12px}
+.stat-chips .sc{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 18px; display:flex; justify-content:space-between; align-items:center}
+.stat-chips .sc .k{font-size:13.5px; color:var(--muted)}
+.stat-chips .sc .v{font-family:var(--fHead); font-weight:800; font-size:22px; color:var(--red)}
+
+/* chart-picker glyph grid */
+.picker{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; flex:1; min-height:0}
+.pick{border:1px solid var(--line); border-radius:14px; padding:18px 20px; display:flex; flex-direction:column; gap:10px; background:var(--surface); transition:transform .25s ease, box-shadow .25s ease, border-color .25s}
+.pick:hover{transform:translateY(-3px); box-shadow:0 18px 34px -22px rgba(0,0,0,.3); border-color:var(--tint-red-2)}
+.pick .pg-glyph{height:46px; display:flex; align-items:flex-end; gap:4px}
+.pick .q{font-family:var(--fMono); font-size:12px; color:var(--red); font-weight:500}
+.pick h4{font-family:var(--fHead); font-weight:700; font-size:16px; color:var(--ink)}
+.pick p{font-size:13px; color:var(--muted); line-height:1.4}
+.pick svg{width:100%; height:46px}
+
+/* insight callout */
+.insight{display:grid; grid-template-columns:1fr 1fr; gap:30px; flex:1; min-height:0; align-items:center}
+.insight .lead-card{background:var(--ink); color:#fff; border-radius:18px; padding:30px 32px; position:relative; overflow:hidden}
+.insight .lead-card::before{content:""; position:absolute; right:-40px; top:-40px; width:160px; height:160px; border-radius:50%; background:radial-gradient(circle,rgba(236,27,35,.4),transparent 70%)}
+.insight .lead-card .so{font-family:var(--fHead); font-weight:700; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#ff6a6f; margin-bottom:14px}
+.insight .lead-card .big-line{font-family:var(--fHead); font-weight:800; font-size:28px; line-height:1.15; letter-spacing:-.01em}
+.insight .lead-card .big-line em{color:#ff8e91; font-style:normal}
+.layer-list{list-style:none; display:flex; flex-direction:column; gap:16px}
+.layer-list li{display:flex; gap:14px; align-items:flex-start}
+.layer-list li .n{flex:none; width:30px; height:30px; border-radius:9px; background:var(--tint-red); color:var(--red); font-family:var(--fHead); font-weight:800; display:grid; place-items:center; font-size:14px}
+.layer-list li b{font-family:var(--fHead); color:var(--ink); font-size:16px}
+.layer-list li p{font-size:14px; color:var(--muted); line-height:1.4; margin-top:2px}
+
+/* closing recap */
+.recap-grid{display:grid; grid-template-columns:1fr 1fr; gap:30px; flex:1; min-height:0; align-items:center}
+.recap-col h4{font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.12em; text-transform:uppercase; margin-bottom:18px; display:flex; align-items:center; gap:10px}
+.recap-col.recap h4{color:#ff6a6f}.recap-col.next h4{color:#fff}
+.recap-col ul{list-style:none; display:flex; flex-direction:column; gap:14px}
+.recap-col li{font-size:16px; line-height:1.45; padding-left:26px; position:relative; color:rgba(255,255,255,.88)}
+.recap-col.recap li::before{content:"✓"; position:absolute; left:0; color:var(--red); font-weight:800}
+.recap-col.next li::before{content:"→"; position:absolute; left:0; color:#ff6a6f; font-weight:800}
+.recap-col.next{background:rgba(236,27,35,.1); border:1px solid rgba(236,27,35,.25); border-radius:18px; padding:26px 28px}
+
+/* big single stat (80%) */
+.megastat{display:flex; align-items:center; gap:60px; margin:auto 0}
+.megastat .num{font-family:var(--fHead); font-weight:800; font-size:200px; line-height:.85; color:var(--red); letter-spacing:-.05em}
+.megastat .num .u{font-size:90px}
+.megastat .copy{max-width:42ch}
+.megastat .copy h3{font-family:var(--fHead); font-weight:800; font-size:30px; color:var(--ink); line-height:1.1; letter-spacing:-.02em; margin-bottom:14px}
+.megastat .copy p{font-size:16px; color:var(--muted); line-height:1.55}
+.megastat .copy .src{font-size:12.5px; color:var(--faint); margin-top:14px}
+
+/* =========================================================================
+   Navigation chrome
+   ========================================================================= */
+.progress{position:fixed; top:0; left:0; height:3px; background:var(--red); z-index:50; transition:width .4s ease; box-shadow:0 0 12px rgba(236,27,35,.6)}
+.hud{position:fixed; bottom:18px; right:22px; z-index:50; display:flex; align-items:center; gap:14px; font-family:var(--fMono); font-size:12px; color:rgba(255,255,255,.55)}
+.hud .dots{display:flex; gap:6px}
+.hud .dot{width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.22); cursor:pointer; transition:all .25s ease}
+.hud .dot.on{background:var(--red); transform:scale(1.35)}
+.hud .dot.sec{background:rgba(255,255,255,.4)}
+.hud .count b{color:#fff}
+.hint{position:fixed; bottom:20px; left:22px; z-index:50; font-size:11.5px; color:rgba(255,255,255,.4); font-family:var(--fMono)}
+.hint kbd{background:rgba(255,255,255,.1); border-radius:4px; padding:1px 6px; color:rgba(255,255,255,.7)}
+/* auto-hide nav chrome when idle or when deck fills the viewport */
+.hud,.hint{transition:opacity .4s ease}
+body.idle .hud, body.idle .hint{opacity:0; pointer-events:none}
+body.static .hud, body.static .hint{display:none}
+
+/* speaker notes drawer */
+.notes{position:fixed; left:0; right:0; bottom:0; z-index:60; transform:translateY(100%); transition:transform .35s cubic-bezier(.16,1,.3,1); background:#16161a; color:#e7e7ea; border-top:3px solid var(--red); max-height:42vh; overflow:auto; padding:22px 30px; box-shadow:0 -20px 50px -20px rgba(0,0,0,.7)}
+.notes.show{transform:none}
+.notes h5{font-family:var(--fHead); font-weight:700; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#ff6a6f; margin-bottom:12px; display:flex; align-items:center; gap:10px}
+.notes ul{margin:0; padding-left:20px; display:flex; flex-direction:column; gap:9px}
+.notes li{font-size:14.5px; line-height:1.55; color:#cfd0d6}
+.notes .close{position:absolute; top:16px; right:22px; color:#888; cursor:pointer; font-size:18px; background:none; border:none}
+
+/* mobile: the deck is a fixed 16:9 stage — prompt rotation when held upright */
+.rotate-cue{position:fixed; inset:0; height:100dvh; z-index:120; display:none;
+  place-items:center; text-align:center; padding:42px;
+  background:radial-gradient(700px 460px at 50% 0%, rgba(236,27,35,.14), transparent 62%), #0a0a0c;
+  color:#e7e7ea; font-family:var(--fHead)}
+.rotate-cue .ic{width:58px; height:58px; margin:0 auto 24px; color:var(--red);
+  animation:rot-tilt 2.2s ease-in-out infinite}
+.rotate-cue h4{font-size:21px; font-weight:800; letter-spacing:-.01em; color:#fff; margin-bottom:10px}
+.rotate-cue p{font-size:14px; line-height:1.55; color:rgba(255,255,255,.6); max-width:34ch; margin:0 auto}
+@keyframes rot-tilt{0%,100%{transform:rotate(-12deg)} 50%{transform:rotate(78deg)}}
+/* show only on small screens held in portrait */
+@media (orientation:portrait) and (max-width:860px){
+  .rotate-cue{display:grid}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important; transition-duration:.2s !important}
+  [data-r]{opacity:1 !important; transform:none !important}
+  .rotate-cue .ic{animation:none; transform:rotate(78deg)}
+}
+/* static mode (QA captures / no-motion): snap everything to final */
+body.static [data-r]{opacity:1 !important; transform:none !important; transition:none !important}
+body.static .code-line{animation:none !important}
+body.static .flow .step,
+body.static .venn .circ,
+body.static .venn .center,
+body.static .venn .danger,
+body.static .jcard::after{opacity:1 !important; transform:none !important; transition:none !important}
+body.static .venn .c3{transform:translateX(-50%) !important}
+body.static .jcard::after{transform:scaleX(1) !important}
+body.static .nb-cell, body.static .nb-out{transition:none !important; transform:none !important; opacity:1 !important}
+body.static .nb-out.shown{max-height:320px !important}
+body.static .pushdown .pd{opacity:1 !important; transform:none !important; transition:none !important}
+/* ============================ Topic 4 (RAG) additions ============================ */
+.fillc{flex:1; min-height:0; display:flex; flex-direction:column; justify-content:center}
+.fillrow{flex:1; min-height:0; display:flex; align-items:center; gap:40px}
+
+/* confident-hallucination QA card */
+.qa{max-width:780px; margin:auto 0; display:flex; flex-direction:column; gap:14px}
+.qline{display:flex; gap:12px; align-items:flex-start}
+.qline .who{flex:none; width:40px; height:40px; border-radius:11px; display:grid; place-items:center; font-family:var(--fHead); font-weight:800; font-size:12px}
+.qline.q .who{background:var(--ink); color:#fff}
+.qline.a .who{background:var(--tint-red); color:var(--red)}
+.qline .bub{border-radius:12px; padding:14px 18px; font-size:16px; line-height:1.5}
+.qline.q .bub{background:var(--card); border:1px solid var(--line); color:var(--ink)}
+.qline.a .bub{background:linear-gradient(180deg,var(--tint-red),#fff); border:1px solid var(--tint-red-2); color:var(--text)}
+.qa .flag{align-self:flex-start; margin-left:52px; font-family:var(--fMono); font-size:13px; color:var(--red); background:var(--tint-red); border:1px solid var(--tint-red-2); padding:7px 13px; border-radius:99px; display:flex; gap:8px; align-items:center; opacity:0; transition:opacity .5s ease .7s}
+.slide.active .qa .flag{opacity:1}
+
+/* two-phase pipeline */
+.phases{display:flex; flex-direction:column; gap:16px; margin:auto 0; width:100%}
+.phase{border:1px solid var(--line); border-radius:16px; padding:15px 20px; background:var(--surface)}
+.phase.idx{background:linear-gradient(180deg,var(--card),#fff)}
+.phase .plabel{font-family:var(--fHead); font-weight:800; font-size:12px; letter-spacing:.09em; text-transform:uppercase; margin-bottom:12px; display:flex; align-items:center; gap:9px}
+.phase.idx .plabel{color:var(--muted)} .phase.ret .plabel{color:var(--red)}
+.phase .plabel .tg{font-family:var(--fMono); font-size:10px; letter-spacing:.02em; text-transform:none; padding:3px 8px; border-radius:99px; background:var(--card-2); color:var(--muted)}
+.phase.ret .plabel .tg{background:var(--tint-red); color:var(--red)}
+.prow{display:flex; align-items:center}
+.pstep{flex:1; display:flex; flex-direction:column; align-items:center; gap:7px; text-align:center; opacity:0; transform:translateY(10px); transition:opacity .45s ease, transform .45s ease}
+.slide.active .pstep{opacity:1; transform:none}
+.slide.active .phase.idx .pstep:nth-child(1){transition-delay:.15s}.slide.active .phase.idx .pstep:nth-child(3){transition-delay:.3s}.slide.active .phase.idx .pstep:nth-child(5){transition-delay:.45s}.slide.active .phase.idx .pstep:nth-child(7){transition-delay:.6s}
+.slide.active .phase.ret .pstep:nth-child(1){transition-delay:.55s}.slide.active .phase.ret .pstep:nth-child(3){transition-delay:.7s}.slide.active .phase.ret .pstep:nth-child(5){transition-delay:.85s}.slide.active .phase.ret .pstep:nth-child(7){transition-delay:1s}.slide.active .phase.ret .pstep:nth-child(9){transition-delay:1.15s}
+.pstep .pi{width:42px; height:42px; border-radius:11px; background:var(--ink); color:#fff; display:grid; place-items:center}
+.pstep .pi svg{width:21px; height:21px}
+.phase.ret .pstep .pi{background:var(--red)}
+.pstep .pt{font-family:var(--fHead); font-weight:700; font-size:12.5px; color:var(--ink); line-height:1.15}
+.parr{flex:0 0 28px; color:var(--line-strong); display:flex; justify-content:center; align-items:center}
+.parr svg{width:18px; height:18px}
+
+/* vector-space scatter (query + nearest neighbours) */
+.vspace .pt{opacity:0; transition:opacity .5s ease}
+.slide.active .vspace .pt{opacity:.85}
+.slide.active .vspace .pt:nth-of-type(1){transition-delay:.1s}.slide.active .vspace .pt:nth-of-type(2){transition-delay:.18s}.slide.active .vspace .pt:nth-of-type(3){transition-delay:.26s}.slide.active .vspace .pt:nth-of-type(4){transition-delay:.34s}.slide.active .vspace .pt:nth-of-type(5){transition-delay:.42s}.slide.active .vspace .pt:nth-of-type(6){transition-delay:.5s}
+.vspace .qp{opacity:0; transition:opacity .5s ease .7s}
+.slide.active .vspace .qp{opacity:1}
+.vspace .near{stroke:var(--red); stroke-width:2; stroke-dasharray:5 4; opacity:0; transition:opacity .5s ease 1s}
+.slide.active .vspace .near{opacity:.75}
+.vspace .lab{font-family:var(--fBody); font-size:11.5px; fill:var(--muted)}
+.vspace .qlab{fill:var(--ink); font-weight:700; font-family:var(--fHead)}
+
+/* cosine-angle */
+.cosbox{position:relative; width:380px; height:300px; margin:auto}
+.cosbox svg{width:100%; height:100%; overflow:visible}
+.cosbox .vec{stroke-width:4; stroke-linecap:round; fill:none}
+.cosbox .vq{stroke:var(--ink)}
+.cosbox .vd{stroke:var(--red)}
+.cosbox .swing{transform-origin:40px 260px; transform:rotate(-40deg); transition:transform 1.4s cubic-bezier(.16,1,.3,1) .4s}
+.slide.active .cosbox .swing{transform:rotate(0deg)}
+.cosbox .arc{fill:none; stroke:var(--red); stroke-width:2.5; opacity:0; transition:opacity .5s ease 1.5s}
+.slide.active .cosbox .arc{opacity:.7}
+.cosbox .clab{font-family:var(--fHead); font-weight:800; fill:var(--red); font-size:15px; opacity:0; transition:opacity .5s ease 1.6s}
+.slide.active .cosbox .clab{opacity:1}
+.cosbox .vlab{font-family:var(--fHead); font-weight:700; font-size:13px}
+
+/* chunking: document -> chunks */
+.docwrap{display:flex; gap:34px; align-items:center; justify-content:center; margin:auto 0}
+.page{width:150px; background:#fff; border:1px solid var(--line); border-radius:9px; padding:15px 14px; box-shadow:0 18px 40px -28px rgba(0,0,0,.3); display:flex; flex-direction:column; gap:7px}
+.page .ln{height:6px; border-radius:3px; background:var(--card-2)}
+.page .ln.s{width:60%}
+.chunks{display:flex; flex-direction:column; gap:9px}
+.chunk{border-radius:9px; padding:11px 15px; font-size:12.5px; color:#fff; line-height:1.35; opacity:0; transform:translateX(-14px); transition:opacity .45s ease, transform .45s ease}
+.slide.active .chunk{opacity:1; transform:none}
+.slide.active .chunk:nth-child(1){transition-delay:.3s}.slide.active .chunk:nth-child(2){transition-delay:.46s}.slide.active .chunk:nth-child(3){transition-delay:.62s}.slide.active .chunk:nth-child(4){transition-delay:.78s}
+.chunk.c1{background:linear-gradient(100deg,var(--red),var(--red-dark))}.chunk.c2{background:linear-gradient(100deg,#1C6E9C,#2487bf)}.chunk.c3{background:linear-gradient(100deg,#1E8E5A,#13724a)}.chunk.c4{background:linear-gradient(100deg,#2A2A2F,#1c1c20)}
+.chunk b{font-weight:700}
+.bigarrow{color:var(--red); display:flex; align-items:center}
+.bigarrow svg{width:36px; height:36px}
+
+/* 3-way chunk-size compare */
+.three-chunk{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; flex:1; min-height:0}
+.tcol{border:1px solid var(--line); border-radius:14px; padding:16px; display:flex; flex-direction:column; background:var(--surface)}
+.tcol .th{font-family:var(--fHead); font-weight:800; font-size:14px; margin-bottom:4px}
+.tcol .ts{font-size:12px; color:var(--muted); margin-bottom:12px}
+.tcol.bad .th{color:var(--muted)} .tcol.good .th{color:var(--red)}
+.tcol .cell{flex:1; border-radius:8px; padding:8px; display:flex; flex-direction:column; gap:5px; justify-content:center}
+.tcol.good .cell{background:var(--tint-red); border:1px solid var(--tint-red-2)}
+.tcol:not(.good) .cell{background:var(--card)}
+.tcol .cell .ln{height:6px; border-radius:3px; background:#c8ccd3}
+.tcol.good .cell .ln{background:var(--red)}
+.tcol .vd{font-size:11.5px; color:var(--muted); margin-top:10px; line-height:1.35}
+
+/* hybrid merge + rerank shared */
+.merge{display:grid; grid-template-columns:1fr 64px 1fr; align-items:center; flex:1; min-height:0}
+.mcol{display:flex; flex-direction:column; gap:12px}
+.mcard{border:1px solid var(--line); border-radius:14px; padding:16px 18px; background:var(--surface)}
+.mcard .mh{font-family:var(--fHead); font-weight:800; font-size:15px; display:flex; align-items:center; gap:10px; margin-bottom:6px}
+.mcard.sem .mh{color:var(--red)} .mcard.kw .mh{color:#1C6E9C}
+.mcard p{font-size:12.5px; color:var(--muted); line-height:1.4}
+.mcard .glyph{width:34px; height:34px; border-radius:9px; display:grid; place-items:center; color:#fff; flex:none}
+.mcard.sem .glyph{background:var(--red)} .mcard.kw .glyph{background:#1C6E9C}
+.mmid{display:flex; flex-direction:column; align-items:center; color:var(--red)}
+.mmid svg{width:30px; height:30px}
+.mout{background:var(--ink); color:#fff; border-radius:14px; padding:18px 20px}
+.mout .mh{font-family:var(--fHead); font-weight:800; font-size:15px; color:#fff; margin-bottom:10px}
+.mout ol{margin:0; padding-left:20px; display:flex; flex-direction:column; gap:8px}
+.mout li{font-size:13px; color:rgba(255,255,255,.9)}
+.mout li b{color:#ff8e91}
+
+/* rerank reshuffle */
+.rerank{display:grid; grid-template-columns:1fr 64px 1fr; align-items:center; flex:1; min-height:0}
+.rlist{display:flex; flex-direction:column; gap:8px}
+.rhd{font-family:var(--fHead); font-weight:800; font-size:13px; letter-spacing:.04em; text-transform:uppercase; margin-bottom:6px}
+.rlist.before .rhd{color:var(--muted)} .rlist.after .rhd{color:var(--red)}
+.ritem{border:1px solid var(--line); border-radius:9px; padding:9px 13px; display:flex; gap:11px; align-items:center; font-size:13px; background:#fff; opacity:0; transform:translateY(8px); transition:opacity .45s ease, transform .45s ease}
+.slide.active .rlist.after .ritem{opacity:1; transform:none}
+.rlist.before .ritem{opacity:1}
+.slide.active .rlist.after .ritem:nth-child(2){transition-delay:.2s}.slide.active .rlist.after .ritem:nth-child(3){transition-delay:.34s}.slide.active .rlist.after .ritem:nth-child(4){transition-delay:.48s}.slide.active .rlist.after .ritem:nth-child(5){transition-delay:.62s}
+.ritem .rk{font-family:var(--fMono); font-size:12px; color:var(--faint); width:18px}
+.ritem.hit{border-color:var(--tint-red-2); background:var(--tint-red)}
+.ritem.hit .rk{color:var(--red); font-weight:700}
+.ritem .rt{flex:1; color:var(--text)}
+
+/* spec card (Qwen3-Embedding-8B) */
+.specwrap{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:auto 0}
+.specc{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px 20px; position:relative; overflow:hidden; opacity:0; transform:translateY(12px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .specc{opacity:1; transform:none}
+.slide.active .specc:nth-child(1){transition-delay:.15s}.slide.active .specc:nth-child(2){transition-delay:.27s}.slide.active .specc:nth-child(3){transition-delay:.39s}.slide.active .specc:nth-child(4){transition-delay:.51s}.slide.active .specc:nth-child(5){transition-delay:.63s}.slide.active .specc:nth-child(6){transition-delay:.75s}
+.specc::before{content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--red)}
+.specc .sv{font-family:var(--fHead); font-weight:800; font-size:24px; color:var(--ink); letter-spacing:-.02em; line-height:1}
+.specc .sl{font-size:13px; color:var(--muted); margin-top:8px; line-height:1.4}
+
+/* dimension slider */
+.dimwrap{display:grid; grid-template-columns:1fr 1fr; gap:34px; flex:1; min-height:0; align-items:center}
+.dimbox{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:26px 28px; text-align:center}
+.dimbox .dval{font-family:var(--fHead); font-weight:800; font-size:48px; color:var(--red); letter-spacing:-.03em}
+.dimbox .dlab{font-size:13px; color:var(--muted); margin-bottom:18px}
+.dimbox input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:6px; border-radius:99px; background:linear-gradient(90deg,#1C6E9C,var(--red)); outline:none}
+.dimbox input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:24px; height:24px; border-radius:50%; background:#fff; border:3px solid var(--red); cursor:pointer; box-shadow:0 3px 10px -3px rgba(0,0,0,.5)}
+.dimbox input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:#fff;border:3px solid var(--red);cursor:pointer}
+.dimrow{display:flex; align-items:center; gap:14px; margin-bottom:16px}
+.dimrow .dl{width:74px; font-family:var(--fHead); font-weight:700; font-size:14px; color:var(--ink); text-align:left}
+.dimrow .dt{flex:1; height:14px; background:var(--card-2); border-radius:99px; overflow:hidden}
+.dimrow .df{height:100%; border-radius:99px; width:0; transition:width .2s ease}
+.dimrow .df.acc{background:var(--ink)} .dimrow .df.sto{background:var(--red)}
+.dimrow .dv{width:54px; text-align:right; font-family:var(--fHead); font-weight:800; font-size:14px; color:var(--ink)}
+
+/* static snaps */
+body.static .qa .flag,
+body.static .pstep,
+body.static .vspace .pt, body.static .vspace .qp, body.static .vspace .near,
+body.static .cosbox .arc, body.static .cosbox .clab,
+body.static .chunk,
+body.static .ritem,
+body.static .specc{opacity:1 !important; transform:none !important; transition:none !important}
+body.static .vspace .pt{opacity:.85 !important}
+body.static .vspace .near{opacity:.75 !important}
+body.static .cosbox .swing{transform:rotate(0deg) !important; transition:none !important}
+
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="stage">
+  <main class="deck" id="deck">
+
+  <section class="slide dark cover active" data-notes='["Welcome to Session 4, the final core topic. This builds directly on Topic 3 — you know what an LLM is, and that it hallucinates and has no live knowledge.", "Today we fix that: retrieval. Give the model the right context, from our own documents, at the right moment. 90 minutes, one demo, all banking examples.", "Promise: by the end you can reason about a RAG system end to end and explain why our chatbots can cite a real policy."]'>
+    <div class="bg"></div><div class="scrim"></div>
+    <div class="inner">
+      <img class="logo" src="assets/ocbc-logo.png" alt="OCBC" />
+      <h1 data-r data-d="1">Knowledge Retrieval<span class="red">Grounding AI in Your Data</span></h1>
+      <div class="rule" data-r data-d="2"></div>
+      <div class="meta" data-r data-d="3"><strong>Session 4 of the Data series</strong><br/>OCBC CRAYON 2026 · ADM Team<br/>90 minutes · lecture + 1 animated demo</div>
+      <div class="program" data-r data-d="4">OCBC CRAYON · Topic 4</div>
+    </div>
+  </section>
+
+  <section class="slide dark" data-notes='["The framing principle for the whole session. Capability is not the bottleneck — access to the right information is.", "A frontier model that cannot see OCBC&#39;s product sheets will confidently invent the early-withdrawal penalty. Retrieval is what closes that gap.", "We will call this back at the close."]'>
+    <div class="body-area">
+      <div class="kicker"><span class="badge"></span>Why retrieval matters</div>
+      <div class="quote-wrap">
+        <div class="quote-mark" data-r data-d="2">&ldquo;</div>
+        <blockquote data-r data-d="3">The smartest model in the world is useless if it can&#39;t <em>see your data</em>.</blockquote>
+        <cite data-r data-d="4">A framing principle for grounding</cite>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">02</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Bridge from Topic 3. We established two hard limits: LLMs hallucinate, and they have no live or internal knowledge — they only know their training data.", "RAG is the fix. Instead of trusting the model&#39;s memory, we hand it the relevant facts at question time.", "Frame the session as turning a confident guesser into a grounded, citable assistant."]'>
+    <div class="kicker"><span class="badge"></span>Topic 3 &rarr; Topic 4</div>
+    <h2 class="slide-title" data-r data-d="1">From a confident guesser to a grounded one</h2>
+    <p class="slide-sub" data-r data-d="2">Topic 3 left two gaps: LLMs <b style="color:var(--ink)">hallucinate</b> and have <b style="color:var(--ink)">no live or internal knowledge</b>. Today we close both.</p>
+    <div class="flow" style="margin-top:6px">
+      <div class="step"><div class="node">1</div><h4>Ask</h4><p>a policy question</p><div class="arrow"></div>
+      <div class="step"><div class="node">2</div><h4>Retrieve</h4><p>the relevant passage</p><div class="arrow"></div>
+      <div class="step"><div class="node hot">3</div><h4>Answer</h4><p>grounded, with a citation</p>
+    </div>
+    <div class="flow-cap">Give the model <b style="color:var(--red)">the right context at the right moment</b> — from our own documents.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">03</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Make the failure visceral. Ask a specific, real OCBC question — the early-withdrawal penalty on a 6-month time deposit.", "The model never read our product sheet, so it produces a fluent, plausible, and wrong number. That is the danger: it looks authoritative.", "This is exactly what retrieval prevents — and why a bank cannot ship an ungrounded assistant."]'>
+    <div class="kicker"><span class="badge"></span>The problem, concretely</div>
+    <h2 class="slide-title" data-r data-d="1">Confident, fluent &mdash; and wrong</h2>
+    <div class="qa">
+      <div class="qline q" data-r data-d="2"><div class="who">RM</div><div class="bub">What&#39;s our early-withdrawal penalty on the 6-month time deposit?</div></div>
+      <div class="qline a" data-r data-d="3"><div class="who">LLM</div><div class="bub">A flat <b>S$50 fee</b> applies, plus forfeiture of all accrued interest on early withdrawal.</div></div>
+      <div class="flag">&#10007; The model never read OCBC&#39;s product sheet &mdash; this number is invented</div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">04</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Three ways to give a model knowledge. Fine-tuning bakes facts into the weights — expensive, slow to update, and wrong the moment a policy changes.", "Stuffing everything into the prompt hits context limits and gets costly fast — you cannot paste the whole policy library every time.", "Retrieval fetches just the relevant passages on demand. For knowledge that is large, changing, and sensitive, RAG wins."]'>
+    <div class="kicker"><span class="badge"></span>Three ways to add knowledge</div>
+    <h2 class="slide-title" data-r data-d="1">Why retrieval wins for bank knowledge</h2>
+    <div class="cards c3" style="margin-top:24px">
+      <div class="card" data-r data-d="2"><div class="num">A</div><h3>Fine-tune</h3><p>Bake facts into the weights. Expensive, static, stale the moment policy changes.</p></div>
+      <div class="card" data-r data-d="3"><div class="num">B</div><h3>Stuff the prompt</h3><p>Paste everything in. Hits context limits, slow and costly at scale.</p></div>
+      <div class="card" data-r data-d="4"><div class="num">C</div><h3>Retrieve &mdash; RAG</h3><p>Fetch only what&#39;s relevant, on demand. Current, cheap, and sources stay ours.</p></div>
+    </div>
+    <div class="flow-cap">For knowledge that is <b style="color:var(--red)">large, changing and sensitive</b>, retrieval is the right tool.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">05</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Define it. RAG — Retrieval-Augmented Generation: find relevant text from a trusted source, add it to the prompt, then generate.", "The analogy that sticks: an open-book exam instead of a closed-book one. The model does not have to memorise; it looks things up.", "Three moves — retrieve, augment, generate. The rest of the deck is how each is done well."]'>
+    <div class="kicker"><span class="badge"></span>What is RAG</div>
+    <h2 class="slide-title" data-r data-d="1">An open-book exam for the model</h2>
+    <div class="flow" style="margin-top:6px">
+      <div class="step"><div class="node">1</div><h4>Retrieve</h4><p>find relevant passages</p><div class="arrow"></div>
+      <div class="step"><div class="node">2</div><h4>Augment</h4><p>add them to the prompt</p><div class="arrow"></div>
+      <div class="step"><div class="node hot">3</div><h4>Generate</h4><p>answer from that context</p>
+    </div>
+    <div class="flow-cap"><b>R</b>etrieval-<b>A</b>ugmented <b>G</b>eneration &mdash; the model answers from <b style="color:var(--red)">retrieved facts</b>, not memory.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">06</span></div>
+  </section>
+
+  <section class="slide" data-notes='["This diagram is the spine of the entire deck. RAG has two phases. Indexing happens offline, once: documents are chunked, embedded, and stored in a vector database.", "Retrieval happens online, per question: embed the query, search the index, optionally rerank, stuff the top chunks into the prompt, and answer.", "Every later section zooms into one box: embeddings, chunking, and retrieval mechanics. Keep returning to this map."]'>
+    <div class="kicker"><span class="badge"></span>The two phases</div>
+    <h2 class="slide-title" data-r data-d="1">Index once, retrieve every time</h2>
+    <div class="phases">
+      <div class="phase idx">
+        <div class="plabel">Indexing <span class="tg">offline · once</span></div>
+        <div class="prow"><div class="pstep"><div class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></div><div class="pt">Documents</div></div><div class="parr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div><div class="pstep"><div class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.5 7.5L20 18M8.5 16.5L20 6"/></svg></div><div class="pt">Chunk</div></div><div class="parr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div><div class="pstep"><div class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20L20 4M20 4h-7M20 4v7"/><circle cx="4" cy="20" r="1.5" fill="currentColor"/></svg></div><div class="pt">Embed</div></div><div class="parr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div><div class="pstep"><div class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></div><div class="pt">Vector DB</div></div></div>
+      </div>
+      <div class="phase ret">
+        <div class="plabel">Retrieval <span class="tg">online · per query</span></div>
+        <div class="prow"><div class="pstep"><div class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3 2.5c-.8.4-1.5 1-1.5 2M12 17h.01"/></svg></div><div class="pt">Query</div></div><div class="parr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div><div class="pstep"><div class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20L20 4M20 4h-7M20 4v7"/><circle cx="4" cy="20" r="1.5" fill="currentColor"/></svg></div><div class="pt">Embed</div></div><div class="parr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div><div class="pstep"><div class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div><div class="pt">Search</div></div><div class="parr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div><div class="pstep"><div class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h10M4 12h7M4 18h13M18 4v9M18 13l-3-3M18 13l3-3"/></svg></div><div class="pt">Rerank</div></div><div class="parr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div><div class="pstep"><div class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg></div><div class="pt">Answer</div></div></div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">07</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Make the bank case explicit. Answers are grounded in our own policies — current and citable, not the model&#39;s vague memory.", "Sensitive documents stay inside our infrastructure; nothing is shipped to a third party. That is decisive in a regulated environment.", "And every answer carries a source, which means less hallucination and real auditability — you can show where it came from."]'>
+    <div class="kicker"><span class="badge"></span>Why a bank needs this</div>
+    <h2 class="slide-title" data-r data-d="1">Grounded, private, and auditable</h2>
+    <div class="cards c2" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M9 12l2 2 4-4"/></svg></div><h3>Grounded &amp; current</h3><p>Answers come from our live policy and product docs, not stale memory.</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg></div><h3>Sensitive docs stay in-house</h3><p>Retrieval runs over our own store, inside our infrastructure.</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3 2.5c-.8.4-1.5 1-1.5 2M12 17h.01"/></svg></div><h3>Less hallucination</h3><p>The model reasons over real text instead of inventing it.</p></div>
+      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></div><h3>Auditability</h3><p>Every answer can cite its source &mdash; here&#39;s the clause.</p></div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">08</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["Part 1, about 22 minutes. Embeddings are the load-bearing idea of retrieval — meaning as coordinates.", "We anchor on OCBC&#39;s actual embedding model, Qwen3-Embedding-8B, and the real tuning levers around it.", "End on the golden rule: one model, one space, for queries and documents alike."]'>
+    <div class="pillar-no">01</div>
+    <div class="eyebrow"><span class="dot"></span>Part 1</div>
+    <h2>Vector Embeddings</h2>
+    <p class="lead">Turning meaning into numbers a computer can compare.</p>
+    <div class="prog-rail"><span class="on">Vector embeddings</span><span>Chunking</span><span>Retrieval</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">09</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Recap from Topic 3, now load-bearing. An embedding turns a piece of text into a list of numbers — a vector — that captures its meaning.", "The key property: texts with similar meaning get similar vectors, so they sit close together in space.", "Everything in retrieval reduces to comparing these vectors. Numbers, because computers compare numbers, not words."]'>
+    <div class="kicker"><span class="badge"></span>What is an embedding</div>
+    <h2 class="slide-title" data-r data-d="1">Text becomes a vector of meaning</h2>
+    <div class="two" style="margin-top:18px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">An <b>embedding</b> maps text to a list of numbers &mdash; a <b>vector</b>.</li>
+          <li data-r data-d="3" class="strong">Similar meaning &rarr; similar vector &rarr; <b>close in space</b>.</li>
+          <li data-r data-d="4">Retrieval is just comparing these vectors.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="prompt-box" data-r data-d="3" style="background:var(--code-bg);color:var(--code-ink);font-family:var(--fMono);border-radius:14px;padding:24px 26px;font-size:15px;line-height:1.7">"early withdrawal penalty"<br/><span style="color:#7d8590">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&darr; embed</span><br/>[ 0.07, -0.21, 0.88, 0.13,<br/>&nbsp; -0.04, 0.42, ... , 0.19 ]<br/><span style="color:#7d8590"># 4096 numbers</span></div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">10</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Make it visual. Picture every text as a point in space. Texts about the same thing cluster together.", "Time deposit and fixed deposit land right next to each other — same concept, different words. Credit card sits far away.", "Meaning becomes geometry. This is the whole reason retrieval can match on sense rather than exact words."]'>
+    <div class="kicker"><span class="badge"></span>The vector space</div>
+    <h2 class="slide-title" data-r data-d="1">Meaning becomes geometry</h2>
+    <div class="fillc">
+      <div class="svg-card" data-r data-d="2" style="max-width:760px;margin:0 auto;width:100%">
+        <div class="ct">Texts about the same thing cluster together</div>
+        <svg class="vspace chart-svg" viewBox="0 0 380 220" preserveAspectRatio="xMidYMid meet">
+          <circle class="pt" cx="110" cy="78" r="7" fill="#EC1B23"/><text class="lab" x="60" y="66">time deposit</text>
+          <circle class="pt" cx="138" cy="100" r="7" fill="#EC1B23"/><text class="lab" x="148" y="104">fixed deposit</text>
+          <circle class="pt" cx="92" cy="118" r="7" fill="#EC1B23"/><text class="lab" x="36" y="132">early withdrawal</text>
+          <circle class="pt" cx="300" cy="168" r="7" fill="#1C6E9C"/><text class="lab" x="246" y="190">credit card</text>
+          <circle class="pt" cx="326" cy="142" r="7" fill="#1C6E9C"/><text class="lab" x="300" y="134">rewards</text>
+          <circle class="pt" cx="200" cy="60" r="7" fill="#1E8E5A"/><text class="lab" x="208" y="56">KYC form</text>
+          <text class="lab" x="70" y="44" style="fill:#EC1B23;font-weight:700">deposits</text>
+          <text class="lab" x="250" y="118" style="fill:#1C6E9C;font-weight:700">cards</text>
+        </svg>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">11</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Why bother with embeddings over plain keyword search? Keyword search matches exact words, so it misses synonyms and paraphrases.", "Early withdrawal and breaking your deposit early mean the same thing but share no keywords — keyword search whiffs; embeddings match on meaning.", "Foreshadow the catch: embeddings can miss exact identifiers like a product code. We fix that later with hybrid search."]'>
+    <div class="kicker"><span class="badge"></span>Why not just keyword search</div>
+    <h2 class="slide-title" data-r data-d="1">Match meaning, not exact words</h2>
+    <div class="vs" style="margin-top:24px">
+      <div class="panel" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>Keyword search</div>
+        <div class="ps">Matches exact words. Misses synonyms and paraphrases.</div>
+        <div class="chips"><span class="chip">"early withdrawal"</span><span class="chip">&ne;</span><span class="chip">"breaking your deposit early"</span></div>
+        <div class="where">Same meaning, no shared words &rarr; <b>no match</b>.</div>
+      </div>
+      <div class="panel accent" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/></svg></span>Semantic (embeddings)</div>
+        <div class="ps">Matches on meaning, however it&#39;s phrased.</div>
+        <div class="chips"><span class="chip">paraphrase &check;</span><span class="chip">synonym &check;</span><span class="chip">cross-language &check;</span></div>
+        <div class="where">Catch: can miss exact IDs &mdash; <b>fixed later with hybrid</b>.</div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">12</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The concrete tool OCBC uses: Qwen3-Embedding-8B. Walk the specs that actually matter in practice.", "8B parameters and up to 32K-token context; flexible output dimensions from 32 up to 4096 via Matryoshka; over 100 languages including Bahasa Indonesia and code.", "It is instruction-aware, and we self-host it — so sensitive documents never leave our infrastructure."]'>
+    <div class="kicker"><span class="badge"></span>Our embedding model</div>
+    <h2 class="slide-title" data-r data-d="1">Qwen3-Embedding-8B, self-hosted</h2>
+    <div class="specwrap">
+      <div class="specc"><div class="sv">8B</div><div class="sl">parameters &mdash; strong semantic quality</div></div>
+      <div class="specc"><div class="sv">32K</div><div class="sl">token context &mdash; embeds long passages</div></div>
+      <div class="specc"><div class="sv">32&ndash;4096</div><div class="sl">output dims via Matryoshka (MRL)</div></div>
+      <div class="specc"><div class="sv">100+</div><div class="sl">languages &mdash; incl. Bahasa Indonesia + code</div></div>
+      <div class="specc"><div class="sv">Instruct</div><div class="sl">instruction-aware queries</div></div>
+      <div class="specc"><div class="sv">In-house</div><div class="sl">self-hosted &mdash; docs stay with us</div></div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">13</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Why this model. As of June 2025 it ranked number one on the MTEB multilingual leaderboard with a score of 70.58 — present that as a 2025 snapshot, verify current.", "Multilingual strength matters for us — Indonesian and English banking documents in one consistent space.", "And self-hosting keeps data inside OCBC. Strong, multilingual, and ours."]'>
+    <div class="kicker"><span class="badge"></span>Why it&#39;s a strong choice</div>
+    <h2 class="slide-title" data-r data-d="1">Top of the multilingual leaderboard</h2>
+    <div class="megastat">
+      <div class="num">#1<span class="u" style="font-size:64px"></span></div>
+      <div class="copy" data-r data-d="2">
+        <h3>MTEB multilingual &mdash; score <span style="color:var(--red)">70.58</span></h3>
+        <p>Best-in-class multilingual retrieval, which matters for Indonesian + English banking docs. Self-hosting keeps the data in OCBC infrastructure.</p>
+        <div class="src">As of June 2025 &mdash; benchmarks move; verify the current standing before quoting.</div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">14</span></div>
+  </section>
+
+  <section class="slide" data-notes='["A cheap, practical lever. Qwen3 lets you prepend a short task instruction to the query before embedding.", "For example: Represent this banking-policy question for retrieval. This nudges the vector toward the retrieval task.", "Typical gain is one to five percent in retrieval quality — small effort, free improvement. Instruct queries; documents usually stay plain."]'>
+    <div class="kicker"><span class="badge"></span>Instruction-aware embeddings</div>
+    <h2 class="slide-title" data-r data-d="1">Tell the embedder what the query is for</h2>
+    <div class="two" style="margin-top:18px">
+      <div class="viz">
+        <div class="prompt-box" data-r data-d="2" style="background:var(--code-bg);color:var(--code-ink);font-family:var(--fMono);border-radius:14px;padding:22px 24px;font-size:14.5px;line-height:1.7"><span style="color:#7d8590"># plain query</span><br/>"early withdrawal penalty?"<br/><br/><span style="color:#7d8590"># instruction-aware</span><br/><span style="color:#ff8e91">Represent this banking-policy<br/>question for retrieval:</span><br/>"early withdrawal penalty?"</div>
+      </div>
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="3">Prepend a short <b>task instruction</b> to the query.</li>
+          <li data-r data-d="4" class="strong">Typically a <b>1&ndash;5% retrieval gain</b> &mdash; nearly free.</li>
+          <li data-r data-d="5">Instruct the <b>query</b>; keep documents plain and consistent.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">15</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Dimension choice is a real tuning decision. Bigger vectors capture more nuance but cost more storage and slow search.", "Matryoshka representation learning lets you truncate the same vector to fewer dimensions — say 1024 — keeping most of the accuracy for a fraction of the cost.", "Drag it: as you cut dimensions, storage and latency fall fast while accuracy dips only a little. There is no single right value — you tune it."]'>
+    <div class="kicker"><span class="badge"></span>Choosing dimensions (MRL)</div>
+    <h2 class="slide-title" data-r data-d="1">Trade a little accuracy for big savings</h2>
+    <div class="dimwrap">
+      <div class="dimbox" data-r data-d="2">
+        <div class="dval" id="dval">1024</div>
+        <div class="dlab">output dimensions</div>
+        <input id="dim" type="range" min="0" max="4" value="2" />
+      </div>
+      <div data-r data-d="3">
+        <div class="dimrow"><div class="dl">Accuracy</div><div class="dt"><div class="df acc" id="dacc"></div></div><div class="dv" id="daccv"></div></div>
+        <div class="dimrow"><div class="dl">Storage</div><div class="dt"><div class="df sto" id="dsto"></div></div><div class="dv" id="dstov"></div></div>
+        <div class="demo-take" style="margin-top:6px"><b>MRL:</b> truncate the same vector to fewer dims &mdash; cut storage and latency, keep most of the accuracy.</div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">16</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The one rule people break. Queries and documents must be embedded with the same model, so they live in the same geometric space.", "Mix two models and the coordinates are not comparable — distances become meaningless and retrieval silently degrades.", "Corollary: if you ever switch embedding models, you must re-embed everything. One model, one space."]'>
+    <div class="kicker"><span class="badge"></span>The golden rule</div>
+    <h2 class="slide-title" data-r data-d="1">One model, one space</h2>
+    <div class="vs" style="margin-top:24px">
+      <div class="panel" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>Two models</div>
+        <div class="ps">Query and docs embedded differently.</div>
+        <div class="chips"><span class="chip">incompatible axes</span><span class="chip">meaningless distance</span></div>
+        <div class="where">Retrieval <b>silently breaks</b>.</div>
+      </div>
+      <div class="panel accent" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/></svg></span>One model</div>
+        <div class="ps">Same embedder for query and documents.</div>
+        <div class="chips"><span class="chip">shared space</span><span class="chip">comparable</span></div>
+        <div class="where">Switch models &rarr; <b>re-embed everything</b>.</div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">17</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["Part 2, about 20 minutes. Chunking is the least glamorous and often highest-leverage knob in RAG.", "We compare fixed, recursive and semantic splitting, then overlap, metadata, and contextual retrieval.", "Defaults to remember: recursive, roughly 256 to 512 tokens, 10 to 20 percent overlap."]'>
+    <div class="pillar-no">02</div>
+    <div class="eyebrow"><span class="dot"></span>Part 2</div>
+    <h2>Chunking</h2>
+    <p class="lead">How you split the document decides what you can find.</p>
+    <div class="prog-rail"><span>Vector embeddings</span><span class="on">Chunking</span><span>Retrieval</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">18</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Why chunk at all? You cannot embed a 50-page policy as a single vector — the meaning gets averaged into mush and it will not fit retrieval context.", "So you split the document into passages and embed each one. Now a query can match the specific paragraph that answers it.", "Chunking is frequently the highest-leverage decision in the whole pipeline — get it wrong and nothing downstream can recover."]'>
+    <div class="kicker"><span class="badge"></span>Why chunk at all</div>
+    <h2 class="slide-title" data-r data-d="1">Split the document into passages</h2>
+    <div class="docwrap">
+      <div class="page" data-r data-d="2"><div class="ln"></div><div class="ln"></div><div class="ln s"></div><div class="ln"></div><div class="ln"></div><div class="ln s"></div><div class="ln"></div><div class="ln s"></div></div>
+      <div class="bigarrow" data-r data-d="3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="chunks">
+        <div class="chunk c1"><b>Chunk 1</b> &mdash; eligibility &amp; tenure</div>
+        <div class="chunk c2"><b>Chunk 2</b> &mdash; interest &amp; payout</div>
+        <div class="chunk c3"><b>Chunk 3</b> &mdash; early withdrawal penalty</div>
+        <div class="chunk c4"><b>Chunk 4</b> &mdash; fees &amp; charges</div>
+      </div>
+    </div>
+    <div class="flow-cap">Embed <b style="color:var(--red)">each passage</b> &mdash; so a query can match the exact paragraph that answers it.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">19</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The Goldilocks problem. Chunk too big and the embedding is diluted with off-topic text, so match quality drops.", "Chunk too small and the fragment loses the context needed to actually answer the question.", "You want it just right: one coherent idea per chunk. Same passage, three ways — the middle one retrieves best."]'>
+    <div class="kicker"><span class="badge"></span>The Goldilocks problem</div>
+    <h2 class="slide-title" data-r data-d="1">Too big, too small, or just right</h2>
+    <div class="three-chunk" style="margin-top:20px">
+      <div class="tcol bad" data-r data-d="2"><div class="th">Too big</div><div class="ts">whole section in one vector</div><div class="cell"><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div><div class="ln"></div></div><div class="vd">Meaning diluted by off-topic text &rarr; weaker matches.</div></div>
+      <div class="tcol good" data-r data-d="3"><div class="th">Just right</div><div class="ts">one idea per chunk</div><div class="cell"><div class="ln"></div><div class="ln"></div></div><div class="vd">Focused vector &rarr; the paragraph that answers retrieves cleanly.</div></div>
+      <div class="tcol bad" data-r data-d="4"><div class="th">Too small</div><div class="ts">a single sentence</div><div class="cell"><div class="ln"></div></div><div class="vd">Loses the context needed to answer the question.</div></div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">20</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Strategy one: fixed-size. Cut every N tokens — say 256 to 512 — regardless of meaning. Simple and fast.", "The downside is obvious: it happily slices through the middle of a sentence or a table, ignoring natural boundaries.", "It is the blunt baseline. Fine to start, but you can almost always do better."]'>
+    <div class="kicker"><span class="badge"></span>Strategy 1 &middot; Fixed-size</div>
+    <h2 class="slide-title" data-r data-d="1">Cut every N tokens &mdash; the blunt baseline</h2>
+    <div class="two" style="margin-top:18px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">Split every <b>256&ndash;512 tokens</b>, ignoring meaning.</li>
+          <li data-r data-d="3" class="strong">Simple, fast, predictable sizes.</li>
+          <li data-r data-d="4">But it cuts <b>mid-sentence</b> and through tables.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="chunks" data-r data-d="3">
+          <div class="chunk c4">...tenure is 6 months and interest is</div>
+          <div class="chunk c1" style="border:2px dashed #fff">paid at maturity. Early withdrawal in<span style="opacity:.7"> &laquo; cut mid-sentence</span></div>
+          <div class="chunk c4">curs a penalty of 1% on the principal...</div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">21</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Strategy two: recursive — the pragmatic default. Split along natural boundaries: sections, then paragraphs, then sentences, until chunks fit.", "It respects the document&#39;s structure, so chunks stay coherent. This is the recommended starting point.", "Defaults to remember: roughly 256 to 512 tokens with 10 to 20 percent overlap."]'>
+    <div class="kicker"><span class="badge"></span>Strategy 2 &middot; Recursive</div>
+    <h2 class="slide-title" data-r data-d="1">Split along natural boundaries</h2>
+    <div class="two" style="margin-top:18px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">Split by <b>sections &rarr; paragraphs &rarr; sentences</b> until it fits.</li>
+          <li data-r data-d="3" class="strong">Chunks stay <b>coherent</b> &mdash; the pragmatic default.</li>
+          <li data-r data-d="4">Start at <b>~256&ndash;512 tokens, 10&ndash;20% overlap</b>.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="chunks" data-r data-d="3">
+          <div class="chunk c1"><b>&sect; Eligibility</b> &mdash; full clean section</div>
+          <div class="chunk c2"><b>&sect; Interest &amp; payout</b> &mdash; full clean section</div>
+          <div class="chunk c3"><b>&sect; Early withdrawal</b> &mdash; full clean section</div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">22</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Strategy three: semantic. Embed sentences, then place a boundary wherever the meaning shifts — where cosine distance between neighbours spikes.", "It produces the most coherent chunks, but it costs an extra embedding pass and yields variable sizes.", "Higher accuracy in principle — but benchmark it on your own docs before adopting; it is not always worth the cost."]'>
+    <div class="kicker"><span class="badge"></span>Strategy 3 &middot; Semantic</div>
+    <h2 class="slide-title" data-r data-d="1">Cut where the meaning shifts</h2>
+    <div class="two" style="margin-top:18px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">Embed sentences; cut where <b>meaning changes</b>.</li>
+          <li data-r data-d="3" class="strong">Most coherent chunks &mdash; but <b>variable sizes</b>.</li>
+          <li data-r data-d="4">Costs an extra embedding pass &mdash; <b>benchmark first</b>.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="chunks" data-r data-d="3">
+          <div class="chunk c1">eligibility + tenure <span style="opacity:.7">(topic A)</span></div>
+          <div class="chunk c2">interest + payout <span style="opacity:.7">(topic B)</span></div>
+          <div class="chunk c3">penalties + fees <span style="opacity:.7">(topic C)</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">23</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Two practical add-ons. Overlap: let adjacent chunks share 10 to 20 percent of text, so a key sentence at a boundary is not orphaned.", "Metadata: store source doc, section, page and effective date with every chunk.", "In a bank that metadata is not optional — it is what lets every answer cite a real, dated source for audit."]'>
+    <div class="kicker"><span class="badge"></span>Overlap &amp; metadata</div>
+    <h2 class="slide-title" data-r data-d="1">Overlap stops orphans; metadata enables citations</h2>
+    <div class="two" style="margin-top:18px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2"><b>Overlap (10&ndash;20%):</b> share text across boundaries so key sentences aren&#39;t split off.</li>
+          <li data-r data-d="3" class="strong">Keep <b>metadata</b> per chunk: source, section, page, effective date.</li>
+          <li data-r data-d="4">Essential for <b>citations and audit</b> in a bank.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="chunks" data-r data-d="3">
+          <div class="chunk c2">...interest is paid at maturity.<br/><b style="color:#ffd; opacity:.95">Early withdrawal incurs a penalty</b></div>
+          <div class="chunk c3"><b style="color:#ffd; opacity:.95">Early withdrawal incurs a penalty</b> of 1% on principal...</div>
+        </div>
+        <div class="flow-cap" style="margin-top:14px"><span style="font-family:var(--fMono);font-size:11px;color:var(--red);background:var(--tint-red);border:1px solid var(--tint-red-2);padding:4px 9px;border-radius:6px">doc: TD T&amp;Cs 2025 · &sect;4 · p.3 · eff. 2025-01</span></div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">24</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The best-practice upgrade, from Anthropic. A bare chunk that says the penalty is 1% is context-less — the index does not know which product or year.", "Contextual retrieval prepends a short context blurb to each chunk before embedding: this is from OCBC&#39;s 2025 Time Deposit T&Cs, regarding early withdrawal.", "Reported around 35 percent fewer retrieval failures, and it pairs well with hybrid search. Cheap to add, big win."]'>
+    <div class="kicker"><span class="badge"></span>Contextual retrieval &mdash; the upgrade</div>
+    <h2 class="slide-title" data-r data-d="1">Give each chunk its context before embedding</h2>
+    <div class="ba" style="margin-top:18px">
+      <div class="col before">
+        <div class="ba-h"><span class="tagx">Context-less chunk</span></div>
+        <div class="codewrap"><div class="bar"><i></i><i></i><i></i><span class="fn">chunk</span></div><pre><code>"The penalty is 1% of principal."
+
+(which product? which year?
+ the index has no idea)</code></pre></div>
+      </div>
+      <div class="col after">
+        <div class="ba-h"><span class="tagx">Contextualised chunk</span></div>
+        <div class="codewrap"><div class="bar"><i></i><i></i><i></i><span class="fn">chunk</span></div><pre><code>"From OCBC's 2025 Time Deposit
+ T&Cs, re: early withdrawal —
+ The penalty is 1% of principal."</code></pre></div>
+      </div>
+    </div>
+    <div class="flow-cap"><b style="color:var(--red)">~35% fewer retrieval failures</b> (Anthropic) &mdash; and it stacks with hybrid search.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">25</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["Part 3, about 24 minutes — how retrieval actually works under the hood, intuition only.", "Cosine similarity, nearest neighbours, approximate search, then the two upgrades that matter: hybrid and reranking.", "End with the full pipeline and how you measure that it works."]'>
+    <div class="pillar-no">03</div>
+    <div class="eyebrow"><span class="dot"></span>Part 3</div>
+    <h2>Retrieval Mechanics</h2>
+    <p class="lead">Finding the right needle, fast, in millions of vectors.</p>
+    <div class="prog-rail"><span>Vector embeddings</span><span>Chunking</span><span class="on">Retrieval</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">26</span></div>
+  </section>
+
+  <section class="slide" data-notes='["How do we measure closeness? Cosine similarity: the angle between two vectors. Small angle means similar meaning.", "A score near 1 means the directions almost line up — near-identical meaning. Near 0 means unrelated.", "Watch the query vector swing toward the closest chunk. We never use the length, only the direction — that is what cosine captures."]'>
+    <div class="kicker"><span class="badge"></span>Cosine similarity</div>
+    <h2 class="slide-title" data-r data-d="1">Closeness is the angle between arrows</h2>
+    <div class="fillc">
+      <div class="cosbox" data-r data-d="2">
+        <svg viewBox="0 0 380 300" preserveAspectRatio="xMidYMid meet">
+          <line class="vec vd" x1="40" y1="260" x2="320" y2="70"/>
+          <text class="vlab" x="326" y="68" fill="#EC1B23">chunk</text>
+          <g class="swing">
+            <line class="vec vq" x1="40" y1="260" x2="320" y2="120"/>
+            <text class="vlab" x="326" y="122" fill="#1A1A1A">query</text>
+          </g>
+          <path class="arc" d="M 200 150 A 70 70 0 0 1 188 188"/>
+          <text class="clab" x="150" y="150">cos &theta; &asymp; 0.92</text>
+          <circle cx="40" cy="260" r="4" fill="#1A1A1A"/>
+        </svg>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">27</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Retrieval in one line: embed the query, drop it into the same vector space, and grab the k closest chunks — say the top 5.", "Watch the query land in the cloud; its nearest neighbours light up. Those are the passages we hand to the model.", "Top-k is a knob: too few and you miss the answer; too many and you add noise and cost."]'>
+    <div class="kicker"><span class="badge"></span>Nearest neighbours &amp; top-k</div>
+    <h2 class="slide-title" data-r data-d="1">Grab the k closest chunks to the query</h2>
+    <div class="fillc">
+      <div class="svg-card" data-r data-d="2" style="max-width:760px;margin:0 auto;width:100%">
+        <div class="ct">The query lands; its nearest chunks light up (top-k = 3)</div>
+        <svg class="vspace chart-svg" viewBox="0 0 380 220" preserveAspectRatio="xMidYMid meet">
+          <line class="near" x1="190" y1="110" x2="150" y2="78"/>
+          <line class="near" x1="190" y1="110" x2="232" y2="86"/>
+          <line class="near" x1="190" y1="110" x2="166" y2="150"/>
+          <circle class="pt" cx="150" cy="78" r="7" fill="#EC1B23"/>
+          <circle class="pt" cx="232" cy="86" r="7" fill="#EC1B23"/>
+          <circle class="pt" cx="166" cy="150" r="7" fill="#EC1B23"/>
+          <circle class="pt" cx="70" cy="50" r="6" fill="#c8ccd3"/>
+          <circle class="pt" cx="300" cy="170" r="6" fill="#c8ccd3"/>
+          <circle class="pt" cx="320" cy="60" r="6" fill="#c8ccd3"/>
+          <circle class="qp" cx="190" cy="110" r="9" fill="#1A1A1A"/>
+          <text class="lab qlab" x="200" y="106">query</text>
+        </svg>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">28</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Scale problem: comparing the query to millions of vectors one by one is too slow for a live chatbot.", "Vector databases use Approximate Nearest Neighbour indexes — like HNSW — that take smart shortcuts to get near-instant results with a tiny accuracy trade-off.", "Name a few lightly: pgvector, FAISS, Milvus. The idea to keep: ANN is a smart shortcut, not exact search."]'>
+    <div class="kicker"><span class="badge"></span>Vector databases &amp; ANN</div>
+    <h2 class="slide-title" data-r data-d="1">A smart shortcut through millions of vectors</h2>
+    <div class="two" style="margin-top:18px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">Exact search over millions of vectors is <b>too slow</b>.</li>
+          <li data-r data-d="3" class="strong"><b>ANN</b> indexes (e.g. HNSW) get near-instant results...</li>
+          <li data-r data-d="4">...for a <b>tiny accuracy trade-off</b>.</li>
+          <li data-r data-d="5">Tools: <b>pgvector, FAISS, Milvus</b>, and more.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="svg-card" data-r data-d="3">
+          <div class="ct">HNSW &mdash; hop across a graph to the neighbourhood</div>
+          <svg class="vspace chart-svg" viewBox="0 0 320 190" preserveAspectRatio="xMidYMid meet">
+            <line class="near" x1="40" y1="150" x2="120" y2="90"/>
+            <line class="near" x1="120" y1="90" x2="220" y2="70"/>
+            <line class="near" x1="220" y1="70" x2="276" y2="120"/>
+            <circle class="pt" cx="40" cy="150" r="7" fill="#1A1A1A"/>
+            <circle class="pt" cx="120" cy="90" r="6" fill="#1C6E9C"/>
+            <circle class="pt" cx="220" cy="70" r="6" fill="#1C6E9C"/>
+            <circle class="pt" cx="276" cy="120" r="8" fill="#EC1B23"/>
+            <circle class="pt" cx="90" cy="40" r="5" fill="#c8ccd3"/><circle class="pt" cx="180" cy="150" r="5" fill="#c8ccd3"/><circle class="pt" cx="250" cy="30" r="5" fill="#c8ccd3"/>
+            <text class="lab" x="20" y="172">query</text><text class="lab" x="250" y="150" style="fill:#EC1B23;font-weight:700">match</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">29</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Pure semantic search has a real blind spot: exact matches. Embeddings blur precise tokens.", "Ask for product code TD-6M or a specific clause number, and semantic search may return something that means roughly the same but is the wrong exact item.", "Error codes, account types, product codes, clause numbers — these need exact matching. That is the motivation for hybrid."]'>
+    <div class="kicker"><span class="badge"></span>The weakness of pure vectors</div>
+    <h2 class="slide-title" data-r data-d="1">Semantic search blurs exact tokens</h2>
+    <div class="qa">
+      <div class="qline q" data-r data-d="2"><div class="who">Q</div><div class="bub">What&#39;s the early-withdrawal penalty on <b>TD-6M</b>?</div></div>
+      <div class="qline a" data-r data-d="3"><div class="who"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div><div class="bub">Returns the <b>12-month</b> time deposit clause &mdash; semantically close, wrong product.</div></div>
+      <div class="flag">&#10007; Exact code <b>TD-6M</b> got blurred away &mdash; vectors miss precise strings</div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">30</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The fix is to use both. Hybrid search runs semantic vector search and keyword search — BM25 — in parallel, then merges the rankings.", "A common merge is Reciprocal Rank Fusion. Semantic catches meaning and paraphrase; keyword nails the exact code or clause number.", "Hybrid is the current best-practice default — it catches both the sense and the exact string."]'>
+    <div class="kicker"><span class="badge"></span>Hybrid search</div>
+    <h2 class="slide-title" data-r data-d="1">Meaning and exact strings, together</h2>
+    <div class="merge" style="margin-top:8px">
+      <div class="mcol">
+        <div class="mcard sem"><div class="mh"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>Semantic</div><p>vectors &mdash; meaning, synonyms, paraphrase</p></div>
+        <div class="mcard kw"><div class="mh"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="4"/><path d="M11 11l8 8M16 16l2-2M19 19l2-2"/></svg></span>Keyword (BM25)</div><p>exact tokens &mdash; codes, clauses, IDs</p></div>
+      </div>
+      <div class="mmid" data-r data-d="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg><div style="font-family:var(--fMono);font-size:11px;margin-top:6px">RRF</div></div>
+      <div class="mout" data-r data-d="3">
+        <div class="mh">Merged ranking</div>
+        <ol>
+          <li><b>TD-6M</b> early-withdrawal clause</li>
+          <li>Time-deposit penalty overview</li>
+          <li>Early-withdrawal FAQ</li>
+        </ol>
+      </div>
+    </div>
+    <div class="flow-cap">Reciprocal Rank Fusion merges both streams &mdash; the <b style="color:var(--red)">best-practice default</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">31</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Reranking is the precision step. First retrieve a broad top-k cheaply — say 20 candidates.", "Then a reranker, a cross-encoder, re-reads each candidate against the query and scores true relevance, reordering them.", "Keep the top few for the prompt. It is slower per item, so you only run it on the shortlist. Qwen3 ships a reranker too."]'>
+    <div class="kicker"><span class="badge"></span>Reranking</div>
+    <h2 class="slide-title" data-r data-d="1">Re-read the shortlist for precision</h2>
+    <div class="rerank" style="margin-top:8px">
+      <div class="rlist before">
+        <div class="rhd">Top-k (cheap)</div>
+        <div class="ritem"><div class="rk">1</div><div class="rt">Time-deposit overview</div></div>
+        <div class="ritem"><div class="rk">2</div><div class="rt">Savings account terms</div></div>
+        <div class="ritem"><div class="rk">3</div><div class="rt">TD-6M early-withdrawal clause</div></div>
+        <div class="ritem"><div class="rk">4</div><div class="rt">General fees schedule</div></div>
+        <div class="ritem"><div class="rk">5</div><div class="rt">Deposit insurance note</div></div>
+      </div>
+      <div class="mmid" data-r data-d="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg><div style="font-family:var(--fMono);font-size:10px;margin-top:6px">cross-<br/>encoder</div></div>
+      <div class="rlist after">
+        <div class="rhd">Reranked (precise)</div>
+        <div class="ritem hit"><div class="rk">1</div><div class="rt">TD-6M early-withdrawal clause</div></div>
+        <div class="ritem"><div class="rk">2</div><div class="rt">Time-deposit overview</div></div>
+        <div class="ritem"><div class="rk">3</div><div class="rt">General fees schedule</div></div>
+        <div class="ritem"><div class="rk">4</div><div class="rt">Savings account terms</div></div>
+        <div class="ritem"><div class="rk">5</div><div class="rt">Deposit insurance note</div></div>
+      </div>
+    </div>
+    <div class="flow-cap">The truly relevant chunk jumps to the top &mdash; keep the <b style="color:var(--red)">top few</b> for the prompt.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">32</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Put it all together, end to end. A query gets an instruction and is embedded, then hybrid search pulls candidates by meaning and by keyword.", "The reranker sharpens the order; the top chunks plus their citations go into the prompt; the LLM generates a grounded answer.", "This is the payoff diagram — every piece we built, in one flow."]'>
+    <div class="kicker"><span class="badge"></span>The full pipeline</div>
+    <h2 class="slide-title" data-r data-d="1">Query to grounded answer, end to end</h2>
+    <div class="phases">
+      <div class="phase ret">
+        <div class="plabel">Retrieval &amp; generation <span class="tg">online · per query</span></div>
+        <div class="prow"><div class="pstep"><div class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg></div><div class="pt">Query +<br/>instruction</div></div><div class="parr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div><div class="pstep"><div class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20L20 4M20 4h-7M20 4v7"/></svg></div><div class="pt">Embed</div></div><div class="parr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div><div class="pstep"><div class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div><div class="pt">Hybrid<br/>search</div></div><div class="parr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div><div class="pstep"><div class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h10M4 12h7M4 18h13M18 4v9M18 13l-3-3M18 13l3-3"/></svg></div><div class="pt">Rerank</div></div><div class="parr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div><div class="pstep"><div class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></div><div class="pt">Chunks +<br/>citations</div></div><div class="parr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div><div class="pstep"><div class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 7V3M8 13h.01M16 13h.01"/></svg></div><div class="pt">Grounded<br/>answer</div></div></div>
+      </div>
+    </div>
+    <div class="flow-cap">Embeddings, chunking and retrieval mechanics &mdash; <b style="color:var(--red)">all of Part 1&ndash;3</b>, in one flow.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">33</span></div>
+  </section>
+
+  <section class="slide" data-notes='["You must measure retrieval, not vibe-check it. Three metrics. Context recall: did we fetch the chunks that contain the answer?", "Context precision: of what we fetched, how much is actually relevant? Faithfulness: is the final answer grounded in those chunks, or did the model drift?", "Build a small golden set of real questions with known answers, and tune chunking, dimensions and top-k against it. Measure, then change one thing at a time."]'>
+    <div class="kicker"><span class="badge"></span>How you know it&#39;s working</div>
+    <h2 class="slide-title" data-r data-d="1">Measure retrieval, don&#39;t vibe it</h2>
+    <div class="cards c3" style="margin-top:24px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg></div><h3>Context recall</h3><p>Did we fetch the chunks that actually hold the answer?</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 18a8 8 0 0 1 16 0"/><path d="M12 18l4-5"/></svg></div><h3>Context precision</h3><p>Of what we fetched, how much is genuinely relevant?</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l4 4L19 6"/></svg></div><h3>Faithfulness</h3><p>Is the answer grounded in the chunks &mdash; or drifting?</p></div>
+    </div>
+    <div class="flow-cap">Build a <b style="color:var(--red)">golden-query set</b>; tune chunking, dims and top-k against it.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">34</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["Bring it home to OCBC. Everything today powers tools you already met in Topic 3.", "Three products, mapped to the pipeline stage each leans on.", "Where internal details are unknown, we describe generically and label as illustrative."]'>
+    <div class="pillar-no">&#9733;</div>
+    <div class="eyebrow"><span class="dot"></span>Showcase</div>
+    <h2>Grounding at OCBC</h2>
+    <p class="lead">Retrieval, running inside our own tools.</p>
+    <div class="prog-rail"><span class="on">Vector embeddings</span><span class="on">Chunking</span><span class="on">Retrieval</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">35</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Map the products to the pipeline. The RM-support chatbot is RAG over the policy and product knowledge base — chunk, embed, hybrid search, answer with citations.", "The customer assistant is grounded in approved FAQs and product info, with tight guardrails on what it can say.", "Document Q&A runs retrieval over KYC and AML guidelines. Illustrative — real products, simplified to the concept."]'>
+    <div class="kicker"><span class="badge"></span>Where this powers our tools</div>
+    <h2 class="slide-title" data-r data-d="1">RAG behind OCBC&#39;s assistants</h2>
+    <div class="cards c3" style="margin-top:24px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg></div><h3>RM-support chatbot</h3><p>Answers from the policy and product KB, with citations.</p><div class="ctag">hybrid search · rerank</div></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 7V3M8 13h.01M16 13h.01"/></svg></div><h3>Customer assistant</h3><p>Grounded in approved FAQs and product info, guardrailed.</p><div class="ctag">embeddings · grounding</div></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></div><h3>Document Q&amp;A</h3><p>Retrieval over KYC and AML guidelines.</p><div class="ctag">chunking · metadata</div></div>
+    </div>
+    <div class="flow-cap" style="font-style:italic">Illustrative &mdash; real products, simplified to show the concept.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">36</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Replay the spine. Index: chunk, embed, store. Retrieve: embed the query, hybrid search, rerank, generate with citations.", "Safe defaults: recursive chunks around 256 to 512 tokens with 10 to 20 percent overlap, contextual retrieval, hybrid plus rerank, Qwen3-Embedding-8B in one consistent space, and always keep citations.", "Three takeaways: chunking is the highest-leverage knob, hybrid beats pure vectors, and you must always measure."]'>
+    <div class="kicker"><span class="badge"></span>Recap</div>
+    <h2 class="slide-title" data-r data-d="1">Three things to remember</h2>
+    <div class="bullets-rail" style="margin-top:18px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2"><b>The spine:</b> chunk &rarr; embed &rarr; store · embed &rarr; hybrid search &rarr; rerank &rarr; generate.</li>
+          <li data-r data-d="3"><b>Defaults:</b> recursive ~256&ndash;512 tokens, 10&ndash;20% overlap, contextual + hybrid + rerank.</li>
+          <li data-r data-d="4">One model, one space (Qwen3-Embedding-8B) &mdash; always keep citations.</li>
+        </ul>
+      </div>
+      <div class="rail" data-r data-d="3">
+        <h4>Take these away</h4>
+        <ul>
+          <li><b style="color:#fff">Chunking</b> is the highest-leverage knob.</li>
+          <li><b style="color:#fff">Hybrid</b> beats pure-vector search.</li>
+          <li>Always <b style="color:#fff">measure</b> retrieval.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">37</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["Close it. They can now reason about a RAG system end to end — and explain why our chatbots can cite a real policy clause.", "Pointers to go deeper: Anthropic&#39;s Contextual Retrieval write-up, and the Qwen3-Embedding model card.", "Call back the opening line — the smartest model is useless if it cannot see your data — then open for questions."]'>
+    <div class="pillar-no">&#10003;</div>
+    <div class="eyebrow"><span class="dot"></span>Wrap</div>
+    <h2>You can now reason about RAG end to end.</h2>
+    <p class="lead">Keep going: Anthropic&#39;s <b>Contextual Retrieval</b> write-up, and the <b>Qwen3-Embedding</b> model card. And remember the frame &mdash; the smartest model is useless if it can&#39;t see your data. Retrieval is how it sees ours.</p>
+    <div class="prog-rail"><span class="on">Vector embeddings</span><span class="on">Chunking</span><span class="on">Retrieval</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">38</span></div>
+  </section>
+
+  </main>
+</div>
+
+<div class="hud">
+  <div class="dots" id="dots"></div>
+  <div class="count">slide <b id="cur">1</b> / <span id="tot">34</span></div>
+</div>
+<div class="hint"><kbd>→</kbd> next &nbsp; <kbd>←</kbd> back &nbsp; <kbd>N</kbd> notes &nbsp; <kbd>F</kbd> full</div>
+
+<div class="rotate-cue" aria-hidden="true">
+  <div>
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="7" y="2" width="10" height="20" rx="2.2"/><path d="M11 18.5h2"/></svg>
+    <h4>Rotate your device</h4>
+    <p>This deck is built for a wide 16:9 stage — turn your phone to landscape for the full view.</p>
+  </div>
+</div>
+
+<div class="notes" id="notes">
+  <button class="close" id="notesClose">&times;</button>
+  <h5><span style="width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block"></span>Speaker notes</h5>
+  <ul id="notesBody"></ul>
+</div>
+
+<script>
+/* ---- fit fixed 1280x720 stage to viewport ---- */
+const STATIC = location.search.includes('static');
+if(STATIC) document.body.classList.add('static');
+const deck = document.getElementById('deck');
+function fit(){
+  const vv = window.visualViewport;
+  const w = (vv && vv.width)  || innerWidth  || document.documentElement.clientWidth  || 1280;
+  const h = (vv && vv.height) || innerHeight || document.documentElement.clientHeight || 720;
+  const s = Math.min(w/1280, h/720) || 1;
+  // anchor top-left and centre with an explicit pixel offset — robust even when
+  // the deck is larger than the viewport (small mobile-landscape screens)
+  const x = (w - 1280*s) / 2, y = (h - 720*s) / 2;
+  deck.style.transform = `translate(${x}px, ${y}px) scale(${s>0?s:1})`;
+}
+addEventListener('resize', fit);
+addEventListener('load', fit);
+// mobile: re-fit when rotating or when the browser chrome resizes the visible area
+addEventListener('orientationchange', ()=>{ fit(); setTimeout(fit,200); setTimeout(fit,500); });
+if(window.visualViewport){ visualViewport.addEventListener('resize', fit); }
+fit(); requestAnimationFrame(fit); setTimeout(fit,120);
+
+/* ---- presentation controller ---- */
+const slides = [...document.querySelectorAll('.slide')];
+const TOT = slides.length;
+let i = 0;
+document.getElementById('tot').textContent = TOT;
+
+const dotsEl = document.getElementById('dots');
+slides.forEach((sl,idx)=>{
+  const d = document.createElement('span');
+  d.className='dot'+(sl.classList.contains('dark')?' sec':'');
+  d.addEventListener('click',()=>go(idx));
+  dotsEl.appendChild(d);
+});
+const dots=[...dotsEl.children];
+// page numbers follow slide order (so slides can be inserted freely)
+slides.forEach((s,idx)=>{const pg=s.querySelector('.foot .pg'); if(pg)pg.textContent=String(idx+1).padStart(2,'0');});
+
+const notesEl=document.getElementById('notes');
+const notesBody=document.getElementById('notesBody');
+function renderNotes(){
+  let data=[]; try{data=JSON.parse(slides[i].dataset.notes||'[]')}catch(e){}
+  notesBody.innerHTML='';
+  if(!data.length){notesBody.innerHTML='<li style="color:#777">No notes for this slide.</li>';}
+  data.forEach(t=>{const li=document.createElement('li');li.textContent=t;notesBody.appendChild(li);});
+}
+function go(n){
+  n=Math.max(0,Math.min(TOT-1,n));
+  if(n===i) return;
+  slides[i].classList.remove('active'); slides[i].classList.add('prev');
+  slides[n].classList.remove('prev'); slides[n].classList.add('active');
+  i=n; sync();
+}
+function sync(){
+  document.getElementById('progress').style.width=((i+1)/TOT*100)+'%';
+  document.getElementById('cur').textContent=i+1;
+  dots.forEach((d,x)=>d.classList.toggle('on',x===i));
+  location.hash=i+1;
+  if(notesEl.classList.contains('show')) renderNotes();
+  // (re)trigger counters on the active slide
+  triggerCounters(slides[i]);
+  playDemo(slides[i]);
+}
+function next(){go(i+1)} function prev(){go(i-1)}
+
+/* keyboard */
+addEventListener('keydown',e=>{
+  if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();next();}
+  else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();prev();}
+  else if(e.key==='Home'){go(0)} else if(e.key==='End'){go(TOT-1)}
+  else if(e.key.toLowerCase()==='n'){notesEl.classList.toggle('show'); renderNotes();}
+  else if(e.key.toLowerCase()==='f'){if(!document.fullscreenElement)document.documentElement.requestFullscreen();else document.exitFullscreen();}
+});
+document.getElementById('notesClose').addEventListener('click',()=>notesEl.classList.remove('show'));
+
+/* wheel (debounced) */
+let wlock=false;
+addEventListener('wheel',e=>{
+  if(wlock) return; if(Math.abs(e.deltaY)<18) return;
+  wlock=true; e.deltaY>0?next():prev();
+  setTimeout(()=>wlock=false,650);
+},{passive:true});
+
+/* touch */
+let tx=0,ty=0;
+addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
+addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty;
+  if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)) dx<0?next():prev();
+},{passive:true});
+
+/* counters */
+function triggerCounters(slide){
+  slide.querySelectorAll('[data-count]').forEach(el=>{
+    if(el.dataset.done) return; el.dataset.done='1';
+    const end=+el.dataset.count, pre=el.dataset.prefix||'', suf=el.dataset.suffix||'';
+    if(STATIC){el.innerHTML=pre+end+(suf?'<span class="unit">'+suf+'</span>':'');return;}
+    const dur=1100, t0=performance.now();
+    function tick(t){
+      const p=Math.min(1,(t-t0)/dur), e=1-Math.pow(1-p,3);
+      const v=Math.round(end*e);
+      el.innerHTML=pre+v+(suf?'<span class="unit">'+suf+'</span>':'');
+      if(p<1)requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+  // progress rings
+  slide.querySelectorAll('[data-ring]').forEach(el=>{
+    if(el.dataset.done) return; el.dataset.done='1';
+    const circle=el.querySelector('.fg'); if(!circle)return;
+    const pct=+el.dataset.ring, len=circle.getTotalLength();
+    if(STATIC){circle.style.strokeDasharray=len;circle.style.strokeDashoffset=len*(1-pct/100);const o=el.querySelector('.pct');if(o)o.textContent=pct+'%';return;}
+    circle.style.strokeDasharray=len; circle.style.strokeDashoffset=len;
+    requestAnimationFrame(()=>{circle.style.transition='stroke-dashoffset 1.3s cubic-bezier(.16,1,.3,1)';circle.style.strokeDashoffset=len*(1-pct/100);});
+    const out=el.querySelector('.pct'); if(out){const t0=performance.now();(function tk(t){const p=Math.min(1,(t-t0)/1300);out.textContent=Math.round(pct*(1-Math.pow(1-p,3)))+'%';if(p<1)requestAnimationFrame(tk);})(performance.now());}
+  });
+}
+
+/* notebook demo player */
+const demoTimers=[];
+function clearDemo(){demoTimers.forEach(clearTimeout); demoTimers.length=0;}
+function playDemo(slide){
+  if(!slide.classList.contains('demo-slide')) return;
+  clearDemo();
+  const cells=[...slide.querySelectorAll('.nb-cell')];
+  const steps=[...slide.querySelectorAll('.demo-steps li')];
+  cells.forEach(c=>{c.classList.remove('shown','running'); const o=c.querySelector('.nb-out'); if(o)o.classList.remove('shown'); const p=c.querySelector('.nb-prompt'); if(p){p.classList.remove('busy'); p.textContent='['+(cells.indexOf(c)+1)+']';}});
+  steps.forEach(s=>s.classList.remove('on'));
+  if(STATIC){cells.forEach(c=>{c.classList.add('shown'); const o=c.querySelector('.nb-out'); if(o)o.classList.add('shown');}); steps.forEach(s=>s.classList.add('on')); const body=slide.querySelector('.nb-body'); if(body){body.style.scrollBehavior='auto'; const snap=()=>body.scrollTop=body.scrollHeight; snap(); requestAnimationFrame(snap); setTimeout(snap,80);} return;}
+  let t=420;
+  cells.forEach((cell,idx)=>{
+    const prompt=cell.querySelector('.nb-prompt');
+    const out=cell.querySelector('.nb-out');
+    demoTimers.push(setTimeout(()=>{cell.classList.add('shown','running'); if(prompt){prompt.classList.add('busy'); prompt.textContent='[*]';} const body=cell.parentElement; body.scrollTop=Math.max(0,cell.offsetTop-90);},t));
+    t+=720;
+    demoTimers.push(setTimeout(()=>{
+      cell.classList.remove('running');
+      if(prompt){prompt.classList.remove('busy'); prompt.textContent='['+(idx+1)+']';}
+      if(out)out.classList.add('shown');
+      if(steps[idx])steps[idx].classList.add('on');
+    },t));
+    t+=820;
+  });
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-replay]'); if(!b) return;
+  playDemo(b.closest('.slide'));
+});
+addEventListener('keydown',e=>{if(e.key.toLowerCase()==='r'){const s=slides[i]; if(s.classList.contains('demo-slide'))playDemo(s);}});
+
+/* auto-hide chrome when idle */
+let idleT; function poke(){document.body.classList.remove('idle'); clearTimeout(idleT); idleT=setTimeout(()=>document.body.classList.add('idle'),3200);}
+['mousemove','keydown','touchstart','wheel','click'].forEach(ev=>addEventListener(ev,poke,{passive:true})); poke();
+
+/* deep link */
+if(location.hash){const n=parseInt(location.hash.slice(1));if(n>=1&&n<=TOT){slides[0].classList.remove('active');i=n-1;slides[i].classList.add('active');}}
+sync();
+</script>
+<script>
+/* dimension (MRL) slider — slide 16 */
+(function(){
+  var sl=document.getElementById('dim'); if(!sl) return;
+  var dims=[256,512,1024,2048,4096], acc=[88,93,96,98,100], sto=[6,12,25,50,100];
+  function upd(){var i=+sl.value;
+    document.getElementById('dval').textContent=dims[i];
+    var a=document.getElementById('dacc'),av=document.getElementById('daccv');
+    var s=document.getElementById('dsto'),sv=document.getElementById('dstov');
+    if(a)a.style.width=acc[i]+'%'; if(av)av.textContent=acc[i]+'%';
+    if(s)s.style.width=sto[i]+'%'; if(sv)sv.textContent=sto[i]+'%';
+  }
+  sl.addEventListener('input',upd); upd();
+})();
+</script>
+</body>
+</html>
