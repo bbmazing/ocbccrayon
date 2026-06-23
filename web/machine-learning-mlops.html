@@ -1,0 +1,1602 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Machine Learning 101 &amp; MLOps Basics · OCBC CRAYON</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+/* =========================================================================
+   OCBC CRAYON · Python Data Foundations
+   Self-contained animated deck. Fixed 16:9 stage, one slide at a time.
+   ========================================================================= */
+:root{
+  /* OCBC brand */
+  --red:#EC1B23; --red-dark:#B3141A; --red-deep:#7A0E12;
+  --ink:#1A1A1A; --charcoal:#202024; --charcoal-2:#2A2A2F;
+  --text:#1F2937; --muted:#6B7280; --faint:#9AA1AC;
+  --surface:#FFFFFF; --card:#F5F5F6; --card-2:#EFEFF1;
+  --line:#E4E7EB; --line-strong:#D6D9DE;
+  --tint-red:#FCEEEF; --tint-red-2:#FBE2E3;
+  --code-bg:#1A1C22; --code-ink:#E7E9EE;
+  /* supporting diagram hues (used sparingly) */
+  --blue:#1C6E9C; --teal:#0E7C6B; --amber:#C9851A; --green:#1E8E5A; --violet:#6C4FB3;
+  /* stage geometry */
+  --stageW:1280px; --stageH:720px;
+  --fHead:'Manrope',system-ui,sans-serif;
+  --fBody:'Inter',system-ui,sans-serif;
+  --fMono:'JetBrains Mono',ui-monospace,monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:#0c0c0e;
+  font-family:var(--fBody);
+  color:var(--text);
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+/* ---- Stage: scale a fixed 1280x720 deck to fit the viewport ---- */
+.stage{
+  position:fixed; inset:0; height:100dvh; display:grid; place-items:center;
+  background:
+    radial-gradient(1200px 700px at 80% -10%, rgba(236,27,35,.10), transparent 60%),
+    #0a0a0c;
+}
+.deck{
+  position:absolute; left:0; top:0;
+  width:var(--stageW); height:var(--stageH);
+  transform-origin:top left;
+  box-shadow:0 40px 120px -30px rgba(0,0,0,.8);
+  border-radius:4px; overflow:hidden;
+  background:#fff;
+}
+
+/* ---- Slides ---- */
+.slide{
+  position:absolute; inset:0;
+  width:var(--stageW); height:var(--stageH);
+  opacity:0; visibility:hidden; pointer-events:none;
+  transition:opacity .5s ease;
+  display:flex; flex-direction:column;
+  padding:62px 76px 58px;
+  background:var(--surface);
+}
+.slide.active{opacity:1; visibility:visible; pointer-events:auto; z-index:2}
+.slide.prev{z-index:1}
+
+/* dark slides (cover, dividers, close) */
+.slide.dark{
+  color:#fff;
+  background:
+    radial-gradient(900px 600px at 78% -8%, rgba(236,27,35,.30), transparent 55%),
+    radial-gradient(700px 500px at -5% 110%, rgba(236,27,35,.12), transparent 60%),
+    linear-gradient(160deg,#202024 0%,#161618 60%,#121214 100%);
+}
+.slide.dark::after{ /* fine grain texture */
+  content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
+  background-image:radial-gradient(rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size:3px 3px; mix-blend-mode:screen;
+}
+
+/* =========================================================================
+   Shared chrome: kicker, badge, footer, titles
+   ========================================================================= */
+.kicker{
+  display:inline-flex; align-items:center; gap:11px;
+  font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--red); margin-bottom:16px;
+}
+.kicker .badge{
+  width:24px; height:24px; border-radius:50%;
+  background:var(--red); position:relative; flex:none;
+  box-shadow:0 0 0 4px var(--tint-red);
+  overflow:hidden;
+}
+.kicker .badge::before{ /* rising-sun rays motif */
+  content:""; position:absolute; left:50%; bottom:5px; width:0; height:0;
+  border-left:7px solid transparent; border-right:7px solid transparent;
+  border-bottom:9px solid #fff; transform:translateX(-50%); opacity:.95;
+}
+.kicker .badge::after{
+  content:""; position:absolute; left:0; right:0; bottom:6px; height:1.5px;
+  background:rgba(255,255,255,.85);
+}
+.dark .kicker{color:#ff6a6f}
+.dark .kicker .badge{box-shadow:0 0 0 4px rgba(236,27,35,.25)}
+
+.slide-title{
+  font-family:var(--fHead); font-weight:800; color:var(--ink);
+  font-size:38px; line-height:1.08; letter-spacing:-.02em; max-width:24ch;
+}
+.dark .slide-title{color:#fff}
+.slide-sub{font-size:17px; color:var(--muted); margin-top:12px; max-width:60ch; line-height:1.5}
+
+.foot{
+  position:absolute; left:76px; right:76px; bottom:26px;
+  display:flex; align-items:center; justify-content:space-between;
+  font-size:12px; color:var(--faint); letter-spacing:.02em;
+}
+.foot .mark{display:flex; align-items:center; gap:9px; font-weight:600; color:var(--muted)}
+.foot .mark img{height:18px; width:auto; display:block}
+.foot .pg{font-family:var(--fMono); font-weight:500}
+.dark .foot{color:rgba(255,255,255,.5)}
+.dark .foot .mark{color:rgba(255,255,255,.7)}
+
+.body-area{flex:1; min-height:0; display:flex; flex-direction:column; margin-top:8px}
+
+/* =========================================================================
+   Reveal system — children animate in when slide becomes active
+   ========================================================================= */
+[data-r]{opacity:0; transform:translateY(16px); transition:opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1);}
+.slide.active [data-r]{opacity:1; transform:none}
+[data-r][data-d="1"]{transition-delay:.08s}[data-r][data-d="2"]{transition-delay:.16s}
+[data-r][data-d="3"]{transition-delay:.24s}[data-r][data-d="4"]{transition-delay:.32s}
+[data-r][data-d="5"]{transition-delay:.40s}[data-r][data-d="6"]{transition-delay:.48s}
+[data-r][data-d="7"]{transition-delay:.56s}[data-r][data-d="8"]{transition-delay:.64s}
+[data-r][data-d="9"]{transition-delay:.72s}[data-r][data-d="10"]{transition-delay:.80s}
+[data-r][data-d="11"]{transition-delay:.88s}[data-r][data-d="12"]{transition-delay:.96s}
+
+/* =========================================================================
+   COVER (slide 1)
+   ========================================================================= */
+.cover{padding:0}
+.cover .bg{
+  position:absolute; inset:0;
+  background:url('assets/bg_title_skyline.png') center/cover no-repeat;
+}
+.cover .scrim{position:absolute; inset:0; background:linear-gradient(100deg, rgba(255,255,255,.96) 0%, rgba(255,255,255,.82) 34%, rgba(255,255,255,0) 56%);}
+.cover .inner{position:relative; height:100%; display:flex; flex-direction:column; justify-content:center; padding:0 76px;}
+.cover .logo{height:34px; width:auto; position:absolute; top:48px; left:76px}
+.cover h1{font-family:var(--fHead); font-weight:800; letter-spacing:-.025em; line-height:1.02; font-size:66px; color:var(--ink)}
+.cover h1 .red{color:var(--red); display:block}
+.cover .rule{width:64px; height:5px; background:var(--red); border-radius:3px; margin:26px 0 22px}
+.cover .meta{font-size:15px; color:var(--muted); line-height:1.7}
+.cover .meta strong{color:var(--text); font-weight:600}
+.cover .program{position:absolute; bottom:46px; left:76px; font-size:12.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); font-weight:600}
+
+/* =========================================================================
+   QUOTE (slide 2)
+   ========================================================================= */
+.quote-wrap{flex:1; display:flex; flex-direction:column; justify-content:center; max-width:70ch}
+.quote-mark{font-family:var(--fHead); font-size:120px; line-height:.6; color:var(--red); font-weight:800; height:54px}
+.quote-wrap blockquote{font-family:var(--fHead); font-weight:600; font-size:46px; line-height:1.18; letter-spacing:-.02em; color:#fff; margin:18px 0 26px}
+.quote-wrap blockquote em{color:#ff6a6f; font-style:normal}
+.quote-wrap cite{font-style:normal; font-size:16px; color:rgba(255,255,255,.65); letter-spacing:.04em}
+.quote-wrap cite b{color:#fff; font-weight:600}
+
+/* =========================================================================
+   DIVIDER (section openers)
+   ========================================================================= */
+.divider{justify-content:center}
+.divider .pillar-no{font-family:var(--fHead); font-weight:800; font-size:200px; line-height:.8; color:rgba(255,255,255,.06); position:absolute; right:60px; top:50%; transform:translateY(-50%); letter-spacing:-.04em}
+.divider .eyebrow{font-family:var(--fHead); font-weight:700; letter-spacing:.18em; text-transform:uppercase; font-size:14px; color:#ff6a6f; display:flex; align-items:center; gap:12px}
+.divider .eyebrow .dot{width:26px;height:26px;border-radius:50%;background:var(--red);position:relative;overflow:hidden}
+.divider .eyebrow .dot::before{content:"";position:absolute;left:50%;bottom:5px;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:9px solid #fff;transform:translateX(-50%)}
+.divider h2{font-family:var(--fHead); font-weight:800; font-size:64px; letter-spacing:-.025em; color:#fff; margin:20px 0 18px; line-height:1.02; max-width:18ch}
+.divider .lead{font-size:18px; color:rgba(255,255,255,.7); max-width:54ch; line-height:1.55}
+.divider .prog-rail{display:flex; gap:10px; margin-top:34px}
+.divider .prog-rail span{font-size:12.5px; font-weight:600; letter-spacing:.04em; color:rgba(255,255,255,.4); padding:7px 14px; border:1px solid rgba(255,255,255,.14); border-radius:99px}
+.divider .prog-rail span.on{color:#fff; border-color:var(--red); background:rgba(236,27,35,.18)}
+
+/* =========================================================================
+   Generic building blocks
+   ========================================================================= */
+.cards{display:grid; gap:16px; flex:1; min-height:0}
+.cards.c3{grid-template-columns:repeat(3,1fr)}
+.cards.c2{grid-template-columns:repeat(2,1fr)}
+.card{
+  background:var(--card); border:1px solid var(--line); border-radius:14px;
+  padding:20px 22px; display:flex; flex-direction:column; gap:8px;
+  transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.card:hover{transform:translateY(-3px); box-shadow:0 18px 36px -22px rgba(0,0,0,.3); border-color:var(--line-strong)}
+.card .ic{width:40px; height:40px; border-radius:11px; background:var(--tint-red); color:var(--red); display:grid; place-items:center; flex:none}
+.card .ic svg{width:22px; height:22px}
+.card .num{font-family:var(--fHead); font-weight:800; font-size:15px; color:var(--red); width:30px; height:30px; border-radius:8px; background:var(--tint-red); display:grid; place-items:center}
+.card h3{font-family:var(--fHead); font-weight:700; font-size:18px; color:var(--ink); letter-spacing:-.01em}
+.card p{font-size:14px; color:var(--muted); line-height:1.5}
+.card .tag{font-family:var(--fMono); font-size:12px; color:var(--red); font-weight:500}
+
+/* two-column: text + visual */
+.two{display:grid; grid-template-columns:1fr 1fr; gap:40px; flex:1; min-height:0; align-items:center}
+.two.wide-r{grid-template-columns:0.86fr 1.14fr}
+.two .txt{display:flex; flex-direction:column; justify-content:center}
+.bullets{list-style:none; display:flex; flex-direction:column; gap:14px; margin-top:6px}
+.bullets li{position:relative; padding-left:28px; font-size:16.5px; line-height:1.5; color:var(--text)}
+.bullets li::before{content:""; position:absolute; left:0; top:9px; width:9px; height:9px; border-radius:3px; background:var(--red)}
+.bullets li.strong{font-weight:600; color:var(--ink)}
+.bullets li b{color:var(--ink); font-weight:600}
+.viz{position:relative; height:100%; display:flex; flex-direction:column; justify-content:center}
+
+/* rail (side panel) */
+.rail{background:var(--ink); color:#fff; border-radius:16px; padding:24px 26px; align-self:stretch; display:flex; flex-direction:column; justify-content:center}
+.rail h4{font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.12em; text-transform:uppercase; color:#ff6a6f; margin-bottom:16px}
+.rail ul{list-style:none; display:flex; flex-direction:column; gap:13px}
+.rail li{font-size:15px; color:rgba(255,255,255,.86); padding-left:22px; position:relative; line-height:1.4}
+.rail li::before{content:""; position:absolute; left:0; top:7px; width:7px; height:7px; border-radius:50%; background:var(--red)}
+
+.bullets-rail{display:grid; grid-template-columns:1.55fr 1fr; gap:32px; flex:1; min-height:0; align-items:stretch}
+.bullets-rail .txt{display:flex; flex-direction:column; justify-content:center}
+
+/* =========================================================================
+   Code block (typing reveal + syntax tint)
+   ========================================================================= */
+.codewrap{background:var(--code-bg); border-radius:14px; overflow:hidden; box-shadow:0 24px 50px -28px rgba(0,0,0,.5); border:1px solid #2a2d36; display:flex; flex-direction:column}
+.codewrap .bar{display:flex; align-items:center; gap:7px; padding:12px 16px; border-bottom:1px solid #272a33; background:#15171c}
+.codewrap .bar i{width:11px; height:11px; border-radius:50%; display:block}
+.codewrap .bar i:nth-child(1){background:#ff5f57}.codewrap .bar i:nth-child(2){background:#febc2e}.codewrap .bar i:nth-child(3){background:#28c840}
+.codewrap .bar .fn{margin-left:10px; font-family:var(--fMono); font-size:12.5px; color:#8b909c}
+.codewrap pre{margin:0; padding:20px 22px; overflow:hidden; flex:1}
+.codewrap code{font-family:var(--fMono); font-size:14.5px; line-height:1.65; color:var(--code-ink); white-space:pre; display:block}
+.tok-kw{color:#ff7b72}.tok-fn{color:#d2a8ff}.tok-str{color:#a5d6ff}.tok-num{color:#79c0ff}.tok-com{color:#7d8590; font-style:italic}.tok-op{color:#ff7b72}.tok-var{color:#ffa657}
+.code-line{display:block}
+.slide.active .code-line{animation:codeLine .42s both}
+.slide.active .code-line:nth-child(1){animation-delay:.15s}.slide.active .code-line:nth-child(2){animation-delay:.22s}
+.slide.active .code-line:nth-child(3){animation-delay:.29s}.slide.active .code-line:nth-child(4){animation-delay:.36s}
+.slide.active .code-line:nth-child(5){animation-delay:.43s}.slide.active .code-line:nth-child(6){animation-delay:.50s}
+.slide.active .code-line:nth-child(7){animation-delay:.57s}.slide.active .code-line:nth-child(8){animation-delay:.64s}
+.slide.active .code-line:nth-child(9){animation-delay:.71s}.slide.active .code-line:nth-child(10){animation-delay:.78s}
+.slide.active .code-line:nth-child(11){animation-delay:.85s}.slide.active .code-line:nth-child(12){animation-delay:.92s}
+.slide.active .code-line:nth-child(13){animation-delay:.99s}.slide.active .code-line:nth-child(14){animation-delay:1.06s}
+@keyframes codeLine{from{opacity:0; transform:translateX(-8px)}to{opacity:1; transform:none}}
+.code-note{font-size:14px; color:var(--muted); margin-top:14px; line-height:1.5; font-style:italic}
+.code-points{list-style:none; display:flex; flex-direction:column; gap:12px}
+.code-points li{position:relative; padding-left:24px; font-size:15.5px; line-height:1.45; color:var(--text)}
+.code-points li::before{content:"›"; position:absolute; left:0; top:-1px; color:var(--red); font-weight:800; font-size:18px}
+
+/* =========================================================================
+   Conway Venn (slide 4)
+   ========================================================================= */
+.venn{position:relative; width:430px; height:380px; margin:auto}
+.venn .circ{position:absolute; width:250px; height:250px; border-radius:50%; mix-blend-mode:multiply; display:grid; place-items:center; opacity:0; transform:scale(.6); transition:opacity .7s ease, transform .7s cubic-bezier(.34,1.56,.64,1)}
+.venn .c1{background:rgba(236,27,35,.40); left:0; top:0}
+.venn .c2{background:rgba(28,110,156,.40); right:0; top:0}
+.venn .c3{background:rgba(30,142,90,.42); left:50%; bottom:0; transform:translateX(-50%) scale(.6)}
+.slide.active .venn .c1{opacity:1; transform:scale(1); transition-delay:.2s}
+.slide.active .venn .c2{opacity:1; transform:scale(1); transition-delay:.45s}
+.slide.active .venn .c3{opacity:1; transform:translateX(-50%) scale(1); transition-delay:.7s}
+.venn .lbl{font-family:var(--fHead); font-weight:700; font-size:14px; color:var(--ink); text-align:center; line-height:1.2; pointer-events:none; padding:0 30px}
+.venn .center{position:absolute; left:50%; top:48%; transform:translate(-50%,-50%); z-index:5; background:var(--ink); color:#fff; font-family:var(--fHead); font-weight:800; font-size:13px; padding:8px 14px; border-radius:99px; white-space:nowrap; opacity:0; transition:opacity .5s ease .95s; box-shadow:0 8px 20px -8px rgba(0,0,0,.5)}
+.slide.active .venn .center{opacity:1}
+.venn .danger{position:absolute; left:14%; bottom:30%; z-index:6; font-family:var(--fHead); font-weight:800; font-size:11px; color:#fff; background:var(--red); padding:5px 10px; border-radius:6px; transform:rotate(-8deg); opacity:0; transition:opacity .5s ease 1.2s; box-shadow:0 6px 16px -6px rgba(236,27,35,.7)}
+.slide.active .venn .danger{opacity:1}
+
+/* =========================================================================
+   Stat counters (slide 5 + others)
+   ========================================================================= */
+.stat-row{display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin:auto 0}
+.stat{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:30px 26px; text-align:left; position:relative; overflow:hidden}
+.stat .big{font-family:var(--fHead); font-weight:800; font-size:62px; line-height:1; color:var(--red); letter-spacing:-.03em}
+.stat .big .unit{font-size:32px; vertical-align:super; margin-left:2px}
+.stat .lab{font-size:15px; color:var(--text); margin-top:12px; line-height:1.45; font-weight:500}
+.stat .sub{font-size:12.5px; color:var(--faint); margin-top:8px}
+.stat::before{content:""; position:absolute; left:0; top:0; bottom:0; width:5px; background:var(--red)}
+
+/* progress ring (80% stat) */
+.ring-wrap{display:flex; align-items:center; gap:40px; margin:auto 0}
+.ring{position:relative; width:230px; height:230px; flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring .pct{position:absolute; inset:0; display:grid; place-items:center; font-family:var(--fHead); font-weight:800; font-size:56px; color:var(--ink)}
+.ring-copy{max-width:46ch}
+.ring-copy h3{font-family:var(--fHead); font-weight:800; font-size:28px; color:var(--ink); letter-spacing:-.02em; line-height:1.1; margin-bottom:14px}
+.ring-copy p{font-size:16px; color:var(--muted); line-height:1.55}
+
+/* =========================================================================
+   Step strip (5 facets / workflow)
+   ========================================================================= */
+.flow{display:flex; align-items:stretch; gap:0; margin:auto 0; width:100%}
+.flow .step{flex:1; position:relative; display:flex; flex-direction:column; gap:8px; padding:0 6px}
+.flow .step .node{width:54px; height:54px; border-radius:14px; background:var(--ink); color:#fff; font-family:var(--fHead); font-weight:800; font-size:20px; display:grid; place-items:center; position:relative; z-index:2}
+.flow .step:nth-child(odd) .node{background:var(--red)}
+.flow .step h4{font-family:var(--fHead); font-weight:700; font-size:16.5px; color:var(--ink); margin-top:10px}
+.flow .step p{font-size:13.5px; color:var(--muted); line-height:1.45}
+.flow .arrow{position:absolute; top:27px; left:46px; right:-8px; height:2px; background:var(--line-strong); z-index:1}
+.flow .arrow::after{content:""; position:absolute; right:0; top:-4px; border-left:8px solid var(--line-strong); border-top:5px solid transparent; border-bottom:5px solid transparent}
+.flow .step:last-child .arrow{display:none}
+/* sequential build for flow */
+.flow .step{opacity:0; transform:translateY(14px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .flow .step{opacity:1; transform:none}
+.slide.active .flow .step:nth-child(1){transition-delay:.15s}.slide.active .flow .step:nth-child(2){transition-delay:.35s}
+.slide.active .flow .step:nth-child(3){transition-delay:.55s}.slide.active .flow .step:nth-child(4){transition-delay:.75s}
+.slide.active .flow .step:nth-child(5){transition-delay:.95s}.slide.active .flow .step:nth-child(6){transition-delay:1.15s}
+.flow.compact .node{width:46px;height:46px;border-radius:12px;font-size:17px}
+.flow-cap{font-size:14px; color:var(--muted); font-style:italic; text-align:center; margin-top:26px}
+
+/* journey / agenda */
+.journey{display:grid; grid-template-columns:repeat(4,1fr); gap:18px; flex:1; min-height:0; align-items:stretch}
+.jcard{border:1px solid var(--line); border-radius:16px; padding:24px 22px; display:flex; flex-direction:column; position:relative; background:var(--surface); overflow:hidden}
+.jcard .pn{font-family:var(--fHead); font-weight:800; font-size:46px; color:var(--card-2); line-height:1; letter-spacing:-.03em}
+.jcard .ph{font-family:var(--fHead); font-weight:700; font-size:18.5px; color:var(--ink); margin:14px 0 8px; letter-spacing:-.01em}
+.jcard p{font-size:13.5px; color:var(--muted); line-height:1.5; flex:1}
+.jcard .demo{margin-top:14px; font-family:var(--fMono); font-size:11px; font-weight:600; color:var(--red); background:var(--tint-red); padding:5px 10px; border-radius:6px; align-self:flex-start; display:inline-flex; gap:6px; align-items:center}
+.jcard::after{content:""; position:absolute; left:0; right:0; bottom:0; height:4px; background:var(--red); transform:scaleX(0); transform-origin:left; transition:transform .5s ease}
+.slide.active .jcard::after{transform:scaleX(1)}
+.slide.active .jcard:nth-child(1)::after{transition-delay:.3s}.slide.active .jcard:nth-child(2)::after{transition-delay:.45s}
+.slide.active .jcard:nth-child(3)::after{transition-delay:.6s}.slide.active .jcard:nth-child(4)::after{transition-delay:.75s}
+
+/* =========================================================================
+   Layered stack diagram (Python data stack)
+   ========================================================================= */
+.stack{display:flex; flex-direction:column; gap:12px; margin:auto 0; width:100%}
+.layer{display:grid; grid-template-columns:200px 1fr; align-items:center; gap:22px; border-radius:14px; padding:18px 24px; color:#fff; position:relative; overflow:hidden; opacity:0; transform:translateX(-18px); transition:opacity .55s ease, transform .55s cubic-bezier(.16,1,.3,1)}
+.slide.active .layer{opacity:1; transform:none}
+.slide.active .layer:nth-child(1){transition-delay:.5s}.slide.active .layer:nth-child(2){transition-delay:.38s}
+.slide.active .layer:nth-child(3){transition-delay:.26s}.slide.active .layer:nth-child(4){transition-delay:.14s}
+.layer .lname{font-family:var(--fHead); font-weight:800; font-size:21px; letter-spacing:-.01em; display:flex; align-items:baseline; gap:9px}
+.layer .lname code{font-family:var(--fMono); font-size:13px; opacity:.7; font-weight:500}
+.layer .ldesc{font-size:14.5px; line-height:1.4; opacity:.95}
+.layer.l1{background:linear-gradient(100deg,#2A2A2F,#1c1c20)}
+.layer.l2{background:linear-gradient(100deg,var(--red-dark),var(--red))}
+.layer.l3{background:linear-gradient(100deg,#1C6E9C,#2487bf)}
+.layer.l4{background:linear-gradient(100deg,#0E7C6B,#13a08a)}
+.stack .scaffold{font-size:12.5px; color:var(--muted); text-align:center; font-style:italic}
+
+/* container / building-block cards */
+.mini-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:14px}
+.mini{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:15px 18px}
+.mini .mh{font-family:var(--fMono); font-size:14px; font-weight:700; color:var(--red)}
+.mini .md{font-size:13.5px; color:var(--muted); margin-top:4px; line-height:1.4}
+.mini code{font-family:var(--fMono); font-size:12.5px; color:var(--ink); background:var(--card-2); padding:1px 5px; border-radius:4px}
+
+/* before / after code columns */
+.ba{display:grid; grid-template-columns:1fr 1fr; gap:22px; flex:1; min-height:0; align-items:stretch}
+.ba .col{display:flex; flex-direction:column}
+.ba .ba-h{font-family:var(--fHead); font-weight:700; font-size:14px; margin-bottom:10px; display:flex; align-items:center; gap:9px}
+.ba .ba-h .tagx{font-size:11px; padding:3px 9px; border-radius:99px; font-weight:700; letter-spacing:.04em}
+.ba .before .tagx{background:var(--card-2); color:var(--muted)}
+.ba .after .tagx{background:var(--tint-red); color:var(--red)}
+.ba .codewrap{flex:1}
+/* optimisation pushdown strip (eager vs lazy slide) */
+.pushdown{display:flex; gap:12px; margin-top:16px; justify-content:center; flex-wrap:wrap}
+.pushdown .pd{display:flex; align-items:center; gap:9px; background:var(--tint-red); border:1px solid var(--tint-red-2); border-radius:99px; padding:8px 16px; font-size:13px; color:var(--ink); opacity:0; transform:translateY(10px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .pushdown .pd{opacity:1; transform:none}
+.slide.active .pushdown .pd:nth-child(1){transition-delay:.5s}.slide.active .pushdown .pd:nth-child(2){transition-delay:.66s}.slide.active .pushdown .pd:nth-child(3){transition-delay:.82s}
+.pushdown .pd b{color:var(--red); font-weight:700}
+.pushdown .pd .ck{width:18px;height:18px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-size:11px;flex:none}
+
+/* =========================================================================
+   Notebook-playback demo component
+   ========================================================================= */
+.demo-stage{flex:1; min-height:0; display:grid; grid-template-columns:1.62fr 1fr; gap:26px; align-items:stretch}
+.nb{background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 24px 50px -30px rgba(0,0,0,.35); display:flex; flex-direction:column; overflow:hidden}
+.nb-top{display:flex; align-items:center; gap:8px; padding:11px 16px; border-bottom:1px solid var(--line); background:var(--card)}
+.nb-top .t-ic{width:9px;height:9px;border-radius:50%;background:#e0a800}
+.nb-top .t-ic.r{background:var(--red)} .nb-top .t-ic.g{background:#28a745}
+.nb-top .nb-name{font-family:var(--fMono); font-size:12.5px; color:var(--muted); margin-left:8px}
+.nb-top .nb-kernel{margin-left:auto; font-size:11.5px; color:var(--faint); display:flex; align-items:center; gap:6px}
+.nb-top .nb-kernel::after{content:"";width:8px;height:8px;border-radius:50%;background:#28a745}
+.nb-body{flex:1; overflow:hidden; padding:6px 0; scroll-behavior:smooth}
+.nb-cell{padding:5px 16px; opacity:0; transform:translateY(8px); transition:opacity .4s ease, transform .4s ease}
+.nb-cell.shown{opacity:1; transform:none}
+.nb-in{display:grid; grid-template-columns:54px 1fr; gap:10px; align-items:start}
+.nb-prompt{font-family:var(--fMono); font-size:12.5px; color:#3b6fb0; text-align:right; padding-top:9px; user-select:none}
+.nb-prompt.busy{color:var(--red)}
+.nb-code{position:relative; background:#f6f7f9; border:1px solid #eceef1; border-left:3px solid var(--red); border-radius:6px; padding:9px 12px; font-family:var(--fMono); font-size:13px; line-height:1.55; color:#1f2430; white-space:pre; overflow:hidden; transition:box-shadow .3s ease, border-left-color .3s ease}
+.nb-cell.running .nb-code{box-shadow:0 0 0 2px var(--tint-red-2), 0 8px 22px -12px rgba(236,27,35,.5); border-left-color:var(--red-dark)}
+.nb-cell.running .nb-code::after{content:"▋"; color:var(--red); animation:caret .7s steps(1) infinite; margin-left:1px}
+@keyframes caret{50%{opacity:0}}
+.nb-out{margin:6px 0 0 64px; font-family:var(--fMono); font-size:12px; line-height:1.5; color:#333; max-height:0; opacity:0; overflow:hidden; transition:max-height .5s ease, opacity .4s ease}
+.nb-out.shown{max-height:240px; opacity:1}
+.nb-out .otable{border-collapse:collapse; font-size:11px}
+.nb-out .otable th{background:var(--ink); color:#fff; font-weight:600; padding:2px 9px; text-align:right; font-family:var(--fMono)}
+.nb-out .otable td{padding:2px 9px; border-bottom:1px solid #eee; text-align:right; color:#444}
+.nb-out .otable tr:nth-child(even) td{background:#fafafa}
+.nb-out .muted{color:#8a9099}
+.nb-out .ok{color:#1E8E5A}
+.demo-side{display:flex; flex-direction:column; gap:16px; justify-content:center}
+.demo-card{border-radius:16px; padding:22px 24px; background:var(--ink); color:#fff}
+.demo-card .dk{font-family:var(--fHead); font-weight:700; font-size:12px; letter-spacing:.13em; text-transform:uppercase; color:#ff6a6f; margin-bottom:10px}
+.demo-card h3{font-family:var(--fHead); font-weight:800; font-size:22px; line-height:1.12; letter-spacing:-.01em; margin-bottom:10px}
+.demo-card p{font-size:14px; line-height:1.5; color:rgba(255,255,255,.82)}
+.demo-steps{list-style:none; display:flex; flex-direction:column; gap:11px}
+.demo-steps li{display:flex; gap:11px; align-items:flex-start; font-size:14px; color:var(--text); line-height:1.4}
+.demo-steps li .sn{flex:none; width:24px; height:24px; border-radius:7px; background:var(--tint-red); color:var(--red); font-family:var(--fHead); font-weight:800; font-size:12px; display:grid; place-items:center}
+.demo-steps li.on .sn{background:var(--red); color:#fff}
+.replay{align-self:flex-start; display:inline-flex; align-items:center; gap:8px; background:var(--tint-red); color:var(--red); border:1px solid var(--tint-red-2); font-family:var(--fHead); font-weight:700; font-size:13px; padding:9px 16px; border-radius:99px; cursor:pointer; transition:all .2s ease}
+.replay:hover{background:var(--red); color:#fff}
+.replay svg{width:14px;height:14px}
+.demo-take{background:var(--tint-red); border:1px solid var(--tint-red-2); border-radius:12px; padding:14px 18px; font-size:13.5px; color:var(--ink); line-height:1.45}
+.demo-take b{color:var(--red)}
+
+/* =========================================================================
+   VS compare panels (structured vs unstructured, good vs bad)
+   ========================================================================= */
+.vs{display:grid; grid-template-columns:1fr 1fr; gap:24px; flex:1; min-height:0}
+.vs .panel{border:1px solid var(--line); border-radius:16px; padding:24px 26px; display:flex; flex-direction:column; background:var(--surface); position:relative; overflow:hidden}
+.vs .panel.accent{background:linear-gradient(180deg,var(--tint-red),#fff); border-color:var(--tint-red-2)}
+.vs .panel .ph{font-family:var(--fHead); font-weight:800; font-size:21px; color:var(--ink); letter-spacing:-.01em; display:flex; align-items:center; gap:12px}
+.vs .panel .ph .glyph{width:42px; height:42px; border-radius:11px; display:grid; place-items:center; flex:none}
+.vs .panel.accent .ph .glyph{background:var(--red); color:#fff}
+.vs .panel:not(.accent) .ph .glyph{background:var(--ink); color:#fff}
+.vs .panel .ps{font-size:14px; color:var(--muted); margin:8px 0 16px; line-height:1.45}
+.vs .chips{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px}
+.vs .chip{font-family:var(--fMono); font-size:12px; padding:6px 11px; border-radius:8px; background:var(--card); border:1px solid var(--line); color:var(--text)}
+.vs .panel.accent .chip{background:#fff; border-color:var(--tint-red-2)}
+.vs .where{margin-top:auto; font-size:13.5px; color:var(--text); line-height:1.45; padding-top:14px; border-top:1px dashed var(--line-strong)}
+.vs .where b{color:var(--red)}
+
+/* annotated "shape of data" table */
+.shape-tbl{display:grid; grid-template-columns:auto 1fr; gap:0 18px; align-items:center; margin:auto 0}
+.dtable{border-collapse:separate; border-spacing:0; border-radius:12px; overflow:hidden; box-shadow:0 18px 40px -28px rgba(0,0,0,.3); width:100%}
+.dtable th{background:var(--ink); color:#fff; font-family:var(--fMono); font-size:13px; font-weight:600; padding:11px 16px; text-align:left}
+.dtable th.target{background:var(--red)}
+.dtable td{padding:10px 16px; font-family:var(--fMono); font-size:13.5px; color:var(--text); background:#fff; border-bottom:1px solid var(--line)}
+.dtable td.target{background:var(--tint-red); color:var(--red-dark); font-weight:600}
+.dtable tr:nth-child(even) td{background:#fafafb}
+.dtable tr:nth-child(even) td.target{background:var(--tint-red-2)}
+.annot{font-family:var(--fHead); font-weight:700; font-size:14px; color:var(--red); display:flex; align-items:center; gap:8px}
+.annot.muted{color:var(--muted)}
+.shape-legend{display:flex; gap:26px; justify-content:center; margin-top:22px; flex-wrap:wrap}
+.shape-legend .item{display:flex; align-items:center; gap:9px; font-size:14px; color:var(--text)}
+.shape-legend .sw{width:16px; height:16px; border-radius:5px}
+
+/* analytics staircase (ascending) */
+.stair{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; align-items:end; flex:1; min-height:0; padding-top:8px}
+.rung{display:flex; flex-direction:column; justify-content:flex-end}
+.rung .box{border-radius:14px 14px 0 0; padding:20px 20px 22px; color:#fff; position:relative; transform-origin:bottom; transform:scaleY(0); opacity:0; transition:transform .6s cubic-bezier(.16,1,.3,1), opacity .4s ease}
+.slide.active .rung .box{transform:scaleY(1); opacity:1}
+.slide.active .rung:nth-child(1) .box{transition-delay:.2s}.slide.active .rung:nth-child(2) .box{transition-delay:.42s}
+.slide.active .rung:nth-child(3) .box{transition-delay:.64s}.slide.active .rung:nth-child(4) .box{transition-delay:.86s}
+.rung:nth-child(1) .box{background:#3a3a40; min-height:150px}
+.rung:nth-child(2) .box{background:#8a1419; min-height:215px}
+.rung:nth-child(3) .box{background:var(--red-dark); min-height:280px}
+.rung:nth-child(4) .box{background:var(--red); min-height:345px}
+.rung .q{font-family:var(--fMono); font-size:12px; opacity:.85; margin-bottom:6px}
+.rung .box h4{font-family:var(--fHead); font-weight:800; font-size:21px; letter-spacing:-.01em}
+.rung .box p{font-size:13px; line-height:1.4; opacity:.92; margin-top:8px}
+.rung .box .step-i{position:absolute; top:14px; right:16px; font-family:var(--fHead); font-weight:800; font-size:14px; opacity:.35}
+.stair-axis{display:flex; justify-content:space-between; font-size:13px; color:var(--muted); margin-top:14px; font-style:italic}
+.stair-axis b{color:var(--red); font-style:normal; font-weight:700}
+
+/* animated SVG charts (scatter, dual-line) */
+.svg-card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px 22px; height:100%; display:flex; flex-direction:column}
+.svg-card .ct{font-family:var(--fHead); font-weight:700; font-size:15px; color:var(--ink); margin-bottom:6px}
+.chart-svg{width:100%; flex:1}
+.chart-svg .dot{opacity:0; transition:opacity .5s ease}
+.slide.active .chart-svg .dot{opacity:.78}
+.chart-svg .trend{stroke:var(--red); stroke-width:3; fill:none; stroke-dasharray:600; stroke-dashoffset:600; transition:stroke-dashoffset 1.3s ease .6s}
+.slide.active .chart-svg .trend{stroke-dashoffset:0}
+.chart-svg .ln{fill:none; stroke-width:3; stroke-dasharray:900; stroke-dashoffset:900; transition:stroke-dashoffset 1.5s ease}
+.slide.active .chart-svg .ln1{stroke-dashoffset:0; transition-delay:.3s}
+.slide.active .chart-svg .ln2{stroke-dashoffset:0; transition-delay:.7s}
+.chart-svg .axis{stroke:var(--line-strong); stroke-width:1.5}
+.chart-svg .glab{font-family:var(--fBody); font-size:11px; fill:var(--muted)}
+
+/* problem -> fix table */
+.pf-table{display:flex; flex-direction:column; border:1px solid var(--line); border-radius:14px; overflow:hidden; flex:1; min-height:0}
+.pf-row{display:grid; grid-template-columns:1.1fr 1fr 1.25fr; align-items:center; padding:0; border-bottom:1px solid var(--line); opacity:0; transform:translateX(-12px); transition:opacity .45s ease, transform .45s ease}
+.slide.active .pf-row{opacity:1; transform:none}
+.slide.active .pf-row:nth-child(1){transition-delay:.1s}.slide.active .pf-row:nth-child(2){transition-delay:.2s}
+.slide.active .pf-row:nth-child(3){transition-delay:.3s}.slide.active .pf-row:nth-child(4){transition-delay:.4s}
+.slide.active .pf-row:nth-child(5){transition-delay:.5s}.slide.active .pf-row:nth-child(6){transition-delay:.6s}
+.slide.active .pf-row:nth-child(7){transition-delay:.7s}
+.pf-row:last-child{border-bottom:none}
+.pf-row.head{background:var(--ink); color:#fff; opacity:1; transform:none}
+.pf-row.head>div{font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.04em; text-transform:uppercase; padding:12px 20px; color:rgba(255,255,255,.85)}
+.pf-row>div{padding:13px 20px; font-size:14.5px}
+.pf-row .prob{font-weight:600; color:var(--ink); display:flex; align-items:center; gap:10px}
+.pf-row .prob .d{width:8px;height:8px;border-radius:50%;background:var(--red);flex:none}
+.pf-row .fix code{font-family:var(--fMono); font-size:13px; background:var(--tint-red); color:var(--red-dark); padding:3px 9px; border-radius:6px; font-weight:500}
+.pf-row .desc{color:var(--muted); font-size:13.5px; line-height:1.4}
+.pf-row:nth-child(even):not(.head){background:#fafafb}
+
+/* tidy before/after tables */
+.tidy{display:grid; grid-template-columns:1fr auto 1fr; gap:20px; align-items:center; flex:1; min-height:0}
+.tidy .tcol{display:flex; flex-direction:column}
+.tidy .tlabel{font-family:var(--fHead); font-weight:800; font-size:14px; letter-spacing:.06em; text-transform:uppercase; margin-bottom:12px; display:flex; align-items:center; gap:9px}
+.tidy .messy .tlabel{color:var(--muted)} .tidy .clean .tlabel{color:var(--red)}
+.tidy .arrow-mid{font-size:34px; color:var(--red); font-weight:800}
+.tidy .note{font-size:12.5px; color:var(--muted); margin-top:10px; font-style:italic; line-height:1.4}
+
+/* histogram (EDA) */
+.hist{display:flex; align-items:flex-end; gap:7px; height:230px; padding:0 4px; border-bottom:2px solid var(--line-strong)}
+.hist .bar{flex:1; background:linear-gradient(180deg,var(--red),var(--red-dark)); border-radius:5px 5px 0 0; height:0; transition:height .8s cubic-bezier(.16,1,.3,1); position:relative}
+.hist .bar.med{background:linear-gradient(180deg,#3a3a40,#222)}
+.slide.active .hist .bar{height:var(--h)}
+.slide.active .hist .bar:nth-child(1){transition-delay:.1s}.slide.active .hist .bar:nth-child(2){transition-delay:.16s}
+.slide.active .hist .bar:nth-child(3){transition-delay:.22s}.slide.active .hist .bar:nth-child(4){transition-delay:.28s}
+.slide.active .hist .bar:nth-child(5){transition-delay:.34s}.slide.active .hist .bar:nth-child(6){transition-delay:.40s}
+.slide.active .hist .bar:nth-child(7){transition-delay:.46s}.slide.active .hist .bar:nth-child(8){transition-delay:.52s}
+.slide.active .hist .bar:nth-child(9){transition-delay:.58s}.slide.active .hist .bar:nth-child(10){transition-delay:.64s}
+.slide.active .hist .bar:nth-child(11){transition-delay:.70s}.slide.active .hist .bar:nth-child(12){transition-delay:.76s}
+.stat-chips{display:flex; flex-direction:column; gap:12px}
+.stat-chips .sc{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 18px; display:flex; justify-content:space-between; align-items:center}
+.stat-chips .sc .k{font-size:13.5px; color:var(--muted)}
+.stat-chips .sc .v{font-family:var(--fHead); font-weight:800; font-size:22px; color:var(--red)}
+
+/* chart-picker glyph grid */
+.picker{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; flex:1; min-height:0}
+.pick{border:1px solid var(--line); border-radius:14px; padding:18px 20px; display:flex; flex-direction:column; gap:10px; background:var(--surface); transition:transform .25s ease, box-shadow .25s ease, border-color .25s}
+.pick:hover{transform:translateY(-3px); box-shadow:0 18px 34px -22px rgba(0,0,0,.3); border-color:var(--tint-red-2)}
+.pick .pg-glyph{height:46px; display:flex; align-items:flex-end; gap:4px}
+.pick .q{font-family:var(--fMono); font-size:12px; color:var(--red); font-weight:500}
+.pick h4{font-family:var(--fHead); font-weight:700; font-size:16px; color:var(--ink)}
+.pick p{font-size:13px; color:var(--muted); line-height:1.4}
+.pick svg{width:100%; height:46px}
+
+/* insight callout */
+.insight{display:grid; grid-template-columns:1fr 1fr; gap:30px; flex:1; min-height:0; align-items:center}
+.insight .lead-card{background:var(--ink); color:#fff; border-radius:18px; padding:30px 32px; position:relative; overflow:hidden}
+.insight .lead-card::before{content:""; position:absolute; right:-40px; top:-40px; width:160px; height:160px; border-radius:50%; background:radial-gradient(circle,rgba(236,27,35,.4),transparent 70%)}
+.insight .lead-card .so{font-family:var(--fHead); font-weight:700; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#ff6a6f; margin-bottom:14px}
+.insight .lead-card .big-line{font-family:var(--fHead); font-weight:800; font-size:28px; line-height:1.15; letter-spacing:-.01em}
+.insight .lead-card .big-line em{color:#ff8e91; font-style:normal}
+.layer-list{list-style:none; display:flex; flex-direction:column; gap:16px}
+.layer-list li{display:flex; gap:14px; align-items:flex-start}
+.layer-list li .n{flex:none; width:30px; height:30px; border-radius:9px; background:var(--tint-red); color:var(--red); font-family:var(--fHead); font-weight:800; display:grid; place-items:center; font-size:14px}
+.layer-list li b{font-family:var(--fHead); color:var(--ink); font-size:16px}
+.layer-list li p{font-size:14px; color:var(--muted); line-height:1.4; margin-top:2px}
+
+/* closing recap */
+.recap-grid{display:grid; grid-template-columns:1fr 1fr; gap:30px; flex:1; min-height:0; align-items:center}
+.recap-col h4{font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.12em; text-transform:uppercase; margin-bottom:18px; display:flex; align-items:center; gap:10px}
+.recap-col.recap h4{color:#ff6a6f}.recap-col.next h4{color:#fff}
+.recap-col ul{list-style:none; display:flex; flex-direction:column; gap:14px}
+.recap-col li{font-size:16px; line-height:1.45; padding-left:26px; position:relative; color:rgba(255,255,255,.88)}
+.recap-col.recap li::before{content:"✓"; position:absolute; left:0; color:var(--red); font-weight:800}
+.recap-col.next li::before{content:"→"; position:absolute; left:0; color:#ff6a6f; font-weight:800}
+.recap-col.next{background:rgba(236,27,35,.1); border:1px solid rgba(236,27,35,.25); border-radius:18px; padding:26px 28px}
+
+/* big single stat (80%) */
+.megastat{display:flex; align-items:center; gap:60px; margin:auto 0}
+.megastat .num{font-family:var(--fHead); font-weight:800; font-size:200px; line-height:.85; color:var(--red); letter-spacing:-.05em}
+.megastat .num .u{font-size:90px}
+.megastat .copy{max-width:42ch}
+.megastat .copy h3{font-family:var(--fHead); font-weight:800; font-size:30px; color:var(--ink); line-height:1.1; letter-spacing:-.02em; margin-bottom:14px}
+.megastat .copy p{font-size:16px; color:var(--muted); line-height:1.55}
+.megastat .copy .src{font-size:12.5px; color:var(--faint); margin-top:14px}
+
+/* =========================================================================
+   Navigation chrome
+   ========================================================================= */
+.progress{position:fixed; top:0; left:0; height:3px; background:var(--red); z-index:50; transition:width .4s ease; box-shadow:0 0 12px rgba(236,27,35,.6)}
+.hud{position:fixed; bottom:18px; right:22px; z-index:50; display:flex; align-items:center; gap:14px; font-family:var(--fMono); font-size:12px; color:rgba(255,255,255,.55)}
+.hud .dots{display:flex; gap:6px}
+.hud .dot{width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.22); cursor:pointer; transition:all .25s ease}
+.hud .dot.on{background:var(--red); transform:scale(1.35)}
+.hud .dot.sec{background:rgba(255,255,255,.4)}
+.hud .count b{color:#fff}
+.hint{position:fixed; bottom:20px; left:22px; z-index:50; font-size:11.5px; color:rgba(255,255,255,.4); font-family:var(--fMono)}
+.hint kbd{background:rgba(255,255,255,.1); border-radius:4px; padding:1px 6px; color:rgba(255,255,255,.7)}
+/* auto-hide nav chrome when idle or when deck fills the viewport */
+.hud,.hint{transition:opacity .4s ease}
+body.idle .hud, body.idle .hint{opacity:0; pointer-events:none}
+body.static .hud, body.static .hint{display:none}
+
+/* speaker notes drawer */
+.notes{position:fixed; left:0; right:0; bottom:0; z-index:60; transform:translateY(100%); transition:transform .35s cubic-bezier(.16,1,.3,1); background:#16161a; color:#e7e7ea; border-top:3px solid var(--red); max-height:42vh; overflow:auto; padding:22px 30px; box-shadow:0 -20px 50px -20px rgba(0,0,0,.7)}
+.notes.show{transform:none}
+.notes h5{font-family:var(--fHead); font-weight:700; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#ff6a6f; margin-bottom:12px; display:flex; align-items:center; gap:10px}
+.notes ul{margin:0; padding-left:20px; display:flex; flex-direction:column; gap:9px}
+.notes li{font-size:14.5px; line-height:1.55; color:#cfd0d6}
+.notes .close{position:absolute; top:16px; right:22px; color:#888; cursor:pointer; font-size:18px; background:none; border:none}
+
+/* mobile: the deck is a fixed 16:9 stage — prompt rotation when held upright */
+.rotate-cue{position:fixed; inset:0; height:100dvh; z-index:120; display:none;
+  place-items:center; text-align:center; padding:42px;
+  background:radial-gradient(700px 460px at 50% 0%, rgba(236,27,35,.14), transparent 62%), #0a0a0c;
+  color:#e7e7ea; font-family:var(--fHead)}
+.rotate-cue .ic{width:58px; height:58px; margin:0 auto 24px; color:var(--red);
+  animation:rot-tilt 2.2s ease-in-out infinite}
+.rotate-cue h4{font-size:21px; font-weight:800; letter-spacing:-.01em; color:#fff; margin-bottom:10px}
+.rotate-cue p{font-size:14px; line-height:1.55; color:rgba(255,255,255,.6); max-width:34ch; margin:0 auto}
+@keyframes rot-tilt{0%,100%{transform:rotate(-12deg)} 50%{transform:rotate(78deg)}}
+/* show only on small screens held in portrait */
+@media (orientation:portrait) and (max-width:860px){
+  .rotate-cue{display:grid}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important; transition-duration:.2s !important}
+  [data-r]{opacity:1 !important; transform:none !important}
+  .rotate-cue .ic{animation:none; transform:rotate(78deg)}
+}
+/* static mode (QA captures / no-motion): snap everything to final */
+body.static [data-r]{opacity:1 !important; transform:none !important; transition:none !important}
+body.static .code-line{animation:none !important}
+body.static .flow .step,
+body.static .venn .circ,
+body.static .venn .center,
+body.static .venn .danger,
+body.static .jcard::after{opacity:1 !important; transform:none !important; transition:none !important}
+body.static .venn .c3{transform:translateX(-50%) !important}
+body.static .jcard::after{transform:scaleX(1) !important}
+body.static .nb-cell, body.static .nb-out{transition:none !important; transform:none !important; opacity:1 !important}
+body.static .nb-out.shown{max-height:320px !important}
+body.static .pushdown .pd{opacity:1 !important; transform:none !important; transition:none !important}
+/* ============================ Topic 2 additions ============================ */
+.fillc{flex:1; min-height:0; display:flex; flex-direction:column; justify-content:center}
+.fillrow{flex:1; min-height:0; display:flex; align-items:center; gap:40px}
+.flow .step .node.hot{box-shadow:0 0 0 6px var(--tint-red-2), 0 12px 28px -8px rgba(236,27,35,.6)}
+.flow .step .node.hot::after{content:""; position:absolute; inset:-7px; border-radius:17px; border:2px solid var(--red); opacity:.55}
+
+/* megastat animated counter unit */
+.megastat .num .unit{font-size:84px; vertical-align:super; margin-left:2px}
+
+/* two-color scatter + decision boundary (reuses .chart-svg) */
+.chart-svg .dotA{fill:var(--red)} .chart-svg .dotB{fill:#1C6E9C}
+.chart-svg .boundary{stroke:var(--ink); stroke-width:2.5; stroke-dasharray:9 7; fill:none; stroke-dashoffset:760; transition:stroke-dashoffset 1.2s ease .5s}
+.slide.active .chart-svg .boundary{stroke-dashoffset:0}
+.chart-svg .mk{opacity:0; transition:opacity .5s ease 1.1s}
+.slide.active .chart-svg .mk{opacity:1}
+
+/* clustering: grey points recolour on enter */
+.clr .pt{fill:#c8ccd3; transition:fill .7s ease .4s}
+.slide.active .clr .k1{fill:var(--red)} .slide.active .clr .k2{fill:#1C6E9C} .slide.active .clr .k3{fill:#1E8E5A}
+
+/* train / test split bar */
+.splitbar{display:flex; width:100%; height:88px; border-radius:14px; overflow:hidden; border:1px solid var(--line); box-shadow:0 18px 40px -28px rgba(0,0,0,.3)}
+.splitbar .seg{display:flex; flex-direction:column; align-items:center; justify-content:center; color:#fff; transform-origin:left; transform:scaleX(0); transition:transform .9s cubic-bezier(.16,1,.3,1)}
+.slide.active .splitbar .seg{transform:scaleX(1)}
+.slide.active .splitbar .test{transition-delay:.55s}
+.splitbar .train{background:linear-gradient(100deg,var(--red-dark),var(--red)); flex:0 0 80%}
+.splitbar .test{background:#2a2a2f; flex:0 0 20%}
+.splitbar .seg .pc{font-family:var(--fHead); font-weight:800; font-size:27px}
+.splitbar .seg .lb{font-size:11.5px; opacity:.85; letter-spacing:.07em; text-transform:uppercase; margin-top:3px}
+
+/* confusion matrix */
+.cm-wrap{display:flex; gap:16px; align-items:center; margin:auto 0}
+.cm-axis-y{writing-mode:vertical-rl; transform:rotate(180deg); font-family:var(--fHead); font-weight:700; font-size:12px; letter-spacing:.09em; text-transform:uppercase; color:var(--muted)}
+.cm-col{display:flex; flex-direction:column}
+.cm-axis-x{text-align:center; font-family:var(--fHead); font-weight:700; font-size:12px; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); margin-bottom:10px}
+.cmatrix{display:grid; grid-template-columns:repeat(2,1fr); gap:12px; width:100%; max-width:430px}
+.cm-cell{border-radius:14px; padding:16px 18px; min-height:104px; display:flex; flex-direction:column; gap:3px; color:#fff;
+  opacity:0; transform:scale(.92); transition:opacity .5s ease, transform .5s cubic-bezier(.34,1.56,.64,1)}
+.slide.active .cm-cell{opacity:1; transform:none}
+.slide.active .cm-cell:nth-child(1){transition-delay:.2s}.slide.active .cm-cell:nth-child(2){transition-delay:.36s}
+.slide.active .cm-cell:nth-child(3){transition-delay:.52s}.slide.active .cm-cell:nth-child(4){transition-delay:.68s}
+.cm-cell.tp{background:linear-gradient(140deg,#1E8E5A,#13724a)} .cm-cell.tn{background:linear-gradient(140deg,#2a2a2f,#1c1c20)}
+.cm-cell.fp{background:linear-gradient(140deg,#C9851A,#a86d12)} .cm-cell.fn{background:linear-gradient(140deg,var(--red),var(--red-dark))}
+.cm-cell .cmk{font-family:var(--fMono); font-size:12px; opacity:.85; font-weight:600}
+.cm-cell .cmv{font-family:var(--fHead); font-weight:800; font-size:21px}
+.cm-cell .cmd{font-size:12px; opacity:.92; line-height:1.3}
+
+/* precision / recall mini matrices */
+.pr-two{display:grid; grid-template-columns:1fr 1fr; gap:30px}
+.pr-cap{font-family:var(--fHead); font-weight:800; font-size:17px; color:var(--ink); margin-bottom:10px}
+.pr-cap span{color:var(--red)}
+.mini-cm{display:grid; grid-template-columns:repeat(2,1fr); gap:7px; max-width:220px}
+.mini-cm .mc{border-radius:9px; min-height:52px; display:grid; place-items:center; font-family:var(--fMono); font-size:11.5px; color:#fff; background:#c8ccd3; text-align:center; padding:4px}
+.mini-cm .mc.on{background:var(--red)} .mini-cm .mc.on2{background:var(--ink)}
+.pr-form{font-family:var(--fMono); font-size:12.5px; color:var(--muted); margin-top:10px}
+.pr-form b{color:var(--red)}
+
+/* interactive threshold slider */
+.thr-wrap{display:grid; grid-template-columns:1fr 1fr; gap:34px; flex:1; min-height:0; align-items:center}
+.thr-box{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:26px 28px}
+.thr-thr{font-family:var(--fHead); font-weight:800; font-size:17px; color:var(--ink); margin-bottom:16px}
+.thr-thr span{color:var(--red)}
+input[type=range].rng{-webkit-appearance:none; appearance:none; width:100%; height:6px; border-radius:99px; background:linear-gradient(90deg,#1C6E9C,var(--red)); outline:none}
+input[type=range].rng::-webkit-slider-thumb{-webkit-appearance:none; width:24px;height:24px;border-radius:50%; background:#fff;border:3px solid var(--red);cursor:pointer;box-shadow:0 3px 10px -3px rgba(0,0,0,.5)}
+input[type=range].rng::-moz-range-thumb{width:24px;height:24px;border-radius:50%; background:#fff;border:3px solid var(--red);cursor:pointer}
+.thr-hint{font-size:12.5px; color:var(--muted); margin-top:12px; font-style:italic}
+.thr-row{display:flex; align-items:center; gap:14px; margin-bottom:16px}
+.thr-row .tlab{width:78px; font-family:var(--fHead); font-weight:700; font-size:14px; color:var(--ink)}
+.thr-track{flex:1; height:14px; background:var(--card-2); border-radius:99px; overflow:hidden}
+.thr-fill{height:100%; border-radius:99px; width:0; transition:width .15s ease}
+.thr-fill.p{background:var(--red)} .thr-fill.r{background:#1C6E9C} .thr-fill.f{background:var(--ink)}
+.thr-val{width:46px; text-align:right; font-family:var(--fHead); font-weight:800; font-size:16px; color:var(--ink)}
+
+/* MLOps lifecycle loop */
+.loop{position:relative; width:440px; height:340px; margin:auto}
+.loop .ring-dash{position:absolute; left:80px; right:80px; top:30px; bottom:30px; border:2px dashed var(--line-strong); border-radius:50%}
+.loop .hub{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:118px; height:118px; border-radius:50%; background:var(--ink); color:#fff; display:grid; place-items:center; text-align:center; font-family:var(--fHead); font-weight:800; font-size:15px; box-shadow:0 16px 40px -16px rgba(0,0,0,.55); z-index:3}
+.loop .hub small{color:#ff6a6f; display:block; font-size:10.5px; letter-spacing:.1em; margin-top:3px; font-weight:700}
+.loop .lnode{position:absolute; width:108px; transform:translate(-50%,-50%); text-align:center; opacity:0; transition:opacity .55s ease, transform .55s ease}
+.slide.active .loop .lnode{opacity:1}
+.loop .lnode .ln-ic{width:46px; height:46px; border-radius:13px; background:var(--red); color:#fff; display:grid; place-items:center; margin:0 auto 7px; font-family:var(--fHead); font-weight:800; font-size:18px; box-shadow:0 8px 20px -8px rgba(236,27,35,.6)}
+.loop .lnode.dk .ln-ic{background:var(--ink); box-shadow:0 8px 20px -8px rgba(0,0,0,.5)}
+.loop .lnode .lt{font-family:var(--fHead); font-weight:700; font-size:12.5px; color:var(--ink); line-height:1.2}
+.loop .lnode.n1{transition-delay:.2s}.loop .lnode.n2{transition-delay:.34s}.loop .lnode.n3{transition-delay:.48s}
+.loop .lnode.n4{transition-delay:.62s}.loop .lnode.n5{transition-delay:.76s}.loop .lnode.n6{transition-delay:.9s}
+
+/* three gears */
+.gears{display:flex; gap:26px; justify-content:center; align-items:center}
+.gear{display:flex; flex-direction:column; align-items:center; gap:9px}
+.gear svg{width:92px; height:92px; color:var(--red)}
+.gear:nth-child(2) svg{color:var(--ink); width:112px; height:112px}
+.gear .gsvg{transform-origin:50% 50%; animation:gspin 9s linear infinite}
+.gear:nth-child(2) .gsvg{animation-duration:7s; animation-direction:reverse}
+.gear:nth-child(3) .gsvg{animation-duration:11s}
+@keyframes gspin{to{transform:rotate(360deg)}}
+.gear .glab{font-family:var(--fHead); font-weight:800; font-size:16px; color:var(--ink)}
+.gear .gsub{font-size:12px; color:var(--muted)}
+body.static .gsvg{animation:none !important}
+
+/* notebook -> production */
+.np-flow{display:flex; align-items:center; justify-content:center; margin:auto 0; width:100%}
+.np-box{flex:1; border-radius:16px; padding:26px 28px; text-align:center}
+.np-box .nh{font-family:var(--fHead); font-weight:800; font-size:20px; letter-spacing:-.01em}
+.np-box .nd{font-size:13.5px; margin-top:8px; line-height:1.45}
+.np-box.nb2{background:var(--card); border:1px solid var(--line); color:var(--ink)}
+.np-box.nb2 .nd{color:var(--muted)}
+.np-box.prod{background:linear-gradient(150deg,var(--red),var(--red-dark)); color:#fff}
+.np-box.prod .nd{color:rgba(255,255,255,.86)}
+.np-arrowx{flex:0 0 96px; display:flex; align-items:center; justify-content:center; color:var(--red)}
+.np-arrowx svg{width:54px; height:54px}
+.np-def{margin-top:22px; text-align:center; font-size:15px; color:var(--text)}
+.np-def b{color:var(--ink)} .np-def .tag{font-family:var(--fMono); color:var(--red); font-size:13px}
+
+/* runs table best row */
+.dtable td.best, .dtable tr.bestrow td{background:var(--tint-red); color:var(--red-dark); font-weight:700}
+.toolchips{display:flex; flex-wrap:wrap; gap:9px; margin-top:16px}
+.toolchips .tc{font-family:var(--fMono); font-size:12px; padding:6px 12px; border-radius:99px; background:var(--card); border:1px solid var(--line); color:var(--text)}
+.toolchips .tc b{color:var(--red)}
+
+/* static mode: snap Topic-2 components to final (for PDF / no-motion) */
+body.static .cm-cell{opacity:1 !important; transform:none !important; transition:none !important}
+body.static .splitbar .seg{transform:none !important; transition:none !important}
+body.static .loop .lnode{opacity:1 !important; transition:none !important}
+body.static .clr .pt{transition:none !important}
+body.static .chart-svg .boundary,
+body.static .chart-svg .trend,
+body.static .chart-svg .ln{stroke-dashoffset:0 !important; transition:none !important}
+body.static .chart-svg .mk{opacity:1 !important; transition:none !important}
+
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="stage">
+  <main class="deck" id="deck">
+
+  <section class="slide dark cover active" data-notes='["Welcome back. This is Session 2 — it assumes Topic 1 (Python, wrangling, analytics). We move from describing data to making it predict.", "90 minutes, intuition-first: no calculus. Two animated code demos, and a banking flavour throughout — fraud, AML, credit, recommendations.", "Tell them the goal: by the end they can read an ML project end to end and talk to data scientists in their own language."]'>
+    <div class="bg"></div><div class="scrim"></div>
+    <div class="inner">
+      <img class="logo" src="assets/ocbc-logo.png" alt="OCBC" />
+      <h1 data-r data-d="1">Machine Learning 101<span class="red">&amp; MLOps Basics</span></h1>
+      <div class="rule" data-r data-d="2"></div>
+      <div class="meta" data-r data-d="3"><strong>Session 2 of the Data series</strong><br/>OCBC CRAYON 2026 · ADM Team<br/>90 minutes · lecture + 2 animated demos</div>
+      <div class="program" data-r data-d="4">OCBC CRAYON · Topic 2</div>
+    </div>
+  </section>
+
+  <section class="slide dark" data-notes='["Box frames the whole lecture: a model is a simplification of reality, never the truth. The question is never is it correct but is it useful enough to act on.", "For a bank this is the right posture: a fraud model will miss some cases and false-alarm on others. We judge it on business value, not perfection.", "We will call this back on the closing slide."]'>
+    <div class="body-area">
+      <div class="kicker"><span class="badge"></span>The frame</div>
+      <div class="quote-wrap">
+        <div class="quote-mark" data-r data-d="2">&ldquo;</div>
+        <blockquote data-r data-d="3">All models are wrong, but some are <em>useful</em>.</blockquote>
+        <cite data-r data-d="4"><b>George Box</b> &middot; statistician</cite>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">02</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Anchor the new material in the familiar workflow. They already do Ask, Acquire, Wrangle, Explore from Topic 1.", "Today is the highlighted node — Model — plus what nobody teaches: keeping it alive in production (that is the MLOps half).", "One sentence bridge: wrangling made the data trustworthy; now we let it predict."]'>
+    <div class="kicker"><span class="badge"></span>Topic 1 &rarr; Topic 2</div>
+    <h2 class="slide-title" data-r data-d="1">From exploring data to making it predict</h2>
+    <p class="slide-sub" data-r data-d="2">You can already wrangle and explore. Today we add one node to the same workflow you learned in Topic 1.</p>
+    <div class="flow"><div class="step"><div class="node">1</div><h4>Ask</h4><p>Frame it</p><div class="arrow"></div></div><div class="step"><div class="node">2</div><h4>Acquire</h4><p>Get data</p><div class="arrow"></div></div><div class="step"><div class="node">3</div><h4>Wrangle</h4><p>Clean it</p><div class="arrow"></div></div><div class="step"><div class="node">4</div><h4>Explore</h4><p>Understand</p><div class="arrow"></div></div><div class="step"><div class="node hot">5</div><h4>Model</h4><p>Predict</p><div class="arrow"></div></div><div class="step"><div class="node">6</div><h4>Communicate</h4><p>Act</p></div></div>
+    <div class="flow-cap">Topic 1 took you Ask &rarr; Explore &middot; Topic 2 is the <b style="color:var(--red)">Model</b> step &mdash; and everything that comes after it</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">03</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Plain definition: ML learns patterns from data to make predictions, instead of a human hand-coding the rules.", "The contrast is the whole point. Rules-based fraud detection is a maintenance nightmare and always one step behind.", "A learned model generalises from examples and improves as you feed it more labeled data — the same fraud task, a fundamentally different approach."]'>
+    <div class="kicker"><span class="badge"></span>What it is</div>
+    <h2 class="slide-title" data-r data-d="1">Learning patterns, not hand-coding rules</h2>
+    <div class="vs" style="margin-top:24px">
+      <div class="panel" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 8l-4 4 4 4M16 8l4 4-4 4"/></svg></span>Rules-based</div>
+        <div class="ps">A human writes every condition by hand.</div>
+        <div class="chips"><span class="chip">if amount &gt; 10000</span><span class="chip">if country in blocklist</span><span class="chip">if 3 txns in 60s</span></div>
+        <div class="where">Brittle: fraudsters adapt, rules pile into the hundreds, and new tricks slip through the gaps.</div>
+      </div>
+      <div class="panel accent" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></span>Learned &mdash; machine learning</div>
+        <div class="ps">Show the model thousands of labeled examples; it learns the pattern itself.</div>
+        <div class="chips"><span class="chip">past fraud + legit txns</span><span class="chip">model.fit(X, y)</span><span class="chip">adapts as data grows</span></div>
+        <div class="where"><b>Same fraud problem</b> &mdash; learned from history instead of guessed by hand.</div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">04</span></div>
+  </section>
+
+  <section class="slide" data-notes='["These four flagship OCBC use cases are the running examples for the whole deck. Name each and where it lives in the bank.", "Recommendation lives in the app investment tab; AML and fraud watch transactions; credit scores loan applications.", "Flag now: fraud, AML and credit are supervised (we have past labeled outcomes); recommendation leans unsupervised. We will formalise that next."]'>
+    <div class="kicker"><span class="badge"></span>Where ML already lives at OCBC</div>
+    <h2 class="slide-title" data-r data-d="1">Four anchor examples we return to all session</h2>
+    <div class="cards c2" style="margin-top:22px"><div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l2.4 5 5.6.6-4 3.8 1 5.6L12 21l-5 2.6 1-5.6-4-3.8 5.6-.6z"/></svg></div><h3>Product recommendation</h3><p>Next-best investment surfaced in the OCBC app investment tab.</p><div class="tag">anchor &middot; mostly unsupervised</div></div><div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div><h3>AML detection</h3><p>Flagging suspicious transaction patterns for compliance review.</p><div class="tag">anchor &middot; supervised</div></div><div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg></div><h3>Fraud detection</h3><p>Catching fraudulent transactions in real time, at the moment of payment.</p><div class="tag">anchor &middot; supervised</div></div><div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></svg></div><h3>Credit / loan approval</h3><p>Scoring applications for approve / decline and risk.</p><div class="tag">anchor &middot; supervised</div></div></div>
+    <div class="flow-cap">The rest of the talk keeps coming back to these four &mdash; watch for them in every section.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">05</span></div>
+  </section>
+
+  <section class="slide" data-notes='["This is the ML lifecycle in miniature: Frame, Data, Train, Evaluate, Deploy, Monitor.", "Section 2 zooms into Evaluate (metrics). Section 3 zooms into Deploy and Monitor (MLOps).", "Emphasise the arrow back: a deployed model is never done — drift sends you back to data and retraining."]'>
+    <div class="kicker"><span class="badge"></span>The ML workflow</div>
+    <h2 class="slide-title" data-r data-d="1">The loop the rest of the talk follows</h2>
+    <div class="flow"><div class="step"><div class="node">1</div><h4>Frame</h4><p>The question</p><div class="arrow"></div></div><div class="step"><div class="node">2</div><h4>Data</h4><p>Collect, label</p><div class="arrow"></div></div><div class="step"><div class="node">3</div><h4>Train</h4><p>Fit a model</p><div class="arrow"></div></div><div class="step"><div class="node">4</div><h4>Evaluate</h4><p>Measure it</p><div class="arrow"></div></div><div class="step"><div class="node">5</div><h4>Deploy</h4><p>Serve it</p><div class="arrow"></div></div><div class="step"><div class="node">6</div><h4>Monitor</h4><p>Watch + retrain</p></div></div>
+    <div class="flow-cap">A loop, not a line &mdash; <b style="color:var(--red)">Monitor</b> feeds findings back to Data, and you retrain. Sections 2 and 3 live on this map.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">06</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["Part 1, about 25 minutes. The single most useful mental model in ML: the supervised / unsupervised split.", "Keep it concrete by slotting the four anchor cases onto the split as we go.", "Mention reinforcement learning exists in one line, then declare it out of scope."]'>
+    <div class="pillar-no">01</div>
+    <div class="eyebrow"><span class="dot"></span>Part 1</div>
+    <h2>Supervised vs Unsupervised</h2>
+    <p class="lead">The first fork in every ML problem: do you have labeled answers to learn from, or are you hunting for structure?</p>
+    <div class="prog-rail"><span class="on">Supervised vs Unsupervised</span><span>Evaluation metrics</span><span>MLOps</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">07</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The one mental model to keep: labeled data goes to supervised; no labels and you want structure goes to unsupervised.", "Slot the anchors: fraud, AML and credit are supervised — we have past labeled outcomes. Recommendation and segmentation are often unsupervised first.", "Reinforcement learning gets one sentence and a wave — not today."]'>
+    <div class="kicker"><span class="badge"></span>The big split</div>
+    <h2 class="slide-title" data-r data-d="1">Do you have labels? That decides everything</h2>
+    <div class="vs" style="margin-top:24px">
+      <div class="panel accent" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></span>Supervised</div>
+        <div class="ps">Labeled data &mdash; past examples with known answers. Learn to predict the label.</div>
+        <div class="chips"><span class="chip">fraud / not-fraud</span><span class="chip">AML alert / clear</span><span class="chip">approve / decline</span></div>
+        <div class="where"><b>Fraud, AML, credit approval</b> &mdash; we have labeled history to learn from.</div>
+      </div>
+      <div class="panel" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l2.4 5 5.6.6-4 3.8 1 5.6L12 21l-5 2.6 1-5.6-4-3.8 5.6-.6z"/></svg></span>Unsupervised</div>
+        <div class="ps">No labels &mdash; find structure and groupings hidden in the data.</div>
+        <div class="chips"><span class="chip">customer segments</span><span class="chip">lookalike groups</span><span class="chip">anomalies</span></div>
+        <div class="where"><b>Recommendation and segmentation</b> &mdash; find patterns, then layer prediction on top.</div>
+      </div>
+    </div>
+    <div class="flow-cap">A third family, <b>reinforcement learning</b> (learning from reward), exists &mdash; out of scope today.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">08</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Shared vocabulary for everything after. Rows are examples (here, customers). Columns are features, capital X.", "One special column is the label or target, lower-case y — the thing we predict. Here it is the fraud flag.", "Supervised learning is just: learn the mapping from X to y. Keep pointing back to this table."]'>
+    <div class="kicker"><span class="badge"></span>Vocabulary</div>
+    <h2 class="slide-title" data-r data-d="1">Rows, features (X), and a label (y)</h2>
+    <div class="fillc">
+      <table class="dtable" data-r data-d="2">
+        <tr><th>customer</th><th>txns / 24h</th><th>avg amount</th><th>tenure (mo)</th><th>foreign %</th><th class="target">fraud? (y)</th></tr>
+        <tr><td>C-1042</td><td>3</td><td>$84</td><td>37</td><td>0%</td><td class="target">no</td></tr>
+        <tr><td>C-2191</td><td>19</td><td>$1,260</td><td>2</td><td>80%</td><td class="target">yes</td></tr>
+        <tr><td>C-3308</td><td>5</td><td>$210</td><td>54</td><td>12%</td><td class="target">no</td></tr>
+        <tr><td>C-4417</td><td>22</td><td>$990</td><td>1</td><td>65%</td><td class="target">yes</td></tr>
+      </table>
+      <div class="shape-legend" data-r data-d="3">
+        <div class="item"><span class="sw" style="background:#c8ccd3"></span><b style="font-family:var(--fHead)">Features (X)</b> &mdash; the inputs the model learns from</div>
+        <div class="item"><span class="sw" style="background:var(--red)"></span><b style="font-family:var(--fHead);color:var(--red-dark)">Label / target (y)</b> &mdash; the answer we predict</div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">09</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Supervised splits into classification (discrete labels) and regression (continuous numbers).", "Classification: fraud or not, alert or clear, approve or decline. Regression: a credit limit, a probability of default.", "Note credit approval uses both — a regression score for risk, then a classification decision to approve or decline."]'>
+    <div class="kicker"><span class="badge"></span>Supervised learning</div>
+    <h2 class="slide-title" data-r data-d="1">Supervised learning has two flavors</h2>
+    <div class="vs" style="margin-top:24px">
+      <div class="panel" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg></span>Classification</div>
+        <div class="ps">Predict a <b>discrete class</b> &mdash; which bucket does this belong to?</div>
+        <div class="chips"><span class="chip">fraud / not-fraud</span><span class="chip">AML alert / clear</span><span class="chip">approve / decline</span></div>
+        <div class="where">Most OCBC anchor cases are classification problems.</div>
+      </div>
+      <div class="panel accent" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></svg></span>Regression</div>
+        <div class="ps">Predict a <b>continuous number</b> &mdash; how much?</div>
+        <div class="chips"><span class="chip">credit limit ($)</span><span class="chip">probability of default</span><span class="chip">expected loss</span></div>
+        <div class="where"><b>Credit / loan approval</b> blends both &mdash; a score feeds the decision.</div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">10</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Classification, visually: points are transactions; the model finds a line (or curve) that best separates fraud from legit.", "Do not teach the math. Name the common models in one breath — logistic regression, trees, random forests, gradient boosting.", "A new transaction is classified by which side of the boundary it falls on."]'>
+    <div class="kicker"><span class="badge"></span>Classification, intuitively</div>
+    <h2 class="slide-title" data-r data-d="1">Classification draws a boundary</h2>
+    <div class="two" style="margin-top:18px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">The model learns a <b>boundary</b> that separates the classes.</li>
+          <li data-r data-d="3" class="strong">Anchor: <b>fraud vs legitimate</b> transactions &mdash; also alert/clear, approve/decline.</li>
+          <li data-r data-d="4">New transaction lands on one side &rarr; predicted class.</li>
+          <li data-r data-d="5">Common models: <b>logistic regression, decision trees, random forests, gradient boosting</b>.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="svg-card" data-r data-d="3">
+          <div class="ct">Fraud vs legitimate &mdash; a learned boundary</div>
+          <svg class="chart-svg" viewBox="0 0 320 220" preserveAspectRatio="xMidYMid meet">
+            <path class="boundary" d="M30 212 L300 28"/>
+            <circle class="dot dotB" cx="50" cy="170" r="7"/><circle class="dot dotB" cx="72" cy="185" r="7"/><circle class="dot dotB" cx="60" cy="150" r="7"/><circle class="dot dotB" cx="92" cy="176" r="7"/><circle class="dot dotB" cx="46" cy="140" r="7"/><circle class="dot dotB" cx="82" cy="160" r="7"/><circle class="dot dotB" cx="110" cy="182" r="7"/><circle class="dot dotB" cx="64" cy="120" r="7"/><circle class="dot dotA" cx="212" cy="70" r="7"/><circle class="dot dotA" cx="240" cy="55" r="7"/><circle class="dot dotA" cx="225" cy="92" r="7"/><circle class="dot dotA" cx="262" cy="60" r="7"/><circle class="dot dotA" cx="202" cy="45" r="7"/><circle class="dot dotA" cx="250" cy="86" r="7"/><circle class="dot dotA" cx="282" cy="72" r="7"/><circle class="dot dotA" cx="236" cy="108" r="7"/>
+            <text class="glab" x="250" y="150">legit</text>
+            <text class="glab" x="60" y="40">fraud</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">11</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Regression fits a continuous relationship. Animate the line settling through the cloud of points.", "Anchor on credit: predict a number — a credit limit or a probability of default.", "That number is what feeds the approve/decline gate and risk-based pricing — the link to the loan-approval anchor."]'>
+    <div class="kicker"><span class="badge"></span>Regression, intuitively</div>
+    <h2 class="slide-title" data-r data-d="1">Regression fits a line to predict a number</h2>
+    <div class="two" style="margin-top:18px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">Fit a line or curve through the points, then read off the prediction.</li>
+          <li data-r data-d="3" class="strong">Anchor: <b>credit / loan approval</b> &mdash; predict a credit limit or probability of default.</li>
+          <li data-r data-d="4">That number feeds the <b>approve / decline</b> decision and the risk-based pricing.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="svg-card" data-r data-d="3">
+          <div class="ct">Income / history &rarr; predicted credit limit</div>
+          <svg class="chart-svg" viewBox="0 0 320 220" preserveAspectRatio="xMidYMid meet">
+            <line class="axis" x1="34" y1="14" x2="34" y2="196"/>
+            <line class="axis" x1="34" y1="196" x2="308" y2="196"/>
+            <circle class="dot dotA" cx="40" cy="180" r="7"/><circle class="dot dotA" cx="70" cy="166" r="7"/><circle class="dot dotA" cx="96" cy="150" r="7"/><circle class="dot dotA" cx="120" cy="158" r="7"/><circle class="dot dotA" cx="150" cy="132" r="7"/><circle class="dot dotA" cx="176" cy="122" r="7"/><circle class="dot dotA" cx="206" cy="112" r="7"/><circle class="dot dotA" cx="236" cy="92" r="7"/><circle class="dot dotA" cx="266" cy="80" r="7"/><circle class="dot dotA" cx="292" cy="62" r="7"/>
+            <path class="ln ln1" stroke="#EC1B23" d="M40 186 L300 56"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">12</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Unsupervised has no labels; the goal is structure. Two workhorses: clustering and dimensionality reduction.", "Clustering groups similar customers — the engine behind segmentation and the investment-tab recommendations.", "Anomaly detection falls out of this: a transaction in no normal cluster is suspicious — the AML link."]'>
+    <div class="kicker"><span class="badge"></span>Unsupervised learning</div>
+    <h2 class="slide-title" data-r data-d="1">No labels &mdash; find the structure</h2>
+    <div class="vs" style="margin-top:24px">
+      <div class="panel accent" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l2.4 5 5.6.6-4 3.8 1 5.6L12 21l-5 2.6 1-5.6-4-3.8 5.6-.6z"/></svg></span>Clustering</div>
+        <div class="ps">Group similar customers together without being told the groups.</div>
+        <div class="chips"><span class="chip">customer segments</span><span class="chip">k-means</span><span class="chip">lookalikes</span></div>
+        <div class="where">Powers <b>segmentation behind the investment-tab</b> recommendations.</div>
+      </div>
+      <div class="panel" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 8l-4 4 4 4M16 8l4 4-4 4"/></svg></span>Dimensionality reduction</div>
+        <div class="ps">Compress many features into a few &mdash; for visualization and speed.</div>
+        <div class="chips"><span class="chip">PCA</span><span class="chip">fewer features</span><span class="chip">de-noise</span></div>
+        <div class="where">Also: anomalies = points <b>far from every normal cluster</b> (AML).</div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">13</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Animate scattered customers snapping into colour-coded segments — the k-means intuition, no math.", "The big idea: real recommendation blends families. Segments (unsupervised) plus collaborative filtering plus a supervised propensity model.", "Same clustering view also gives anomaly detection for AML — anything far from every cluster is worth a look."]'>
+    <div class="kicker"><span class="badge"></span>Clustering and recommendation</div>
+    <h2 class="slide-title" data-r data-d="1">Cluster customers, then recommend</h2>
+    <div class="two wide-r" style="margin-top:18px">
+      <div class="viz">
+        <div class="svg-card" data-r data-d="2">
+          <div class="ct">Customers resolve into segments (k-means feel)</div>
+          <svg class="clr chart-svg" viewBox="0 0 300 230" preserveAspectRatio="xMidYMid meet"><circle class="pt k1" cx="60" cy="62" r="8"/><circle class="pt k1" cx="82" cy="74" r="8"/><circle class="pt k1" cx="66" cy="90" r="8"/><circle class="pt k1" cx="92" cy="60" r="8"/><circle class="pt k1" cx="74" cy="104" r="8"/><circle class="pt k2" cx="208" cy="70" r="8"/><circle class="pt k2" cx="232" cy="86" r="8"/><circle class="pt k2" cx="214" cy="102" r="8"/><circle class="pt k2" cx="240" cy="66" r="8"/><circle class="pt k2" cx="224" cy="116" r="8"/><circle class="pt k3" cx="128" cy="168" r="8"/><circle class="pt k3" cx="156" cy="182" r="8"/><circle class="pt k3" cx="140" cy="152" r="8"/><circle class="pt k3" cx="170" cy="170" r="8"/><circle class="pt k3" cx="150" cy="196" r="8"/></svg>
+        </div>
+      </div>
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="3">Group lookalike customers into segments &mdash; <b>unsupervised</b>.</li>
+          <li data-r data-d="4" class="strong">The app investment-tab <b>next-best product</b> blends both families:</li>
+          <li data-r data-d="5">segments (unsupervised) + what similar customers chose (<b>collaborative filtering</b>) + a <b>propensity model</b> (supervised).</li>
+          <li data-r data-d="6">Same engine spots <b>AML anomalies</b> &mdash; transactions in no normal cluster.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">14</span></div>
+  </section>
+
+  <section class="slide" data-notes='["A simple decision aid: first ask if you have labels; then ask what the question is — a value, a class, or groups.", "Walk the four anchors as worked answers so the framework sticks.", "Recommendation is the honest one — real systems blend supervised and unsupervised."]'>
+    <div class="kicker"><span class="badge"></span>How to choose</div>
+    <h2 class="slide-title" data-r data-d="1">Which family? Two questions decide</h2>
+    <p class="slide-sub" data-r data-d="2"><b>1.</b> Do you have labels?&nbsp;&nbsp;<b>2.</b> Are you predicting a value, predicting a class, or finding groups?</p>
+    <div class="cards c2" style="margin-top:20px">
+      <div class="card" data-r data-d="3"><div class="num">1</div><h3>Fraud &amp; AML</h3><p>Labeled past outcomes, predict a class &rarr; <b>supervised classification</b>.</p></div>
+      <div class="card" data-r data-d="4"><div class="num">2</div><h3>Credit / loan approval</h3><p>Predict a number (risk), then decide &rarr; <b>regression + classification</b>.</p></div>
+      <div class="card" data-r data-d="5"><div class="num">3</div><h3>Customer segmentation</h3><p>No labels, find groups &rarr; <b>unsupervised clustering</b>.</p></div>
+      <div class="card" data-r data-d="6"><div class="num">4</div><h3>Product recommendation</h3><p>Segments + supervised propensity &rarr; <b>a blend of both</b>.</p></div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">15</span></div>
+  </section>
+
+  <section class="slide demo-slide" data-demo="1" data-notes='["Demo 1, replayed in-deck — press R or Replay to run it again. The point lands in one line: a model is fit then predict.", "Cell 1 splits data 80/20 so we can grade honestly later. Cell 2 trains a random forest. Cell 3 predicts on unseen rows.", "Do not dwell on the algorithm — emphasise the shape of the API. This is identical across almost every sklearn model."]'>
+    <div class="kicker"><span class="badge"></span>Pillar 1 &middot; Recorded Demo 1</div>
+    <h2 class="slide-title" data-r data-d="1">A model is <code style="font-family:var(--fMono);font-size:.8em;color:var(--red)">.fit()</code> then <code style="font-family:var(--fMono);font-size:.8em;color:var(--red)">.predict()</code></h2>
+    <div class="demo-stage">
+      <div class="nb">
+        <div class="nb-top"><span class="t-ic r"></span><span class="t-ic"></span><span class="t-ic g"></span><span class="nb-name">fraud_model.ipynb</span><span class="nb-kernel">Python 3</span></div>
+        <div class="nb-body"><div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[1]</div><div class="nb-code">from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42)</div></div><div class="nb-out"><span class="ok">&#10003; 8,000 train &middot; 2,000 test</span></div></div><div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[2]</div><div class="nb-code">model = RandomForestClassifier(n_estimators=200)
+model.fit(X_train, y_train)</div></div><div class="nb-out">RandomForestClassifier(n_estimators=200)</div></div><div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[3]</div><div class="nb-code">preds = model.predict(X_test[:5])
+preds</div></div><div class="nb-out">array([0, 0, 1, 0, 1])&nbsp;&nbsp;<span class="muted"># 0 = legit, 1 = fraud</span></div></div></div>
+      </div>
+      <div class="demo-side">
+        <div class="demo-card"><div class="dk">Recorded Demo 1</div><h3>Train a fraud classifier</h3><p>scikit-learn on a loan/fraud-style table from the anchor cases.</p></div>
+        <ul class="demo-steps"><li><span class="sn">1</span>Split into train / test</li><li><span class="sn">2</span>fit() on the training set</li><li><span class="sn">3</span>predict() on unseen rows</li></ul>
+        <button class="replay" data-replay><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v4h4"/></svg>Replay</button>
+        <div class="demo-take"><b>Takeaway:</b> every supervised model is the same two calls &mdash; <b>fit</b> on training data, <b>predict</b> on new data.</div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">16</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["Part 2, about 28 minutes — the most practically useful section. The metric you pick changes the whole story.", "We climb a ladder: accuracy is a lie, then confusion matrix, precision/recall, F1, ROC-AUC, and finally overfitting.", "Keep grounding every metric in the fraud anchor — rare events break naive accuracy."]'>
+    <div class="pillar-no">02</div>
+    <div class="eyebrow"><span class="dot"></span>Part 2</div>
+    <h2>Model Evaluation Metrics</h2>
+    <p class="lead">Accuracy alone will fool you. How do you actually know a model is any good?</p>
+    <div class="prog-rail"><span>Supervised vs Unsupervised</span><span class="on">Evaluation metrics</span><span>MLOps</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">17</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The hook. A model that predicts never-fraud is about 98 percent accurate because fraud is rare — and it catches nothing.", "Accuracy is misleading on imbalanced problems, which is most interesting banking problems: fraud, AML, default.", "This sets up why we need precision and recall — metrics that look at the rare class."]'>
+    <div class="kicker"><span class="badge"></span>Accuracy is a lie</div>
+    <h2 class="slide-title" data-r data-d="1">A useless model can score 98%</h2>
+    <div class="megastat">
+      <div class="num" data-count="98" data-suffix="%">0</div>
+      <div class="copy" data-r data-d="2">
+        <h3>Predict &ldquo;never fraud&rdquo; and you are 98% accurate &mdash; and catch <span style="color:var(--red)">zero</span> fraud.</h3>
+        <p>Fraud is rare (about 2% of transactions), so always-guess-legit looks great and is worthless. <b>Accuracy hides failure on the cases that matter.</b></p>
+        <div class="src">This is why we need precision, recall and the curves that follow.</div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">18</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Golden rule of evaluation: hold out data. A model graded on what it memorised always looks better than it is.", "Animate the split — 80 percent to train, 20 percent held back to test. The test set is your honest estimate.", "Mention cross-validation as the more robust version; we use it in Demo 2."]'>
+    <div class="kicker"><span class="badge"></span>Train / test split</div>
+    <h2 class="slide-title" data-r data-d="1">Never grade a model on data it trained on</h2>
+    <div class="two" style="margin-top:18px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">Hold out a <b>test set</b> the model never sees during training.</li>
+          <li data-r data-d="3" class="strong">Grade on the held-out set &mdash; that estimates real-world performance.</li>
+          <li data-r data-d="4">Memorising the training data is not learning. We want <b>generalisation</b>.</li>
+          <li data-r data-d="5">Typical split: <b>80% train / 20% test</b> (or k-fold cross-validation).</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="splitbar" data-r data-d="3">
+          <div class="seg train"><div class="pc">80%</div><div class="lb">Train</div></div>
+          <div class="seg test"><div class="pc">20%</div><div class="lb">Test</div></div>
+        </div>
+        <div class="flow-cap" style="margin-top:20px">Fit on the red part &middot; grade only on the dark part</div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">19</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The 2x2 that everything derives from. In banking terms: caught fraud (TP), false alarm (FP), missed fraud (FN), correct clear (TN).", "Animate the cells filling in. Point out FN — missed fraud — is usually the expensive mistake.", "Precision, recall, F1, ROC all come from these four numbers. Get comfortable here."]'>
+    <div class="kicker"><span class="badge"></span>The confusion matrix</div>
+    <h2 class="slide-title" data-r data-d="1">The confusion matrix: four outcomes</h2>
+    <div class="cm-wrap">
+      <div class="cm-axis-y">Actual</div>
+      <div class="cm-col">
+        <div class="cm-axis-x">Predicted</div>
+        <div class="cmatrix">
+          <div class="cm-cell tp"><div class="cmk">True Positive</div><div class="cmv">142</div><div class="cmd">fraud caught</div></div>
+          <div class="cm-cell fp"><div class="cmk">False Positive</div><div class="cmv">58</div><div class="cmd">false alarm &mdash; legit blocked</div></div>
+          <div class="cm-cell fn"><div class="cmk">False Negative</div><div class="cmv">23</div><div class="cmd">missed fraud &mdash; the costly one</div></div>
+          <div class="cm-cell tn"><div class="cmk">True Negative</div><div class="cmv">9,777</div><div class="cmd">correctly cleared</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-cap">Every evaluation metric is built from these four cells.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">20</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Plain words first. Precision is about the alerts you raised — what fraction were right. Recall is about all the real fraud — what fraction you caught.", "Show which cells each uses: precision is the predicted-fraud column (TP+FP), recall is the actual-fraud row (TP+FN).", "Different costs pull them apart, which is the trade-off on the next slide."]'>
+    <div class="kicker"><span class="badge"></span>Precision and recall</div>
+    <h2 class="slide-title" data-r data-d="1">Precision vs recall &mdash; two questions</h2>
+    <div class="two" style="margin-top:16px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2"><b>Precision:</b> of the alerts we raised, how many were <em>real</em> fraud?</li>
+          <li data-r data-d="3"><b>Recall:</b> of all the real fraud, how much did we <em>catch</em>?</li>
+          <li data-r data-d="4" class="strong">High precision = few false alarms. High recall = few misses.</li>
+          <li data-r data-d="5">You rarely max both at once &mdash; next slide.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="pr-two" data-r data-d="3">
+          <div>
+            <div class="pr-cap"><span>Precision</span></div>
+            <div class="mini-cm"><div class="mc on">TP</div><div class="mc on">FP</div><div class="mc">FN</div><div class="mc">TN</div></div>
+            <div class="pr-form">TP / (TP <b>+ FP</b>)</div>
+          </div>
+          <div>
+            <div class="pr-cap"><span>Recall</span></div>
+            <div class="mini-cm"><div class="mc on">TP</div><div class="mc">FP</div><div class="mc on">FN</div><div class="mc">TN</div></div>
+            <div class="pr-form">TP / (TP <b>+ FN</b>)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">21</span></div>
+  </section>
+
+  <section class="slide" data-notes='["This is interactive — drag the slider. As the cutoff rises, precision climbs and recall falls, and vice versa.", "Tie it to the business: in fraud/AML the cost is false alarms versus missed losses; in lending it is bad approvals versus lost good customers.", "F1 is the harmonic mean — one balanced number when you cannot decide which way to lean."]'>
+    <div class="kicker"><span class="badge"></span>The trade-off</div>
+    <h2 class="slide-title" data-r data-d="1">Move the threshold, trade precision for recall</h2>
+    <div class="thr-wrap">
+      <div class="thr-box" data-r data-d="2">
+        <div class="thr-thr">Alert threshold: <span id="tval">0.50</span></div>
+        <input id="thr" class="rng" type="range" min="5" max="95" value="50" />
+        <div class="thr-hint">Drag the cutoff. Raise it &rarr; fewer alerts, precision up, recall down. Lower it &rarr; catch more, more false alarms.</div>
+      </div>
+      <div data-r data-d="3">
+        <div class="thr-row"><div class="tlab">Precision</div><div class="thr-track"><div class="thr-fill p" id="fp"></div></div><div class="thr-val" id="fpv">0%</div></div>
+        <div class="thr-row"><div class="tlab">Recall</div><div class="thr-track"><div class="thr-fill r" id="fr"></div></div><div class="thr-val" id="frv">0%</div></div>
+        <div class="thr-row"><div class="tlab">F1</div><div class="thr-track"><div class="thr-fill f" id="ff"></div></div><div class="thr-val" id="ffv">0%</div></div>
+        <div class="demo-take" style="margin-top:6px"><b>Business choice:</b> fraud/AML &mdash; false alarms vs missed losses; loans &mdash; bad approvals vs lost good customers. <b>F1</b> balances the two in one number.</div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">22</span></div>
+  </section>
+
+  <section class="slide" data-notes='["ROC sweeps every threshold and plots true-positive rate against false-positive rate. Animate the curve drawing in.", "AUC summarises it: 0.5 is a coin flip, 1.0 is perfect. It measures how well the model ranks fraud above legit.", "Important caveat for the bank: on very rare events the precision-recall curve is more honest than ROC."]'>
+    <div class="kicker"><span class="badge"></span>ROC curve and AUC</div>
+    <h2 class="slide-title" data-r data-d="1">ROC curve and AUC</h2>
+    <div class="two" style="margin-top:18px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">Plot <b>true-positive rate</b> against <b>false-positive rate</b> across every threshold.</li>
+          <li data-r data-d="3" class="strong"><b>AUC</b> = ranking quality. 0.5 = coin flip, 1.0 = perfect.</li>
+          <li data-r data-d="4">Lets you compare models independent of one threshold.</li>
+          <li data-r data-d="5">On rare events (fraud), prefer the <b>precision-recall curve</b>.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="svg-card" data-r data-d="3">
+          <div class="ct">ROC &mdash; the curve bows toward the top-left</div>
+          <svg class="chart-svg" viewBox="0 0 300 220" preserveAspectRatio="xMidYMid meet">
+            <line class="axis" x1="38" y1="18" x2="38" y2="186"/>
+            <line class="axis" x1="38" y1="186" x2="286" y2="186"/>
+            <line x1="38" y1="186" x2="286" y2="18" stroke="#c8ccd3" stroke-width="2" stroke-dasharray="6 6"/>
+            <path class="trend" d="M38 186 C 70 90 150 48 286 18"/>
+            <text class="glab mk" x="150" y="92" style="fill:var(--red);font-weight:700">AUC = 0.94</text>
+            <text class="glab" x="250" y="200">FPR</text>
+            <text class="glab" x="10" y="30">TPR</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">23</span></div>
+  </section>
+
+  <section class="slide" data-notes='["For regression you measure error size, not right-or-wrong. MAE is the average miss in real units — most intuitive.", "RMSE penalises large errors more, which matters when a few big misses are expensive. R-squared is variance explained.", "Tie back to the credit anchor: this is how you grade the probability-of-default model feeding loan approval."]'>
+    <div class="kicker"><span class="badge"></span>Regression metrics</div>
+    <h2 class="slide-title" data-r data-d="1">Metrics for predicting a number</h2>
+    <div class="cards c3" style="margin-top:24px">
+      <div class="card" data-r data-d="2"><div class="num">MAE</div><h3>Mean Absolute Error</h3><p>Average size of the miss, in the same units (dollars). Easy to explain.</p></div>
+      <div class="card" data-r data-d="3"><div class="num">RMSE</div><h3>Root Mean Sq. Error</h3><p>Like MAE but punishes big misses harder &mdash; good when large errors are costly.</p></div>
+      <div class="card" data-r data-d="4"><div class="num">R&sup2;</div><h3>R-squared</h3><p>Share of variance explained. 1.0 = perfect, 0 = no better than the mean.</p></div>
+    </div>
+    <div class="flow-cap">Use these to evaluate the <b>credit-limit / probability-of-default</b> model behind loan approval.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">24</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The core failure mode. Underfitting is too simple. Overfitting memorises noise — perfect on training, bad on new data.", "Animate the U: training error keeps falling, but total error on new data turns back up. The minimum is the sweet spot.", "Cross-validation is the robust way to find that spot without fooling yourself."]'>
+    <div class="kicker"><span class="badge"></span>Overfitting</div>
+    <h2 class="slide-title" data-r data-d="1">Overfitting and the bias-variance trade-off</h2>
+    <div class="two" style="margin-top:18px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2"><b>Underfit (high bias):</b> too simple, misses the pattern.</li>
+          <li data-r data-d="3"><b>Overfit (high variance):</b> aces training, flunks reality &mdash; it memorised noise.</li>
+          <li data-r data-d="4" class="strong">The sweet spot sits in the middle.</li>
+          <li data-r data-d="5">Check it robustly with <b>cross-validation</b>.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="svg-card" data-r data-d="3">
+          <div class="ct">Error vs model complexity</div>
+          <svg class="chart-svg" viewBox="0 0 320 220" preserveAspectRatio="xMidYMid meet">
+            <line class="axis" x1="36" y1="16" x2="36" y2="188"/>
+            <line class="axis" x1="36" y1="188" x2="300" y2="188"/>
+            <path class="trend" d="M44 60 Q 168 206 292 60"/>
+            <path class="ln ln1" stroke="#1C6E9C" d="M44 96 C 130 162 210 184 292 196"/>
+            <circle class="mk" cx="168" cy="138" r="7" fill="#1E8E5A"/>
+            <text class="glab mk" x="128" y="128" style="fill:#1E8E5A;font-weight:700">sweet spot</text>
+            <text class="glab" x="44" y="206">underfit</text>
+            <text class="glab" x="250" y="206">overfit</text>
+            <text class="glab" x="150" y="40" style="fill:var(--red)">total error</text>
+            <text class="glab" x="235" y="180" style="fill:#1C6E9C">train error</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">25</span></div>
+  </section>
+
+  <section class="slide demo-slide" data-demo="2" data-notes='["Demo 2 evaluates the Demo-1 model. Same model — watch the story change with the metric.", "The confusion matrix and classification report expose the truth: high accuracy and AUC, but fraud recall is poor.", "This is the payoff of the whole section: always ask which metric, and whether it matches the business cost."]'>
+    <div class="kicker"><span class="badge"></span>Pillar 2 &middot; Recorded Demo 2</div>
+    <h2 class="slide-title" data-r data-d="1">Same model, different metric, different story</h2>
+    <div class="demo-stage">
+      <div class="nb">
+        <div class="nb-top"><span class="t-ic r"></span><span class="t-ic"></span><span class="t-ic g"></span><span class="nb-name">evaluate.ipynb</span><span class="nb-kernel">Python 3</span></div>
+        <div class="nb-body"><div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[4]</div><div class="nb-code">from sklearn.metrics import confusion_matrix, classification_report
+print(confusion_matrix(y_test, preds))</div></div><div class="nb-out">[[1936&nbsp;&nbsp;&nbsp;24]<br/>&nbsp;[&nbsp;&nbsp;31&nbsp;&nbsp;&nbsp;9]]&nbsp;&nbsp;<span class="muted"># [[TN FP][FN TP]]</span></div></div><div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[5]</div><div class="nb-code">print(classification_report(y_test, preds))</div></div><div class="nb-out"><table class="otable"><tr><th></th><th>prec</th><th>recall</th><th>f1</th></tr><tr><td class="muted">legit</td><td>0.98</td><td>0.99</td><td>0.99</td></tr><tr><td class="muted">fraud</td><td>0.27</td><td>0.23</td><td>0.25</td></tr></table></div></div><div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[6]</div><div class="nb-code">from sklearn.metrics import roc_auc_score
+roc_auc_score(y_test, model.predict_proba(X_test)[:,1])</div></div><div class="nb-out"><span class="ok">0.942</span></div></div><div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[7]</div><div class="nb-code">from sklearn.model_selection import cross_val_score
+cross_val_score(model, X, y, cv=5).mean()</div></div><div class="nb-out"><span class="ok">0.913</span></div></div></div>
+      </div>
+      <div class="demo-side">
+        <div class="demo-card"><div class="dk">Recorded Demo 2</div><h3>Evaluate the fraud model</h3><p>The Demo-1 model, judged four ways.</p></div>
+        <ul class="demo-steps"><li><span class="sn">1</span>Confusion matrix</li><li><span class="sn">2</span>Precision / recall / F1</li><li><span class="sn">3</span>ROC-AUC score</li><li><span class="sn">4</span>Cross-validation</li></ul>
+        <button class="replay" data-replay><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v4h4"/></svg>Replay</button>
+        <div class="demo-take"><b>Takeaway:</b> 0.94 AUC looks great, but fraud recall is only 0.23. <b>The metric you report changes the verdict.</b></div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">26</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["Part 3, about 20 minutes. The half that beginners skip and production teams obsess over.", "MLOps is how a model leaves the notebook and stays useful — deployment, monitoring, retraining, governance.", "Keep it bank-flavoured: regulated, audited, and never set-and-forget."]'>
+    <div class="pillar-no">03</div>
+    <div class="eyebrow"><span class="dot"></span>Part 3</div>
+    <h2>MLOps Fundamentals</h2>
+    <p class="lead">A model in a notebook is worth nothing. Value comes when it runs reliably in production.</p>
+    <div class="prog-rail"><span>Supervised vs Unsupervised</span><span>Evaluation metrics</span><span class="on">MLOps</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">27</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Blunt truth: a notebook model delivers zero value. Value starts when it runs reliably against real transactions.", "Define MLOps: the discipline that blends ML, software engineering, DevOps and data engineering.", "Frame the rest of the section as crossing that arrow — and staying on the right side of it."]'>
+    <div class="kicker"><span class="badge"></span>From notebook to production</div>
+    <h2 class="slide-title" data-r data-d="1">The notebook is not the finish line</h2>
+    <div class="np-flow" data-r data-d="2">
+      <div class="np-box nb2"><div class="nh">A model in a notebook</div><div class="nd">accurate, on your laptop, used by no one</div></div>
+      <div class="np-arrowx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="np-box prod"><div class="nh">A model in production</div><div class="nd">scoring real OCBC transactions, reliably, 24/7</div></div>
+    </div>
+    <div class="np-def" data-r data-d="3"><b>MLOps</b> = ML + software engineering + DevOps + data engineering &mdash; <span class="tag">build, deploy and maintain models in production</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">28</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Traditional software is deterministic — you test it once and it behaves. ML breaks that assumption.", "An ML system depends on data and a learned model as well as code, and the data keeps changing under you.", "So MLOps manages three interlocking moving parts: data, model, code. The gears turning together is the mental image."]'>
+    <div class="kicker"><span class="badge"></span>Three moving parts</div>
+    <h2 class="slide-title" data-r data-d="1">Why ML is harder than normal software</h2>
+    <div class="two" style="margin-top:18px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">Normal code is <b>deterministic</b> &mdash; same input, same output, forever.</li>
+          <li data-r data-d="3" class="strong">ML also depends on <b>data and a learned model</b>, and both change over time.</li>
+          <li data-r data-d="4">So you version and manage <b>three moving parts</b>, not one.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="gears" data-r data-d="3">
+          <div class="gear"><svg class="gsvg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm0 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/><path d="M21 13v-2l-2.1-.3a7 7 0 0 0-.7-1.7l1.3-1.7-1.4-1.4-1.7 1.3a7 7 0 0 0-1.7-.7L14.4 3h-2l-.3 2.1a7 7 0 0 0-1.7.7L8.7 4.5 7.3 5.9l1.3 1.7a7 7 0 0 0-.7 1.7L5.8 9.9v2l2.1.3a7 7 0 0 0 .7 1.7l-1.3 1.7 1.4 1.4 1.7-1.3a7 7 0 0 0 1.7.7l.3 2.1h2l.3-2.1a7 7 0 0 0 1.7-.7l1.7 1.3 1.4-1.4-1.3-1.7a7 7 0 0 0 .7-1.7z"/></svg><div class="glab">Data</div><div class="gsub">shifts over time</div></div>
+          <div class="gear"><svg class="gsvg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm0 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/><path d="M21 13v-2l-2.1-.3a7 7 0 0 0-.7-1.7l1.3-1.7-1.4-1.4-1.7 1.3a7 7 0 0 0-1.7-.7L14.4 3h-2l-.3 2.1a7 7 0 0 0-1.7.7L8.7 4.5 7.3 5.9l1.3 1.7a7 7 0 0 0-.7 1.7L5.8 9.9v2l2.1.3a7 7 0 0 0 .7 1.7l-1.3 1.7 1.4 1.4 1.7-1.3a7 7 0 0 0 1.7.7l.3 2.1h2l.3-2.1a7 7 0 0 0 1.7-.7l1.7 1.3 1.4-1.4-1.3-1.7a7 7 0 0 0 .7-1.7z"/></svg><div class="glab">Model</div><div class="gsub">retrained, versioned</div></div>
+          <div class="gear"><svg class="gsvg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm0 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"/><path d="M21 13v-2l-2.1-.3a7 7 0 0 0-.7-1.7l1.3-1.7-1.4-1.4-1.7 1.3a7 7 0 0 0-1.7-.7L14.4 3h-2l-.3 2.1a7 7 0 0 0-1.7.7L8.7 4.5 7.3 5.9l1.3 1.7a7 7 0 0 0-.7 1.7L5.8 9.9v2l2.1.3a7 7 0 0 0 .7 1.7l-1.3 1.7 1.4 1.4 1.7-1.3a7 7 0 0 0 1.7.7l.3 2.1h2l.3-2.1a7 7 0 0 0 1.7-.7l1.7 1.3 1.4-1.4-1.3-1.7a7 7 0 0 0 .7-1.7z"/></svg><div class="glab">Code</div><div class="gsub">the pipeline</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">29</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The canonical loop: Design, Data, Train, Evaluate, Deploy, Monitor — and Monitor feeds back to retraining.", "Animate it advancing node by node. The key idea is the feedback arrow: deployment is the middle, not the end.", "This loop is the spine of the whole section; the next slides zoom into pieces of it."]'>
+    <div class="kicker"><span class="badge"></span>The MLOps lifecycle</div>
+    <h2 class="slide-title" data-r data-d="1">The MLOps lifecycle is a loop</h2>
+    <div class="fillc">
+      <div class="loop">
+        <div class="ring-dash"></div>
+        <div class="hub">MLOps<small>NEVER DONE</small></div>
+        <div class="lnode n1 " style="left:220px;top:24px"><div class="ln-ic">1</div><div class="lt">Design</div></div><div class="lnode n2 dk" style="left:372px;top:92px"><div class="ln-ic">2</div><div class="lt">Data</div></div><div class="lnode n3 " style="left:372px;top:248px"><div class="ln-ic">3</div><div class="lt">Train</div></div><div class="lnode n4 dk" style="left:220px;top:316px"><div class="ln-ic">4</div><div class="lt">Evaluate</div></div><div class="lnode n5 " style="left:68px;top:248px"><div class="ln-ic">5</div><div class="lt">Deploy</div></div><div class="lnode n6 dk" style="left:68px;top:92px"><div class="ln-ic">6</div><div class="lt">Monitor</div></div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">30</span></div>
+  </section>
+
+  <section class="slide" data-notes='["ML has too many runs to track in your head. Log parameters and metrics for every run automatically.", "Reproducibility means versioning all three: data, model, and code. Run 43 should be re-creatable months later.", "Name tools lightly — MLflow or Weights and Biases for tracking and a registry, DVC or Git for versioning."]'>
+    <div class="kicker"><span class="badge"></span>Experiment tracking</div>
+    <h2 class="slide-title" data-r data-d="1">Track experiments, version everything</h2>
+    <div class="two wide-r" style="margin-top:16px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">Too many runs to remember &mdash; log <b>params and metrics</b> automatically.</li>
+          <li data-r data-d="3" class="strong">Version <b>data + model + code</b> so any result is reproducible.</li>
+          <li data-r data-d="4">In a bank, that audit trail is not optional.</li>
+        </ul>
+        <div class="toolchips" data-r data-d="5">
+          <span class="tc"><b>MLflow</b> / W&amp;B &mdash; tracking + registry</span>
+          <span class="tc"><b>DVC</b> / Git &mdash; data + code versioning</span>
+        </div>
+      </div>
+      <div class="viz">
+        <table class="dtable" data-r data-d="3">
+          <tr><th>run</th><th>model</th><th>depth</th><th>AUC</th><th>status</th></tr>
+          <tr><td>#41</td><td>logreg</td><td>&ndash;</td><td>0.88</td><td>done</td></tr>
+          <tr><td>#42</td><td>rforest</td><td>8</td><td>0.91</td><td>done</td></tr>
+          <tr class="bestrow"><td>#43</td><td>gbm</td><td>6</td><td>0.94</td><td>best &#9733;</td></tr>
+          <tr><td>#44</td><td>gbm</td><td>12</td><td>0.92</td><td>overfit</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">31</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Two main serving modes. Real-time API scores each event — fraud at the moment of payment, recommendations in the app.", "Batch scores on a schedule — overnight AML screening and credit risk runs. Pick by how fresh the decision must be.", "Before full launch, de-risk with shadow (run silently and compare) and canary (a small traffic slice first)."]'>
+    <div class="kicker"><span class="badge"></span>Deployment patterns</div>
+    <h2 class="slide-title" data-r data-d="1">How a model reaches users</h2>
+    <div class="cards c2" style="margin-top:20px">
+      <div class="card" data-r data-d="2"><div class="num">API</div><h3>Real-time API</h3><p>Score per event, in milliseconds.</p><div class="tag">fraud at txn time &middot; app recommendations</div></div>
+      <div class="card" data-r data-d="3"><div class="num">&#9202;</div><h3>Batch</h3><p>Score on a schedule, overnight.</p><div class="tag">AML screening &middot; credit risk runs</div></div>
+      <div class="card" data-r data-d="4"><div class="num">&#128065;</div><h3>Shadow</h3><p>Run alongside production, compare, no live impact.</p><div class="tag">safe rollout</div></div>
+      <div class="card" data-r data-d="5"><div class="num">&#10138;</div><h3>Canary</h3><p>Route a small slice of traffic first, then ramp.</p><div class="tag">safe rollout</div></div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">32</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The part beginners miss: models decay. Two kinds of drift — data drift (inputs move) and concept drift (the relationship moves).", "Performance slides quietly below acceptable. You only catch it if you monitor metrics and data and alert on them.", "Then you retrain — the bump back up. OCBC examples: spending shifts stale the fraud model; new products dull recommendations."]'>
+    <div class="kicker"><span class="badge"></span>Monitoring and drift</div>
+    <h2 class="slide-title" data-r data-d="1">Models decay &mdash; monitor and retrain</h2>
+    <div class="two" style="margin-top:18px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2"><b>Data drift:</b> the inputs change (spending patterns shift).</li>
+          <li data-r data-d="3"><b>Concept drift:</b> the relationship changes (what fraud looks like evolves).</li>
+          <li data-r data-d="4" class="strong">Performance silently decays &mdash; monitor metrics, alert, <b>retrain</b>.</li>
+          <li data-r data-d="5">OCBC: stale fraud/AML models, mis-priced credit, less relevant recommendations.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="svg-card" data-r data-d="3">
+          <div class="ct">Performance over time &mdash; with a retrain</div>
+          <svg class="chart-svg" viewBox="0 0 320 200" preserveAspectRatio="xMidYMid meet">
+            <line class="axis" x1="36" y1="14" x2="36" y2="170"/>
+            <line class="axis" x1="36" y1="170" x2="304" y2="170"/>
+            <line x1="36" y1="140" x2="304" y2="140" stroke="#c8ccd3" stroke-width="2" stroke-dasharray="6 6"/>
+            <text class="glab" x="44" y="134">min acceptable</text>
+            <path class="ln ln1" stroke="#EC1B23" d="M44 48 L104 78 L162 122 L162 56 L228 84 L300 126"/>
+            <circle class="mk" cx="162" cy="56" r="6" fill="#1E8E5A"/>
+            <text class="glab mk" x="138" y="44" style="fill:#1E8E5A;font-weight:700">retrain</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">33</span></div>
+  </section>
+
+  <section class="slide" data-notes='["A bank-relevant note, not a compliance lecture. In a regulated environment the lifecycle carries checkpoints.", "Explainability is the headline: if you decline a loan, you must be able to say why. Fairness and audit trails matter too.", "Human-in-the-loop oversight stays on the highest-stakes calls — AML and credit. These set expectations for production ML here."]'>
+    <div class="kicker"><span class="badge"></span>Governance</div>
+    <h2 class="slide-title" data-r data-d="1">In a regulated bank, the loop has checkpoints</h2>
+    <div class="cards c3" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="num">&#8635;</div><h3>Reproducibility</h3><p>Re-create any decision from versioned data + model + code.</p></div>
+      <div class="card" data-r data-d="3"><div class="num">&#9783;</div><h3>Audit trail</h3><p>Who deployed what, when, and on which data.</p></div>
+      <div class="card" data-r data-d="4"><div class="num">?</div><h3>Explainability</h3><p>Why was this loan application declined? You must be able to answer.</p></div>
+      <div class="card" data-r data-d="5"><div class="num">&#9878;</div><h3>Fairness</h3><p>No unlawful bias across customer groups.</p></div>
+      <div class="card" data-r data-d="6"><div class="num">&#10003;</div><h3>Model approval</h3><p>Sign-off before a model goes live.</p></div>
+      <div class="card" data-r data-d="7"><div class="num">&#128100;</div><h3>Human in the loop</h3><p>People review high-stakes AML and credit calls.</p></div>
+    </div>
+    <div class="flow-cap">Most acute on the regulated anchors &mdash; <b>loan approval</b> and <b>AML</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">34</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Replay the two spines: the workflow Frame-to-Monitor, and the metric ladder from confusion matrix up to ROC-AUC.", "Land the three takeaways: pick the right metric, beware overfitting, treat the model as a product that needs maintenance.", "These three are what separates a notebook experiment from a system the bank can trust."]'>
+    <div class="kicker"><span class="badge"></span>Recap</div>
+    <h2 class="slide-title" data-r data-d="1">Three things to remember</h2>
+    <div class="bullets-rail" style="margin-top:18px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2"><b>Workflow spine:</b> Frame &rarr; Data &rarr; Train &rarr; Evaluate &rarr; Deploy &rarr; Monitor.</li>
+          <li data-r data-d="3"><b>Metric ladder:</b> confusion matrix &rarr; precision / recall &rarr; F1 &rarr; ROC-AUC.</li>
+          <li data-r data-d="4">Supervised vs unsupervised decides everything upstream.</li>
+        </ul>
+      </div>
+      <div class="rail" data-r data-d="3">
+        <h4>Take these away</h4>
+        <ul>
+          <li>Pick the <b style="color:#fff">right metric</b> &mdash; accuracy lies on rare events.</li>
+          <li>Beware <b style="color:#fff">overfitting</b> &mdash; grade on held-out data.</li>
+          <li>A model is a <b style="color:#fff">product</b> &mdash; it must be monitored and retrained.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">35</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["Close the loop: they can now read an ML project end to end and talk to data scientists in their language.", "Pointers to go deeper — Andrew Ng for the math foundations, an MLOps hands-on track for the production side.", "Call back the Box quote, then open the floor for questions."]'>
+    <div class="pillar-no">&#10003;</div>
+    <div class="eyebrow"><span class="dot"></span>Wrap</div>
+    <h2>You can now read an ML project end to end.</h2>
+    <p class="lead">Keep going: <b>Andrew Ng&#39;s ML Specialization</b> for the math, and a hands-on <b>MLOps track</b> for production. And remember Box &mdash; all models are wrong, but some are useful. Your job is to keep them useful.</p>
+    <div class="prog-rail"><span class="on">Supervised vs Unsupervised</span><span class="on">Evaluation metrics</span><span class="on">MLOps</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">36</span></div>
+  </section>
+
+  </main>
+</div>
+
+<div class="hud">
+  <div class="dots" id="dots"></div>
+  <div class="count">slide <b id="cur">1</b> / <span id="tot">34</span></div>
+</div>
+<div class="hint"><kbd>→</kbd> next &nbsp; <kbd>←</kbd> back &nbsp; <kbd>N</kbd> notes &nbsp; <kbd>F</kbd> full</div>
+
+<div class="rotate-cue" aria-hidden="true">
+  <div>
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="7" y="2" width="10" height="20" rx="2.2"/><path d="M11 18.5h2"/></svg>
+    <h4>Rotate your device</h4>
+    <p>This deck is built for a wide 16:9 stage — turn your phone to landscape for the full view.</p>
+  </div>
+</div>
+
+<div class="notes" id="notes">
+  <button class="close" id="notesClose">&times;</button>
+  <h5><span style="width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block"></span>Speaker notes</h5>
+  <ul id="notesBody"></ul>
+</div>
+
+<script>
+/* ---- fit fixed 1280x720 stage to viewport ---- */
+const STATIC = location.search.includes('static');
+if(STATIC) document.body.classList.add('static');
+const deck = document.getElementById('deck');
+function fit(){
+  const vv = window.visualViewport;
+  const w = (vv && vv.width)  || innerWidth  || document.documentElement.clientWidth  || 1280;
+  const h = (vv && vv.height) || innerHeight || document.documentElement.clientHeight || 720;
+  const s = Math.min(w/1280, h/720) || 1;
+  // anchor top-left and centre with an explicit pixel offset — robust even when
+  // the deck is larger than the viewport (small mobile-landscape screens)
+  const x = (w - 1280*s) / 2, y = (h - 720*s) / 2;
+  deck.style.transform = `translate(${x}px, ${y}px) scale(${s>0?s:1})`;
+}
+addEventListener('resize', fit);
+addEventListener('load', fit);
+// mobile: re-fit when rotating or when the browser chrome resizes the visible area
+addEventListener('orientationchange', ()=>{ fit(); setTimeout(fit,200); setTimeout(fit,500); });
+if(window.visualViewport){ visualViewport.addEventListener('resize', fit); }
+fit(); requestAnimationFrame(fit); setTimeout(fit,120);
+
+/* ---- presentation controller ---- */
+const slides = [...document.querySelectorAll('.slide')];
+const TOT = slides.length;
+let i = 0;
+document.getElementById('tot').textContent = TOT;
+
+const dotsEl = document.getElementById('dots');
+slides.forEach((sl,idx)=>{
+  const d = document.createElement('span');
+  d.className='dot'+(sl.classList.contains('dark')?' sec':'');
+  d.addEventListener('click',()=>go(idx));
+  dotsEl.appendChild(d);
+});
+const dots=[...dotsEl.children];
+// page numbers follow slide order (so slides can be inserted freely)
+slides.forEach((s,idx)=>{const pg=s.querySelector('.foot .pg'); if(pg)pg.textContent=String(idx+1).padStart(2,'0');});
+
+const notesEl=document.getElementById('notes');
+const notesBody=document.getElementById('notesBody');
+function renderNotes(){
+  let data=[]; try{data=JSON.parse(slides[i].dataset.notes||'[]')}catch(e){}
+  notesBody.innerHTML='';
+  if(!data.length){notesBody.innerHTML='<li style="color:#777">No notes for this slide.</li>';}
+  data.forEach(t=>{const li=document.createElement('li');li.textContent=t;notesBody.appendChild(li);});
+}
+function go(n){
+  n=Math.max(0,Math.min(TOT-1,n));
+  if(n===i) return;
+  slides[i].classList.remove('active'); slides[i].classList.add('prev');
+  slides[n].classList.remove('prev'); slides[n].classList.add('active');
+  i=n; sync();
+}
+function sync(){
+  document.getElementById('progress').style.width=((i+1)/TOT*100)+'%';
+  document.getElementById('cur').textContent=i+1;
+  dots.forEach((d,x)=>d.classList.toggle('on',x===i));
+  location.hash=i+1;
+  if(notesEl.classList.contains('show')) renderNotes();
+  // (re)trigger counters on the active slide
+  triggerCounters(slides[i]);
+  playDemo(slides[i]);
+}
+function next(){go(i+1)} function prev(){go(i-1)}
+
+/* keyboard */
+addEventListener('keydown',e=>{
+  if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();next();}
+  else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();prev();}
+  else if(e.key==='Home'){go(0)} else if(e.key==='End'){go(TOT-1)}
+  else if(e.key.toLowerCase()==='n'){notesEl.classList.toggle('show'); renderNotes();}
+  else if(e.key.toLowerCase()==='f'){if(!document.fullscreenElement)document.documentElement.requestFullscreen();else document.exitFullscreen();}
+});
+document.getElementById('notesClose').addEventListener('click',()=>notesEl.classList.remove('show'));
+
+/* wheel (debounced) */
+let wlock=false;
+addEventListener('wheel',e=>{
+  if(wlock) return; if(Math.abs(e.deltaY)<18) return;
+  wlock=true; e.deltaY>0?next():prev();
+  setTimeout(()=>wlock=false,650);
+},{passive:true});
+
+/* touch */
+let tx=0,ty=0;
+addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
+addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty;
+  if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)) dx<0?next():prev();
+},{passive:true});
+
+/* counters */
+function triggerCounters(slide){
+  slide.querySelectorAll('[data-count]').forEach(el=>{
+    if(el.dataset.done) return; el.dataset.done='1';
+    const end=+el.dataset.count, pre=el.dataset.prefix||'', suf=el.dataset.suffix||'';
+    if(STATIC){el.innerHTML=pre+end+(suf?'<span class="unit">'+suf+'</span>':'');return;}
+    const dur=1100, t0=performance.now();
+    function tick(t){
+      const p=Math.min(1,(t-t0)/dur), e=1-Math.pow(1-p,3);
+      const v=Math.round(end*e);
+      el.innerHTML=pre+v+(suf?'<span class="unit">'+suf+'</span>':'');
+      if(p<1)requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+  // progress rings
+  slide.querySelectorAll('[data-ring]').forEach(el=>{
+    if(el.dataset.done) return; el.dataset.done='1';
+    const circle=el.querySelector('.fg'); if(!circle)return;
+    const pct=+el.dataset.ring, len=circle.getTotalLength();
+    if(STATIC){circle.style.strokeDasharray=len;circle.style.strokeDashoffset=len*(1-pct/100);const o=el.querySelector('.pct');if(o)o.textContent=pct+'%';return;}
+    circle.style.strokeDasharray=len; circle.style.strokeDashoffset=len;
+    requestAnimationFrame(()=>{circle.style.transition='stroke-dashoffset 1.3s cubic-bezier(.16,1,.3,1)';circle.style.strokeDashoffset=len*(1-pct/100);});
+    const out=el.querySelector('.pct'); if(out){const t0=performance.now();(function tk(t){const p=Math.min(1,(t-t0)/1300);out.textContent=Math.round(pct*(1-Math.pow(1-p,3)))+'%';if(p<1)requestAnimationFrame(tk);})(performance.now());}
+  });
+}
+
+/* notebook demo player */
+const demoTimers=[];
+function clearDemo(){demoTimers.forEach(clearTimeout); demoTimers.length=0;}
+function playDemo(slide){
+  if(!slide.classList.contains('demo-slide')) return;
+  clearDemo();
+  const cells=[...slide.querySelectorAll('.nb-cell')];
+  const steps=[...slide.querySelectorAll('.demo-steps li')];
+  cells.forEach(c=>{c.classList.remove('shown','running'); const o=c.querySelector('.nb-out'); if(o)o.classList.remove('shown'); const p=c.querySelector('.nb-prompt'); if(p){p.classList.remove('busy'); p.textContent='['+(cells.indexOf(c)+1)+']';}});
+  steps.forEach(s=>s.classList.remove('on'));
+  if(STATIC){cells.forEach(c=>{c.classList.add('shown'); const o=c.querySelector('.nb-out'); if(o)o.classList.add('shown');}); steps.forEach(s=>s.classList.add('on')); const body=slide.querySelector('.nb-body'); if(body){body.style.scrollBehavior='auto'; const snap=()=>body.scrollTop=body.scrollHeight; snap(); requestAnimationFrame(snap); setTimeout(snap,80);} return;}
+  let t=420;
+  cells.forEach((cell,idx)=>{
+    const prompt=cell.querySelector('.nb-prompt');
+    const out=cell.querySelector('.nb-out');
+    demoTimers.push(setTimeout(()=>{cell.classList.add('shown','running'); if(prompt){prompt.classList.add('busy'); prompt.textContent='[*]';} const body=cell.parentElement; body.scrollTop=Math.max(0,cell.offsetTop-90);},t));
+    t+=720;
+    demoTimers.push(setTimeout(()=>{
+      cell.classList.remove('running');
+      if(prompt){prompt.classList.remove('busy'); prompt.textContent='['+(idx+1)+']';}
+      if(out)out.classList.add('shown');
+      if(steps[idx])steps[idx].classList.add('on');
+    },t));
+    t+=820;
+  });
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-replay]'); if(!b) return;
+  playDemo(b.closest('.slide'));
+});
+addEventListener('keydown',e=>{if(e.key.toLowerCase()==='r'){const s=slides[i]; if(s.classList.contains('demo-slide'))playDemo(s);}});
+
+/* auto-hide chrome when idle */
+let idleT; function poke(){document.body.classList.remove('idle'); clearTimeout(idleT); idleT=setTimeout(()=>document.body.classList.add('idle'),3200);}
+['mousemove','keydown','touchstart','wheel','click'].forEach(ev=>addEventListener(ev,poke,{passive:true})); poke();
+
+/* deep link */
+if(location.hash){const n=parseInt(location.hash.slice(1));if(n>=1&&n<=TOT){slides[0].classList.remove('active');i=n-1;slides[i].classList.add('active');}}
+sync();
+</script>
+<script>
+/* interactive precision/recall threshold (slide 22) */
+(function(){
+  var sl=document.getElementById('thr'); if(!sl) return;
+  var pos=[91,88,84,81,78,75,72,69,66,62,58,54,49,44,38,32];
+  var neg=[64,58,53,49,45,42,39,36,33,30,27,24,21,18,15,12,10,8,6,4,3,2];
+  function set(id,v){var f=document.getElementById(id),x=document.getElementById(id+'v');var p=Math.round(v*100);if(f)f.style.width=p+'%';if(x)x.textContent=p+'%';}
+  function upd(){
+    var t=+sl.value;
+    var tp=pos.filter(function(s){return s>=t;}).length, fn=pos.length-tp;
+    var fp=neg.filter(function(s){return s>=t;}).length;
+    var prec=(tp+fp)?tp/(tp+fp):0, rec=(tp+fn)?tp/(tp+fn):0;
+    var f1=(prec+rec)?2*prec*rec/(prec+rec):0;
+    document.getElementById('tval').textContent=(t/100).toFixed(2);
+    set('fp',prec); set('fr',rec); set('ff',f1);
+  }
+  sl.addEventListener('input',upd); upd();
+})();
+</script>
+</body>
+</html>
