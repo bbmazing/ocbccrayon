@@ -800,9 +800,9 @@ body.static .cosbox .swing{transform:rotate(0deg) !important; transition:none !i
     <h2 class="slide-title" data-r data-d="1">From a confident guesser to a grounded one</h2>
     <p class="slide-sub" data-r data-d="2">Topic 3 left two gaps: LLMs <b style="color:var(--ink)">hallucinate</b> and have <b style="color:var(--ink)">no live or internal knowledge</b>. Today we close both.</p>
     <div class="flow" style="margin-top:6px">
-      <div class="step"><div class="node">1</div><h4>Ask</h4><p>a policy question</p><div class="arrow"></div>
-      <div class="step"><div class="node">2</div><h4>Retrieve</h4><p>the relevant passage</p><div class="arrow"></div>
-      <div class="step"><div class="node hot">3</div><h4>Answer</h4><p>grounded, with a citation</p>
+      <div class="step"><div class="node">1</div><h4>Ask</h4><p>a policy question</p><div class="arrow"></div></div>
+      <div class="step"><div class="node">2</div><h4>Retrieve</h4><p>the relevant passage</p><div class="arrow"></div></div>
+      <div class="step"><div class="node hot">3</div><h4>Answer</h4><p>grounded, with a citation</p></div>
     </div>
     <div class="flow-cap">Give the model <b style="color:var(--red)">the right context at the right moment</b> — from our own documents.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">03</span></div>
@@ -819,11 +819,11 @@ body.static .cosbox .swing{transform:rotate(0deg) !important; transition:none !i
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">04</span></div>
   </section>
 
-  <section class="slide" data-notes='["Three ways to give a model knowledge. Fine-tuning bakes facts into the weights — expensive, slow to update, and wrong the moment a policy changes.", "Stuffing everything into the prompt hits context limits and gets costly fast — you cannot paste the whole policy library every time.", "Retrieval fetches just the relevant passages on demand. For knowledge that is large, changing, and sensitive, RAG wins."]'>
+  <section class="slide" data-notes='["Three ways to give a model knowledge. Fine-tuning retrains the weights — it is great for teaching behaviour, tone or format, but a poor way to add facts: it is expensive, it cannot cite a source, and it is stale the moment a policy changes.", "Stuffing everything into the prompt hits context limits and gets costly fast — you cannot paste the whole policy library on every question.", "Retrieval fetches just the relevant passages on demand. For knowledge that is large, changing, and sensitive, RAG wins."]'>
     <div class="kicker"><span class="badge"></span>Three ways to add knowledge</div>
     <h2 class="slide-title" data-r data-d="1">Why retrieval wins for bank knowledge</h2>
     <div class="cards c3" style="margin-top:24px">
-      <div class="card" data-r data-d="2"><div class="num">A</div><h3>Fine-tune</h3><p>Bake facts into the weights. Expensive, static, stale the moment policy changes.</p></div>
+      <div class="card" data-r data-d="2"><div class="num">A</div><h3>Fine-tune</h3><p>Trains behaviour into the weights &mdash; the wrong tool for facts: costly, stale when policy changes, and it can&#39;t cite a source.</p></div>
       <div class="card" data-r data-d="3"><div class="num">B</div><h3>Stuff the prompt</h3><p>Paste everything in. Hits context limits, slow and costly at scale.</p></div>
       <div class="card" data-r data-d="4"><div class="num">C</div><h3>Retrieve &mdash; RAG</h3><p>Fetch only what&#39;s relevant, on demand. Current, cheap, and sources stay ours.</p></div>
     </div>
@@ -835,15 +835,15 @@ body.static .cosbox .swing{transform:rotate(0deg) !important; transition:none !i
     <div class="kicker"><span class="badge"></span>What is RAG</div>
     <h2 class="slide-title" data-r data-d="1">An open-book exam for the model</h2>
     <div class="flow" style="margin-top:6px">
-      <div class="step"><div class="node">1</div><h4>Retrieve</h4><p>find relevant passages</p><div class="arrow"></div>
-      <div class="step"><div class="node">2</div><h4>Augment</h4><p>add them to the prompt</p><div class="arrow"></div>
-      <div class="step"><div class="node hot">3</div><h4>Generate</h4><p>answer from that context</p>
+      <div class="step"><div class="node">1</div><h4>Retrieve</h4><p>find relevant passages</p><div class="arrow"></div></div>
+      <div class="step"><div class="node">2</div><h4>Augment</h4><p>add them to the prompt</p><div class="arrow"></div></div>
+      <div class="step"><div class="node hot">3</div><h4>Generate</h4><p>answer from that context</p></div>
     </div>
     <div class="flow-cap"><b>R</b>etrieval-<b>A</b>ugmented <b>G</b>eneration &mdash; the model answers from <b style="color:var(--red)">retrieved facts</b>, not memory.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">06</span></div>
   </section>
 
-  <section class="slide" data-notes='["This diagram is the spine of the entire deck. RAG has two phases. Indexing happens offline, once: documents are chunked, embedded, and stored in a vector database.", "Retrieval happens online, per question: embed the query, search the index, optionally rerank, stuff the top chunks into the prompt, and answer.", "Every later section zooms into one box: embeddings, chunking, and retrieval mechanics. Keep returning to this map."]'>
+  <section class="slide" data-notes='["This diagram is the spine of the entire deck. RAG has two phases. Indexing happens offline, once: documents are chunked, embedded, and stored in a vector database.", "Retrieval happens online, per question: embed the query, search the index, optionally rerank, stuff the top chunks into the prompt, and answer.", "Every later section zooms into one box: embeddings (Part 1), chunking (Part 2), and the search and rerank mechanics (Part 3) — so if &ldquo;rerank&rdquo; looks unfamiliar here, that is fine, it is covered there. Keep returning to this map."]'>
     <div class="kicker"><span class="badge"></span>The two phases</div>
     <h2 class="slide-title" data-r data-d="1">Index once, retrieve every time</h2>
     <div class="phases">
@@ -859,7 +859,7 @@ body.static .cosbox .swing{transform:rotate(0deg) !important; transition:none !i
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">07</span></div>
   </section>
 
-  <section class="slide" data-notes='["Make the bank case explicit. Answers are grounded in our own policies — current and citable, not the model&#39;s vague memory.", "Sensitive documents stay inside our infrastructure; nothing is shipped to a third party. That is decisive in a regulated environment.", "And every answer carries a source, which means less hallucination and real auditability — you can show where it came from."]'>
+  <section class="slide" data-notes='["Make the bank case explicit. Answers are grounded in our own policies — current and citable, not the model&#39;s vague memory.", "Sensitive documents stay inside our infrastructure; nothing is shipped to a third party. That is decisive in a regulated environment.", "And every answer can carry a source — less hallucination and real auditability, because you can show where it came from. Be precise though: retrieval reduces hallucination, it does not eliminate it. The model can still misread or ignore the text it is handed, which is exactly why we measure faithfulness later."]'>
     <div class="kicker"><span class="badge"></span>Why a bank needs this</div>
     <h2 class="slide-title" data-r data-d="1">Grounded, private, and auditable</h2>
     <div class="cards c2" style="margin-top:22px">
@@ -880,19 +880,19 @@ body.static .cosbox .swing{transform:rotate(0deg) !important; transition:none !i
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">09</span></div>
   </section>
 
-  <section class="slide" data-notes='["Recap from Topic 3, now load-bearing. An embedding turns a piece of text into a list of numbers — a vector — that captures its meaning.", "The key property: texts with similar meaning get similar vectors, so they sit close together in space.", "Everything in retrieval reduces to comparing these vectors. Numbers, because computers compare numbers, not words."]'>
+  <section class="slide" data-notes='["Recap from Topic 3, now load-bearing — but at a bigger grain. There, each token had its own vector; here a whole chunk of text collapses to a single vector (a &ldquo;passage embedding&rdquo;) that captures its overall meaning.", "The key property: texts with similar meaning get similar vectors, so they sit close together in space.", "Everything in retrieval reduces to comparing these vectors. Numbers, because computers compare numbers, not words."]'>
     <div class="kicker"><span class="badge"></span>What is an embedding</div>
     <h2 class="slide-title" data-r data-d="1">Text becomes a vector of meaning</h2>
     <div class="two" style="margin-top:18px">
       <div class="txt">
         <ul class="bullets">
-          <li data-r data-d="2">An <b>embedding</b> maps text to a list of numbers &mdash; a <b>vector</b>.</li>
+          <li data-r data-d="2">An <b>embedding</b> maps a whole chunk of text to <b>one</b> vector &mdash; a list of numbers.</li>
           <li data-r data-d="3" class="strong">Similar meaning &rarr; similar vector &rarr; <b>close in space</b>.</li>
           <li data-r data-d="4">Retrieval is just comparing these vectors.</li>
         </ul>
       </div>
       <div class="viz">
-        <div class="prompt-box" data-r data-d="3" style="background:var(--code-bg);color:var(--code-ink);font-family:var(--fMono);border-radius:14px;padding:24px 26px;font-size:15px;line-height:1.7">"early withdrawal penalty"<br/><span style="color:#7d8590">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&darr; embed</span><br/>[ 0.07, -0.21, 0.88, 0.13,<br/>&nbsp; -0.04, 0.42, ... , 0.19 ]<br/><span style="color:#7d8590"># 4096 numbers</span></div>
+        <div class="prompt-box" data-r data-d="3" style="background:var(--code-bg);color:var(--code-ink);font-family:var(--fMono);border-radius:14px;padding:24px 26px;font-size:15px;line-height:1.7">"early withdrawal penalty"<br/><span style="color:#7d8590">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&darr; embed</span><br/>[ 0.07, -0.21, 0.88, 0.13,<br/>&nbsp; -0.04, 0.42, ... , 0.19 ]<br/><span style="color:#7d8590"># up to 4096 numbers</span></div>
       </div>
     </div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">10</span></div>
@@ -939,7 +939,7 @@ body.static .cosbox .swing{transform:rotate(0deg) !important; transition:none !i
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">12</span></div>
   </section>
 
-  <section class="slide" data-notes='["The concrete tool OCBC uses: Qwen3-Embedding-8B. Walk the specs that actually matter in practice.", "8B parameters and up to 32K-token context; flexible output dimensions from 32 up to 4096 via Matryoshka; over 100 languages including Bahasa Indonesia and code.", "It is instruction-aware, and we self-host it — so sensitive documents never leave our infrastructure."]'>
+  <section class="slide" data-notes='["The concrete tool OCBC uses for embeddings: Qwen3-Embedding-8B. Walk the specs that actually matter in practice.", "8B parameters means strong semantic quality. The 32K-token context is the most it can embed at once — but for retrieval we deliberately feed it much smaller chunks, because a focused passage matches far more precisely than a whole document (see Chunking, Part 2). The output size is also flexible — from 32 up to 4096 numbers per vector — thanks to Matryoshka representation learning, which we unpack a couple of slides from now.", "It covers 100+ languages (including Bahasa Indonesia) and code; it is instruction-aware, meaning you can tell it what the text is for; and we self-host it, so sensitive documents never leave our infrastructure."]'>
     <div class="kicker"><span class="badge"></span>Our embedding model</div>
     <h2 class="slide-title" data-r data-d="1">Qwen3-Embedding-8B, self-hosted</h2>
     <div class="specwrap">
@@ -953,14 +953,14 @@ body.static .cosbox .swing{transform:rotate(0deg) !important; transition:none !i
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">13</span></div>
   </section>
 
-  <section class="slide" data-notes='["Why this model. As of June 2025 it ranked number one on the MTEB multilingual leaderboard with a score of 70.58 — present that as a 2025 snapshot, verify current.", "Multilingual strength matters for us — Indonesian and English banking documents in one consistent space.", "And self-hosting keeps data inside OCBC. Strong, multilingual, and ours."]'>
+  <section class="slide" data-notes='["Why this model. MTEB — the Massive Text Embedding Benchmark — is the standard scoreboard for embedding models. As of June 2025, Qwen3-Embedding-8B ranked number one on its multilingual leaderboard with a score of 70.58. Present that as a 2025 snapshot and verify the current standing before quoting.", "Multilingual strength matters for us — Indonesian and English banking documents living in one consistent space.", "And self-hosting keeps the data inside OCBC. Strong, multilingual, and ours."]'>
     <div class="kicker"><span class="badge"></span>Why it&#39;s a strong choice</div>
     <h2 class="slide-title" data-r data-d="1">Top of the multilingual leaderboard</h2>
     <div class="megastat">
       <div class="num">#1<span class="u" style="font-size:64px"></span></div>
       <div class="copy" data-r data-d="2">
         <h3>MTEB multilingual &mdash; score <span style="color:var(--red)">70.58</span></h3>
-        <p>Best-in-class multilingual retrieval, which matters for Indonesian + English banking docs. Self-hosting keeps the data in OCBC infrastructure.</p>
+        <p>Top-ranked across multilingual text tasks, which matters for Indonesian + English banking docs. Self-hosting keeps the data in OCBC infrastructure.</p>
         <div class="src">As of June 2025 &mdash; benchmarks move; verify the current standing before quoting.</div>
       </div>
     </div>
@@ -985,19 +985,19 @@ body.static .cosbox .swing{transform:rotate(0deg) !important; transition:none !i
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">15</span></div>
   </section>
 
-  <section class="slide" data-notes='["Dimension choice is a real tuning decision. Bigger vectors capture more nuance but cost more storage and slow search.", "Matryoshka representation learning lets you truncate the same vector to fewer dimensions — say 1024 — keeping most of the accuracy for a fraction of the cost.", "Drag it: as you cut dimensions, storage and latency fall fast while accuracy dips only a little. There is no single right value — you tune it."]'>
+  <section class="slide" data-notes='["Dimension choice is a real tuning decision. Bigger vectors (more numbers each) capture more nuance but cost more storage and slow the search down.", "Matryoshka representation learning — named after Russian nesting dolls — packs the most important information into the first dimensions. So you can truncate the same vector to fewer dimensions, say 1024, and keep most of the accuracy for a fraction of the cost.", "Drag the slider: near the top, cutting dimensions saves storage and latency while accuracy barely moves — that is the MRL win. Push it too far down (say 64) and accuracy drops noticeably, so there is no single right value: tune it for your data and budget, and measure."]'>
     <div class="kicker"><span class="badge"></span>Choosing dimensions (MRL)</div>
     <h2 class="slide-title" data-r data-d="1">Trade a little accuracy for big savings</h2>
     <div class="dimwrap">
       <div class="dimbox" data-r data-d="2">
         <div class="dval" id="dval">1024</div>
         <div class="dlab">output dimensions</div>
-        <input id="dim" type="range" min="0" max="4" value="2" />
+        <input id="dim" type="range" min="0" max="6" value="4" />
       </div>
       <div data-r data-d="3">
         <div class="dimrow"><div class="dl">Accuracy</div><div class="dt"><div class="df acc" id="dacc"></div></div><div class="dv" id="daccv"></div></div>
         <div class="dimrow"><div class="dl">Storage</div><div class="dt"><div class="df sto" id="dsto"></div></div><div class="dv" id="dstov"></div></div>
-        <div class="demo-take" style="margin-top:6px"><b>MRL:</b> truncate the same vector to fewer dims &mdash; cut storage and latency, keep most of the accuracy.</div>
+        <div class="demo-take" style="margin-top:6px"><b>MRL:</b> shorten the same vector to save storage &amp; latency. Accuracy holds near the top but falls if you cut too far &mdash; tune it, don&#39;t just pick the smallest. <span style="opacity:.65">(numbers illustrative)</span></div>
       </div>
     </div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">16</span></div>
@@ -1148,7 +1148,7 @@ body.static .cosbox .swing{transform:rotate(0deg) !important; transition:none !i
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">24</span></div>
   </section>
 
-  <section class="slide" data-notes='["The best-practice upgrade, from Anthropic. A bare chunk that says the penalty is 1% is context-less — the index does not know which product or year.", "Contextual retrieval prepends a short context blurb to each chunk before embedding: this is from OCBC&#39;s 2025 Time Deposit T&Cs, regarding early withdrawal.", "Reported around 35 percent fewer retrieval failures, and it pairs well with hybrid search. Cheap to add, big win."]'>
+  <section class="slide" data-notes='["The best-practice upgrade, from Anthropic. A bare chunk that says the penalty is 1% is context-less — the index does not know which product or year.", "Contextual retrieval prepends a short context blurb to each chunk before embedding — e.g. &ldquo;from OCBC&#39;s 2025 Time Deposit T&amp;Cs, on early withdrawal&rdquo;. The blurb is short and on-topic, so it sharpens the match rather than re-diluting the chunk.", "Anthropic reported around 35 percent fewer retrieval failures from contextual embeddings alone — rising to roughly 49 percent when combined with keyword (BM25) search, and further still once reranking is added. Cheap to add, big win."]'>
     <div class="kicker"><span class="badge"></span>Contextual retrieval &mdash; the upgrade</div>
     <h2 class="slide-title" data-r data-d="1">Give each chunk its context before embedding</h2>
     <div class="ba" style="margin-top:18px">
@@ -1179,7 +1179,7 @@ body.static .cosbox .swing{transform:rotate(0deg) !important; transition:none !i
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">26</span></div>
   </section>
 
-  <section class="slide" data-notes='["How do we measure closeness? Cosine similarity: the angle between two vectors. Small angle means similar meaning.", "A score near 1 means the directions almost line up — near-identical meaning. Near 0 means unrelated.", "Watch the query vector swing toward the closest chunk. We never use the length, only the direction — that is what cosine captures."]'>
+  <section class="slide" data-notes='["How do we measure closeness? Cosine similarity looks at the angle between two vectors, not their length — a short arrow and a long arrow pointing the same way still count as the same meaning.", "Score near 1 = almost the same direction = near-identical meaning; near 0 = unrelated. That is all &ldquo;cosine similarity&rdquo; means.", "We compare direction, not length, so a one-line query and a long passage can still score as a strong match. (Length can be skewed by things like how long or repetitive a text is — which we do not want driving the match.) Watch the query vector swing toward the closest chunk; only the direction counts. The 0.97 here is illustrative of a strong but not identical match."]'>
     <div class="kicker"><span class="badge"></span>Cosine similarity</div>
     <h2 class="slide-title" data-r data-d="1">Closeness is the angle between arrows</h2>
     <div class="fillc">
@@ -1192,7 +1192,7 @@ body.static .cosbox .swing{transform:rotate(0deg) !important; transition:none !i
             <text class="vlab" x="326" y="122" fill="#1A1A1A">query</text>
           </g>
           <path class="arc" d="M 200 150 A 70 70 0 0 1 188 188"/>
-          <text class="clab" x="150" y="150">cos &theta; &asymp; 0.92</text>
+          <text class="clab" x="150" y="150">cos &theta; &asymp; 0.97</text>
           <circle cx="40" cy="260" r="4" fill="#1A1A1A"/>
         </svg>
       </div>
@@ -1224,7 +1224,7 @@ body.static .cosbox .swing{transform:rotate(0deg) !important; transition:none !i
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">28</span></div>
   </section>
 
-  <section class="slide" data-notes='["Scale problem: comparing the query to millions of vectors one by one is too slow for a live chatbot.", "Vector databases use Approximate Nearest Neighbour indexes — like HNSW — that take smart shortcuts to get near-instant results with a tiny accuracy trade-off.", "Name a few lightly: pgvector, FAISS, Milvus. The idea to keep: ANN is a smart shortcut, not exact search."]'>
+  <section class="slide" data-notes='["Scale problem: comparing the query against millions of vectors one by one is too slow for a live chatbot.", "Vector databases use Approximate Nearest Neighbour (ANN) indexes — like HNSW, which links the vectors into a graph you hop across to jump straight to the right neighbourhood — giving near-instant results for a tiny, usually invisible accuracy trade-off.", "Name a few lightly: pgvector, FAISS, Milvus. The idea to keep: ANN is a smart shortcut, not an exhaustive search."]'>
     <div class="kicker"><span class="badge"></span>Vector databases &amp; ANN</div>
     <h2 class="slide-title" data-r data-d="1">A smart shortcut through millions of vectors</h2>
     <div class="two" style="margin-top:18px">
@@ -1232,7 +1232,7 @@ body.static .cosbox .swing{transform:rotate(0deg) !important; transition:none !i
         <ul class="bullets">
           <li data-r data-d="2">Exact search over millions of vectors is <b>too slow</b>.</li>
           <li data-r data-d="3" class="strong"><b>ANN</b> indexes (e.g. HNSW) get near-instant results...</li>
-          <li data-r data-d="4">...for a <b>tiny accuracy trade-off</b>.</li>
+          <li data-r data-d="4">...for a <b>small, tunable accuracy trade-off</b>.</li>
           <li data-r data-d="5">Tools: <b>pgvector, FAISS, Milvus</b>, and more.</li>
         </ul>
       </div>
@@ -1267,7 +1267,7 @@ body.static .cosbox .swing{transform:rotate(0deg) !important; transition:none !i
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">30</span></div>
   </section>
 
-  <section class="slide" data-notes='["The fix is to use both. Hybrid search runs semantic vector search and keyword search — BM25 — in parallel, then merges the rankings.", "A common merge is Reciprocal Rank Fusion. Semantic catches meaning and paraphrase; keyword nails the exact code or clause number.", "Hybrid is the current best-practice default — it catches both the sense and the exact string."]'>
+  <section class="slide" data-notes='["The fix is to use both. Hybrid search runs semantic (vector) search and classic keyword search in parallel, then merges the two rankings. BM25 is just the standard keyword-scoring method — it rewards rare, exact words like a product code.", "A common way to merge them is Reciprocal Rank Fusion (RRF): it blends the two ranked lists by how high each result sits in each. Semantic catches meaning and paraphrase; keyword nails the exact code or clause number.", "Hybrid is the current best-practice default — it catches both the sense and the exact string."]'>
     <div class="kicker"><span class="badge"></span>Hybrid search</div>
     <h2 class="slide-title" data-r data-d="1">Meaning and exact strings, together</h2>
     <div class="merge" style="margin-top:8px">
@@ -1285,11 +1285,11 @@ body.static .cosbox .swing{transform:rotate(0deg) !important; transition:none !i
         </ol>
       </div>
     </div>
-    <div class="flow-cap">Reciprocal Rank Fusion merges both streams &mdash; the <b style="color:var(--red)">best-practice default</b>.</div>
+    <div class="flow-cap">Reciprocal Rank Fusion merges the two by <b>rank</b>, not raw score &mdash; the <b style="color:var(--red)">best-practice default</b>.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">31</span></div>
   </section>
 
-  <section class="slide" data-notes='["Reranking is the precision step. First retrieve a broad top-k cheaply — say 20 candidates.", "Then a reranker, a cross-encoder, re-reads each candidate against the query and scores true relevance, reordering them.", "Keep the top few for the prompt. It is slower per item, so you only run it on the shortlist. Qwen3 ships a reranker too."]'>
+  <section class="slide" data-notes='["Reranking is the precision step. First retrieve a broad shortlist cheaply — say the top 20 candidates.", "Then a reranker — a model called a cross-encoder — reads each candidate together with the query (not separately) and scores how relevant it truly is, then reorders them. Reading them as a pair is what makes it sharper than the first pass.", "Keep only the top few for the prompt. It is slower per item, so you run it just on the shortlist, never the whole index. Qwen3 ships a reranker too."]'>
     <div class="kicker"><span class="badge"></span>Reranking</div>
     <h2 class="slide-title" data-r data-d="1">Re-read the shortlist for precision</h2>
     <div class="rerank" style="margin-top:8px">
@@ -1579,7 +1579,7 @@ sync();
 /* dimension (MRL) slider — slide 16 */
 (function(){
   var sl=document.getElementById('dim'); if(!sl) return;
-  var dims=[256,512,1024,2048,4096], acc=[88,93,96,98,100], sto=[6,12,25,50,100];
+  var dims=[64,128,256,512,1024,2048,4096], acc=[71,82,88,93,96,98,100], sto=[2,3,6,12,25,50,100];
   function upd(){var i=+sl.value;
     document.getElementById('dval').textContent=dims[i];
     var a=document.getElementById('dacc'),av=document.getElementById('daccv');

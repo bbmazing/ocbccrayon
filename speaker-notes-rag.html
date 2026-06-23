@@ -83,7 +83,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
 <div class="banner" id="banner">✎&nbsp; Editing — your changes are saved in this browser. Use <b>Download .txt</b> to keep a copy.</div>
 <main>
   <h1 class="lead">Talk track <span class="red">&middot; every slide</span></h1>
-  <p class="intro">Speaker notes for the OCBC CRAYON 2026 &mdash; Knowledge Retrieval &amp; Context (RAG) deck. 36 slides, in order. Press <b>Edit</b> to tweak the wording inline (saved to this browser), or <b>Download .txt</b> for a copy.</p>
+  <p class="intro">Speaker notes for the OCBC CRAYON 2026 &mdash; Knowledge Retrieval &amp; Context (RAG) deck. 38 slides, in order. Press <b>Edit</b> to tweak the wording inline (saved to this browser), or <b>Download .txt</b> for a copy.</p>
   <div id="notes">
     <article class="s">
       <div class="n">Slide 1</div>
@@ -125,8 +125,8 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       <div class="n">Slide 5</div>
       <h2>Why retrieval wins for bank knowledge</h2>
       <ul>
-        <li>Three ways to give a model knowledge. Fine-tuning bakes facts into the weights — expensive, slow to update, and wrong the moment a policy changes.</li>
-        <li>Stuffing everything into the prompt hits context limits and gets costly fast — you cannot paste the whole policy library every time.</li>
+        <li>Three ways to give a model knowledge. Fine-tuning retrains the weights — it is great for teaching behaviour, tone or format, but a poor way to add facts: it is expensive, it cannot cite a source, and it is stale the moment a policy changes.</li>
+        <li>Stuffing everything into the prompt hits context limits and gets costly fast — you cannot paste the whole policy library on every question.</li>
         <li>Retrieval fetches just the relevant passages on demand. For knowledge that is large, changing, and sensitive, RAG wins.</li>
       </ul>
     </article>
@@ -145,7 +145,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       <ul>
         <li>This diagram is the spine of the entire deck. RAG has two phases. Indexing happens offline, once: documents are chunked, embedded, and stored in a vector database.</li>
         <li>Retrieval happens online, per question: embed the query, search the index, optionally rerank, stuff the top chunks into the prompt, and answer.</li>
-        <li>Every later section zooms into one box: embeddings, chunking, and retrieval mechanics. Keep returning to this map.</li>
+        <li>Every later section zooms into one box: embeddings (Part 1), chunking (Part 2), and the search and rerank mechanics (Part 3) — so if “rerank” looks unfamiliar here, that is fine, it is covered there. Keep returning to this map.</li>
       </ul>
     </article>
     <article class="s">
@@ -154,7 +154,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       <ul>
         <li>Make the bank case explicit. Answers are grounded in our own policies — current and citable, not the model's vague memory.</li>
         <li>Sensitive documents stay inside our infrastructure; nothing is shipped to a third party. That is decisive in a regulated environment.</li>
-        <li>And every answer carries a source, which means less hallucination and real auditability — you can show where it came from.</li>
+        <li>And every answer can carry a source — less hallucination and real auditability, because you can show where it came from. Be precise though: retrieval reduces hallucination, it does not eliminate it. The model can still misread or ignore the text it is handed, which is exactly why we measure faithfulness later.</li>
       </ul>
     </article>
     <article class="s">
@@ -170,7 +170,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       <div class="n">Slide 10</div>
       <h2>Text becomes a vector of meaning</h2>
       <ul>
-        <li>Recap from Topic 3, now load-bearing. An embedding turns a piece of text into a list of numbers — a vector — that captures its meaning.</li>
+        <li>Recap from Topic 3, now load-bearing — but at a bigger grain. There, each token had its own vector; here a whole chunk of text collapses to a single vector (a “passage embedding”) that captures its overall meaning.</li>
         <li>The key property: texts with similar meaning get similar vectors, so they sit close together in space.</li>
         <li>Everything in retrieval reduces to comparing these vectors. Numbers, because computers compare numbers, not words.</li>
       </ul>
@@ -197,18 +197,18 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       <div class="n">Slide 13</div>
       <h2>Qwen3-Embedding-8B, self-hosted</h2>
       <ul>
-        <li>The concrete tool OCBC uses: Qwen3-Embedding-8B. Walk the specs that actually matter in practice.</li>
-        <li>8B parameters and up to 32K-token context; flexible output dimensions from 32 up to 4096 via Matryoshka; over 100 languages including Bahasa Indonesia and code.</li>
-        <li>It is instruction-aware, and we self-host it — so sensitive documents never leave our infrastructure.</li>
+        <li>The concrete tool OCBC uses for embeddings: Qwen3-Embedding-8B. Walk the specs that actually matter in practice.</li>
+        <li>8B parameters means strong semantic quality. The 32K-token context is the most it can embed at once — but for retrieval we deliberately feed it much smaller chunks, because a focused passage matches far more precisely than a whole document (see Chunking, Part 2). The output size is also flexible — from 32 up to 4096 numbers per vector — thanks to Matryoshka representation learning, which we unpack a couple of slides from now.</li>
+        <li>It covers 100+ languages (including Bahasa Indonesia) and code; it is instruction-aware, meaning you can tell it what the text is for; and we self-host it, so sensitive documents never leave our infrastructure.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 14</div>
       <h2>Top of the multilingual leaderboard</h2>
       <ul>
-        <li>Why this model. As of June 2025 it ranked number one on the MTEB multilingual leaderboard with a score of 70.58 — present that as a 2025 snapshot, verify current.</li>
-        <li>Multilingual strength matters for us — Indonesian and English banking documents in one consistent space.</li>
-        <li>And self-hosting keeps data inside OCBC. Strong, multilingual, and ours.</li>
+        <li>Why this model. MTEB — the Massive Text Embedding Benchmark — is the standard scoreboard for embedding models. As of June 2025, Qwen3-Embedding-8B ranked number one on its multilingual leaderboard with a score of 70.58. Present that as a 2025 snapshot and verify the current standing before quoting.</li>
+        <li>Multilingual strength matters for us — Indonesian and English banking documents living in one consistent space.</li>
+        <li>And self-hosting keeps the data inside OCBC. Strong, multilingual, and ours.</li>
       </ul>
     </article>
     <article class="s">
@@ -224,9 +224,9 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       <div class="n">Slide 16</div>
       <h2>Trade a little accuracy for big savings</h2>
       <ul>
-        <li>Dimension choice is a real tuning decision. Bigger vectors capture more nuance but cost more storage and slow search.</li>
-        <li>Matryoshka representation learning lets you truncate the same vector to fewer dimensions — say 1024 — keeping most of the accuracy for a fraction of the cost.</li>
-        <li>Drag it: as you cut dimensions, storage and latency fall fast while accuracy dips only a little. There is no single right value — you tune it.</li>
+        <li>Dimension choice is a real tuning decision. Bigger vectors (more numbers each) capture more nuance but cost more storage and slow the search down.</li>
+        <li>Matryoshka representation learning — named after Russian nesting dolls — packs the most important information into the first dimensions. So you can truncate the same vector to fewer dimensions, say 1024, and keep most of the accuracy for a fraction of the cost.</li>
+        <li>Drag the slider: near the top, cutting dimensions saves storage and latency while accuracy barely moves — that is the MRL win. Push it too far down (say 64) and accuracy drops noticeably, so there is no single right value: tune it for your data and budget, and measure.</li>
       </ul>
     </article>
     <article class="s">
@@ -306,8 +306,8 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       <h2>Give each chunk its context before embedding</h2>
       <ul>
         <li>The best-practice upgrade, from Anthropic. A bare chunk that says the penalty is 1% is context-less — the index does not know which product or year.</li>
-        <li>Contextual retrieval prepends a short context blurb to each chunk before embedding: this is from OCBC's 2025 Time Deposit T&amp;Cs, regarding early withdrawal.</li>
-        <li>Reported around 35 percent fewer retrieval failures, and it pairs well with hybrid search. Cheap to add, big win.</li>
+        <li>Contextual retrieval prepends a short context blurb to each chunk before embedding — e.g. “from OCBC's 2025 Time Deposit T&amp;Cs, on early withdrawal”. The blurb is short and on-topic, so it sharpens the match rather than re-diluting the chunk.</li>
+        <li>Anthropic reported around 35 percent fewer retrieval failures from contextual embeddings alone — rising to roughly 49 percent when combined with keyword (BM25) search, and further still once reranking is added. Cheap to add, big win.</li>
       </ul>
     </article>
     <article class="s">
@@ -323,9 +323,9 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       <div class="n">Slide 27</div>
       <h2>Closeness is the angle between arrows</h2>
       <ul>
-        <li>How do we measure closeness? Cosine similarity: the angle between two vectors. Small angle means similar meaning.</li>
-        <li>A score near 1 means the directions almost line up — near-identical meaning. Near 0 means unrelated.</li>
-        <li>Watch the query vector swing toward the closest chunk. We never use the length, only the direction — that is what cosine captures.</li>
+        <li>How do we measure closeness? Cosine similarity looks at the angle between two vectors, not their length — a short arrow and a long arrow pointing the same way still count as the same meaning.</li>
+        <li>Score near 1 = almost the same direction = near-identical meaning; near 0 = unrelated. That is all “cosine similarity” means.</li>
+        <li>We compare direction, not length, so a one-line query and a long passage can still score as a strong match. (Length can be skewed by things like how long or repetitive a text is — which we do not want driving the match.) Watch the query vector swing toward the closest chunk; only the direction counts. The 0.97 here is illustrative of a strong but not identical match.</li>
       </ul>
     </article>
     <article class="s">
@@ -341,9 +341,9 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       <div class="n">Slide 29</div>
       <h2>A smart shortcut through millions of vectors</h2>
       <ul>
-        <li>Scale problem: comparing the query to millions of vectors one by one is too slow for a live chatbot.</li>
-        <li>Vector databases use Approximate Nearest Neighbour indexes — like HNSW — that take smart shortcuts to get near-instant results with a tiny accuracy trade-off.</li>
-        <li>Name a few lightly: pgvector, FAISS, Milvus. The idea to keep: ANN is a smart shortcut, not exact search.</li>
+        <li>Scale problem: comparing the query against millions of vectors one by one is too slow for a live chatbot.</li>
+        <li>Vector databases use Approximate Nearest Neighbour (ANN) indexes — like HNSW, which links the vectors into a graph you hop across to jump straight to the right neighbourhood — giving near-instant results for a tiny, usually invisible accuracy trade-off.</li>
+        <li>Name a few lightly: pgvector, FAISS, Milvus. The idea to keep: ANN is a smart shortcut, not an exhaustive search.</li>
       </ul>
     </article>
     <article class="s">
@@ -359,8 +359,8 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       <div class="n">Slide 31</div>
       <h2>Meaning and exact strings, together</h2>
       <ul>
-        <li>The fix is to use both. Hybrid search runs semantic vector search and keyword search — BM25 — in parallel, then merges the rankings.</li>
-        <li>A common merge is Reciprocal Rank Fusion. Semantic catches meaning and paraphrase; keyword nails the exact code or clause number.</li>
+        <li>The fix is to use both. Hybrid search runs semantic (vector) search and classic keyword search in parallel, then merges the two rankings. BM25 is just the standard keyword-scoring method — it rewards rare, exact words like a product code.</li>
+        <li>A common way to merge them is Reciprocal Rank Fusion (RRF): it blends the two ranked lists by how high each result sits in each. Semantic catches meaning and paraphrase; keyword nails the exact code or clause number.</li>
         <li>Hybrid is the current best-practice default — it catches both the sense and the exact string.</li>
       </ul>
     </article>
@@ -368,9 +368,9 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       <div class="n">Slide 32</div>
       <h2>Re-read the shortlist for precision</h2>
       <ul>
-        <li>Reranking is the precision step. First retrieve a broad top-k cheaply — say 20 candidates.</li>
-        <li>Then a reranker, a cross-encoder, re-reads each candidate against the query and scores true relevance, reordering them.</li>
-        <li>Keep the top few for the prompt. It is slower per item, so you only run it on the shortlist. Qwen3 ships a reranker too.</li>
+        <li>Reranking is the precision step. First retrieve a broad shortlist cheaply — say the top 20 candidates.</li>
+        <li>Then a reranker — a model called a cross-encoder — reads each candidate together with the query (not separately) and scores how relevant it truly is, then reorders them. Reading them as a pair is what makes it sharper than the first pass.</li>
+        <li>Keep only the top few for the prompt. It is slower per item, so you run it just on the shortlist, never the whole index. Qwen3 ships a reranker too.</li>
       </ul>
     </article>
     <article class="s">
