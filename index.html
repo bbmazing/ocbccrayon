@@ -74,8 +74,13 @@ h1 .red{color:var(--red)}
 }
 
 /* per-topic blocks */
-.topic{margin-top:30px}
-.topic.first{margin-top:4px}
+.day-head{display:flex;align-items:center;gap:14px;margin:14px 0 4px}
+.day-head .dn{font-family:var(--fHead);font-weight:800;font-size:13px;letter-spacing:.12em;text-transform:uppercase;
+  color:#fff;background:var(--ink);border-radius:99px;padding:6px 15px;flex:none}
+.day-head .ds{font-family:var(--fHead);font-weight:700;font-size:13px;color:var(--muted)}
+.day-head::after{content:"";flex:1;height:1px;background:var(--line)}
+.topic{margin-top:24px}
+.topic.first{margin-top:14px}
 .t-head{display:flex;align-items:center;gap:11px;margin-bottom:13px;flex-wrap:wrap}
 .t-no{font-family:var(--fHead);font-weight:800;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
   color:var(--faint);background:var(--card);border:1px solid var(--line);border-radius:99px;padding:5px 11px}
@@ -119,8 +124,10 @@ a.soon.live .go{color:var(--red);font-weight:700;font-size:11.5px;letter-spacing
   <div class="eyebrow"><span class="badge"></span>OCBC CRAYON 2026</div>
   <h1>CRAYON 2026 <span class="red">— ADM</span></h1>
   <p class="lede">A hands-on data &amp; AI training series by the <b>ADM team</b> — for <b>CRAYON 2026 Interns</b>.
-    It starts with <b>Python data foundations</b> and expands across the programme into machine learning,
-    generative AI and retrieval. New topics are added as we go.</p>
+    <b>Day 1</b> runs from <b>Python data foundations</b> through machine learning, generative AI and retrieval.
+    More days are added as the programme grows.</p>
+
+  <div class="day-head"><span class="dn">Day 1</span><span class="ds">Foundations &rarr; ML &rarr; GenAI &rarr; RAG · four sessions</span></div>
 
   <section class="topic first">
     <div class="t-head"><span class="t-no">Topic 1</span><span class="t-title">Python Data Foundations</span><span class="t-badge">Available</span></div>
@@ -195,9 +202,9 @@ a.soon.live .go{color:var(--red);font-weight:700;font-size:11.5px;letter-spacing
   </section>
 
   <section class="next">
-    <div class="hd">The series so far</div>
+    <div class="hd">Coming up</div>
     <div class="track">
-      <div class="soon" style="border-style:solid;background:#fff"><div class="n" style="color:var(--red)">4 / 4</div><h3>Core curriculum complete</h3><span>more as the programme grows</span></div>
+      <div class="soon"><div class="n">Day 2</div><h3>More to come</h3><span>added as the programme grows</span></div>
     </div>
   </section>
 
