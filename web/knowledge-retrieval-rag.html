@@ -959,7 +959,7 @@ body.static .cosbox .swing{transform:rotate(0deg) !important; transition:none !i
     <div class="megastat">
       <div class="num">#1<span class="u" style="font-size:64px"></span></div>
       <div class="copy" data-r data-d="2">
-        <h3>MTEB multilingual &mdash; score <span style="color:var(--red)">70.58</span></h3>
+        <h3>MTEB (Massive Text Embedding Benchmark) multilingual &mdash; score <span style="color:var(--red)">70.58</span></h3>
         <p>Best-in-class multilingual retrieval, which matters for Indonesian + English banking docs. Self-hosting keeps the data in OCBC infrastructure.</p>
         <div class="src">As of June 2025 &mdash; benchmarks move; verify the current standing before quoting.</div>
       </div>
@@ -1231,14 +1231,14 @@ body.static .cosbox .swing{transform:rotate(0deg) !important; transition:none !i
       <div class="txt">
         <ul class="bullets">
           <li data-r data-d="2">Exact search over millions of vectors is <b>too slow</b>.</li>
-          <li data-r data-d="3" class="strong"><b>ANN</b> indexes (e.g. HNSW) get near-instant results...</li>
+          <li data-r data-d="3" class="strong"><b>ANN</b> (approximate nearest neighbour) indexes (e.g. HNSW) get near-instant results...</li>
           <li data-r data-d="4">...for a <b>tiny accuracy trade-off</b>.</li>
           <li data-r data-d="5">Tools: <b>pgvector, FAISS, Milvus</b>, and more.</li>
         </ul>
       </div>
       <div class="viz">
         <div class="svg-card" data-r data-d="3">
-          <div class="ct">HNSW &mdash; hop across a graph to the neighbourhood</div>
+          <div class="ct">HNSW (hierarchical navigable small world) &mdash; hop to the neighbourhood</div>
           <svg class="vspace chart-svg" viewBox="0 0 320 190" preserveAspectRatio="xMidYMid meet">
             <line class="near" x1="40" y1="150" x2="120" y2="90"/>
             <line class="near" x1="120" y1="90" x2="220" y2="70"/>
@@ -1273,7 +1273,7 @@ body.static .cosbox .swing{transform:rotate(0deg) !important; transition:none !i
     <div class="merge" style="margin-top:8px">
       <div class="mcol">
         <div class="mcard sem"><div class="mh"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></span>Semantic</div><p>vectors &mdash; meaning, synonyms, paraphrase</p></div>
-        <div class="mcard kw"><div class="mh"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="4"/><path d="M11 11l8 8M16 16l2-2M19 19l2-2"/></svg></span>Keyword (BM25)</div><p>exact tokens &mdash; codes, clauses, IDs</p></div>
+        <div class="mcard kw"><div class="mh"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="4"/><path d="M11 11l8 8M16 16l2-2M19 19l2-2"/></svg></span>Keyword (BM25)</div><p>BM25 = Best Matching 25 &mdash; exact tokens: codes, clauses, IDs</p></div>
       </div>
       <div class="mmid" data-r data-d="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg><div style="font-family:var(--fMono);font-size:11px;margin-top:6px">RRF</div></div>
       <div class="mout" data-r data-d="3">
@@ -1353,9 +1353,9 @@ body.static .cosbox .swing{transform:rotate(0deg) !important; transition:none !i
     <div class="kicker"><span class="badge"></span>Where this powers our tools</div>
     <h2 class="slide-title" data-r data-d="1">RAG behind OCBC&#39;s assistants</h2>
     <div class="cards c3" style="margin-top:24px">
-      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg></div><h3>RM-support chatbot</h3><p>Answers from the policy and product KB, with citations.</p><div class="ctag">hybrid search · rerank</div></div>
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg></div><h3>RM-support chatbot</h3><p>For relationship managers (RMs) &mdash; answers from the policy and product knowledge base, with citations.</p><div class="ctag">hybrid search · rerank</div></div>
       <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 7V3M8 13h.01M16 13h.01"/></svg></div><h3>Customer assistant</h3><p>Grounded in approved FAQs and product info, guardrailed.</p><div class="ctag">embeddings · grounding</div></div>
-      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></div><h3>Document Q&amp;A</h3><p>Retrieval over KYC and AML guidelines.</p><div class="ctag">chunking · metadata</div></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></div><h3>Document Q&amp;A</h3><p>Retrieval over KYC (know-your-customer) and AML (anti-money-laundering) guidelines.</p><div class="ctag">chunking · metadata</div></div>
     </div>
     <div class="flow-cap" style="font-style:italic">Illustrative &mdash; real products, simplified to show the concept.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">36</span></div>

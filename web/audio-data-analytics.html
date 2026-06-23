@@ -758,8 +758,8 @@ body.static .quant .step, body.static .fline{stroke-dashoffset:0 !important; tra
       <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg></div><h3>Call transcription</h3><p>Turn recorded calls into searchable, analysable text.</p></div>
       <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 11v4M8 9a4 4 0 0 1 8 0v3a8 8 0 0 1-1 4M5 12a7 7 0 0 1 14 0v1M16 17a10 10 0 0 1-1 3"/></svg></div><h3>Voice biometrics</h3><p>Authenticate a caller from their voiceprint.</p></div>
       <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg></div><h3>Sentiment &amp; complaints</h3><p>Mine tone and content to spot unhappy customers.</p></div>
-      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3h4l2 5-3 2a12 12 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg></div><h3>IVR &amp; voice assistant</h3><p>Understand spoken intent and route the call.</p></div>
-      <div class="card" data-r data-d="6"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg></div><h3>Compliance QA</h3><p>Check recorded calls against disclosure rules.</p></div>
+      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3h4l2 5-3 2a12 12 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg></div><h3>Interactive Voice Response (IVR)</h3><p>Understand spoken intent and route the call.</p></div>
+      <div class="card" data-r data-d="6"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg></div><h3>Compliance QA</h3><p>Quality assurance &mdash; check recorded calls against disclosure rules.</p></div>
       <div class="card" data-r data-d="7"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg></div><h3>Fraud signals</h3><p>Detect spoofing and stress cues in the voice.</p></div>
     </div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Audio Data Analytics</div><span class="pg">04</span></div>
@@ -966,7 +966,7 @@ body.static .quant .step, body.static .fline{stroke-dashoffset:0 !important; tra
         <ul class="bullets">
           <li data-r data-d="2">Speech is stable only in short slices &rarr; <b>~20&ndash;25 ms frames</b>.</li>
           <li data-r data-d="3" class="strong">Slide with <b>~10 ms overlap</b> &mdash; don&#39;t lose boundary sounds.</li>
-          <li data-r data-d="4">Apply a <b>window</b> (Hamming) to taper edges before FFT.</li>
+          <li data-r data-d="4">Apply a <b>window</b> (Hamming) to taper edges before the FFT (Fast Fourier Transform).</li>
         </ul>
       </div>
       <div class="viz">
@@ -1050,7 +1050,7 @@ body.static .quant .step, body.static .fline{stroke-dashoffset:0 !important; tra
   </section>
 
   <section class="slide" data-notes='["Before deep learning, the workhorse feature was the MFCC — Mel-Frequency Cepstral Coefficients.", "It is a very compact summary of the spectral shape of each frame, typically just 13 numbers.", "Thirteen coefficients per frame, instead of hundreds of frequency bins — that compactness made classical speech systems possible."]'>
-    <div class="kicker"><span class="badge"></span>MFCC &mdash; the classic feature</div>
+    <div class="kicker"><span class="badge"></span>Mel-Frequency Cepstral Coefficients (MFCC)</div>
     <h2 class="slide-title" data-r data-d="1">13 numbers that capture the spectral shape</h2>
     <div class="fillc">
       <div class="svg-card" data-r data-d="2" style="max-width:680px;margin:0 auto;width:100%">
@@ -1074,7 +1074,7 @@ body.static .quant .step, body.static .fline{stroke-dashoffset:0 !important; tra
       <div class="step"><div class="node">6</div><h4>DCT</h4><p>decorrelate</p><div class="arrow"></div></div>
       <div class="step"><div class="node hot">7</div><h4>13 MFCCs</h4><p>done</p></div>
     </div>
-    <div class="flow-cap">The classic recipe &mdash; pre-emphasis &rarr; frame &rarr; FFT &rarr; Mel &rarr; log &rarr; DCT &rarr; <b style="color:var(--red)">MFCC</b>.</div>
+    <div class="flow-cap">The classic recipe &mdash; pre-emphasis &rarr; frame &rarr; FFT &rarr; Mel &rarr; log &rarr; DCT (discrete cosine transform) &rarr; <b style="color:var(--red)">MFCC</b>.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Audio Data Analytics</div><span class="pg">24</span></div>
   </section>
 
@@ -1146,7 +1146,7 @@ body.static .quant .step, body.static .fline{stroke-dashoffset:0 !important; tra
   </section>
 
   <section class="slide" data-notes='["The task is Automatic Speech Recognition, ASR: audio in, text out.", "That transcript is the front door to everything from Day 1 — once a call is text, you can search it, classify intent, score sentiment, and check compliance.", "ASR is the bridge from the audio world into the text and LLM world we already know."]'>
-    <div class="kicker"><span class="badge"></span>The task: ASR</div>
+    <div class="kicker"><span class="badge"></span>The task: Automatic Speech Recognition (ASR)</div>
     <h2 class="slide-title" data-r data-d="1">Audio in, text out</h2>
     <div class="flow" style="margin-top:6px">
       <div class="step"><div class="node">1</div><h4>Audio</h4><p>the recording</p><div class="arrow"></div></div>
@@ -1217,7 +1217,7 @@ body.static .quant .step, body.static .fline{stroke-dashoffset:0 !important; tra
     <div class="cards c2" style="margin-top:22px">
       <div class="card" data-r data-d="2"><div class="num">!</div><h3>Overlapping speakers</h3><p>Struggles when people talk over each other.</p></div>
       <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5M15 20c0-2 1-3.5 3-3.5s3 1.5 3 3.5"/></svg></div><h3>No diarization</h3><p>Who-spoke-when needs a separate step.</p></div>
-      <div class="card" data-r data-d="4"><div class="num">&#9201;</div><h3>Streaming &amp; scale</h3><p>Real-time and GPU cost need engineering.</p></div>
+      <div class="card" data-r data-d="4"><div class="num">&#9201;</div><h3>Streaming &amp; scale</h3><p>Real-time and GPU (graphics processing unit) cost need engineering.</p></div>
       <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></div><h3>Open ecosystem</h3><p>whisper.cpp, faster-whisper, fine-tune for domain terms.</p></div>
     </div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Audio Data Analytics</div><span class="pg">34</span></div>

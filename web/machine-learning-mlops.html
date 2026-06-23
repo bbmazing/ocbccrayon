@@ -791,7 +791,7 @@ body.static .chart-svg .mk{opacity:1 !important; transition:none !important}
   <section class="slide" data-notes='["These four flagship OCBC use cases are the running examples for the whole deck. Name each and where it lives in the bank.", "Recommendation lives in the app investment tab; AML and fraud watch transactions; credit scores loan applications.", "Flag now: fraud, AML and credit are supervised (we have past labeled outcomes); recommendation leans unsupervised. We will formalise that next."]'>
     <div class="kicker"><span class="badge"></span>Where ML already lives at OCBC</div>
     <h2 class="slide-title" data-r data-d="1">Four anchor examples we return to all session</h2>
-    <div class="cards c2" style="margin-top:22px"><div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l2.4 5 5.6.6-4 3.8 1 5.6L12 21l-5 2.6 1-5.6-4-3.8 5.6-.6z"/></svg></div><h3>Product recommendation</h3><p>Next-best investment surfaced in the OCBC app investment tab.</p><div class="tag">anchor &middot; mostly unsupervised</div></div><div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div><h3>AML detection</h3><p>Flagging suspicious transaction patterns for compliance review.</p><div class="tag">anchor &middot; supervised</div></div><div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg></div><h3>Fraud detection</h3><p>Catching fraudulent transactions in real time, at the moment of payment.</p><div class="tag">anchor &middot; supervised</div></div><div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></svg></div><h3>Credit / loan approval</h3><p>Scoring applications for approve / decline and risk.</p><div class="tag">anchor &middot; supervised</div></div></div>
+    <div class="cards c2" style="margin-top:22px"><div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l2.4 5 5.6.6-4 3.8 1 5.6L12 21l-5 2.6 1-5.6-4-3.8 5.6-.6z"/></svg></div><h3>Product recommendation</h3><p>Next-best investment surfaced in the OCBC app investment tab.</p><div class="tag">anchor &middot; mostly unsupervised</div></div><div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div><h3>AML detection</h3><p>Anti-money laundering (AML) &mdash; flag suspicious transaction patterns for review.</p><div class="tag">anchor &middot; supervised</div></div><div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg></div><h3>Fraud detection</h3><p>Catching fraudulent transactions in real time, at the moment of payment.</p><div class="tag">anchor &middot; supervised</div></div><div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></svg></div><h3>Credit / loan approval</h3><p>Scoring applications for approve / decline and risk.</p><div class="tag">anchor &middot; supervised</div></div></div>
     <div class="flow-cap">The rest of the talk keeps coming back to these four &mdash; watch for them in every section.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">05</span></div>
   </section>
@@ -1125,14 +1125,14 @@ preds</div></div><div class="nb-out">array([0, 0, 1, 0, 1])&nbsp;&nbsp;<span cla
       <div class="txt">
         <ul class="bullets">
           <li data-r data-d="2">Plot <b>true-positive rate</b> against <b>false-positive rate</b> across every threshold.</li>
-          <li data-r data-d="3" class="strong"><b>AUC</b> = ranking quality. 0.5 = coin flip, 1.0 = perfect.</li>
+          <li data-r data-d="3" class="strong"><b>AUC</b> (area under the curve) = ranking quality. 0.5 = coin flip, 1.0 = perfect.</li>
           <li data-r data-d="4">Lets you compare models independent of one threshold.</li>
           <li data-r data-d="5">On rare events (fraud), prefer the <b>precision-recall curve</b>.</li>
         </ul>
       </div>
       <div class="viz">
         <div class="svg-card" data-r data-d="3">
-          <div class="ct">ROC &mdash; the curve bows toward the top-left</div>
+          <div class="ct">ROC (receiver operating characteristic) &mdash; bows to the top-left</div>
           <svg class="chart-svg" viewBox="0 0 300 220" preserveAspectRatio="xMidYMid meet">
             <line class="axis" x1="38" y1="18" x2="38" y2="186"/>
             <line class="axis" x1="38" y1="186" x2="286" y2="186"/>
@@ -1231,7 +1231,7 @@ cross_val_score(model, X, y, cv=5).mean()</div></div><div class="nb-out"><span c
       <div class="np-arrowx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
       <div class="np-box prod"><div class="nh">A model in production</div><div class="nd">scoring real OCBC transactions, reliably, 24/7</div></div>
     </div>
-    <div class="np-def" data-r data-d="3"><b>MLOps</b> = ML + software engineering + DevOps + data engineering &mdash; <span class="tag">build, deploy and maintain models in production</span></div>
+    <div class="np-def" data-r data-d="3"><b>MLOps</b> (Machine Learning Operations) = ML + software engineering + DevOps + data engineering &mdash; <span class="tag">build, deploy and maintain models in production</span></div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Machine Learning &amp; MLOps</div><span class="pg">28</span></div>
   </section>
 
@@ -1281,8 +1281,8 @@ cross_val_score(model, X, y, cv=5).mean()</div></div><div class="nb-out"><span c
           <li data-r data-d="4">In a bank, that audit trail is not optional.</li>
         </ul>
         <div class="toolchips" data-r data-d="5">
-          <span class="tc"><b>MLflow</b> / W&amp;B &mdash; tracking + registry</span>
-          <span class="tc"><b>DVC</b> / Git &mdash; data + code versioning</span>
+          <span class="tc"><b>MLflow</b> / Weights &amp; Biases &mdash; tracking + registry</span>
+          <span class="tc"><b>DVC</b> (data version control) / Git &mdash; data + code versioning</span>
         </div>
       </div>
       <div class="viz">
@@ -1302,7 +1302,7 @@ cross_val_score(model, X, y, cv=5).mean()</div></div><div class="nb-out"><span c
     <div class="kicker"><span class="badge"></span>Deployment patterns</div>
     <h2 class="slide-title" data-r data-d="1">How a model reaches users</h2>
     <div class="cards c2" style="margin-top:20px">
-      <div class="card" data-r data-d="2"><div class="num">API</div><h3>Real-time API</h3><p>Score per event, in milliseconds.</p><div class="tag">fraud at txn time &middot; app recommendations</div></div>
+      <div class="card" data-r data-d="2"><div class="num">API</div><h3>Real-time API</h3><p>Score per event via an application programming interface (API), in milliseconds.</p><div class="tag">fraud at txn time &middot; app recommendations</div></div>
       <div class="card" data-r data-d="3"><div class="num">&#9202;</div><h3>Batch</h3><p>Score on a schedule, overnight.</p><div class="tag">AML screening &middot; credit risk runs</div></div>
       <div class="card" data-r data-d="4"><div class="num">&#128065;</div><h3>Shadow</h3><p>Run alongside production, compare, no live impact.</p><div class="tag">safe rollout</div></div>
       <div class="card" data-r data-d="5"><div class="num">&#10138;</div><h3>Canary</h3><p>Route a small slice of traffic first, then ramp.</p><div class="tag">safe rollout</div></div>
