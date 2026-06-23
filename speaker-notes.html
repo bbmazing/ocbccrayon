@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Speaker notes · Python Data Foundations · OCBC CRAYON</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root{--red:#EC1B23;--ink:#1A1A1A;--text:#1F2937;--muted:#5b626d;--faint:#9AA1AC;
+  --line:#E7E8EB;--tint:#FCEEEF;--tint2:#FBE2E3;
+  --fHead:'Manrope',system-ui,sans-serif;--fBody:'Inter',system-ui,sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--fBody);color:var(--text);background:
+    radial-gradient(900px 500px at 100% -10%, rgba(236,27,35,.10), transparent 60%), #fbfbfc;
+  -webkit-font-smoothing:antialiased;padding-bottom:60px}
+.bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;
+  gap:14px;padding:14px 22px;background:rgba(251,251,252,.86);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line)}
+.bar .ttl{font-family:var(--fHead);font-weight:800;font-size:16px;letter-spacing:-.01em;color:var(--ink)}
+.bar .sub{font-size:12px;color:var(--faint);margin-top:2px}
+.bar .right{display:flex;align-items:center;gap:8px;flex:none;flex-wrap:wrap;justify-content:flex-end}
+.btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--fHead);font-weight:700;
+  font-size:12.5px;text-decoration:none;border-radius:99px;padding:8px 14px;white-space:nowrap;
+  cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease}
+.btn svg{width:14px;height:14px}
+.btn.ghost{color:var(--muted);border:1px solid var(--line);background:#fff}
+.btn.ghost:hover{border-color:var(--tint2);color:var(--ink)}
+.btn.red{color:var(--red);background:var(--tint);border:1px solid var(--tint2)}
+.btn.red:hover{background:var(--red);color:#fff;border-color:var(--red)}
+.btn.on{background:var(--red);color:#fff;border-color:var(--red)}
+.banner{display:none;align-items:center;gap:8px;font-size:13px;color:#8a1015;
+  background:var(--tint);border-bottom:1px solid var(--tint2);padding:10px 22px}
+.banner b{color:var(--red)}
+body.editing .banner{display:flex}
+main{max-width:820px;margin:0 auto;padding:8px 22px}
+.lead{font-family:var(--fHead);font-weight:800;letter-spacing:-.02em;font-size:clamp(1.7rem,5vw,2.4rem);
+  color:var(--ink);margin:26px 0 6px}
+.lead .red{color:var(--red)}
+.intro{color:var(--muted);font-size:14.5px;line-height:1.6;margin-bottom:14px;max-width:60ch}
+.s{padding:20px 0;border-bottom:1px solid var(--line)}
+.s:last-child{border-bottom:none}
+.s .n{font-family:var(--fHead);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--red)}
+.s h2{font-family:var(--fHead);font-weight:700;font-size:18px;letter-spacing:-.015em;color:var(--ink);margin:4px 0 11px}
+.s ul{margin:0;padding-left:19px;display:flex;flex-direction:column;gap:9px}
+.s li{font-size:14.5px;line-height:1.6;color:var(--text)}
+/* edit affordances */
+body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:1px dashed var(--tint2);
+  outline-offset:4px;border-radius:4px}
+.s h2[contenteditable]:focus,.s li[contenteditable]:focus{outline:2px solid var(--red);
+  outline-offset:4px;background:#fff}
+@media(max-width:560px){
+  .bar{padding:11px 14px}
+  .bar .sub{display:none}
+  .btn{padding:7px 10px;font-size:11.5px}
+  .btn .lbl-long{display:none}
+  .banner{padding:9px 14px;font-size:12px}
+  main{padding:6px 16px}
+  .s li{font-size:14px}
+}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div>
+    <div class="ttl">Speaker notes</div>
+    <div class="sub">Python Data Foundations · 36 slides</div>
+  </div>
+  <div class="right">
+    <a class="btn ghost" href="index.html">&larr; Back</a>
+    <button class="btn ghost" id="edit" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+      <span id="editLbl">Edit</span>
+    </button>
+    <button class="btn ghost" id="reset" type="button" style="display:none">Reset</button>
+    <a class="btn red" id="dl" href="speaker-notes.txt" download="OCBC-CRAYON-Python-Data-Foundations-speaker-notes.txt">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3v12M7 11l5 5 5-5M5 21h14"/></svg>
+      <span class="lbl-long">Download&nbsp;</span>.txt
+    </a>
+  </div>
+</header>
+<div class="banner" id="banner">✎&nbsp; Editing — your changes are saved in this browser. Use <b>Download .txt</b> to keep a copy.</div>
+<main>
+  <h1 class="lead">Talk track <span class="red">&middot; every slide</span></h1>
+  <p class="intro">Speaker notes for the OCBC CRAYON 2026 &mdash; Python Data Foundations deck. 36 slides, in order. Press <b>Edit</b> to tweak the wording inline (saved to this browser), or <b>Download .txt</b> for a copy.</p>
+  <div id="notes">
+    <article class="s">
+      <div class="n">Slide 1</div>
+      <h2>Python Data Foundations</h2>
+      <ul>
+        <li>Welcome the interns to the OCBC CRAYON program. This 90-minute session is the foundation everything else builds on — data wrangling, ML, GenAI all assume these skills.</li>
+        <li>Audience is Python-literate, so we move fast on syntax and spend time on the data-science way of thinking.</li>
+        <li>Set expectations: two recorded demos, a banking flavour throughout (transactions, fraud, churn, credit risk).</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 2</div>
+      <h2>The premise</h2>
+      <ul>
+        <li>This is the thesis of the whole session. Data on its own is inert — rows in a table. The job is the two-step climb: data → information → insight.</li>
+        <li>Carly Fiorina said this as HP CEO. For a bank it is literal: every transaction is data; a fraud alert is information; the decision to block a card is insight acted upon.</li>
+        <li>We will return to this exact ladder on the closing slide.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 3</div>
+      <h2>Four pillars, one journey</h2>
+      <ul>
+        <li>Four pillars, taught as a journey from language to judgement. We deliberately put wrangling and analytics front and centre — that is where real data work lives.</li>
+        <li>Flag the two demos: Demo 1 lands after Pillar 1 (loading a transactions CSV); Demo 2 after Pillar 3 (cleaning a messy CSV). These are the hands-on payoffs.</li>
+        <li>Curriculum-informed: this arc mirrors how Berkeley Data 8, Harvard CS109 and MIT teach intro data science.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 4</div>
+      <h2>What is data science?</h2>
+      <ul>
+        <li>Drew Conway's 2010 Venn is still the cleanest definition. Data science sits at the intersection of three skills, none sufficient alone.</li>
+        <li>Hammer the danger zone: coding + domain knowledge WITHOUT statistics. You can produce confident-looking analysis that is quietly wrong — dangerous in a bank.</li>
+        <li>At OCBC the domain expertise is the banking knowledge interns are building; we are adding the programming and the statistical literacy.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 5</div>
+      <h2>Data is the deluge — value is the dividend</h2>
+      <ul>
+        <li>The why-now is two forces colliding: an explosion of data and the cheap compute to use it. Banks are unusually data-rich — every tap, transfer and login is a logged event.</li>
+        <li>Numbers are indicative, not gospel — use them to convey scale. ~402M is a common estimate for terabytes of data created per day; ~90% of the world's data is from the last couple of years.</li>
+        <li>Tie to OCBC: a retail bank sits on years of high-frequency transactional data — exactly the raw material these skills unlock.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 6</div>
+      <h2>What you can build with these skills</h2>
+      <ul>
+        <li>Make it concrete and banking-specific. These six are real, deployed use cases across retail and corporate banking.</li>
+        <li>Each maps to a later pillar: fraud and churn are predictive (Pillar 2 preview); dashboards are descriptive; NLP handles the unstructured pile.</li>
+        <li>Invite interns to spot which of these touch their own team — keeps it grounded.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 7</div>
+      <h2>The five facets of data science</h2>
+      <ul>
+        <li>Borrow authority from the best programmes. Harvard CS109 frames data science as five recurring facets; MIT frames computation as a tool to understand the real world.</li>
+        <li>The point for interns: this is not a syntax tour. The hard parts are asking the right question and communicating the answer — the bookends, not the modelling in the middle.</li>
+        <li>Our 90 minutes follows exactly this arc.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 8</div>
+      <h2>The data science workflow</h2>
+      <ul>
+        <li>This is the map we return to all session. Ask → Acquire → Wrangle → Explore → Model → Communicate. Note the loop — findings at any stage send you back upstream.</li>
+        <li>Frame is the most skipped, most important step. A vague question wastes weeks. Communicate is where value is realised — analysis nobody acts on is wasted.</li>
+        <li>Watch it build step by step; each pillar today lives on a different part of this arc.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 9</div>
+      <h2>Pillar 1 — Basic Python</h2>
+      <ul>
+        <li>Pillar 1. Audience is Python-literate, so this is a fast, confident pass — we sell the ecosystem and the data stack, not the syntax.</li>
+        <li>The one habit to instil: think in tables and vectorised operations, not row-by-row loops.</li>
+        <li>End of this pillar = Demo 1, where a CSV becomes a programmable table.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 10</div>
+      <h2>Readable, batteries-included, everywhere</h2>
+      <ul>
+        <li>Sell the ecosystem, not the syntax. Python is readable, has a mature library for every step, and is the lingua franca of data and AI research — new tools ship here first.</li>
+        <li>Key insight: Python is slow as a language but fast as a platform — the heavy lifting runs in compiled C/Rust under the hood (NumPy, Apache Arrow, Polars).</li>
+        <li>The hello-data snippet: three lines load a banking CSV and answer a real question — that economy of expression is the point.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 11</div>
+      <h2>Variables, types &amp; the four containers</h2>
+      <ul>
+        <li>A fast refresher on the primitives. Variables, the four scalar types, and the four containers. Keep it brisk — they know this.</li>
+        <li>The teaching emphasis: pick the right container. Lists for ordered collections, dicts to model records (a customer), tuples for fixed records, sets for membership and de-duplication.</li>
+        <li>Dicts modelling records is the bridge to DataFrame rows on the next slides.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 12</div>
+      <h2>From loops to comprehensions</h2>
+      <ul>
+        <li>if/else and for are universal. The Python-specific habit to instil is the comprehension: a declarative one-liner that replaces the build-an-empty-list-and-append loop.</li>
+        <li>Comprehensions read closer to the intent ("the active premier customers") and are usually faster. This same declarative style carries straight into Polars expressions.</li>
+        <li>Show both side by side: identical result, far less ceremony on the right.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 13</div>
+      <h2>Define once, call many</h2>
+      <ul>
+        <li>Functions are the unit of reuse. Define once, call many. Small, pure functions (output depends only on input, no side effects) are easy to test, share and reason about.</li>
+        <li>The banking example: a reusable risk-band function. Write it once, apply it to a whole column later. This is exactly how feature engineering works.</li>
+        <li>Tie forward: pure functions map cleanly onto DataFrame transformations and, later, ML features.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 14</div>
+      <h2>Four layers turn Python into a data platform</h2>
+      <ul>
+        <li>The four-layer stack is how Python becomes a data platform. Each layer builds on the one below and speaks the same shapes.</li>
+        <li>NumPy / Apache Arrow = the columnar + n-dimensional memory engine. Polars = labelled DataFrames on Arrow, written in Rust (where most wrangling happens). matplotlib/seaborn = charts. scikit-learn = classic ML.</li>
+        <li>Why Polars over the older pandas: pandas wraps NumPy and runs single-threaded through Python objects; Polars is built in Rust on Apache Arrow's columnar format, runs multi-threaded by default, and has a lazy query optimiser — typically 5–30x faster on real data, with a cleaner expression API. The DataFrame concepts transfer directly if you already know pandas.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 15</div>
+      <h2>A DataFrame is a spreadsheet you can program</h2>
+      <ul>
+        <li>Recorded demo 1, replayed live in-deck. The whole point in one line: a DataFrame is a spreadsheet you can program.</li>
+        <li>Walk the four cells: pl.read_csv loads 50k transactions; .head() shows the first rows; .shape confirms size; .describe() gives instant summary stats — count, null_count, mean, min/max.</li>
+        <li>Press R (or the replay button) to run it again. In a real Polars notebook this is exactly what the first five minutes with any dataset looks like.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 16</div>
+      <h2>Pillar 2 — Data Science Concepts</h2>
+      <ul>
+        <li>Pillar 2: the concepts that frame everything before we touch a model. Light and fast — 13 minutes.</li>
+        <li>Three ideas: what kind of data we have (structured vs unstructured), the universal shape of a dataset, and the ladder of analytics from describing to prescribing.</li>
+        <li>These are the vocabulary the rest of the program assumes.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 17</div>
+      <h2>Structured vs unstructured data</h2>
+      <ul>
+        <li>Two broad families. Structured data fits neatly in rows and columns — the transaction table. Unstructured data does not — text, images, audio, logs.</li>
+        <li>In a bank, roughly 80–90% of data is unstructured: call recordings, chat transcripts, scanned documents, complaint emails. The structured slice is where most classic analytics happens; the unstructured pile is where NLP and GenAI unlock new value.</li>
+        <li>Most of this session lives in the structured world; keep the unstructured pile in mind — it is the frontier.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 18</div>
+      <h2>Rows, columns, and a target</h2>
+      <ul>
+        <li>Every structured dataset has the same shape. Rows are observations — one per thing you measured (here, one customer). Columns are features — the attributes.</li>
+        <li>One column is often special: the target (or label) — the thing you want to predict. Here it is churned. Features are the inputs; the target is the output.</li>
+        <li>This sets up machine learning next session without diving in: ML learns the mapping from features to target. No deep dive today — just plant the vocabulary.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 19</div>
+      <h2>Four types of analytics — value rises with difficulty</h2>
+      <ul>
+        <li>The analytic value escalator (Gartner's framing). Four rungs, rising in both value and difficulty from left to right.</li>
+        <li>Descriptive: what happened (dashboards). Diagnostic: why (drill-down, correlation). Predictive: what will happen (ML forecasts). Prescriptive: what to do (optimisation, recommendations).</li>
+        <li>Two messages: you cannot skip rungs — good prediction needs solid description and clean data first; and most organisations are strong on the left, weak on the right. That gap is the opportunity.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 20</div>
+      <h2>Find the signal in the noise</h2>
+      <ul>
+        <li>The core job of the analyst: separate signal (the real pattern) from noise (random scatter). Real data is never a clean line — it is a cloud.</li>
+        <li>Here, transaction count vs fraud risk: noisy, but a real upward trend hides in the scatter. The skill is seeing the trend without over-fitting to the wiggles.</li>
+        <li>Two failure modes: missing a real signal (too cautious), and seeing patterns in pure noise (too eager). Both are expensive. Statistics is how we tell them apart — back to the danger zone.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 21</div>
+      <h2>Pillar 3 — Data Wrangling</h2>
+      <ul>
+        <li>Pillar 3, the heart of the session: data wrangling. This is where real data scientists spend most of their time, and where Demo 2 lands.</li>
+        <li>Reset expectations: the glamorous modelling is a thin slice. The bulk is finding and fixing problems in messy data.</li>
+        <li>We map every common mess to a one-line Polars expression, then do it live.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 22</div>
+      <h2>Wrangling is most of the job</h2>
+      <ul>
+        <li>The expectation-reset slide. Surveys (e.g. CrowdFlower/Anaconda) consistently put data preparation at roughly 60% of effort for cleaning alone, ~80% including collection.</li>
+        <li>State it as indicative, not gospel — the exact number varies. The point is directional: most of the work is before the modelling.</li>
+        <li>Why? Real data is generated by messy real-world processes — systems change, fields get renamed, humans typo. Clean data is made, not found.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 23</div>
+      <h2>What messy data looks like</h2>
+      <ul>
+        <li>The six usual suspects you hunt for during inspection. Two deserve emphasis.</li>
+        <li>Missing values are a decision, not an accident — dropping vs filling changes your results, so be deliberate. Outliers can be real signal (a genuine large transfer) or a data error — investigate before deleting.</li>
+        <li>Inconsistent categories (ID / Indonesia / idn) and wrong types ("1,000" as text) are the silent time-sinks. Duplicates quietly inflate every total.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 24</div>
+      <h2>Every mess maps to a Polars expression</h2>
+      <ul>
+        <li>Every mess maps to a small set of Polars expressions. This is the cheat sheet.</li>
+        <li>drop_nulls/fill_null for missingness; unique for duplicates; cast and str methods for types and text; group_by().agg() to aggregate; join to combine tables.</li>
+        <li>The point: you do not memorise a thousand functions. You learn this handful, compose them as expressions in a pipeline, and (in Polars) let the lazy optimiser do the rest — more on that just before the demo.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 25</div>
+      <h2>Tidy data: the analysis-ready shape</h2>
+      <ul>
+        <li>Tidy data (Hadley Wickham): one variable per column, one observation per row, one table per unit. A simple, powerful contract.</li>
+        <li>Spreadsheets push people toward the messy wide form — values spread across columns (Q1, Q2, Q3). The tidy long form looks more verbose but is exactly what group_by, plotting and ML expect.</li>
+        <li>Much of wrangling is just reshaping wide into long. In Polars: df.unpivot(). Tidy in, everything downstream gets easier.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 26</div>
+      <h2>Eager vs lazy: plan, then run</h2>
+      <ul>
+        <li>Polars' signature feature, and the one mental model to take away. Two execution modes for the SAME pipeline.</li>
+        <li>Eager (read_csv): every step runs the moment you write it — simple, immediate, great for exploring. This is how pandas always works.</li>
+        <li>Lazy (scan_csv … .collect()): you describe the whole query first; Polars builds a plan, OPTIMISES it, then runs once. Predicate pushdown moves your filter down to the file read; projection pushdown reads only the columns you actually use; and it runs multi-threaded. On a large file that can be the difference between reading 10 GB and reading 1 GB. Rule of thumb: explore eager, run pipelines lazy. You'll see .lazy()…collect() in the demo next.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 27</div>
+      <h2>From messy CSV to one clean table</h2>
+      <ul>
+        <li>Recorded demo 2 — the payoff of the whole pillar. A deliberately messy banking CSV becomes one clean summary table, in Polars.</li>
+        <li>Walk the pipeline: inspect missingness with null_count(); fill amounts and drop rows missing a product with expressions; cast the dtype and de-duplicate with unique(); then the finale — a lazy query (.lazy() … .collect()) that Polars optimises into one pass.</li>
+        <li>Press R to replay. This four-step shape — inspect, fix, reshape, summarise — is 80% of real data work in miniature. The lazy pipeline is Polars' headline feature: it plans and optimises the whole query before touching data.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 28</div>
+      <h2>Pillar 4 — Analytics Principles</h2>
+      <ul>
+        <li>Pillar 4: turning clean data into honest insight. EDA, choosing charts, designing them truthfully, dodging the classic traps, and communicating the so-what.</li>
+        <li>This is where top courses deliberately end — on judgement and interpretation, not technique.</li>
+        <li>17 minutes, then we wrap.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 29</div>
+      <h2>Always look at your data first</h2>
+      <ul>
+        <li>EDA = exploratory data analysis: interrogating data with summaries and visuals before any modelling. Always look at your data first.</li>
+        <li>Distributions (histograms, box plots) reveal shape, spread and outliers. Summary stats give center and spread. Relationships (scatter, correlation) show how variables move together.</li>
+        <li>A single histogram can expose a broken feed, a default value masquerading as real, or two populations mixed together. Anscombe's quartet proves it: near-identical summary stats, completely different pictures — you must visualise, not just summarise.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 30</div>
+      <h2>Start from the question, then pick the chart</h2>
+      <ul>
+        <li>The intellectual core of the viz block: start from the QUESTION, then pick the chart — not the other way around.</li>
+        <li>Six purposes, six defaults: comparison→bar, trend→line, relationship→scatter, distribution→histogram, composition→stacked bar (over pie), correlation→heatmap.</li>
+        <li>The beginner mistake is starting from a chart they like. Ask: am I showing comparison, trend, relationship, distribution, composition or correlation? Each has a default.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 31</div>
+      <h2>Good charts clarify — bad charts mislead</h2>
+      <ul>
+        <li>Visualization is persuasion, so it carries ethical weight. Clarity over decoration.</li>
+        <li>The truncated-axis example is the classic deception: identical data, but the left chart starts the y-axis high, making a 1–2% wiggle look like a dramatic surge. The right chart starts at zero and tells the truth.</li>
+        <li>Rules of thumb: start bars at zero, label your axes, strip chart-junk, one message per chart, colour with meaning. Design honestly — and read others' charts sceptically.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 32</div>
+      <h2>Correlation ≠ causation</h2>
+      <ul>
+        <li>The most expensive analyst mistake. Two series can move together without one causing the other — they may share a hidden third cause.</li>
+        <li>The classic: ice-cream sales and drownings rise together. Ice cream does not cause drowning — summer drives both. In banking: marketing spend and revenue both rise in Q4 because of the holidays, not because the ads worked.</li>
+        <li>Tie back to Conway's danger zone: this is exactly the trap of coding + domain without statistics. Always ask: could a third factor explain this? Would it hold on new data?</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 33</div>
+      <h2>Lead with the “so what”</h2>
+      <ul>
+        <li>The final facet (Harvard CS109's last word): communicate. Analysis nobody acts on is wasted.</li>
+        <li>Storytelling with data: lead with the so-what, not the method. Your stakeholder does not care about your pipeline — they care about the decision.</li>
+        <li>Three habits: lead with the conclusion; one chart, one message; end with a recommendation, not a data dump. This is what turns information into insight — back to Fiorina.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 34</div>
+      <h2>One question, all the way through</h2>
+      <ul>
+        <li>Replay the whole arc on one concrete banking example: reducing churn in young customers.</li>
+        <li>Ask: which customers will churn next quarter? Acquire: pull transactions + tenure. Wrangle: clean and build features. Explore: EDA shows low-engagement under-30s churn most. Model: a churn score (next session). Communicate: target the at-risk segment with one offer.</li>
+        <li>Recap the four pillars, then point to practice: get hands-on in a notebook with a real CSV. The only way to learn this is to do it.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 35</div>
+      <h2>Six habits that outlast any tool</h2>
+      <ul>
+        <li>These six habits are what the literature and practice converge on — they outlast any single tool or language.</li>
+        <li>Frame first (CRISP-DM business understanding): a precise question + success metric prevents weeks of wasted effort. Look before you model: EDA first, always visualise. Tidy + validated: one variable per column, plus explicit data-quality checks.</li>
+        <li>Reproducibility by default: version-control code AND data with Git; a notebook should re-run top-to-bottom with the same result. Efficient pipelines: in Polars, prefer lazy scans and expressions so the optimiser prunes columns and pushes filters down. Iterate &amp; document: the workflow is a loop heading toward deployment — record decisions (this is where MLOps begins).</li>
+        <li>Sources: CRISP-DM (2025 refresh, datascience-pm.com); 'Ten simple rules for a responsible data science workflow' (PMC, 2024); Polars docs (pola.rs).</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 36</div>
+      <h2>Data → information → insight</h2>
+      <ul>
+        <li>Land the plane. Recap in one breath, then bridge to next session: Machine Learning &amp; MLOps — moving from describing data to learning from it.</li>
+        <li>Call back to Fiorina: we have turned data into information and information into insight. Everything in ML next session assumes the clean, well-understood data we just learned to produce.</li>
+        <li>Thank them, open the floor for Q&amp;A.</li>
+      </ul>
+    </article>
+  </div>
+</main>
+<script>
+(function(){
+  var KEY = 'ocbc-crayon-speaker-notes-v1';
+  var arts = [].slice.call(document.querySelectorAll('#notes .s'));
+  var fields = [].slice.call(document.querySelectorAll('#notes h2, #notes li'));
+  var resetBtn = document.getElementById('reset');
+
+  function collect(){
+    return arts.map(function(s){
+      return { t: (s.querySelector('h2')||{}).textContent || '',
+               n: [].slice.call(s.querySelectorAll('li')).map(function(li){ return li.textContent; }) };
+    });
+  }
+  function showReset(on){ resetBtn.style.display = on ? '' : 'none'; }
+
+  // apply any saved edits
+  try{
+    var raw = localStorage.getItem(KEY);
+    if(raw){
+      var data = JSON.parse(raw);
+      arts.forEach(function(s,i){
+        var rec = data[i]; if(!rec) return;
+        var h = s.querySelector('h2'); if(h && rec.t != null) h.textContent = rec.t;
+        var lis = [].slice.call(s.querySelectorAll('li'));
+        (rec.n||[]).forEach(function(t,k){ if(lis[k]) lis[k].textContent = t; });
+      });
+      showReset(true);
+    }
+  }catch(e){}
+
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(collect())); showReset(true); }catch(e){} }
+
+  // edit toggle
+  var editing = false, editBtn = document.getElementById('edit'), editLbl = document.getElementById('editLbl');
+  editBtn.addEventListener('click', function(){
+    editing = !editing;
+    document.body.classList.toggle('editing', editing);
+    editBtn.classList.toggle('on', editing);
+    editLbl.textContent = editing ? 'Done' : 'Edit';
+    fields.forEach(function(el){ el.contentEditable = editing ? 'true' : 'false'; });
+    if(editing){ if(fields[0]) fields[0].focus(); } else { save(); }
+  });
+  document.addEventListener('input', function(){ if(editing) save(); });
+
+  // download current (edited) content as .txt
+  function buildTxt(){
+    var L = ['OCBC CRAYON 2026 — Python Data Foundations', 'Speaker notes · ' + arts.length + ' slides',
+             '================================================', ''];
+    collect().forEach(function(r,i){
+      L.push('Slide ' + (i+1) + ' — ' + r.t);
+      r.n.forEach(function(n){ L.push('  \u2022 ' + n); });
+      L.push('');
+    });
+    return L.join('\n').replace(/\s+$/, '') + '\n';
+  }
+  document.getElementById('dl').addEventListener('click', function(ev){
+    ev.preventDefault();
+    var blob = new Blob([buildTxt()], { type: 'text/plain;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'OCBC-CRAYON-Python-Data-Foundations-speaker-notes.txt';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+  });
+
+  resetBtn.addEventListener('click', function(){
+    if(!confirm('Discard your edits and restore the original notes?')) return;
+    try{ localStorage.removeItem(KEY); }catch(e){}
+    location.reload();
+  });
+})();
+</script>
+</body>
+</html>
