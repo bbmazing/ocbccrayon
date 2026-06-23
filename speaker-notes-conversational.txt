@@ -1,0 +1,138 @@
+OCBC CRAYON 2026 — Conversational AI Design
+Speaker notes · 27 slides
+================================================
+
+Slide 1 — Conversational AI Design
+  • Welcome to the final Day-2 session. You know how the model understands, retrieves, acts, and now listens and speaks. This session is about the conversation itself.
+  • 60 minutes, design-first: principles, sample dialogs and human factors over architecture. Lots of good-versus-bad examples. Banking voice and chat throughout.
+  • Promise: by the end you can critique and shape a conversation — natural interaction, context, and voice UX.
+
+Slide 2 — The frame
+  • The whole session in one line. Design the conversation you would actually want to have — then teach the machine to hold up its end.
+  • Good conversation design models the cooperative rules of human conversation we already know by instinct.
+  • Hold this framing; we will call it back at the close.
+
+Slide 3 — Capable is not the same as usable
+  • The shift this session marks. Earlier sessions made the model capable — it can understand, retrieve and act.
+  • This session makes it usable. A capable model wrapped in a bad conversation still fails the customer.
+  • Design is the difference between a clever engine and a product people trust.
+
+Slide 4 — The experience on top of the engine
+  • What conversation design is: a discipline blending user experience, writing, linguistics and AI to make human-machine dialogue feel natural.
+  • Crucially, the engine — the large language model (LLM) — is separate from the designed experience layered on top of it.
+  • One line to remember: a model isn't a product; a conversation is.
+
+Slide 5 — Design moves the numbers that matter
+  • Why a bank should care. Good conversation design lifts task completion, cuts dropped calls, lowers human-agent load, and builds trust.
+  • Bad design does the opposite — frustration on sensitive money tasks, where the stakes are highest.
+  • It applies across every channel: customer chat, the interactive voice response (IVR) or voice-bot, and the in-app assistant.
+
+Slide 6 — Principles of Natural Interaction
+  • Part 1, about 18 minutes — the principles. The foundation is modelling real human conversation, not inventing a robot dialect.
+  • We cover the cooperative principle, the intent / slot / prompt vocabulary, multi-turn slot filling, the one-question rule, and persona.
+  • Lots of good-versus-bad dialog — comparisons teach faster than prose.
+
+Slide 7 — Mirror the rules we already know
+  • The foundational idea, from Google's conversation-design team: don't invent a robot dialect — mirror the cooperative rules of human conversation people already know.
+  • Turn-taking, brevity, relevance, not repeating yourself. Watch this exchange play out: each turn is short, relevant, and moves the task forward.
+  • When dialog follows the rules we use by instinct, it feels natural — and customers don't have to learn anything.
+
+Slide 8 — Say enough — but not too much
+  • The cooperative principle in practice: say enough but not too much, stay relevant, be clear, be truthful.
+  • On the left, a bloated robotic reply that buries the answer. On the right, a crisp cooperative one that gives the answer and a next step.
+  • Same information, very different experience. Brevity and relevance are design choices.
+
+Slide 9 — The vocabulary of task-based dialog
+  • The core vocabulary, from Alexa and Lex. The utterance is what the user says. The intent is what they want. Slots are the details needed. The prompt is the system's move to advance.
+  • Here: the utterance ‘transfer money’ maps to a transfer intent, which needs three slots — amount, payee and date.
+  • Every task-based assistant is built on this shape: detect intent, fill slots, then act.
+
+Slide 10 — Gather what's missing, one turn at a time
+  • Real tasks need several turns. Gather missing slots one at a time, confirm, allow updates, then act.
+  • Notice the assistant asks only for what it still needs — the date — rather than demanding everything at once.
+  • Filling slots conversationally, one at a time, is what makes a task feel like a chat rather than a form.
+
+Slide 11 — A conversation isn't a form read aloud
+  • A top practitioner rule: a conversation isn't a form read aloud.
+  • On the left, the bot dumps every field at once — overwhelming and unnatural. On the right, it asks one relevant question and uses the answer immediately.
+  • One question at a time keeps cognitive load low and the dialog moving.
+
+Slide 12 — Tone is brand, in word choice
+  • The assistant's voice sets expectations. A bank assistant should sound trustworthy, clear and professional — not jokey.
+  • Tone is brand, translated into word choice, and it must stay consistent across every turn and channel.
+  • Decide the persona deliberately and write to it — it is as much a design artefact as the flow.
+
+Slide 13 — Offer paths, don't leave a void
+  • Tell users what the assistant can do. A brief onboarding line and a few conversation starters beat an open-ended ‘How can I help?’ void.
+  • Open-ended prompts make users guess; guided options show the happy paths and reduce dead ends.
+  • Set expectations early and offer choices — people are faster when they aren't guessing.
+
+Slide 14 — Context — Making It Feel Intelligent
+  • Part 2, about 13 minutes. The single biggest lever on perceived intelligence is context.
+  • We cover carrying context across turns, resolving references like ‘it’, handling topic changes, and short- versus long-term memory.
+  • Plus the privacy line a bank must hold around remembered data.
+
+Slide 15 — Tracking context feels smart; forgetting feels broken
+  • Google's point: an assistant that tracks the dialog and the user's situation feels smart; one that forgets feels broken.
+  • The infamous anti-pattern is the phone tree that says ‘please listen carefully, our menu options have changed’ — oblivious to you and your history.
+  • Memory is the cheapest way to feel intelligent. Track the thread.
+
+Slide 16 — Resolve “it” without re-asking
+  • Carrying context across turns means resolving references — ‘cancel it’, ‘the second one’ — and not re-asking for information already given.
+  • Watch the assistant resolve ‘it’ to the scheduled transfer from earlier in the dialog, without making the customer repeat the details.
+  • Keeping the thread is what separates a conversation from a series of disconnected questions.
+
+Slide 17 — Follow the switch, keep the thread
+  • Users jump: from tracking a transfer, to cancelling, to a brand-new question. Good design follows the switch without dumping the prior context.
+  • Here the customer pivots from a transfer to a lost card; the assistant follows cleanly and can still return to the transfer.
+  • Support correction and digression gracefully — real conversations are not linear.
+
+Slide 18 — Personalize — within clear privacy limits
+  • Two kinds of context. Short-term is this conversation's state. Long-term is remembered preferences and history — tie this back to RAG and memory from earlier sessions.
+  • Use long-term context to personalize, but flag privacy: sensitive data, clear retention, and user control over what is remembered.
+  • Personalization is powerful; in a bank it must be consented and governed.
+
+Slide 19 — UX in Voice Interfaces
+  • Part 3, about 16 minutes. Voice changes the rules — no screen, no scrollback, linear and ephemeral.
+  • We cover the design process, confirmations, error recovery, handoff to humans, and multimodal plus accessibility.
+  • Error recovery is the make-or-break; we spend the most time there.
+
+Slide 20 — Design for the ear, not the eye
+  • Voice is different from chat. There's no screen, no scrollback; it's linear and ephemeral, often hands-free, with interruptions and noise.
+  • So responses must be shorter, with confirmations and interruption handling. You can't show a list of twenty options — you must speak a few.
+  • Design for the ear, not the eye.
+
+Slide 21 — Sample dialogs → flow diagram → edge cases
+  • How professionals actually do it. First write sample dialogs — script the happy path, the shortest route to completion.
+  • Then turn those scripts into a conversation-flow diagram. Only after that do you build complexity: errors, first-time versus returning users.
+  • Script first, diagram second, edge-cases last — in that order.
+
+Slide 22 — No screen means confirm out loud
+  • Voice has no visual receipt, so confirm critical actions out loud — especially anything that moves money.
+  • Read back what was understood, and use audio cues, or earcons, to signal state. ‘Transfer 500 dollars to Budi — shall I proceed?’
+  • Explicit confirmation is non-negotiable on irreversible money tasks.
+
+Slide 23 — Design for being misunderstood
+  • Error recovery is the make-or-break. Design for misunderstanding, because it will happen.
+  • Detect low confidence, ask a clarifying question rather than guessing, allow an easy rephrase, and escalate to a human after repeated failure.
+  • Graceful fallback is what separates a good assistant from a frustrating one.
+
+Slide 24 — Gather · recover · confirm · act
+  • A short banking dialog playing out end to end, including a recovery branch. The customer asks to transfer; the assistant doesn't catch the amount and recovers with a clarifying question.
+  • Then it gathers the rest one slot at a time, confirms the critical detail, and acts.
+  • Good design in one screen: gather one slot at a time, confirm the important things, recover gracefully.
+
+Slide 25 — Hand off — with the context
+  • Know when to stop. For complex, sensitive or repeatedly-failed cases, route to a human — and crucially, pass the context along.
+  • The customer should never have to repeat everything they just told the bot.
+  • A clean exit to a human is good UX, not a failure of the assistant.
+
+Slide 26 — Voice as an entry point, not the whole story
+  • A 2026 trend: voice as an entry point, paired with a screen for browsing and confirming — multimodal.
+  • Design for accessibility: voice helps users who can't type or see; screens help those who can't hear.
+  • And plan multilingual and Indonesian-English code-switching from the start — that's our audience's reality.
+
+Slide 27 — Design the conversation first
+  • Land the plane. Three pillars: natural interaction — model real conversation, intent/slot/prompt, one question at a time; context — memory is perceived intelligence, carry the thread; and voice UX — confirm, recover, hand off, go multimodal.
+  • One overarching rule: test with real users early — Wizard-of-Oz, conversation logs, fallout analysis. People always say what you didn't script.
+  • Pointers: Google Conversation Design and the Amazon Alexa Design Guide. Call back the opener — design the conversation you'd want to have. Questions.
