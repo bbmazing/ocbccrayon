@@ -61,8 +61,18 @@ visual; titles centered only, body left-aligned.
 
 ```bash
 cd web
+# 1. rebuild the deck's self-contained standalone (inlines fonts + images)
 python make_standalone.py <source>.html <source>.standalone.html
+# 2. regenerate the speaker-notes page/.txt FROM the deck's data-notes
+#    (the deck is the single source of truth; this keeps both in sync)
+python make_speaker_notes.py ../<source>.html ../speaker-notes-<topic>.html \
+       ../speaker-notes-<topic>.txt "OCBC CRAYON 2026 — <Deck Title>"
 ```
 
-Rebuild a deck's standalone, its components gallery standalone, AND regenerate
-its speaker-notes page/.txt whenever the deck content or slide order changes.
+`make_speaker_notes.py` rewrites only the `<div id="notes">` list, the two
+slide-count strings, and the `.txt` mirror — all page chrome is preserved. Slide
+headings are derived from each slide (cover h1 / "eyebrow — h2" for dividers /
+`.slide-title` / kicker), so edit notes in the **deck's `data-notes`**, never the
+notes page directly. Whenever deck content or slide order changes, rebuild the
+deck standalone, its components gallery standalone, AND regenerate the
+speaker-notes page/.txt.

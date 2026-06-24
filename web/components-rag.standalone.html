@@ -420,7 +420,7 @@ body{font-family:var(--fBody); color:var(--text); background:#fafafb; line-heigh
     <div class="desc">Drag — trade accuracy for storage/speed.</div>
     <div class="stage"><div class="gdim">
       <div class="dv" id="gdval">1024</div>
-      <input id="gdim" type="range" min="0" max="4" value="2" />
+      <input id="gdim" type="range" min="0" max="6" value="4" />
       <div class="gdr"><span class="l">Accuracy</span><span class="t"><span class="f a" id="gda"></span></span><span class="v" id="gdav"></span></div>
       <div class="gdr"><span class="l">Storage</span><span class="t"><span class="f s" id="gds"></span></span><span class="v" id="gdsv"></span></div>
     </div></div>
@@ -475,7 +475,7 @@ document.querySelectorAll('.tile').forEach(t=>t.addEventListener('click',()=>{
 /* MRL dimension slider */
 (function(){
   var sl=document.getElementById('gdim'); if(!sl) return;
-  var dims=[256,512,1024,2048,4096], acc=[88,93,96,98,100], sto=[6,12,25,50,100];
+  var dims=[64,128,256,512,1024,2048,4096], acc=[71,82,88,93,96,98,100], sto=[2,3,6,12,25,50,100];
   function set(id,v){var f=document.getElementById(id),x=document.getElementById(id+'v');if(f)f.style.width=v+'%';if(x)x.textContent=v+'%';}
   function upd(){var i=+sl.value;document.getElementById('gdval').textContent=dims[i];set('gda',acc[i]);set('gds',sto[i]);}
   sl.addEventListener('input',upd); sl.addEventListener('click',function(e){e.stopPropagation();}); upd();
