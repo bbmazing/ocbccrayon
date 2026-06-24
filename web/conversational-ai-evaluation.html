@@ -1,0 +1,1389 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Conversational AI Evaluation · OCBC CRAYON</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+/* =========================================================================
+   OCBC CRAYON · Python Data Foundations
+   Self-contained animated deck. Fixed 16:9 stage, one slide at a time.
+   ========================================================================= */
+:root{
+  /* OCBC brand */
+  --red:#EC1B23; --red-dark:#B3141A; --red-deep:#7A0E12;
+  --ink:#1A1A1A; --charcoal:#202024; --charcoal-2:#2A2A2F;
+  --text:#1F2937; --muted:#6B7280; --faint:#9AA1AC;
+  --surface:#FFFFFF; --card:#F5F5F6; --card-2:#EFEFF1;
+  --line:#E4E7EB; --line-strong:#D6D9DE;
+  --tint-red:#FCEEEF; --tint-red-2:#FBE2E3;
+  --code-bg:#1A1C22; --code-ink:#E7E9EE;
+  /* supporting diagram hues (used sparingly) */
+  --blue:#1C6E9C; --teal:#0E7C6B; --amber:#C9851A; --green:#1E8E5A; --violet:#6C4FB3;
+  /* stage geometry */
+  --stageW:1280px; --stageH:720px;
+  --fHead:'Manrope',system-ui,sans-serif;
+  --fBody:'Inter',system-ui,sans-serif;
+  --fMono:'JetBrains Mono',ui-monospace,monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:#0c0c0e;
+  font-family:var(--fBody);
+  color:var(--text);
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+/* ---- Stage: scale a fixed 1280x720 deck to fit the viewport ---- */
+.stage{
+  position:fixed; inset:0; height:100dvh; display:grid; place-items:center;
+  background:
+    radial-gradient(1200px 700px at 80% -10%, rgba(236,27,35,.10), transparent 60%),
+    #0a0a0c;
+}
+.deck{
+  position:absolute; left:0; top:0;
+  width:var(--stageW); height:var(--stageH);
+  transform-origin:top left;
+  box-shadow:0 40px 120px -30px rgba(0,0,0,.8);
+  border-radius:4px; overflow:hidden;
+  background:#fff;
+}
+
+/* ---- Slides ---- */
+.slide{
+  position:absolute; inset:0;
+  width:var(--stageW); height:var(--stageH);
+  opacity:0; visibility:hidden; pointer-events:none;
+  transition:opacity .5s ease;
+  display:flex; flex-direction:column;
+  padding:62px 76px 58px;
+  background:var(--surface);
+}
+.slide.active{opacity:1; visibility:visible; pointer-events:auto; z-index:2}
+.slide.prev{z-index:1}
+
+/* dark slides (cover, dividers, close) */
+.slide.dark{
+  color:#fff;
+  background:
+    radial-gradient(900px 600px at 78% -8%, rgba(236,27,35,.30), transparent 55%),
+    radial-gradient(700px 500px at -5% 110%, rgba(236,27,35,.12), transparent 60%),
+    linear-gradient(160deg,#202024 0%,#161618 60%,#121214 100%);
+}
+.slide.dark::after{ /* fine grain texture */
+  content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
+  background-image:radial-gradient(rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size:3px 3px; mix-blend-mode:screen;
+}
+
+/* =========================================================================
+   Shared chrome: kicker, badge, footer, titles
+   ========================================================================= */
+.kicker{
+  display:inline-flex; align-items:center; gap:11px;
+  font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--red); margin-bottom:16px;
+}
+.kicker .badge{
+  width:24px; height:24px; border-radius:50%;
+  background:var(--red); position:relative; flex:none;
+  box-shadow:0 0 0 4px var(--tint-red);
+  overflow:hidden;
+}
+.kicker .badge::before{ /* rising-sun rays motif */
+  content:""; position:absolute; left:50%; bottom:5px; width:0; height:0;
+  border-left:7px solid transparent; border-right:7px solid transparent;
+  border-bottom:9px solid #fff; transform:translateX(-50%); opacity:.95;
+}
+.kicker .badge::after{
+  content:""; position:absolute; left:0; right:0; bottom:6px; height:1.5px;
+  background:rgba(255,255,255,.85);
+}
+.dark .kicker{color:#ff6a6f}
+.dark .kicker .badge{box-shadow:0 0 0 4px rgba(236,27,35,.25)}
+
+.slide-title{
+  font-family:var(--fHead); font-weight:800; color:var(--ink);
+  font-size:38px; line-height:1.08; letter-spacing:-.02em; max-width:24ch;
+}
+.dark .slide-title{color:#fff}
+.slide-sub{font-size:17px; color:var(--muted); margin-top:12px; max-width:60ch; line-height:1.5}
+
+.foot{
+  position:absolute; left:76px; right:76px; bottom:26px;
+  display:flex; align-items:center; justify-content:space-between;
+  font-size:12px; color:var(--faint); letter-spacing:.02em;
+}
+.foot .mark{display:flex; align-items:center; gap:9px; font-weight:600; color:var(--muted)}
+.foot .mark img{height:18px; width:auto; display:block}
+.foot .pg{font-family:var(--fMono); font-weight:500}
+.dark .foot{color:rgba(255,255,255,.5)}
+.dark .foot .mark{color:rgba(255,255,255,.7)}
+
+.body-area{flex:1; min-height:0; display:flex; flex-direction:column; margin-top:8px}
+
+/* =========================================================================
+   Reveal system — children animate in when slide becomes active
+   ========================================================================= */
+[data-r]{opacity:0; transform:translateY(16px); transition:opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1);}
+.slide.active [data-r]{opacity:1; transform:none}
+[data-r][data-d="1"]{transition-delay:.08s}[data-r][data-d="2"]{transition-delay:.16s}
+[data-r][data-d="3"]{transition-delay:.24s}[data-r][data-d="4"]{transition-delay:.32s}
+[data-r][data-d="5"]{transition-delay:.40s}[data-r][data-d="6"]{transition-delay:.48s}
+[data-r][data-d="7"]{transition-delay:.56s}[data-r][data-d="8"]{transition-delay:.64s}
+[data-r][data-d="9"]{transition-delay:.72s}[data-r][data-d="10"]{transition-delay:.80s}
+[data-r][data-d="11"]{transition-delay:.88s}[data-r][data-d="12"]{transition-delay:.96s}
+
+/* =========================================================================
+   COVER (slide 1)
+   ========================================================================= */
+.cover{padding:0}
+.cover .bg{
+  position:absolute; inset:0;
+  background:url('assets/bg_title_skyline.png') center/cover no-repeat;
+}
+.cover .scrim{position:absolute; inset:0; background:linear-gradient(100deg, rgba(255,255,255,.96) 0%, rgba(255,255,255,.82) 34%, rgba(255,255,255,0) 56%);}
+.cover .inner{position:relative; height:100%; display:flex; flex-direction:column; justify-content:center; padding:0 76px;}
+.cover .logo{height:34px; width:auto; position:absolute; top:48px; left:76px}
+.cover h1{font-family:var(--fHead); font-weight:800; letter-spacing:-.025em; line-height:1.02; font-size:66px; color:var(--ink)}
+.cover h1 .red{color:var(--red); display:block}
+.cover .rule{width:64px; height:5px; background:var(--red); border-radius:3px; margin:26px 0 22px}
+.cover .meta{font-size:15px; color:var(--muted); line-height:1.7}
+.cover .meta strong{color:var(--text); font-weight:600}
+.cover .program{position:absolute; bottom:46px; left:76px; font-size:12.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); font-weight:600}
+
+/* =========================================================================
+   QUOTE (slide 2)
+   ========================================================================= */
+.quote-wrap{flex:1; display:flex; flex-direction:column; justify-content:center; max-width:70ch}
+.quote-mark{font-family:var(--fHead); font-size:120px; line-height:.6; color:var(--red); font-weight:800; height:54px}
+.quote-wrap blockquote{font-family:var(--fHead); font-weight:600; font-size:46px; line-height:1.18; letter-spacing:-.02em; color:#fff; margin:18px 0 26px}
+.quote-wrap blockquote em{color:#ff6a6f; font-style:normal}
+.quote-wrap cite{font-style:normal; font-size:16px; color:rgba(255,255,255,.65); letter-spacing:.04em}
+.quote-wrap cite b{color:#fff; font-weight:600}
+
+/* =========================================================================
+   DIVIDER (section openers)
+   ========================================================================= */
+.divider{justify-content:center}
+.divider .pillar-no{font-family:var(--fHead); font-weight:800; font-size:200px; line-height:.8; color:rgba(255,255,255,.06); position:absolute; right:60px; top:50%; transform:translateY(-50%); letter-spacing:-.04em}
+.divider .eyebrow{font-family:var(--fHead); font-weight:700; letter-spacing:.18em; text-transform:uppercase; font-size:14px; color:#ff6a6f; display:flex; align-items:center; gap:12px}
+.divider .eyebrow .dot{width:26px;height:26px;border-radius:50%;background:var(--red);position:relative;overflow:hidden}
+.divider .eyebrow .dot::before{content:"";position:absolute;left:50%;bottom:5px;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:9px solid #fff;transform:translateX(-50%)}
+.divider h2{font-family:var(--fHead); font-weight:800; font-size:64px; letter-spacing:-.025em; color:#fff; margin:20px 0 18px; line-height:1.02; max-width:18ch}
+.divider .lead{font-size:18px; color:rgba(255,255,255,.7); max-width:54ch; line-height:1.55}
+.divider .prog-rail{display:flex; gap:10px; margin-top:34px}
+.divider .prog-rail span{font-size:12.5px; font-weight:600; letter-spacing:.04em; color:rgba(255,255,255,.4); padding:7px 14px; border:1px solid rgba(255,255,255,.14); border-radius:99px}
+.divider .prog-rail span.on{color:#fff; border-color:var(--red); background:rgba(236,27,35,.18)}
+
+/* =========================================================================
+   Generic building blocks
+   ========================================================================= */
+.cards{display:grid; gap:16px; flex:1; min-height:0}
+.cards.c3{grid-template-columns:repeat(3,1fr)}
+.cards.c2{grid-template-columns:repeat(2,1fr)}
+.card{
+  background:var(--card); border:1px solid var(--line); border-radius:14px;
+  padding:20px 22px; display:flex; flex-direction:column; gap:8px;
+  transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.card:hover{transform:translateY(-3px); box-shadow:0 18px 36px -22px rgba(0,0,0,.3); border-color:var(--line-strong)}
+.card .ic{width:40px; height:40px; border-radius:11px; background:var(--tint-red); color:var(--red); display:grid; place-items:center; flex:none}
+.card .ic svg{width:22px; height:22px}
+.card .num{font-family:var(--fHead); font-weight:800; font-size:15px; color:var(--red); width:30px; height:30px; border-radius:8px; background:var(--tint-red); display:grid; place-items:center}
+.card h3{font-family:var(--fHead); font-weight:700; font-size:18px; color:var(--ink); letter-spacing:-.01em}
+.card p{font-size:14px; color:var(--muted); line-height:1.5}
+.card .tag{font-family:var(--fMono); font-size:12px; color:var(--red); font-weight:500}
+
+/* two-column: text + visual */
+.two{display:grid; grid-template-columns:1fr 1fr; gap:40px; flex:1; min-height:0; align-items:center}
+.two.wide-r{grid-template-columns:0.86fr 1.14fr}
+.two .txt{display:flex; flex-direction:column; justify-content:center}
+.bullets{list-style:none; display:flex; flex-direction:column; gap:14px; margin-top:6px}
+.bullets li{position:relative; padding-left:28px; font-size:16.5px; line-height:1.5; color:var(--text)}
+.bullets li::before{content:""; position:absolute; left:0; top:9px; width:9px; height:9px; border-radius:3px; background:var(--red)}
+.bullets li.strong{font-weight:600; color:var(--ink)}
+.bullets li b{color:var(--ink); font-weight:600}
+.viz{position:relative; height:100%; display:flex; flex-direction:column; justify-content:center}
+
+/* rail (side panel) */
+.rail{background:var(--ink); color:#fff; border-radius:16px; padding:24px 26px; align-self:stretch; display:flex; flex-direction:column; justify-content:center}
+.rail h4{font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.12em; text-transform:uppercase; color:#ff6a6f; margin-bottom:16px}
+.rail ul{list-style:none; display:flex; flex-direction:column; gap:13px}
+.rail li{font-size:15px; color:rgba(255,255,255,.86); padding-left:22px; position:relative; line-height:1.4}
+.rail li::before{content:""; position:absolute; left:0; top:7px; width:7px; height:7px; border-radius:50%; background:var(--red)}
+
+.bullets-rail{display:grid; grid-template-columns:1.55fr 1fr; gap:32px; flex:1; min-height:0; align-items:stretch}
+.bullets-rail .txt{display:flex; flex-direction:column; justify-content:center}
+
+/* =========================================================================
+   Code block (typing reveal + syntax tint)
+   ========================================================================= */
+.codewrap{background:var(--code-bg); border-radius:14px; overflow:hidden; box-shadow:0 24px 50px -28px rgba(0,0,0,.5); border:1px solid #2a2d36; display:flex; flex-direction:column}
+.codewrap .bar{display:flex; align-items:center; gap:7px; padding:12px 16px; border-bottom:1px solid #272a33; background:#15171c}
+.codewrap .bar i{width:11px; height:11px; border-radius:50%; display:block}
+.codewrap .bar i:nth-child(1){background:#ff5f57}.codewrap .bar i:nth-child(2){background:#febc2e}.codewrap .bar i:nth-child(3){background:#28c840}
+.codewrap .bar .fn{margin-left:10px; font-family:var(--fMono); font-size:12.5px; color:#8b909c}
+.codewrap pre{margin:0; padding:20px 22px; overflow:hidden; flex:1}
+.codewrap code{font-family:var(--fMono); font-size:14.5px; line-height:1.65; color:var(--code-ink); white-space:pre; display:block}
+.tok-kw{color:#ff7b72}.tok-fn{color:#d2a8ff}.tok-str{color:#a5d6ff}.tok-num{color:#79c0ff}.tok-com{color:#7d8590; font-style:italic}.tok-op{color:#ff7b72}.tok-var{color:#ffa657}
+.code-line{display:block}
+.slide.active .code-line{animation:codeLine .42s both}
+.slide.active .code-line:nth-child(1){animation-delay:.15s}.slide.active .code-line:nth-child(2){animation-delay:.22s}
+.slide.active .code-line:nth-child(3){animation-delay:.29s}.slide.active .code-line:nth-child(4){animation-delay:.36s}
+.slide.active .code-line:nth-child(5){animation-delay:.43s}.slide.active .code-line:nth-child(6){animation-delay:.50s}
+.slide.active .code-line:nth-child(7){animation-delay:.57s}.slide.active .code-line:nth-child(8){animation-delay:.64s}
+.slide.active .code-line:nth-child(9){animation-delay:.71s}.slide.active .code-line:nth-child(10){animation-delay:.78s}
+.slide.active .code-line:nth-child(11){animation-delay:.85s}.slide.active .code-line:nth-child(12){animation-delay:.92s}
+.slide.active .code-line:nth-child(13){animation-delay:.99s}.slide.active .code-line:nth-child(14){animation-delay:1.06s}
+@keyframes codeLine{from{opacity:0; transform:translateX(-8px)}to{opacity:1; transform:none}}
+.code-note{font-size:14px; color:var(--muted); margin-top:14px; line-height:1.5; font-style:italic}
+.code-points{list-style:none; display:flex; flex-direction:column; gap:12px}
+.code-points li{position:relative; padding-left:24px; font-size:15.5px; line-height:1.45; color:var(--text)}
+.code-points li::before{content:"›"; position:absolute; left:0; top:-1px; color:var(--red); font-weight:800; font-size:18px}
+
+/* =========================================================================
+   Conway Venn (slide 4)
+   ========================================================================= */
+.venn{position:relative; width:430px; height:380px; margin:auto}
+.venn .circ{position:absolute; width:250px; height:250px; border-radius:50%; mix-blend-mode:multiply; display:grid; place-items:center; opacity:0; transform:scale(.6); transition:opacity .7s ease, transform .7s cubic-bezier(.34,1.56,.64,1)}
+.venn .c1{background:rgba(236,27,35,.40); left:0; top:0}
+.venn .c2{background:rgba(28,110,156,.40); right:0; top:0}
+.venn .c3{background:rgba(30,142,90,.42); left:50%; bottom:0; transform:translateX(-50%) scale(.6)}
+.slide.active .venn .c1{opacity:1; transform:scale(1); transition-delay:.2s}
+.slide.active .venn .c2{opacity:1; transform:scale(1); transition-delay:.45s}
+.slide.active .venn .c3{opacity:1; transform:translateX(-50%) scale(1); transition-delay:.7s}
+.venn .lbl{font-family:var(--fHead); font-weight:700; font-size:14px; color:var(--ink); text-align:center; line-height:1.2; pointer-events:none; padding:0 30px}
+.venn .center{position:absolute; left:50%; top:48%; transform:translate(-50%,-50%); z-index:5; background:var(--ink); color:#fff; font-family:var(--fHead); font-weight:800; font-size:13px; padding:8px 14px; border-radius:99px; white-space:nowrap; opacity:0; transition:opacity .5s ease .95s; box-shadow:0 8px 20px -8px rgba(0,0,0,.5)}
+.slide.active .venn .center{opacity:1}
+.venn .danger{position:absolute; left:14%; bottom:30%; z-index:6; font-family:var(--fHead); font-weight:800; font-size:11px; color:#fff; background:var(--red); padding:5px 10px; border-radius:6px; transform:rotate(-8deg); opacity:0; transition:opacity .5s ease 1.2s; box-shadow:0 6px 16px -6px rgba(236,27,35,.7)}
+.slide.active .venn .danger{opacity:1}
+
+/* =========================================================================
+   Stat counters (slide 5 + others)
+   ========================================================================= */
+.stat-row{display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin:auto 0}
+.stat{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:30px 26px; text-align:left; position:relative; overflow:hidden}
+.stat .big{font-family:var(--fHead); font-weight:800; font-size:62px; line-height:1; color:var(--red); letter-spacing:-.03em}
+.stat .big .unit{font-size:32px; vertical-align:super; margin-left:2px}
+.stat .lab{font-size:15px; color:var(--text); margin-top:12px; line-height:1.45; font-weight:500}
+.stat .sub{font-size:12.5px; color:var(--faint); margin-top:8px}
+.stat::before{content:""; position:absolute; left:0; top:0; bottom:0; width:5px; background:var(--red)}
+
+/* progress ring (80% stat) */
+.ring-wrap{display:flex; align-items:center; gap:40px; margin:auto 0}
+.ring{position:relative; width:230px; height:230px; flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring .pct{position:absolute; inset:0; display:grid; place-items:center; font-family:var(--fHead); font-weight:800; font-size:56px; color:var(--ink)}
+.ring-copy{max-width:46ch}
+.ring-copy h3{font-family:var(--fHead); font-weight:800; font-size:28px; color:var(--ink); letter-spacing:-.02em; line-height:1.1; margin-bottom:14px}
+.ring-copy p{font-size:16px; color:var(--muted); line-height:1.55}
+
+/* =========================================================================
+   Step strip (5 facets / workflow)
+   ========================================================================= */
+.flow{display:flex; align-items:stretch; gap:0; margin:auto 0; width:100%}
+.flow .step{flex:1; position:relative; display:flex; flex-direction:column; gap:8px; padding:0 6px}
+.flow .step .node{width:54px; height:54px; border-radius:14px; background:var(--ink); color:#fff; font-family:var(--fHead); font-weight:800; font-size:20px; display:grid; place-items:center; position:relative; z-index:2}
+.flow .step:nth-child(odd) .node{background:var(--red)}
+.flow .step h4{font-family:var(--fHead); font-weight:700; font-size:16.5px; color:var(--ink); margin-top:10px}
+.flow .step p{font-size:13.5px; color:var(--muted); line-height:1.45}
+.flow .arrow{position:absolute; top:27px; left:46px; right:-8px; height:2px; background:var(--line-strong); z-index:1}
+.flow .arrow::after{content:""; position:absolute; right:0; top:-4px; border-left:8px solid var(--line-strong); border-top:5px solid transparent; border-bottom:5px solid transparent}
+.flow .step:last-child .arrow{display:none}
+/* sequential build for flow */
+.flow .step{opacity:0; transform:translateY(14px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .flow .step{opacity:1; transform:none}
+.slide.active .flow .step:nth-child(1){transition-delay:.15s}.slide.active .flow .step:nth-child(2){transition-delay:.35s}
+.slide.active .flow .step:nth-child(3){transition-delay:.55s}.slide.active .flow .step:nth-child(4){transition-delay:.75s}
+.slide.active .flow .step:nth-child(5){transition-delay:.95s}.slide.active .flow .step:nth-child(6){transition-delay:1.15s}
+.flow.compact .node{width:46px;height:46px;border-radius:12px;font-size:17px}
+.flow-cap{font-size:14px; color:var(--muted); font-style:italic; text-align:center; margin-top:26px}
+
+/* journey / agenda */
+.journey{display:grid; grid-template-columns:repeat(4,1fr); gap:18px; flex:1; min-height:0; align-items:stretch}
+.jcard{border:1px solid var(--line); border-radius:16px; padding:24px 22px; display:flex; flex-direction:column; position:relative; background:var(--surface); overflow:hidden}
+.jcard .pn{font-family:var(--fHead); font-weight:800; font-size:46px; color:var(--card-2); line-height:1; letter-spacing:-.03em}
+.jcard .ph{font-family:var(--fHead); font-weight:700; font-size:18.5px; color:var(--ink); margin:14px 0 8px; letter-spacing:-.01em}
+.jcard p{font-size:13.5px; color:var(--muted); line-height:1.5; flex:1}
+.jcard .demo{margin-top:14px; font-family:var(--fMono); font-size:11px; font-weight:600; color:var(--red); background:var(--tint-red); padding:5px 10px; border-radius:6px; align-self:flex-start; display:inline-flex; gap:6px; align-items:center}
+.jcard::after{content:""; position:absolute; left:0; right:0; bottom:0; height:4px; background:var(--red); transform:scaleX(0); transform-origin:left; transition:transform .5s ease}
+.slide.active .jcard::after{transform:scaleX(1)}
+.slide.active .jcard:nth-child(1)::after{transition-delay:.3s}.slide.active .jcard:nth-child(2)::after{transition-delay:.45s}
+.slide.active .jcard:nth-child(3)::after{transition-delay:.6s}.slide.active .jcard:nth-child(4)::after{transition-delay:.75s}
+
+/* =========================================================================
+   Layered stack diagram (Python data stack)
+   ========================================================================= */
+.stack{display:flex; flex-direction:column; gap:12px; margin:auto 0; width:100%}
+.layer{display:grid; grid-template-columns:200px 1fr; align-items:center; gap:22px; border-radius:14px; padding:18px 24px; color:#fff; position:relative; overflow:hidden; opacity:0; transform:translateX(-18px); transition:opacity .55s ease, transform .55s cubic-bezier(.16,1,.3,1)}
+.slide.active .layer{opacity:1; transform:none}
+.slide.active .layer:nth-child(1){transition-delay:.5s}.slide.active .layer:nth-child(2){transition-delay:.38s}
+.slide.active .layer:nth-child(3){transition-delay:.26s}.slide.active .layer:nth-child(4){transition-delay:.14s}
+.layer .lname{font-family:var(--fHead); font-weight:800; font-size:21px; letter-spacing:-.01em; display:flex; align-items:baseline; gap:9px}
+.layer .lname code{font-family:var(--fMono); font-size:13px; opacity:.7; font-weight:500}
+.layer .ldesc{font-size:14.5px; line-height:1.4; opacity:.95}
+.layer.l1{background:linear-gradient(100deg,#2A2A2F,#1c1c20)}
+.layer.l2{background:linear-gradient(100deg,var(--red-dark),var(--red))}
+.layer.l3{background:linear-gradient(100deg,#1C6E9C,#2487bf)}
+.layer.l4{background:linear-gradient(100deg,#0E7C6B,#13a08a)}
+.stack .scaffold{font-size:12.5px; color:var(--muted); text-align:center; font-style:italic}
+
+/* container / building-block cards */
+.mini-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:14px}
+.mini{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:15px 18px}
+.mini .mh{font-family:var(--fMono); font-size:14px; font-weight:700; color:var(--red)}
+.mini .md{font-size:13.5px; color:var(--muted); margin-top:4px; line-height:1.4}
+.mini code{font-family:var(--fMono); font-size:12.5px; color:var(--ink); background:var(--card-2); padding:1px 5px; border-radius:4px}
+
+/* before / after code columns */
+.ba{display:grid; grid-template-columns:1fr 1fr; gap:22px; flex:1; min-height:0; align-items:stretch}
+.ba .col{display:flex; flex-direction:column}
+.ba .ba-h{font-family:var(--fHead); font-weight:700; font-size:14px; margin-bottom:10px; display:flex; align-items:center; gap:9px}
+.ba .ba-h .tagx{font-size:11px; padding:3px 9px; border-radius:99px; font-weight:700; letter-spacing:.04em}
+.ba .before .tagx{background:var(--card-2); color:var(--muted)}
+.ba .after .tagx{background:var(--tint-red); color:var(--red)}
+.ba .codewrap{flex:1}
+/* optimisation pushdown strip (eager vs lazy slide) */
+.pushdown{display:flex; gap:12px; margin-top:16px; justify-content:center; flex-wrap:wrap}
+.pushdown .pd{display:flex; align-items:center; gap:9px; background:var(--tint-red); border:1px solid var(--tint-red-2); border-radius:99px; padding:8px 16px; font-size:13px; color:var(--ink); opacity:0; transform:translateY(10px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .pushdown .pd{opacity:1; transform:none}
+.slide.active .pushdown .pd:nth-child(1){transition-delay:.5s}.slide.active .pushdown .pd:nth-child(2){transition-delay:.66s}.slide.active .pushdown .pd:nth-child(3){transition-delay:.82s}
+.pushdown .pd b{color:var(--red); font-weight:700}
+.pushdown .pd .ck{width:18px;height:18px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-size:11px;flex:none}
+
+/* =========================================================================
+   Notebook-playback demo component
+   ========================================================================= */
+.demo-stage{flex:1; min-height:0; display:grid; grid-template-columns:1.62fr 1fr; gap:26px; align-items:stretch}
+.nb{background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 24px 50px -30px rgba(0,0,0,.35); display:flex; flex-direction:column; overflow:hidden}
+.nb-top{display:flex; align-items:center; gap:8px; padding:11px 16px; border-bottom:1px solid var(--line); background:var(--card)}
+.nb-top .t-ic{width:9px;height:9px;border-radius:50%;background:#e0a800}
+.nb-top .t-ic.r{background:var(--red)} .nb-top .t-ic.g{background:#28a745}
+.nb-top .nb-name{font-family:var(--fMono); font-size:12.5px; color:var(--muted); margin-left:8px}
+.nb-top .nb-kernel{margin-left:auto; font-size:11.5px; color:var(--faint); display:flex; align-items:center; gap:6px}
+.nb-top .nb-kernel::after{content:"";width:8px;height:8px;border-radius:50%;background:#28a745}
+.nb-body{flex:1; overflow:hidden; padding:6px 0; scroll-behavior:smooth}
+.nb-cell{padding:5px 16px; opacity:0; transform:translateY(8px); transition:opacity .4s ease, transform .4s ease}
+.nb-cell.shown{opacity:1; transform:none}
+.nb-in{display:grid; grid-template-columns:54px 1fr; gap:10px; align-items:start}
+.nb-prompt{font-family:var(--fMono); font-size:12.5px; color:#3b6fb0; text-align:right; padding-top:9px; user-select:none}
+.nb-prompt.busy{color:var(--red)}
+.nb-code{position:relative; background:#f6f7f9; border:1px solid #eceef1; border-left:3px solid var(--red); border-radius:6px; padding:9px 12px; font-family:var(--fMono); font-size:13px; line-height:1.55; color:#1f2430; white-space:pre; overflow:hidden; transition:box-shadow .3s ease, border-left-color .3s ease}
+.nb-cell.running .nb-code{box-shadow:0 0 0 2px var(--tint-red-2), 0 8px 22px -12px rgba(236,27,35,.5); border-left-color:var(--red-dark)}
+.nb-cell.running .nb-code::after{content:"▋"; color:var(--red); animation:caret .7s steps(1) infinite; margin-left:1px}
+@keyframes caret{50%{opacity:0}}
+.nb-out{margin:6px 0 0 64px; font-family:var(--fMono); font-size:12px; line-height:1.5; color:#333; max-height:0; opacity:0; overflow:hidden; transition:max-height .5s ease, opacity .4s ease}
+.nb-out.shown{max-height:240px; opacity:1}
+.nb-out .otable{border-collapse:collapse; font-size:11px}
+.nb-out .otable th{background:var(--ink); color:#fff; font-weight:600; padding:2px 9px; text-align:right; font-family:var(--fMono)}
+.nb-out .otable td{padding:2px 9px; border-bottom:1px solid #eee; text-align:right; color:#444}
+.nb-out .otable tr:nth-child(even) td{background:#fafafa}
+.nb-out .muted{color:#8a9099}
+.nb-out .ok{color:#1E8E5A}
+.demo-side{display:flex; flex-direction:column; gap:16px; justify-content:center}
+.demo-card{border-radius:16px; padding:22px 24px; background:var(--ink); color:#fff}
+.demo-card .dk{font-family:var(--fHead); font-weight:700; font-size:12px; letter-spacing:.13em; text-transform:uppercase; color:#ff6a6f; margin-bottom:10px}
+.demo-card h3{font-family:var(--fHead); font-weight:800; font-size:22px; line-height:1.12; letter-spacing:-.01em; margin-bottom:10px}
+.demo-card p{font-size:14px; line-height:1.5; color:rgba(255,255,255,.82)}
+.demo-steps{list-style:none; display:flex; flex-direction:column; gap:11px}
+.demo-steps li{display:flex; gap:11px; align-items:flex-start; font-size:14px; color:var(--text); line-height:1.4}
+.demo-steps li .sn{flex:none; width:24px; height:24px; border-radius:7px; background:var(--tint-red); color:var(--red); font-family:var(--fHead); font-weight:800; font-size:12px; display:grid; place-items:center}
+.demo-steps li.on .sn{background:var(--red); color:#fff}
+.replay{align-self:flex-start; display:inline-flex; align-items:center; gap:8px; background:var(--tint-red); color:var(--red); border:1px solid var(--tint-red-2); font-family:var(--fHead); font-weight:700; font-size:13px; padding:9px 16px; border-radius:99px; cursor:pointer; transition:all .2s ease}
+.replay:hover{background:var(--red); color:#fff}
+.replay svg{width:14px;height:14px}
+.demo-take{background:var(--tint-red); border:1px solid var(--tint-red-2); border-radius:12px; padding:14px 18px; font-size:13.5px; color:var(--ink); line-height:1.45}
+.demo-take b{color:var(--red)}
+
+/* =========================================================================
+   VS compare panels (structured vs unstructured, good vs bad)
+   ========================================================================= */
+.vs{display:grid; grid-template-columns:1fr 1fr; gap:24px; flex:1; min-height:0}
+.vs .panel{border:1px solid var(--line); border-radius:16px; padding:24px 26px; display:flex; flex-direction:column; background:var(--surface); position:relative; overflow:hidden}
+.vs .panel.accent{background:linear-gradient(180deg,var(--tint-red),#fff); border-color:var(--tint-red-2)}
+.vs .panel .ph{font-family:var(--fHead); font-weight:800; font-size:21px; color:var(--ink); letter-spacing:-.01em; display:flex; align-items:center; gap:12px}
+.vs .panel .ph .glyph{width:42px; height:42px; border-radius:11px; display:grid; place-items:center; flex:none}
+.vs .panel.accent .ph .glyph{background:var(--red); color:#fff}
+.vs .panel:not(.accent) .ph .glyph{background:var(--ink); color:#fff}
+.vs .panel .ps{font-size:14px; color:var(--muted); margin:8px 0 16px; line-height:1.45}
+.vs .chips{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px}
+.vs .chip{font-family:var(--fMono); font-size:12px; padding:6px 11px; border-radius:8px; background:var(--card); border:1px solid var(--line); color:var(--text)}
+.vs .panel.accent .chip{background:#fff; border-color:var(--tint-red-2)}
+.vs .where{margin-top:auto; font-size:13.5px; color:var(--text); line-height:1.45; padding-top:14px; border-top:1px dashed var(--line-strong)}
+.vs .where b{color:var(--red)}
+
+/* annotated "shape of data" table */
+.shape-tbl{display:grid; grid-template-columns:auto 1fr; gap:0 18px; align-items:center; margin:auto 0}
+.dtable{border-collapse:separate; border-spacing:0; border-radius:12px; overflow:hidden; box-shadow:0 18px 40px -28px rgba(0,0,0,.3); width:100%}
+.dtable th{background:var(--ink); color:#fff; font-family:var(--fMono); font-size:13px; font-weight:600; padding:11px 16px; text-align:left}
+.dtable th.target{background:var(--red)}
+.dtable td{padding:10px 16px; font-family:var(--fMono); font-size:13.5px; color:var(--text); background:#fff; border-bottom:1px solid var(--line)}
+.dtable td.target{background:var(--tint-red); color:var(--red-dark); font-weight:600}
+.dtable tr:nth-child(even) td{background:#fafafb}
+.dtable tr:nth-child(even) td.target{background:var(--tint-red-2)}
+.annot{font-family:var(--fHead); font-weight:700; font-size:14px; color:var(--red); display:flex; align-items:center; gap:8px}
+.annot.muted{color:var(--muted)}
+.shape-legend{display:flex; gap:26px; justify-content:center; margin-top:22px; flex-wrap:wrap}
+.shape-legend .item{display:flex; align-items:center; gap:9px; font-size:14px; color:var(--text)}
+.shape-legend .sw{width:16px; height:16px; border-radius:5px}
+
+/* analytics staircase (ascending) */
+.stair{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; align-items:end; flex:1; min-height:0; padding-top:8px}
+.rung{display:flex; flex-direction:column; justify-content:flex-end}
+.rung .box{border-radius:14px 14px 0 0; padding:20px 20px 22px; color:#fff; position:relative; transform-origin:bottom; transform:scaleY(0); opacity:0; transition:transform .6s cubic-bezier(.16,1,.3,1), opacity .4s ease}
+.slide.active .rung .box{transform:scaleY(1); opacity:1}
+.slide.active .rung:nth-child(1) .box{transition-delay:.2s}.slide.active .rung:nth-child(2) .box{transition-delay:.42s}
+.slide.active .rung:nth-child(3) .box{transition-delay:.64s}.slide.active .rung:nth-child(4) .box{transition-delay:.86s}
+.rung:nth-child(1) .box{background:#3a3a40; min-height:150px}
+.rung:nth-child(2) .box{background:#8a1419; min-height:215px}
+.rung:nth-child(3) .box{background:var(--red-dark); min-height:280px}
+.rung:nth-child(4) .box{background:var(--red); min-height:345px}
+.rung .q{font-family:var(--fMono); font-size:12px; opacity:.85; margin-bottom:6px}
+.rung .box h4{font-family:var(--fHead); font-weight:800; font-size:21px; letter-spacing:-.01em}
+.rung .box p{font-size:13px; line-height:1.4; opacity:.92; margin-top:8px}
+.rung .box .step-i{position:absolute; top:14px; right:16px; font-family:var(--fHead); font-weight:800; font-size:14px; opacity:.35}
+.stair-axis{display:flex; justify-content:space-between; font-size:13px; color:var(--muted); margin-top:14px; font-style:italic}
+.stair-axis b{color:var(--red); font-style:normal; font-weight:700}
+
+/* animated SVG charts (scatter, dual-line) */
+.svg-card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px 22px; height:100%; display:flex; flex-direction:column}
+.svg-card .ct{font-family:var(--fHead); font-weight:700; font-size:15px; color:var(--ink); margin-bottom:6px}
+.chart-svg{width:100%; flex:1}
+.chart-svg .dot{opacity:0; transition:opacity .5s ease}
+.slide.active .chart-svg .dot{opacity:.78}
+.chart-svg .trend{stroke:var(--red); stroke-width:3; fill:none; stroke-dasharray:600; stroke-dashoffset:600; transition:stroke-dashoffset 1.3s ease .6s}
+.slide.active .chart-svg .trend{stroke-dashoffset:0}
+.chart-svg .ln{fill:none; stroke-width:3; stroke-dasharray:900; stroke-dashoffset:900; transition:stroke-dashoffset 1.5s ease}
+.slide.active .chart-svg .ln1{stroke-dashoffset:0; transition-delay:.3s}
+.slide.active .chart-svg .ln2{stroke-dashoffset:0; transition-delay:.7s}
+.chart-svg .axis{stroke:var(--line-strong); stroke-width:1.5}
+.chart-svg .glab{font-family:var(--fBody); font-size:11px; fill:var(--muted)}
+
+/* problem -> fix table */
+.pf-table{display:flex; flex-direction:column; border:1px solid var(--line); border-radius:14px; overflow:hidden; flex:1; min-height:0}
+.pf-row{display:grid; grid-template-columns:1.1fr 1fr 1.25fr; align-items:center; padding:0; border-bottom:1px solid var(--line); opacity:0; transform:translateX(-12px); transition:opacity .45s ease, transform .45s ease}
+.slide.active .pf-row{opacity:1; transform:none}
+.slide.active .pf-row:nth-child(1){transition-delay:.1s}.slide.active .pf-row:nth-child(2){transition-delay:.2s}
+.slide.active .pf-row:nth-child(3){transition-delay:.3s}.slide.active .pf-row:nth-child(4){transition-delay:.4s}
+.slide.active .pf-row:nth-child(5){transition-delay:.5s}.slide.active .pf-row:nth-child(6){transition-delay:.6s}
+.slide.active .pf-row:nth-child(7){transition-delay:.7s}
+.pf-row:last-child{border-bottom:none}
+.pf-row.head{background:var(--ink); color:#fff; opacity:1; transform:none}
+.pf-row.head>div{font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.04em; text-transform:uppercase; padding:12px 20px; color:rgba(255,255,255,.85)}
+.pf-row>div{padding:13px 20px; font-size:14.5px}
+.pf-row .prob{font-weight:600; color:var(--ink); display:flex; align-items:center; gap:10px}
+.pf-row .prob .d{width:8px;height:8px;border-radius:50%;background:var(--red);flex:none}
+.pf-row .fix code{font-family:var(--fMono); font-size:13px; background:var(--tint-red); color:var(--red-dark); padding:3px 9px; border-radius:6px; font-weight:500}
+.pf-row .desc{color:var(--muted); font-size:13.5px; line-height:1.4}
+.pf-row:nth-child(even):not(.head){background:#fafafb}
+
+/* tidy before/after tables */
+.tidy{display:grid; grid-template-columns:1fr auto 1fr; gap:20px; align-items:center; flex:1; min-height:0}
+.tidy .tcol{display:flex; flex-direction:column}
+.tidy .tlabel{font-family:var(--fHead); font-weight:800; font-size:14px; letter-spacing:.06em; text-transform:uppercase; margin-bottom:12px; display:flex; align-items:center; gap:9px}
+.tidy .messy .tlabel{color:var(--muted)} .tidy .clean .tlabel{color:var(--red)}
+.tidy .arrow-mid{font-size:34px; color:var(--red); font-weight:800}
+.tidy .note{font-size:12.5px; color:var(--muted); margin-top:10px; font-style:italic; line-height:1.4}
+
+/* histogram (EDA) */
+.hist{display:flex; align-items:flex-end; gap:7px; height:230px; padding:0 4px; border-bottom:2px solid var(--line-strong)}
+.hist .bar{flex:1; background:linear-gradient(180deg,var(--red),var(--red-dark)); border-radius:5px 5px 0 0; height:0; transition:height .8s cubic-bezier(.16,1,.3,1); position:relative}
+.hist .bar.med{background:linear-gradient(180deg,#3a3a40,#222)}
+.slide.active .hist .bar{height:var(--h)}
+.slide.active .hist .bar:nth-child(1){transition-delay:.1s}.slide.active .hist .bar:nth-child(2){transition-delay:.16s}
+.slide.active .hist .bar:nth-child(3){transition-delay:.22s}.slide.active .hist .bar:nth-child(4){transition-delay:.28s}
+.slide.active .hist .bar:nth-child(5){transition-delay:.34s}.slide.active .hist .bar:nth-child(6){transition-delay:.40s}
+.slide.active .hist .bar:nth-child(7){transition-delay:.46s}.slide.active .hist .bar:nth-child(8){transition-delay:.52s}
+.slide.active .hist .bar:nth-child(9){transition-delay:.58s}.slide.active .hist .bar:nth-child(10){transition-delay:.64s}
+.slide.active .hist .bar:nth-child(11){transition-delay:.70s}.slide.active .hist .bar:nth-child(12){transition-delay:.76s}
+.stat-chips{display:flex; flex-direction:column; gap:12px}
+.stat-chips .sc{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 18px; display:flex; justify-content:space-between; align-items:center}
+.stat-chips .sc .k{font-size:13.5px; color:var(--muted)}
+.stat-chips .sc .v{font-family:var(--fHead); font-weight:800; font-size:22px; color:var(--red)}
+
+/* chart-picker glyph grid */
+.picker{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; flex:1; min-height:0}
+.pick{border:1px solid var(--line); border-radius:14px; padding:18px 20px; display:flex; flex-direction:column; gap:10px; background:var(--surface); transition:transform .25s ease, box-shadow .25s ease, border-color .25s}
+.pick:hover{transform:translateY(-3px); box-shadow:0 18px 34px -22px rgba(0,0,0,.3); border-color:var(--tint-red-2)}
+.pick .pg-glyph{height:46px; display:flex; align-items:flex-end; gap:4px}
+.pick .q{font-family:var(--fMono); font-size:12px; color:var(--red); font-weight:500}
+.pick h4{font-family:var(--fHead); font-weight:700; font-size:16px; color:var(--ink)}
+.pick p{font-size:13px; color:var(--muted); line-height:1.4}
+.pick svg{width:100%; height:46px}
+
+/* insight callout */
+.insight{display:grid; grid-template-columns:1fr 1fr; gap:30px; flex:1; min-height:0; align-items:center}
+.insight .lead-card{background:var(--ink); color:#fff; border-radius:18px; padding:30px 32px; position:relative; overflow:hidden}
+.insight .lead-card::before{content:""; position:absolute; right:-40px; top:-40px; width:160px; height:160px; border-radius:50%; background:radial-gradient(circle,rgba(236,27,35,.4),transparent 70%)}
+.insight .lead-card .so{font-family:var(--fHead); font-weight:700; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#ff6a6f; margin-bottom:14px}
+.insight .lead-card .big-line{font-family:var(--fHead); font-weight:800; font-size:28px; line-height:1.15; letter-spacing:-.01em}
+.insight .lead-card .big-line em{color:#ff8e91; font-style:normal}
+.layer-list{list-style:none; display:flex; flex-direction:column; gap:16px}
+.layer-list li{display:flex; gap:14px; align-items:flex-start}
+.layer-list li .n{flex:none; width:30px; height:30px; border-radius:9px; background:var(--tint-red); color:var(--red); font-family:var(--fHead); font-weight:800; display:grid; place-items:center; font-size:14px}
+.layer-list li b{font-family:var(--fHead); color:var(--ink); font-size:16px}
+.layer-list li p{font-size:14px; color:var(--muted); line-height:1.4; margin-top:2px}
+
+/* closing recap */
+.recap-grid{display:grid; grid-template-columns:1fr 1fr; gap:30px; flex:1; min-height:0; align-items:center}
+.recap-col h4{font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.12em; text-transform:uppercase; margin-bottom:18px; display:flex; align-items:center; gap:10px}
+.recap-col.recap h4{color:#ff6a6f}.recap-col.next h4{color:#fff}
+.recap-col ul{list-style:none; display:flex; flex-direction:column; gap:14px}
+.recap-col li{font-size:16px; line-height:1.45; padding-left:26px; position:relative; color:rgba(255,255,255,.88)}
+.recap-col.recap li::before{content:"✓"; position:absolute; left:0; color:var(--red); font-weight:800}
+.recap-col.next li::before{content:"→"; position:absolute; left:0; color:#ff6a6f; font-weight:800}
+.recap-col.next{background:rgba(236,27,35,.1); border:1px solid rgba(236,27,35,.25); border-radius:18px; padding:26px 28px}
+
+/* big single stat (80%) */
+.megastat{display:flex; align-items:center; gap:60px; margin:auto 0}
+.megastat .num{font-family:var(--fHead); font-weight:800; font-size:200px; line-height:.85; color:var(--red); letter-spacing:-.05em}
+.megastat .num .u{font-size:90px}
+.megastat .copy{max-width:42ch}
+.megastat .copy h3{font-family:var(--fHead); font-weight:800; font-size:30px; color:var(--ink); line-height:1.1; letter-spacing:-.02em; margin-bottom:14px}
+.megastat .copy p{font-size:16px; color:var(--muted); line-height:1.55}
+.megastat .copy .src{font-size:12.5px; color:var(--faint); margin-top:14px}
+
+/* =========================================================================
+   Navigation chrome
+   ========================================================================= */
+.progress{position:fixed; top:0; left:0; height:3px; background:var(--red); z-index:50; transition:width .4s ease; box-shadow:0 0 12px rgba(236,27,35,.6)}
+.hud{position:fixed; bottom:18px; right:22px; z-index:50; display:flex; align-items:center; gap:14px; font-family:var(--fMono); font-size:12px; color:rgba(255,255,255,.55)}
+.hud .dots{display:flex; gap:6px}
+.hud .dot{width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.22); cursor:pointer; transition:all .25s ease}
+.hud .dot.on{background:var(--red); transform:scale(1.35)}
+.hud .dot.sec{background:rgba(255,255,255,.4)}
+.hud .count b{color:#fff}
+.hint{position:fixed; bottom:20px; left:22px; z-index:50; font-size:11.5px; color:rgba(255,255,255,.4); font-family:var(--fMono)}
+.hint kbd{background:rgba(255,255,255,.1); border-radius:4px; padding:1px 6px; color:rgba(255,255,255,.7)}
+/* auto-hide nav chrome when idle or when deck fills the viewport */
+.hud,.hint{transition:opacity .4s ease}
+body.idle .hud, body.idle .hint{opacity:0; pointer-events:none}
+body.static .hud, body.static .hint{display:none}
+
+/* speaker notes drawer */
+.notes{position:fixed; left:0; right:0; bottom:0; z-index:60; transform:translateY(100%); transition:transform .35s cubic-bezier(.16,1,.3,1); background:#16161a; color:#e7e7ea; border-top:3px solid var(--red); max-height:42vh; overflow:auto; padding:22px 30px; box-shadow:0 -20px 50px -20px rgba(0,0,0,.7)}
+.notes.show{transform:none}
+.notes h5{font-family:var(--fHead); font-weight:700; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#ff6a6f; margin-bottom:12px; display:flex; align-items:center; gap:10px}
+.notes ul{margin:0; padding-left:20px; display:flex; flex-direction:column; gap:9px}
+.notes li{font-size:14.5px; line-height:1.55; color:#cfd0d6}
+.notes .close{position:absolute; top:16px; right:22px; color:#888; cursor:pointer; font-size:18px; background:none; border:none}
+
+/* mobile: the deck is a fixed 16:9 stage — prompt rotation when held upright */
+.rotate-cue{position:fixed; inset:0; height:100dvh; z-index:120; display:none;
+  place-items:center; text-align:center; padding:42px;
+  background:radial-gradient(700px 460px at 50% 0%, rgba(236,27,35,.14), transparent 62%), #0a0a0c;
+  color:#e7e7ea; font-family:var(--fHead)}
+.rotate-cue .ic{width:58px; height:58px; margin:0 auto 24px; color:var(--red);
+  animation:rot-tilt 2.2s ease-in-out infinite}
+.rotate-cue h4{font-size:21px; font-weight:800; letter-spacing:-.01em; color:#fff; margin-bottom:10px}
+.rotate-cue p{font-size:14px; line-height:1.55; color:rgba(255,255,255,.6); max-width:34ch; margin:0 auto}
+@keyframes rot-tilt{0%,100%{transform:rotate(-12deg)} 50%{transform:rotate(78deg)}}
+/* show only on small screens held in portrait */
+@media (orientation:portrait) and (max-width:860px){
+  .rotate-cue{display:grid}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important; transition-duration:.2s !important}
+  [data-r]{opacity:1 !important; transform:none !important}
+  .rotate-cue .ic{animation:none; transform:rotate(78deg)}
+}
+/* static mode (QA captures / no-motion): snap everything to final */
+body.static [data-r]{opacity:1 !important; transform:none !important; transition:none !important}
+body.static .code-line{animation:none !important}
+body.static .flow .step,
+body.static .venn .circ,
+body.static .venn .center,
+body.static .venn .danger,
+body.static .jcard::after{opacity:1 !important; transform:none !important; transition:none !important}
+body.static .venn .c3{transform:translateX(-50%) !important}
+body.static .jcard::after{transform:scaleX(1) !important}
+body.static .nb-cell, body.static .nb-out{transition:none !important; transform:none !important; opacity:1 !important}
+body.static .nb-out.shown{max-height:320px !important}
+body.static .pushdown .pd{opacity:1 !important; transform:none !important; transition:none !important}
+/* ============================ Day 2 · Conversational AI Design additions ============================ */
+.fillc{flex:1; min-height:0; display:flex; flex-direction:column; justify-content:center}
+
+/* chat replay */
+.chat{display:flex; flex-direction:column; gap:12px; max-width:640px; width:100%; margin:auto auto}
+.cb{max-width:80%; padding:12px 16px; border-radius:16px; font-size:14.5px; line-height:1.45; opacity:0; transform:translateY(12px); transition:opacity .45s ease, transform .45s ease}
+.slide.active .cb{opacity:1; transform:none}
+.cb .who{font-family:var(--fHead); font-weight:800; font-size:9.5px; text-transform:uppercase; letter-spacing:.07em; opacity:.7; margin-bottom:3px}
+.cb.b{align-self:flex-start; background:var(--card); color:var(--text); border-bottom-left-radius:5px}
+.cb.u{align-self:flex-end; background:var(--red); color:#fff; border-bottom-right-radius:5px}
+.cb.bad{background:#F1EBEC; color:#6B7280}
+.cb .ref{background:rgba(255,255,255,.28); border-radius:5px; padding:0 5px; font-weight:700; font-style:normal}
+.cb.b .ref{background:var(--tint-red); color:var(--red-dark)}
+.slide.active .chat .cb:nth-child(1){transition-delay:.1s}.slide.active .chat .cb:nth-child(2){transition-delay:.5s}.slide.active .chat .cb:nth-child(3){transition-delay:.9s}.slide.active .chat .cb:nth-child(4){transition-delay:1.3s}.slide.active .chat .cb:nth-child(5){transition-delay:1.7s}.slide.active .chat .cb:nth-child(6){transition-delay:2.1s}
+.chat.mini{gap:8px; max-width:none; margin:0}
+.chat.mini .cb{max-width:90%; font-size:12.5px; padding:9px 13px}
+.panel .chat.mini .cb:nth-child(1){transition-delay:.2s}.panel .chat.mini .cb:nth-child(2){transition-delay:.45s}.panel .chat.mini .cb:nth-child(3){transition-delay:.7s}
+
+/* slot filling */
+.slotfill{display:flex; flex-direction:column; gap:18px; max-width:760px; width:100%; margin:auto auto}
+.sfrow{display:flex; align-items:center; gap:14px; justify-content:center; flex-wrap:wrap}
+.uttr{background:var(--card); border-radius:14px; padding:12px 18px; font-size:15px; color:var(--ink); opacity:0; transform:translateY(10px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .uttr{opacity:1; transform:none}
+.ibadge{background:linear-gradient(155deg,#26262b,#161618); color:#fff; border-radius:99px; padding:10px 20px; font-family:var(--fHead); font-weight:800; font-size:14px; opacity:0; transform:scale(.9); transition:opacity .5s ease .3s, transform .5s ease .3s}
+.slide.active .ibadge{opacity:1; transform:none}
+.sfarrow{color:var(--red); font-weight:800; font-size:20px}
+.slots{display:flex; gap:12px; justify-content:center; flex-wrap:wrap}
+.slot{border:1.5px dashed var(--line-strong); border-radius:12px; padding:10px 18px; font-size:13px; color:var(--muted); background:#fff; text-align:center; opacity:0; transform:translateY(10px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .slot{opacity:1; transform:none}
+.slot .sl{font-family:var(--fMono); font-size:9.5px; letter-spacing:.06em; display:block; margin-bottom:3px}
+.slot.filled{border-style:solid; border-color:var(--red); background:var(--tint-red); color:var(--red-dark); font-weight:700}
+.slide.active .slots .slot:nth-child(1){transition-delay:.6s}.slide.active .slots .slot:nth-child(2){transition-delay:.85s}.slide.active .slots .slot:nth-child(3){transition-delay:1.1s}
+
+/* persona card */
+.persona{display:flex; gap:26px; align-items:center; max-width:760px; width:100%; margin:auto auto; background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:28px 32px; box-shadow:0 22px 54px -30px rgba(0,0,0,.4)}
+.persona .pav{flex:none; width:96px; height:96px; border-radius:50%; background:linear-gradient(155deg,var(--red),var(--red-dark)); color:#fff; display:grid; place-items:center; box-shadow:0 16px 40px -16px rgba(236,27,35,.6)}
+.persona .pav svg{width:46px; height:46px}
+.persona .pinfo{flex:1}
+.persona .pinfo h4{font-family:var(--fHead); font-weight:800; font-size:20px; color:var(--ink)}
+.persona .ptone{display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 12px}
+.persona .ptone span{background:var(--tint-red); color:var(--red-dark); border-radius:99px; padding:5px 13px; font-family:var(--fHead); font-weight:700; font-size:12px}
+.persona .pquote{font-size:14.5px; color:var(--text); font-style:italic; border-left:3px solid var(--red); padding-left:14px; line-height:1.5}
+
+/* engine vs experience layers */
+.lyr{display:flex; flex-direction:column; gap:14px; max-width:560px; width:100%; margin:auto auto}
+.lyrb{border-radius:16px; padding:20px 24px; opacity:0; transform:translateY(14px); transition:opacity .55s ease, transform .55s ease}
+.slide.active .lyrb{opacity:1; transform:none}
+.lyrb .lt{font-family:var(--fHead); font-weight:800; font-size:17px}
+.lyrb .ls{font-size:12.5px; opacity:.9; margin-top:3px}
+.lyrb.exp{background:linear-gradient(120deg,var(--red),var(--red-dark)); color:#fff}
+.lyrb.eng{background:var(--card); color:var(--ink); border:1px solid var(--line)}
+.slide.active .lyrb.exp{transition-delay:.15s}.slide.active .lyrb.eng{transition-delay:.35s}
+.lyr .lyrlab{text-align:center; font-family:var(--fMono); font-size:10.5px; color:var(--muted)}
+
+/* error-recovery ladder (escalating steps) */
+.erl{display:flex; flex-direction:column; gap:10px; max-width:720px; width:100%; margin:auto auto}
+.erstep{display:flex; align-items:center; gap:14px; padding:13px 18px; border-radius:13px; background:var(--surface); border:1px solid var(--line); opacity:0; transform:translateX(-14px); transition:opacity .45s ease, transform .45s ease}
+.slide.active .erstep{opacity:1; transform:none}
+.slide.active .erstep:nth-child(1){transition-delay:.15s}.slide.active .erstep:nth-child(2){transition-delay:.35s}.slide.active .erstep:nth-child(3){transition-delay:.55s}.slide.active .erstep:nth-child(4){transition-delay:.75s}
+.erstep .ern{flex:none; width:34px; height:34px; border-radius:10px; background:var(--tint-red); color:var(--red); font-family:var(--fHead); font-weight:800; display:grid; place-items:center; font-size:15px}
+.erstep:last-child .ern{background:var(--red); color:#fff}
+.erstep .ert{font-family:var(--fHead); font-weight:800; font-size:15px; color:var(--ink)}
+.erstep .erd{font-size:12.5px; color:var(--muted)}
+.erstep .ertx{flex:1}
+
+/* shared: function-call round-trip + chips */
+.fcall{display:flex; align-items:stretch; justify-content:center; gap:0; margin:auto 0; width:100%}
+.fnode{flex:0 0 150px; text-align:center; padding:20px 14px; border-radius:14px; display:flex; flex-direction:column; align-items:center; gap:8px; opacity:0; transform:translateY(12px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .fnode{opacity:1; transform:none}
+.fnode.model{background:linear-gradient(155deg,#26262b,#161618); color:#fff}
+.fnode.fn{background:linear-gradient(180deg,var(--tint-red),#fff); border:1px solid var(--tint-red-2); color:var(--ink)}
+.fnode .fi{width:40px; height:40px; border-radius:11px; display:grid; place-items:center}
+.fnode.model .fi{background:rgba(255,122,126,.2); color:#ff7a7e} .fnode.fn .fi{background:var(--red); color:#fff}
+.fnode .fi svg{width:21px; height:21px}
+.fnode .ft{font-family:var(--fHead); font-weight:800; font-size:14.5px}
+.fnode .fs{font-size:11px; opacity:.8}
+.fconn{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; opacity:0; transition:opacity .5s ease}
+.slide.active .fconn{opacity:1}
+.slide.active .fconn:nth-of-type(2){transition-delay:.3s}.slide.active .fconn:nth-of-type(4){transition-delay:.6s}
+.fconn .chip{font-family:var(--fMono); font-size:10.5px; background:var(--code-bg); color:#a5d6ff; padding:4px 9px; border-radius:6px; white-space:nowrap}
+.fconn .chip.res{color:#7be0a6}
+.fconn svg{width:28px; height:18px; color:var(--red)}
+
+/* static snaps */
+body.static .cb, body.static .uttr, body.static .ibadge, body.static .slot, body.static .lyrb,
+body.static .erstep, body.static .fnode, body.static .fconn{
+  opacity:1 !important; transform:none !important; transition:none !important}
+
+/* ---- mobile banking app frame (phone mockups) ---- */
+.phones{display:flex; gap:34px; align-items:center; justify-content:center; flex:1; min-height:0; margin-top:4px}
+.phone{width:262px; height:438px; background:#fff; border-radius:30px; border:8px solid #15151a; box-shadow:0 34px 70px -30px rgba(0,0,0,.55); overflow:hidden; display:flex; flex-direction:column; position:relative; flex:none}
+.phone .notch{position:absolute; top:0; left:50%; transform:translateX(-50%); width:108px; height:18px; background:#15151a; border-radius:0 0 13px 13px; z-index:6}
+.phone .app-top{background:linear-gradient(135deg,var(--red),var(--red-dark)); color:#fff; padding:20px 15px 11px; display:flex; align-items:center; gap:9px; flex:none}
+.phone .app-top .ab{flex:none; width:22px; height:22px; display:grid; place-items:center; opacity:.95}
+.phone .app-top .ab svg{width:18px; height:18px}
+.phone .app-top .att{flex:1; min-width:0}
+.phone .app-top .at{font-family:var(--fHead); font-weight:800; font-size:14px; line-height:1.1}
+.phone .app-top .as{font-size:10px; opacity:.85; margin-top:1px}
+.phone .app-top .av{flex:none; width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,.22); display:grid; place-items:center; font-family:var(--fHead); font-weight:800; font-size:11px}
+.phone .app-body{flex:1; min-height:0; padding:13px 11px; overflow:hidden; display:flex; flex-direction:column; gap:8px; background:#f3f3f6}
+.phone .app-bar{flex:none; display:flex; align-items:center; gap:8px; padding:9px 12px; border-top:1px solid var(--line); background:#fff}
+.phone .app-bar .ip{flex:1; background:var(--card); border-radius:99px; padding:7px 13px; font-size:11px; color:var(--faint)}
+.phone .app-bar .snd{flex:none; width:30px; height:30px; border-radius:50%; background:var(--red); color:#fff; display:grid; place-items:center}
+.phone .app-bar .snd svg{width:15px; height:15px}
+.phone .chat{max-width:none; width:100%; margin:0; gap:8px}
+.phone .chat .cb{max-width:92%; font-size:12px; padding:9px 12px; line-height:1.42}
+.phone .chat .cb .who{font-size:8.5px}
+
+/* tappable deeplink / quick-action inside a bubble */
+.dlbtn{display:flex; align-items:center; gap:10px; background:#fff; border:1.5px solid var(--tint-red-2); border-radius:12px; padding:9px 11px; margin-top:8px; box-shadow:0 8px 18px -12px rgba(236,27,35,.5)}
+.dlbtn .dli{flex:none; width:30px; height:30px; border-radius:9px; background:var(--tint-red); color:var(--red); display:grid; place-items:center}
+.dlbtn .dli svg{width:17px; height:17px}
+.dlbtn .dlt{flex:1; font-family:var(--fHead); font-weight:800; font-size:12px; color:var(--ink); line-height:1.15}
+.dlbtn .dlt small{display:block; font-weight:600; font-size:9.5px; color:var(--muted)}
+.dlbtn .dlgo{flex:none; color:var(--red); font-weight:900; font-size:16px}
+
+/* arrow between phones */
+.napwrap{display:flex; flex-direction:column; align-items:center; gap:7px; flex:none}
+.napwrap .nlab{font-family:var(--fMono); font-size:11px; color:var(--red); font-weight:700; background:var(--tint-red); border:1px solid var(--tint-red-2); border-radius:99px; padding:4px 11px; white-space:nowrap}
+.napwrap .narr{color:var(--red)} .napwrap .narr svg{width:46px; height:24px}
+.napwrap .nsub{font-size:10.5px; color:var(--muted); font-style:italic}
+
+/* destination "block card" screen */
+.navscr{display:flex; flex-direction:column; gap:12px; padding:4px 2px; height:100%}
+.navscr .nsh{font-family:var(--fHead); font-weight:800; font-size:14px; color:var(--ink)}
+.navscr .nsp{font-size:11px; color:var(--muted); line-height:1.4}
+.bankcard{border-radius:13px; padding:15px 15px 17px; background:linear-gradient(135deg,#2a2a30,#15151a); color:#fff; box-shadow:0 14px 30px -16px rgba(0,0,0,.6); position:relative; overflow:hidden}
+.bankcard::after{content:""; position:absolute; right:-30px; top:-30px; width:110px; height:110px; border-radius:50%; background:radial-gradient(circle,rgba(236,27,35,.45),transparent 70%)}
+.bankcard .bct{font-size:10px; letter-spacing:.12em; text-transform:uppercase; opacity:.7}
+.bankcard .bcn{font-family:var(--fMono); font-size:14px; letter-spacing:.12em; margin:14px 0 10px}
+.bankcard .bcf{display:flex; justify-content:space-between; font-size:10px; opacity:.85}
+.bankcard .chip{width:30px; height:21px; border-radius:5px; background:linear-gradient(135deg,#e7c977,#b8932f); position:absolute; top:42px; left:15px}
+.bigbtn{margin-top:auto; background:var(--red); color:#fff; border-radius:11px; padding:12px; text-align:center; font-family:var(--fHead); font-weight:800; font-size:13px; box-shadow:0 12px 26px -12px rgba(236,27,35,.7)}
+.navscr .nnote{font-size:10px; color:var(--faint); text-align:center}
+
+/* ---- rich chat elements: voice, tool-calls, result cards, quick replies, feedback ---- */
+.cb .ts{font-size:8px; opacity:.55; margin-top:4px; text-align:right}
+.cb.u .ts{color:rgba(255,255,255,.75)}
+/* voice message bubble */
+.cb.voice{display:flex; align-items:center; gap:8px}
+.cb.voice .vmic{flex:none; width:22px; height:22px; border-radius:50%; display:grid; place-items:center; background:rgba(255,255,255,.28)}
+.cb.b.voice .vmic{background:var(--tint-red); color:var(--red)}
+.cb.voice .vmic svg{width:12px; height:12px}
+.cb.voice .vwave{display:flex; align-items:flex-end; gap:2px; height:18px; flex:1}
+.cb.voice .vwave i{width:2.5px; border-radius:2px; background:currentColor; opacity:.8}
+.cb.voice .vdur{font-size:9px; opacity:.85; font-variant-numeric:tabular-nums; flex:none}
+/* typing indicator */
+.cb.typing{display:inline-flex; gap:4px; padding:13px 14px; align-self:flex-start; background:var(--card)}
+.cb.typing i{width:6px; height:6px; border-radius:50%; background:var(--faint); animation:typedot 1s infinite}
+.cb.typing i:nth-child(2){animation-delay:.15s} .cb.typing i:nth-child(3){animation-delay:.3s}
+@keyframes typedot{0%,60%,100%{opacity:.3; transform:translateY(0)} 30%{opacity:1; transform:translateY(-3px)}}
+/* tool-call card inside a bot bubble */
+.toolcall{display:flex; align-items:center; gap:8px; background:#fff; border:1px solid var(--line); border-left:3px solid var(--red); border-radius:9px; padding:7px 10px; margin-top:7px}
+.toolcall .tci{flex:none; width:22px; height:22px; border-radius:6px; background:var(--tint-red); color:var(--red); display:grid; place-items:center}
+.toolcall .tci svg{width:13px; height:13px}
+.toolcall .tct{flex:1; font-family:var(--fMono); font-size:9.5px; color:var(--ink); line-height:1.3}
+.toolcall .tct b{color:var(--red)}
+.toolcall .tcs{flex:none; font-size:8.5px; font-weight:800; color:#1E8E5A; white-space:nowrap}
+.toolcall .tcs.run{color:var(--muted)}
+/* rich result / transaction card */
+.txncard{background:#fff; border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin-top:7px}
+.txncard .trh{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
+.txncard .trh .ttl{font-family:var(--fHead); font-weight:800; font-size:11.5px; color:var(--ink)}
+.txncard .trh .amt{font-family:var(--fHead); font-weight:800; font-size:13px; color:var(--red); white-space:nowrap}
+.txncard .trr{display:flex; justify-content:space-between; font-size:9.5px; color:var(--muted); margin-top:5px}
+.txncard .ok{display:inline-flex; align-items:center; gap:4px; color:#1E8E5A; font-weight:800; font-size:9.5px; margin-top:7px}
+.txncard .ok svg{width:12px; height:12px}
+/* quick-reply chips */
+.qreplies{display:flex; flex-wrap:wrap; gap:6px; margin-top:2px; justify-content:flex-end}
+.qchip{background:#fff; border:1.3px solid var(--tint-red-2); color:var(--red); border-radius:99px; padding:6px 11px; font-family:var(--fHead); font-weight:700; font-size:10px}
+/* feedback thumbs under a bot bubble */
+.fbrow{display:flex; align-items:center; gap:7px; margin-top:6px; padding-left:2px}
+.fbrow .fbq{font-size:9px; color:var(--faint)}
+.fbrow .fbb{width:24px; height:24px; border-radius:7px; border:1px solid var(--line); background:#fff; display:grid; place-items:center; color:var(--muted)}
+.fbrow .fbb svg{width:13px; height:13px}
+.fbrow .fbb.up{border-color:var(--tint-red-2); color:var(--red); background:var(--tint-red)}
+/* voice input bar (listening state) */
+.app-bar .micbtn{flex:none; width:30px; height:30px; border-radius:50%; background:var(--card); color:var(--muted); display:grid; place-items:center}
+.app-bar .micbtn svg{width:15px; height:15px}
+.app-bar.listening{background:#fff}
+.app-bar .listenwave{flex:1; display:flex; align-items:center; justify-content:center; gap:3px; height:30px; color:var(--red)}
+.app-bar .listenwave i{width:3px; border-radius:2px; background:currentColor; animation:lwave 1s ease-in-out infinite}
+@keyframes lwave{0%,100%{transform:scaleY(.4)} 50%{transform:scaleY(1)}}
+.app-bar .micbtn.on{background:var(--red); color:#fff}
+
+body.static .phone, body.static .dlbtn, body.static .napwrap{opacity:1 !important; transform:none !important}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="stage">
+  <main class="deck" id="deck">
+<style>
+/* popular-metric highlight + per-stage map */
+.popm{color:var(--red-dark); font-weight:700}
+.mleg{margin-top:11px; font-size:12px; color:var(--muted)}
+.mleg .popm{margin-right:3px}
+.dtable td .mn{font-weight:600}
+.msg{display:flex; flex-direction:column; gap:6px; margin-top:12px}
+.msrow{display:grid; grid-template-columns:170px 1fr; gap:14px; align-items:center; padding:6px 0; border-bottom:1px solid var(--line)}
+.msrow:last-child{border-bottom:none}
+.mst{font-family:var(--fHead); font-weight:800; font-size:12.5px; color:var(--ink); line-height:1.12}
+.mst small{display:block; font-family:var(--fMono); font-weight:500; font-size:9px; color:var(--faint); text-transform:uppercase; letter-spacing:.07em; margin-top:2px}
+.mchips{display:flex; flex-wrap:wrap; gap:6px}
+.mc{font-size:11px; font-weight:600; padding:4px 10px; border-radius:99px; border:1px solid var(--line); background:#fff; color:var(--muted); white-space:nowrap}
+.mc.pop{background:var(--tint-red); border-color:var(--tint-red-2); color:var(--red-dark)}
+.mslegend{display:flex; gap:18px; align-items:center; margin-top:11px; font-size:12px; color:var(--muted)}
+.mslegend b{display:inline-flex; align-items:center; gap:7px; font-weight:600}
+.mslegend .sw{width:14px; height:14px; border-radius:5px}
+.mslegend .sw.pop{background:var(--tint-red); border:1px solid var(--tint-red-2)}
+.mslegend .sw.norm{background:#fff; border:1px solid var(--line)}
+</style>
+
+  <section class="slide dark cover active" data-notes='["Welcome to the evaluation session. We built an assistant that can listen, look things up, think, stay safe, and speak. Today we ask: is it any good, and how do we know?", "We follow the same workflow the chatbot uses, stage by stage, and grade each stage with simple metrics.", "For every metric we say what it means in plain words, and we colour the ones teams use most."]'>
+    <div class="bg"></div><div class="scrim"></div>
+    <div class="inner">
+      <img class="logo" src="assets/ocbc-logo.png" alt="OCBC" />
+      <h1 data-r data-d="1">Conversational<span class="red">AI Evaluation</span></h1>
+      <div class="rule" data-r data-d="2"></div>
+      <div class="meta" data-r data-d="3"><strong>Grade the Whole Workflow, Stage by Stage &mdash; Every Metric, in Plain Words</strong><br/>Speech &middot; Retrieval &middot; Answer &middot; Safety &middot; Speech-back &middot; Whole chat &middot; Live</strong><br/>OCBC CRAYON 2026 · ADM Team · 60 minutes</div>
+      <div class="program" data-r data-d="4">OCBC CRAYON · Day 2</div>
+    </div>
+  </section>
+
+
+  <section class="slide dark" data-notes='["The whole session in one line: if you cannot measure it, you cannot ship it. A bank cannot launch what it cannot prove is good and safe.", "Metrics turn opinions into numbers we can compare and defend.", "We will get a number for every stage of the workflow."]'>
+    <div class="body-area">
+      <div class="kicker"><span class="badge"></span>The frame</div>
+      <div class="quote-wrap">
+        <div class="quote-mark" data-r data-d="2">&ldquo;</div>
+        <blockquote data-r data-d="3">If you can&#39;t <em>measure</em> it, you can&#39;t <em>ship</em> it &mdash; so we grade every step.</blockquote>
+        <cite data-r data-d="4">The framing idea for evaluation</cite>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+
+  <section class="slide" data-notes='["A nice demo can still hide wrong answers, made-up facts, a data leak, or a slow reply. These are quiet until a real customer hits them.", "Numbers let us compare versions, set a pass mark, and show risk and compliance the proof they need.", "Each part of the workflow fails in its own way, so each part needs its own number."]'>
+    <div class="kicker"><span class="badge"></span>Why measure</div>
+    <h2 class="slide-title" data-r data-d="1">Numbers, not feelings</h2>
+    <div class="cards c2" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg></div><h3>Failures are quiet</h3><p>wrong numbers, made-up facts, leaks &mdash; hard to spot in a demo</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20a8 8 0 1 1 16 0"/><path d="M12 20l5-6"/></svg></div><h3>Compare fairly</h3><p>version vs version on the same numbers</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div><h3>The gate to launch</h3><p>risk &amp; compliance need proof</p></div>
+      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/></svg></div><h3>Catch what broke</h3><p>make sure the next version doesn&#39;t get worse</p></div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+
+  <section class="slide" data-notes='["This is the path the chatbot follows for every call. Speech becomes text, it looks up facts, the model thinks and answers, a safety check runs, and the reply is spoken back.", "Each box can go wrong on its own, so each box gets its own metrics.", "We will walk this workflow left to right and grade each stage."]'>
+    <div class="kicker"><span class="badge"></span>The pipeline, end to end</div>
+    <h2 class="slide-title" data-r data-d="1">The workflow we grade</h2>
+    <div class="fcall" style="margin-top:18px">
+      <div class="fnode fn" data-r data-d="2"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></div><div class="ft">Speech &rarr; Text</div><div class="fs">it hears you</div></div>
+      <div class="fconn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="fnode fn" data-r data-d="3"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></div><div class="ft">Retrieval</div><div class="fs">finds facts</div></div>
+      <div class="fconn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="fnode model" data-r data-d="4"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/><path d="M8 9h8M8 12h5"/></svg></div><div class="ft">Answer</div><div class="fs">thinks &amp; replies</div></div>
+      <div class="fconn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="fnode fn" data-r data-d="5"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div><div class="ft">Safety</div><div class="fs">checks it</div></div>
+      <div class="fconn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="fnode fn" data-r data-d="6"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h3l2-7 3 16 3-12 2 8 2-5h3"/></svg></div><div class="ft">Text &rarr; Speech</div><div class="fs">speaks back</div></div>
+    </div>
+    <div class="flow-cap">Every box can fail on its own &mdash; so <b style="color:var(--red)">every box gets its own metrics</b>, plus a score for the whole chat.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+
+  <section class="slide" data-notes='["A few words first, so the tables make sense. A score is a grade &mdash; usually higher is better. A rate is how often something happens &mdash; usually lower is better.", "&#39;@k&#39; means &#39;in the top k results&#39;, so Recall@5 looks at the top 5. p95 means the slow end &mdash; 95 out of 100 are faster than this, so it catches the bad cases.", "For every metric we also say which way is good, and colour the ones used most."]'>
+    <div class="kicker"><span class="badge"></span>A tiny words list first</div>
+    <h2 class="slide-title" data-r data-d="1">How to read a metric</h2>
+    <ul class="bullets" style="max-width:1000px;margin-top:14px">
+      <li data-r data-d="2"><b>Score</b> = a grade (usually <b>higher is better</b>). <b>Rate</b> = how often (usually <b>lower is better</b>).</li>
+      <li data-r data-d="3"><b>@k</b> = &ldquo;in the top k results&rdquo; &mdash; e.g. Recall@5 looks at the top 5.</li>
+      <li data-r data-d="4"><b>p95</b> = the slow end &mdash; 95 out of 100 are faster than this. It catches the bad cases.</li>
+      <li data-r data-d="5" class="strong">Red <span class="popm">&#9733;</span> = the metric teams reach for most in real life.</li>
+    </ul>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+
+  <section class="slide" data-notes='["A map you can keep: each stage of the workflow and the metrics that go with it.", "The red ones are the metrics teams use most. The gray ones are also useful, just used less.", "We go through each of these stages next, one by one."]'>
+    <div class="kicker"><span class="badge"></span>Quick reference &middot; the whole map</div>
+    <h2 class="slide-title" data-r data-d="1">Metrics by stage &mdash; red = most used</h2>
+    <div class="msg" data-r data-d="2">
+      <div class="msrow"><div class="mst">Speech &rarr; Text<small>STT</small></div><div class="mchips"><span class="mc pop">Word Error Rate</span><span class="mc">CER</span><span class="mc">Real-Time Factor</span><span class="mc">Latency</span></div></div>
+      <div class="msrow"><div class="mst">Retrieval<small>RAG look-up</small></div><div class="mchips"><span class="mc pop">Recall@k</span><span class="mc pop">Context precision/recall</span><span class="mc">Precision@k</span><span class="mc">MRR</span><span class="mc">nDCG</span></div></div>
+      <div class="msrow"><div class="mst">Answer<small>generation</small></div><div class="mchips"><span class="mc pop">Faithfulness</span><span class="mc pop">Answer relevance</span><span class="mc pop">Hallucination rate</span><span class="mc">BLEU</span><span class="mc">ROUGE</span><span class="mc">BERTScore</span></div></div>
+      <div class="msrow"><div class="mst">LLM-as-judge<small>open answers</small></div><div class="mchips"><span class="mc pop">Pairwise win-rate</span><span class="mc pop">Pointwise score</span><span class="mc">Agreement (kappa)</span><span class="mc">Bias checks</span></div></div>
+      <div class="msrow"><div class="mst">Safety<small>guardrails</small></div><div class="mchips"><span class="mc pop">PII leak rate</span><span class="mc pop">Jailbreak rate</span><span class="mc">Refusal correctness</span><span class="mc">Toxicity</span></div></div>
+      <div class="msrow"><div class="mst">Text &rarr; Speech<small>TTS</small></div><div class="mchips"><span class="mc pop">MOS</span><span class="mc">Intelligibility</span><span class="mc">Round-trip WER</span><span class="mc">Latency</span></div></div>
+      <div class="msrow"><div class="mst">Whole chat<small>end-to-end</small></div><div class="mchips"><span class="mc pop">Task success</span><span class="mc">Goal completion</span><span class="mc">Turns-to-resolution</span><span class="mc">Coherence</span></div></div>
+      <div class="msrow"><div class="mst">Production<small>live</small></div><div class="mchips"><span class="mc pop">Containment</span><span class="mc pop">CSAT</span><span class="mc pop">p95 latency</span><span class="mc">Escalation</span><span class="mc">Cost / chat</span></div></div>
+    </div>
+    <div class="mslegend"><b><span class="sw pop"></span>most used in real life</b><b><span class="sw norm"></span>also useful, used less</b></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+
+  <section class="slide dark divider" data-notes='["Part 1: we walk the workflow stage by stage.", "For each stage we explain what it does, then list its metrics with a plain meaning.", "Red star means the metric is used most in real life."]'>
+    <div class="pillar-no">01</div>
+    <div class="eyebrow"><span class="dot"></span>Part 1</div>
+    <h2>Grading Each Stage</h2>
+    <p class="lead">Walk the workflow left to right. For each stage: what it does, then its metrics and what they mean.</p>
+    <div class="prog-rail"><span class="on">Each stage</span><span>Whole picture</span><span>Make it a habit</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+
+  <section class="slide" data-notes='["The first stage turns the caller&#39;s speech into text. If it mishears here, every later step works on the wrong words.", "It is hard because of noise, accents, names, and people switching languages.", "So we grade how accurate it is, and how fast."]'>
+    <div class="kicker"><span class="badge"></span>Stage 1 of 5 &middot; Speech &rarr; Text (STT)</div>
+    <h2 class="slide-title" data-r data-d="1">Stage 1 &mdash; hearing the caller</h2>
+    <div class="cards c3" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></div><h3>What it does</h3><p>turns spoken words into text</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg></div><h3>What goes wrong</h3><p>noise, accents, names, mixed languages</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/></svg></div><h3>What we grade</h3><p>how accurate, and how fast</p></div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+
+  <section class="slide" data-notes='["Word Error Rate is the main one: out of all the words, how many did it hear wrong &mdash; swapped, added, or missed. Lower is better.", "CER is the same idea per letter, handy for names and numbers. Real-Time Factor checks it keeps up with live speech.", "Always test on our own audio, not a clean demo recording."]'>
+    <div class="kicker"><span class="badge"></span>Stage 1 metrics &middot; Speech &rarr; Text</div>
+    <h2 class="slide-title" data-r data-d="1">Speech-to-text metrics</h2>
+    <table class="dtable" style="margin-top:14px"><tr><th>Metric</th><th class="target">What it means (plain words)</th></tr><tr><td><span class="popm">&#9733; Word Error Rate (WER)</span></td><td class="target">out of all the words, how many it heard wrong (lower is better)</td></tr><tr><td><span class="mn">CER</span></td><td class="target">same as WER but per letter &mdash; good for names, numbers, IDs</td></tr><tr><td><span class="mn">Real-Time Factor</span></td><td class="target">process time vs audio length; under 1 = keeps up live</td></tr><tr><td><span class="mn">Latency</span></td><td class="target">the delay before the text comes back</td></tr></table><div class="mleg"><span class="popm">&#9733;</span> = most used in real life (shown in red).</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+
+  <section class="slide" data-notes='["Our assistant looks up real bank data before it answers. This stage fetches the right pages.", "If the right fact was never fetched, no clever wording can save the answer.", "So we grade the look-up on its own, before the answer."]'>
+    <div class="kicker"><span class="badge"></span>Stage 2 of 5 &middot; Retrieval (RAG)</div>
+    <h2 class="slide-title" data-r data-d="1">Stage 2 &mdash; finding the facts</h2>
+    <div class="cards c3" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></div><h3>What it does</h3><p>fetches the facts the answer needs</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg></div><h3>What goes wrong</h3><p>misses the right page, or pulls noise</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg></div><h3>What we grade</h3><p>did it find the facts, ranked near the top</p></div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+
+  <section class="slide" data-notes='["Recall@k asks: out of all the right pages, how many did it find in the top k. Context precision and recall check how much of the fetched text was useful, and how much of what was needed it got.", "Precision@k, MRR and nDCG check how clean and how well-ranked the results are.", "Recall and context metrics are the ones teams watch most."]'>
+    <div class="kicker"><span class="badge"></span>Stage 2 metrics &middot; Retrieval</div>
+    <h2 class="slide-title" data-r data-d="1">Retrieval metrics</h2>
+    <table class="dtable" style="margin-top:14px"><tr><th>Metric</th><th class="target">What it means (plain words)</th></tr><tr><td><span class="popm">&#9733; Recall@k</span></td><td class="target">of all the right pages, how many it found in the top k</td></tr><tr><td><span class="popm">&#9733; Context precision/recall</span></td><td class="target">how much fetched text was useful, and how much needed text it got</td></tr><tr><td><span class="mn">Precision@k</span></td><td class="target">of the top k it fetched, how many were actually relevant</td></tr><tr><td><span class="mn">MRR</span></td><td class="target">how high up the first right page sits (higher = better)</td></tr><tr><td><span class="mn">nDCG</span></td><td class="target">a richer score for the best results being near the top</td></tr></table><div class="mleg"><span class="popm">&#9733;</span> = most used in real life (shown in red).</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+
+  <section class="slide" data-notes='["A simple picture. Precision is a clean net: almost everything you pull up is a fish you wanted. Recall is a full net: you caught most of the fish that were there.", "Cast a wider net and you catch more fish (recall up) but also more rubbish (precision down).", "The art is catching the answer without dragging in junk for the model to wade through."]'>
+    <div class="kicker"><span class="badge"></span>A picture to remember</div>
+    <h2 class="slide-title" data-r data-d="1">Recall vs precision &mdash; the fishing net</h2>
+    <div class="vs" style="margin-top:18px">
+      <div class="panel" data-r data-d="2"><div class="ph"><span class="glyph">P</span>Precision = a clean net</div><div class="ps">almost all you pull up is wanted</div><div class="chips"><span class="chip">right</span><span class="chip">right</span><span class="chip">right</span></div><div class="where">caught few, but <b>all correct</b></div></div>
+      <div class="panel accent" data-r data-d="3"><div class="ph"><span class="glyph">R</span>Recall = a full net</div><div class="ps">you caught most of the fish there</div><div class="chips"><span class="chip">right</span><span class="chip">right</span><span class="chip">right</span><span class="chip">junk</span><span class="chip">junk</span></div><div class="where">caught <b>all the right ones</b>, plus junk</div></div>
+    </div>
+    <div class="flow-cap">Wider net &rarr; more caught (recall up) but more junk (precision down). <b style="color:var(--red)">Catch the answer without the junk.</b></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+
+  <section class="slide" data-notes='["Now the model writes the reply. This is the hardest stage to grade, because most replies have no single right wording.", "We grade it two ways: against a known correct answer when there is one, and by its qualities when there is not.", "The most important quality for a bank: it sticks to the real facts and makes nothing up."]'>
+    <div class="kicker"><span class="badge"></span>Stage 3 of 5 &middot; Answer (generation)</div>
+    <h2 class="slide-title" data-r data-d="1">Stage 3 &mdash; the answer itself</h2>
+    <div class="cards c2" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg></div><h3>When there IS a right answer</h3><p>compare to the known answer &mdash; balances, dates, yes/no</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h8l4 4v16H6z"/><path d="M14 2v4h4M9 13h6M9 17h6"/></svg></div><h3>When there is NOT</h3><p>grade qualities &mdash; does it stick to facts, answer the question, stay complete</p></div>
+    </div>
+    <div class="flow-cap">Most real replies have no single right wording &mdash; so <b style="color:var(--red)">quality metrics matter most here</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+
+  <section class="slide" data-notes='["These compare the reply to a known answer. Exact Match and F1 work for closed answers like a balance or a date.", "BLEU and ROUGE measure word overlap (built for translation and summaries). METEOR adds synonyms; BERTScore compares meaning, so a good paraphrase still scores well.", "They are weak for open chat, because they reward matching the exact words."]'>
+    <div class="kicker"><span class="badge"></span>Stage 3a &middot; reference-based</div>
+    <h2 class="slide-title" data-r data-d="1">When there is a known right answer</h2>
+    <table class="dtable" style="margin-top:14px"><tr><th>Metric</th><th class="target">What it means (plain words)</th></tr><tr><td><span class="mn">Exact Match / F1</span></td><td class="target">does it match the known answer (or overlap word-for-word)</td></tr><tr><td><span class="mn">BLEU</span></td><td class="target">word overlap with a reference &mdash; built for translation</td></tr><tr><td><span class="mn">ROUGE</span></td><td class="target">word overlap focused on coverage &mdash; built for summaries</td></tr><tr><td><span class="mn">METEOR</span></td><td class="target">like BLEU, but also counts synonyms</td></tr><tr><td><span class="mn">BERTScore</span></td><td class="target">compares meaning, not just words &mdash; rewards good paraphrase</td></tr></table><div class="mleg">Useful for closed answers; weak for open chat &mdash; that is why we add the quality metrics next.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+
+  <section class="slide" data-notes='["Most replies have no reference, so we grade qualities directly. Faithfulness asks: is every claim backed by the facts it was given &mdash; no making things up. This is the top one for a bank.", "Answer relevance asks if it actually answered the question. Hallucination rate counts how often it says something the facts do not support.", "These three are the ones teams watch most."]'>
+    <div class="kicker"><span class="badge"></span>Stage 3b &middot; reference-free quality</div>
+    <h2 class="slide-title" data-r data-d="1">Grading quality without a known answer</h2>
+    <table class="dtable" style="margin-top:14px"><tr><th>Metric</th><th class="target">What it means (plain words)</th></tr><tr><td><span class="popm">&#9733; Faithfulness / groundedness</span></td><td class="target">is every claim backed by the given facts &mdash; nothing made up</td></tr><tr><td><span class="popm">&#9733; Answer relevance</span></td><td class="target">did it actually answer the question asked</td></tr><tr><td><span class="popm">&#9733; Hallucination rate</span></td><td class="target">how often it says something the facts don&#39;t support (lower)</td></tr><tr><td><span class="mn">Completeness</span></td><td class="target">did it cover everything the question needed</td></tr><tr><td><span class="mn">Refusal correctness</span></td><td class="target">says no to the wrong asks, still helps with normal ones</td></tr></table><div class="mleg"><span class="popm">&#9733;</span> = most used in real life (shown in red).</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+
+  <section class="slide" data-notes='["Same question, same facts. The good answer uses only the real fee and points to where it came from. The bad answer guesses a number that was never given.", "Faithfulness catches exactly this: the bad one has a claim with no backing.", "This is the single most important check for a bank chatbot."]'>
+    <div class="kicker"><span class="badge"></span>A worked example</div>
+    <h2 class="slide-title" data-r data-d="1">Good answer vs bad answer</h2>
+    <div class="vs" style="margin-top:14px">
+      <div class="panel accent" data-r data-d="2"><div class="ph"><span class="glyph">&#10003;</span>Grounded reply</div><div class="ps">Fact given: no transfer fee on this plan</div><div class="chat mini"><div class="cb u">Is there a transfer fee?</div><div class="cb b">On your plan there is <span class="ref">no transfer fee</span>.</div></div><div class="where">every claim backed by the facts &mdash; <b>faithful</b></div></div>
+      <div class="panel" data-r data-d="3"><div class="ph"><span class="glyph">&#33;</span>Made-up reply</div><div class="ps">Same fact given</div><div class="chat mini"><div class="cb u">Is there a transfer fee?</div><div class="cb b bad">The fee is <span class="ref">IDR 10,000</span>.</div></div><div class="where"><b>a number the facts never gave</b> &mdash; a hallucination</div></div>
+    </div>
+    <div class="flow-cap">Faithfulness is the metric that <b style="color:var(--red)">catches a confident, made-up answer</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+
+  <section class="slide" data-notes='["How do we grade those qualities at scale? We use a strong model as a fair examiner. We give it the question, the answer, and a marking guide (a rubric &mdash; a checklist of what a good answer needs).", "It returns a score and a short reason. Asking for the reason first makes the grade checkable.", "This is the workhorse &mdash; but we must check the examiner itself, coming up."]'>
+    <div class="kicker"><span class="badge"></span>LLM-as-judge</div>
+    <h2 class="slide-title" data-r data-d="1">Stage 3c &mdash; the AI examiner</h2>
+    <div class="fcall" style="margin-top:16px">
+      <div class="fnode fn" data-r data-d="2"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/><path d="M8 9h8M8 12h5"/></svg></div><div class="ft">Question + answer</div><div class="fs">with the facts</div></div>
+      <div class="fconn"><span class="chip">+ marking guide</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="fnode model" data-r data-d="3"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M6 21V10M18 21V10M4 10h16L12 3z"/></svg></div><div class="ft">AI examiner</div><div class="fs">reasons, then grades</div></div>
+      <div class="fconn"><span class="chip res">grade</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="fnode model" data-r data-d="4"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20a8 8 0 1 1 16 0"/><path d="M12 20l5-6"/></svg></div><div class="ft">Score + reason</div><div class="fs">e.g. 4/5 &mdash; grounded</div></div>
+    </div>
+    <div class="flow-cap">Ask for the <b>reason first, score second</b> &mdash; a reason you can check.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+
+  <section class="slide" data-notes='["Pointwise score: the examiner grades one answer on a scale against the guide. Pairwise win-rate: show two answers and count how often the new one is picked as better.", "Agreement checks how often the examiner agrees with human graders &mdash; so we can trust it. Bias checks make sure it is not fooled by order or by a longer answer.", "Pointwise and pairwise are the everyday ones."]'>
+    <div class="kicker"><span class="badge"></span>Stage 3c metrics &middot; LLM-as-judge</div>
+    <h2 class="slide-title" data-r data-d="1">AI-examiner metrics</h2>
+    <table class="dtable" style="margin-top:14px"><tr><th>Metric</th><th class="target">What it means (plain words)</th></tr><tr><td><span class="popm">&#9733; Pointwise score</span></td><td class="target">the examiner grades one answer on a scale, against the guide</td></tr><tr><td><span class="popm">&#9733; Pairwise win-rate</span></td><td class="target">show two answers, count how often the new one wins</td></tr><tr><td><span class="mn">Agreement (kappa)</span></td><td class="target">how often the examiner agrees with human graders</td></tr><tr><td><span class="mn">Bias checks</span></td><td class="target">tests it isn&#39;t fooled by answer order or length</td></tr></table><div class="mleg"><span class="popm">&#9733;</span> = most used in real life (shown in red).</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+
+  <section class="slide" data-notes='["Before a reply goes out, a guardrail checks it. For a bank these checks are pass/fail, not nice-to-have.", "We test for leaked private data, trick prompts that try to break the rules, and rude or harmful replies.", "We build a set of attack prompts and run it every release."]'>
+    <div class="kicker"><span class="badge"></span>Stage 4 of 5 &middot; Safety (guardrails)</div>
+    <h2 class="slide-title" data-r data-d="1">Stage 4 &mdash; the safety check</h2>
+    <div class="cards c3" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div><h3>What it does</h3><p>checks input and output for harm</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg></div><h3>What goes wrong</h3><p>leaks data, falls for a trick prompt</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg></div><h3>What we grade</h3><p>pass/fail on a red-team set</p></div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+
+  <section class="slide" data-notes='["PII leak rate is how often it shows private data it should not &mdash; it must be near zero. Jailbreak rate is how often a trick prompt gets past the rules.", "Refusal correctness checks it says no to harmful asks but still helps with normal ones. Toxicity rate covers rude, biased, or harmful replies.", "Leak and jailbreak rates are the ones a bank watches hardest."]'>
+    <div class="kicker"><span class="badge"></span>Stage 4 metrics &middot; Safety</div>
+    <h2 class="slide-title" data-r data-d="1">Safety &amp; guardrail metrics</h2>
+    <table class="dtable" style="margin-top:14px"><tr><th>Metric</th><th class="target">What it means (plain words)</th></tr><tr><td><span class="popm">&#9733; PII leak rate</span></td><td class="target">how often it shows private data it shouldn&#39;t (must be ~0)</td></tr><tr><td><span class="popm">&#9733; Jailbreak rate</span></td><td class="target">how often a trick prompt gets past the rules</td></tr><tr><td><span class="mn">Refusal correctness</span></td><td class="target">refuses harmful asks, still helps with normal ones</td></tr><tr><td><span class="mn">Toxicity rate</span></td><td class="target">how often the reply is rude, biased, or harmful</td></tr></table><div class="mleg"><span class="popm">&#9733;</span> = most used in real life (shown in red).</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+
+  <section class="slide" data-notes='["The last stage turns the reply text into a voice. The words can be perfect, but a flat or unclear voice still feels broken on a call.", "We grade how natural and clear it sounds, and how fast it starts.", "A slow or robotic voice undoes all the good work upstream."]'>
+    <div class="kicker"><span class="badge"></span>Stage 5 of 5 &middot; Text &rarr; Speech (TTS)</div>
+    <h2 class="slide-title" data-r data-d="1">Stage 5 &mdash; speaking back</h2>
+    <div class="cards c3" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h3l2-7 3 16 3-12 2 8 2-5h3"/></svg></div><h3>What it does</h3><p>turns the reply text into a voice</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg></div><h3>What goes wrong</h3><p>flat, robotic, unclear, or slow</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/></svg></div><h3>What we grade</h3><p>natural, clear, and quick to start</p></div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+
+  <section class="slide" data-notes='["MOS is the main one: people rate how natural the voice sounds, 1 to 5. Intelligibility asks if listeners understand it clearly.", "Round-trip WER is a neat auto check: speak the text, transcribe it back, and see how much survived. Latency is the delay before it starts speaking.", "MOS is the headline number for a voice."]'>
+    <div class="kicker"><span class="badge"></span>Stage 5 metrics &middot; Text &rarr; Speech</div>
+    <h2 class="slide-title" data-r data-d="1">Text-to-speech metrics</h2>
+    <table class="dtable" style="margin-top:14px"><tr><th>Metric</th><th class="target">What it means (plain words)</th></tr><tr><td><span class="popm">&#9733; MOS (naturalness)</span></td><td class="target">people rate how natural the voice sounds, 1 to 5</td></tr><tr><td><span class="mn">Intelligibility</span></td><td class="target">can listeners understand it clearly</td></tr><tr><td><span class="mn">Round-trip WER</span></td><td class="target">speak it, transcribe back, see how much survived &mdash; auto clarity check</td></tr><tr><td><span class="mn">Time-to-first-audio</span></td><td class="target">the delay before it starts speaking</td></tr></table><div class="mleg"><span class="popm">&#9733;</span> = most used in real life (shown in red).</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+
+  <section class="slide dark divider" data-notes='["Part 2 zooms out from single stages to the whole conversation and to real users.", "A stage can look perfect while the whole chat still fails.", "These are the numbers leadership and risk watch day to day."]'>
+    <div class="pillar-no">02</div>
+    <div class="eyebrow"><span class="dot"></span>Part 2</div>
+    <h2>The Whole Picture</h2>
+    <p class="lead">One stage can look perfect while the whole chat still fails. Grade the conversation and life in production.</p>
+    <div class="prog-rail"><span>Each stage</span><span class="on">Whole picture</span><span>Make it a habit</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+
+  <section class="slide" data-notes='["Now we grade the whole chat, not one stage. The headline is task success: did the customer actually get what they came for.", "We also look at how many turns it took, and whether it stayed on topic without contradicting itself.", "These need a full conversation to score, not a single reply."]'>
+    <div class="kicker"><span class="badge"></span>Whole chat &middot; end-to-end metrics</div>
+    <h2 class="slide-title" data-r data-d="1">The whole conversation</h2>
+    <table class="dtable" style="margin-top:14px"><tr><th>Metric</th><th class="target">What it means (plain words)</th></tr><tr><td><span class="popm">&#9733; Task success rate</span></td><td class="target">did the customer get what they came for (the headline)</td></tr><tr><td><span class="mn">Goal completion</span></td><td class="target">each smaller goal in the chat finished</td></tr><tr><td><span class="mn">Turns-to-resolution</span></td><td class="target">how many back-and-forths it took (fewer is better)</td></tr><tr><td><span class="mn">Coherence</span></td><td class="target">stayed on topic, no contradictions</td></tr></table><div class="mleg"><span class="popm">&#9733;</span> = most used in real life (shown in red).</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+
+  <section class="slide" data-notes='["Offline scores predict; real customers decide. Containment is the share of chats finished without a human. CSAT is the satisfaction score after the chat.", "p95 latency is the slow end of response time &mdash; what your unhappiest one-in-twenty feel. Escalation, cost, and repeat-contact fill in the picture.", "Containment, CSAT and p95 latency are the everyday production numbers."]'>
+    <div class="kicker"><span class="badge"></span>Production &middot; live metrics</div>
+    <h2 class="slide-title" data-r data-d="1">Out in production</h2>
+    <table class="dtable" style="margin-top:14px"><tr><th>Metric</th><th class="target">What it means (plain words)</th></tr><tr><td><span class="popm">&#9733; Containment / deflection</span></td><td class="target">share of chats finished without a human</td></tr><tr><td><span class="popm">&#9733; CSAT</span></td><td class="target">customer satisfaction score after the chat</td></tr><tr><td><span class="popm">&#9733; p95 latency</span></td><td class="target">the slow end of response time &mdash; the worst 1-in-20</td></tr><tr><td><span class="mn">Escalation rate</span></td><td class="target">how often it hands off to a human</td></tr><tr><td><span class="mn">Cost per chat</span></td><td class="target">compute money spent per conversation</td></tr><tr><td><span class="mn">Repeat-contact rate</span></td><td class="target">came back for the same issue &mdash; a sign it didn&#39;t help</td></tr></table><div class="mleg"><span class="popm">&#9733;</span> = most used in real life (shown in red).</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+
+  <section class="slide" data-notes='["The cleanest way to test a change: send a small share of real chats to the new version and compare it with the old one on the numbers that matter.", "Alongside it, watch the safety and speed numbers live, with alerts, so a problem is caught in minutes, not weeks.", "Always keep a way to roll back."]'>
+    <div class="kicker"><span class="badge"></span>Online testing &amp; monitoring</div>
+    <h2 class="slide-title" data-r data-d="1">How we get the live numbers</h2>
+    <div class="cards c3" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5"/><path d="M16 6a3 3 0 0 1 0 6"/></svg></div><h3>Try on a few first</h3><p>send some chats to the new version, compare with the old</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg></div><h3>Watch live, with alerts</h3><p>safety &amp; speed checked in real time</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/></svg></div><h3>Keep a roll-back</h3><p>undo fast if a number drops</p></div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+
+  <section class="slide dark divider" data-notes='["Part 3: turning all these numbers into a routine, not a one-off.", "A living test set, an automatic re-test before each update, and one scorecard.", "We close with how to read the whole workflow at a glance."]'>
+    <div class="pillar-no">03</div>
+    <div class="eyebrow"><span class="dot"></span>Part 3</div>
+    <h2>Make It a Habit</h2>
+    <p class="lead">A living test set, a re-test before every update, and one scorecard for the whole workflow.</p>
+    <div class="prog-rail"><span>Each stage</span><span>Whole picture</span><span class="on">Make it a habit</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+
+  <section class="slide" data-notes='["Every metric needs data to run on. Build a golden set: real chats with known good answers, taken from anonymised transcripts.", "On purpose, add the hard cases &mdash; unclear asks, topic switches, angry customers, and old bugs. Each bug you fix becomes a permanent test.", "Keep it growing, or it slowly stops protecting you."]'>
+    <div class="kicker"><span class="badge"></span>You need a dataset</div>
+    <h2 class="slide-title" data-r data-d="1">Build a practice-question set</h2>
+    <ul class="bullets" style="max-width:1000px;margin-top:14px">
+      <li data-r data-d="2">Seed from <b>real, anonymised</b> chats with known good answers.</li>
+      <li data-r data-d="3">Add the <b>hard cases</b>: unclear asks, topic switches, angry users.</li>
+      <li data-r data-d="4">Every fixed bug becomes a <b>permanent test</b>.</li>
+      <li data-r data-d="5" class="strong">Keep it <b style="color:var(--red)">growing</b> as new problems appear.</li>
+    </ul>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+
+  <section class="slide" data-notes='["Tie it together: before any change goes live, run all the stage metrics and the AI examiner over the practice set, automatically.", "Set a pass mark. If faithfulness drops or a safety check fails, the change is blocked &mdash; like a smoke alarm.", "Then sample for human review and watch the live numbers after launch. Evaluation becomes a loop, not a one-off."]'>
+    <div class="kicker"><span class="badge"></span>Make it automatic</div>
+    <h2 class="slide-title" data-r data-d="1">Re-test before every update</h2>
+    <div class="fcall" style="margin-top:16px">
+      <div class="fnode fn" data-r data-d="2"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/></svg></div><div class="ft">A change</div><div class="fs">new prompt / model</div></div>
+      <div class="fconn"><span class="chip">auto re-test</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="fnode model" data-r data-d="3"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg></div><div class="ft">Pass mark</div><div class="fs">metrics + examiner on the set</div></div>
+      <div class="fconn"><span class="chip res">if it passes</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="fnode model" data-r data-d="4"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20a8 8 0 1 1 16 0"/><path d="M12 20l5-6"/></svg></div><div class="ft">Launch + watch</div><div class="fs">try on a few, keep roll-back</div></div>
+    </div>
+    <div class="flow-cap">A failed faithfulness or safety check <b style="color:var(--red)">blocks the change</b> before it reaches customers.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+
+  <section class="slide" data-notes='["The whole workflow on one page: each stage, its key metric, and a good target. This is the scorecard you could put on a wall.", "Read top to bottom, it follows the chat: hearing, finding facts, answering, staying safe, speaking, and the final result.", "If any row goes red, you know exactly which stage to fix."]'>
+    <div class="kicker"><span class="badge"></span>Everything on one page</div>
+    <h2 class="slide-title" data-r data-d="1">The end-to-end scorecard</h2>
+    <table class="dtable" style="margin-top:14px">
+      <tr><th>Stage</th><th>Key metric</th><th class="target">Target</th></tr>
+      <tr><td>Speech &rarr; Text</td><td><span class="popm">&#9733; Word Error Rate</span></td><td class="target">low on our audio</td></tr>
+      <tr><td>Retrieval</td><td><span class="popm">&#9733; Recall@k</span> &amp; context precision</td><td class="target">high</td></tr>
+      <tr><td>Answer</td><td><span class="popm">&#9733; Faithfulness</span> + answer relevance</td><td class="target">high, made-up ~0</td></tr>
+      <tr><td>Safety</td><td><span class="popm">&#9733; PII leak</span> &amp; jailbreak rate</td><td class="target">~ 0</td></tr>
+      <tr><td>Text &rarr; Speech</td><td><span class="popm">&#9733; MOS</span> / clarity</td><td class="target">&gt; 4</td></tr>
+      <tr><td>Whole chat</td><td><span class="popm">&#9733; Task success rate</span></td><td class="target">high</td></tr>
+      <tr><td>Production</td><td><span class="popm">&#9733; Containment, CSAT, p95</span></td><td class="target">healthy &amp; going up</td></tr>
+    </table>
+    <div class="flow-cap">One red row tells you <b style="color:var(--red)">exactly which stage to fix</b>. The red metric is the one to watch first.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+
+  <section class="slide" data-notes='["A quick guide when something feels off. If it mishears, look at Word Error Rate. If it can&#39;t find the answer, look at Recall@k.", "If it makes things up, look at Faithfulness. If it leaks data, look at PII leak rate. If it&#39;s slow, look at p95 latency. If customers are upset, look at CSAT and repeat-contact.", "Each problem points to one stage and one metric."]'>
+    <div class="kicker"><span class="badge"></span>Troubleshooting guide</div>
+    <h2 class="slide-title" data-r data-d="1">Which number do I look at?</h2>
+    <table class="dtable" style="margin-top:14px"><tr><th>Metric</th><th class="target">What it means (plain words)</th></tr><tr><td><span class="popm">&#9733; Mishears the caller</span></td><td class="target">&rarr; Word Error Rate (STT)</td></tr><tr><td><span class="popm">&#9733; Can&#39;t find the answer</span></td><td class="target">&rarr; Recall@k (Retrieval)</td></tr><tr><td><span class="popm">&#9733; Makes things up</span></td><td class="target">&rarr; Faithfulness (Answer)</td></tr><tr><td><span class="popm">&#9733; Leaks private data</span></td><td class="target">&rarr; PII leak rate (Safety)</td></tr><tr><td><span class="popm">&#9733; Too slow</span></td><td class="target">&rarr; p95 latency (Production)</td></tr><tr><td><span class="popm">&#9733; Customers upset</span></td><td class="target">&rarr; CSAT &amp; repeat-contact (Production)</td></tr></table><div class="mleg">A symptom &rarr; the stage &rarr; the metric to check first.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+
+  <section class="slide dark" data-notes='["Wrap up. Grade every stage of the workflow and the whole chat. Use a known answer where there is one, and the AI examiner where there is not &mdash; but check the examiner against people.", "Safety checks are pass/fail. Live numbers like containment, p95 and CSAT decide if it really works. Run it all on a growing practice set, re-tested before each update.", "For OCBC, run the examiner on our own servers so chats stay in the bank, and grade the whole workflow. Thank you &mdash; questions."]'>
+    <div class="body-area" style="justify-content:center">
+      <div class="kicker" data-r><span class="badge"></span>Wrap &amp; Q&amp;A</div>
+      <h2 class="slide-title" data-r data-d="1" style="font-size:42px;margin-bottom:6px">Graded, stage by stage</h2>
+      <p class="slide-sub" data-r data-d="2" style="color:rgba(255,255,255,.65);margin-bottom:24px">Every stage has a number, the red ones first; check the examiner; re-test before every update.</p>
+      <div class="cards c2" style="flex:none">
+        <div class="card" data-r data-d="3" style="background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.14)"><h3 style="color:#fff">What we covered</h3><p style="color:rgba(255,255,255,.7)">STT &middot; retrieval &middot; answer + examiner &middot; safety &middot; TTS &middot; whole chat &middot; production</p></div>
+        <div class="card" data-r data-d="4" style="background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.14)"><h3 style="color:#fff">The OCBC way</h3><p style="color:rgba(255,255,255,.7)">Examiner on our own servers, whole-workflow metrics, chats stay in the bank</p></div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Conversational AI Evaluation</div><span class="pg">00</span></div>
+  </section>
+
+  </main>
+</div>
+
+<style>
+.home-btn{position:fixed; top:16px; left:18px; z-index:55; display:flex; align-items:center; gap:7px;
+  font-family:var(--fMono,'JetBrains Mono',monospace); font-size:12px; font-weight:600; letter-spacing:.01em; text-decoration:none;
+  color:#fff; background:rgba(18,18,22,.6); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+  border:1px solid rgba(255,255,255,.2); padding:7px 13px 7px 11px; border-radius:99px;
+  transition:background .2s ease, transform .2s ease, opacity .2s ease; opacity:.82}
+.home-btn:hover{background:var(--red,#EC1B23); border-color:transparent; opacity:1; transform:translateY(-1px)}
+.home-btn:active{transform:translateY(0)}
+.home-btn svg{width:15px; height:15px}
+@media print{.home-btn{display:none}}
+</style>
+<a class="home-btn" href="../index.html" aria-label="Back to home" title="Back to home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9h5v-5h4v5h5v-9"/></svg>Home</a>
+<div class="hud">
+  <div class="dots" id="dots"></div>
+  <div class="count">slide <b id="cur">1</b> / <span id="tot">34</span></div>
+</div>
+<div class="hint"><kbd>→</kbd> next &nbsp; <kbd>←</kbd> back &nbsp; <kbd>N</kbd> notes &nbsp; <kbd>F</kbd> full</div>
+
+<div class="rotate-cue" aria-hidden="true">
+  <div>
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="7" y="2" width="10" height="20" rx="2.2"/><path d="M11 18.5h2"/></svg>
+    <h4>Rotate your device</h4>
+    <p>This deck is built for a wide 16:9 stage — turn your phone to landscape for the full view.</p>
+  </div>
+</div>
+
+<div class="notes" id="notes">
+  <button class="close" id="notesClose">&times;</button>
+  <h5><span style="width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block"></span>Speaker notes</h5>
+  <ul id="notesBody"></ul>
+</div>
+
+<script>
+/* ---- fit fixed 1280x720 stage to viewport ---- */
+const STATIC = location.search.includes('static');
+if(STATIC) document.body.classList.add('static');
+const deck = document.getElementById('deck');
+function fit(){
+  const vv = window.visualViewport;
+  const w = (vv && vv.width)  || innerWidth  || document.documentElement.clientWidth  || 1280;
+  const h = (vv && vv.height) || innerHeight || document.documentElement.clientHeight || 720;
+  const s = Math.min(w/1280, h/720) || 1;
+  // anchor top-left and centre with an explicit pixel offset — robust even when
+  // the deck is larger than the viewport (small mobile-landscape screens)
+  const x = (w - 1280*s) / 2, y = (h - 720*s) / 2;
+  deck.style.transform = `translate(${x}px, ${y}px) scale(${s>0?s:1})`;
+}
+addEventListener('resize', fit);
+addEventListener('load', fit);
+// mobile: re-fit when rotating or when the browser chrome resizes the visible area
+addEventListener('orientationchange', ()=>{ fit(); setTimeout(fit,200); setTimeout(fit,500); });
+if(window.visualViewport){ visualViewport.addEventListener('resize', fit); }
+fit(); requestAnimationFrame(fit); setTimeout(fit,120);
+
+/* ---- presentation controller ---- */
+const slides = [...document.querySelectorAll('.slide')];
+const TOT = slides.length;
+let i = 0;
+document.getElementById('tot').textContent = TOT;
+
+const dotsEl = document.getElementById('dots');
+slides.forEach((sl,idx)=>{
+  const d = document.createElement('span');
+  d.className='dot'+(sl.classList.contains('dark')?' sec':'');
+  d.addEventListener('click',()=>go(idx));
+  dotsEl.appendChild(d);
+});
+const dots=[...dotsEl.children];
+// page numbers follow slide order (so slides can be inserted freely)
+slides.forEach((s,idx)=>{const pg=s.querySelector('.foot .pg'); if(pg)pg.textContent=String(idx+1).padStart(2,'0');});
+
+const notesEl=document.getElementById('notes');
+const notesBody=document.getElementById('notesBody');
+function renderNotes(){
+  let data=[]; try{data=JSON.parse(slides[i].dataset.notes||'[]')}catch(e){}
+  notesBody.innerHTML='';
+  if(!data.length){notesBody.innerHTML='<li style="color:#777">No notes for this slide.</li>';}
+  data.forEach(t=>{const li=document.createElement('li');li.textContent=t;notesBody.appendChild(li);});
+}
+function go(n){
+  n=Math.max(0,Math.min(TOT-1,n));
+  if(n===i) return;
+  slides[i].classList.remove('active'); slides[i].classList.add('prev');
+  slides[n].classList.remove('prev'); slides[n].classList.add('active');
+  i=n; sync();
+}
+function sync(){
+  document.getElementById('progress').style.width=((i+1)/TOT*100)+'%';
+  document.getElementById('cur').textContent=i+1;
+  dots.forEach((d,x)=>d.classList.toggle('on',x===i));
+  location.hash=i+1;
+  if(notesEl.classList.contains('show')) renderNotes();
+  // (re)trigger counters on the active slide
+  triggerCounters(slides[i]);
+  playDemo(slides[i]);
+}
+function next(){go(i+1)} function prev(){go(i-1)}
+
+/* keyboard */
+addEventListener('keydown',e=>{
+  if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();next();}
+  else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();prev();}
+  else if(e.key==='Home'){go(0)} else if(e.key==='End'){go(TOT-1)}
+  else if(e.key.toLowerCase()==='n'){notesEl.classList.toggle('show'); renderNotes();}
+  else if(e.key.toLowerCase()==='f'){if(!document.fullscreenElement)document.documentElement.requestFullscreen();else document.exitFullscreen();}
+});
+document.getElementById('notesClose').addEventListener('click',()=>notesEl.classList.remove('show'));
+
+/* wheel (debounced) */
+let wlock=false;
+addEventListener('wheel',e=>{
+  if(wlock) return; if(Math.abs(e.deltaY)<18) return;
+  wlock=true; e.deltaY>0?next():prev();
+  setTimeout(()=>wlock=false,650);
+},{passive:true});
+
+/* touch */
+let tx=0,ty=0;
+addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
+addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty;
+  if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)) dx<0?next():prev();
+},{passive:true});
+
+/* counters */
+function triggerCounters(slide){
+  slide.querySelectorAll('[data-count]').forEach(el=>{
+    if(el.dataset.done) return; el.dataset.done='1';
+    const end=+el.dataset.count, pre=el.dataset.prefix||'', suf=el.dataset.suffix||'';
+    if(STATIC){el.innerHTML=pre+end+(suf?'<span class="unit">'+suf+'</span>':'');return;}
+    const dur=1100, t0=performance.now();
+    function tick(t){
+      const p=Math.min(1,(t-t0)/dur), e=1-Math.pow(1-p,3);
+      const v=Math.round(end*e);
+      el.innerHTML=pre+v+(suf?'<span class="unit">'+suf+'</span>':'');
+      if(p<1)requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+  // progress rings
+  slide.querySelectorAll('[data-ring]').forEach(el=>{
+    if(el.dataset.done) return; el.dataset.done='1';
+    const circle=el.querySelector('.fg'); if(!circle)return;
+    const pct=+el.dataset.ring, len=circle.getTotalLength();
+    if(STATIC){circle.style.strokeDasharray=len;circle.style.strokeDashoffset=len*(1-pct/100);const o=el.querySelector('.pct');if(o)o.textContent=pct+'%';return;}
+    circle.style.strokeDasharray=len; circle.style.strokeDashoffset=len;
+    requestAnimationFrame(()=>{circle.style.transition='stroke-dashoffset 1.3s cubic-bezier(.16,1,.3,1)';circle.style.strokeDashoffset=len*(1-pct/100);});
+    const out=el.querySelector('.pct'); if(out){const t0=performance.now();(function tk(t){const p=Math.min(1,(t-t0)/1300);out.textContent=Math.round(pct*(1-Math.pow(1-p,3)))+'%';if(p<1)requestAnimationFrame(tk);})(performance.now());}
+  });
+}
+
+/* notebook demo player */
+const demoTimers=[];
+function clearDemo(){demoTimers.forEach(clearTimeout); demoTimers.length=0;}
+function playDemo(slide){
+  if(!slide.classList.contains('demo-slide')) return;
+  clearDemo();
+  const cells=[...slide.querySelectorAll('.nb-cell')];
+  const steps=[...slide.querySelectorAll('.demo-steps li')];
+  cells.forEach(c=>{c.classList.remove('shown','running'); const o=c.querySelector('.nb-out'); if(o)o.classList.remove('shown'); const p=c.querySelector('.nb-prompt'); if(p){p.classList.remove('busy'); p.textContent='['+(cells.indexOf(c)+1)+']';}});
+  steps.forEach(s=>s.classList.remove('on'));
+  if(STATIC){cells.forEach(c=>{c.classList.add('shown'); const o=c.querySelector('.nb-out'); if(o)o.classList.add('shown');}); steps.forEach(s=>s.classList.add('on')); const body=slide.querySelector('.nb-body'); if(body){body.style.scrollBehavior='auto'; const snap=()=>body.scrollTop=body.scrollHeight; snap(); requestAnimationFrame(snap); setTimeout(snap,80);} return;}
+  let t=420;
+  cells.forEach((cell,idx)=>{
+    const prompt=cell.querySelector('.nb-prompt');
+    const out=cell.querySelector('.nb-out');
+    demoTimers.push(setTimeout(()=>{cell.classList.add('shown','running'); if(prompt){prompt.classList.add('busy'); prompt.textContent='[*]';} const body=cell.parentElement; body.scrollTop=Math.max(0,cell.offsetTop-90);},t));
+    t+=720;
+    demoTimers.push(setTimeout(()=>{
+      cell.classList.remove('running');
+      if(prompt){prompt.classList.remove('busy'); prompt.textContent='['+(idx+1)+']';}
+      if(out)out.classList.add('shown');
+      if(steps[idx])steps[idx].classList.add('on');
+    },t));
+    t+=820;
+  });
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-replay]'); if(!b) return;
+  playDemo(b.closest('.slide'));
+});
+addEventListener('keydown',e=>{if(e.key.toLowerCase()==='r'){const s=slides[i]; if(s.classList.contains('demo-slide'))playDemo(s);}});
+
+/* auto-hide chrome when idle */
+let idleT; function poke(){document.body.classList.remove('idle'); clearTimeout(idleT); idleT=setTimeout(()=>document.body.classList.add('idle'),3200);}
+['mousemove','keydown','touchstart','wheel','click'].forEach(ev=>addEventListener(ev,poke,{passive:true})); poke();
+
+/* deep link */
+if(location.hash){const n=parseInt(location.hash.slice(1));if(n>=1&&n<=TOT){slides[0].classList.remove('active');i=n-1;slides[i].classList.add('active');}}
+sync();
+</script>
+</body>
+</html>

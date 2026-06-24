@@ -697,6 +697,104 @@ body.static .cb, body.static .uttr, body.static .ibadge, body.static .slot, body
 body.static .erstep, body.static .fnode, body.static .fconn{
   opacity:1 !important; transform:none !important; transition:none !important}
 
+/* ---- mobile banking app frame (phone mockups) ---- */
+.phones{display:flex; gap:34px; align-items:center; justify-content:center; flex:1; min-height:0; margin-top:4px}
+.phone{width:262px; height:438px; background:#fff; border-radius:30px; border:8px solid #15151a; box-shadow:0 34px 70px -30px rgba(0,0,0,.55); overflow:hidden; display:flex; flex-direction:column; position:relative; flex:none}
+.phone .notch{position:absolute; top:0; left:50%; transform:translateX(-50%); width:108px; height:18px; background:#15151a; border-radius:0 0 13px 13px; z-index:6}
+.phone .app-top{background:linear-gradient(135deg,var(--red),var(--red-dark)); color:#fff; padding:20px 15px 11px; display:flex; align-items:center; gap:9px; flex:none}
+.phone .app-top .ab{flex:none; width:22px; height:22px; display:grid; place-items:center; opacity:.95}
+.phone .app-top .ab svg{width:18px; height:18px}
+.phone .app-top .att{flex:1; min-width:0}
+.phone .app-top .at{font-family:var(--fHead); font-weight:800; font-size:14px; line-height:1.1}
+.phone .app-top .as{font-size:10px; opacity:.85; margin-top:1px}
+.phone .app-top .av{flex:none; width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,.22); display:grid; place-items:center; font-family:var(--fHead); font-weight:800; font-size:11px}
+.phone .app-body{flex:1; min-height:0; padding:13px 11px; overflow:hidden; display:flex; flex-direction:column; gap:8px; background:#f3f3f6}
+.phone .app-bar{flex:none; display:flex; align-items:center; gap:8px; padding:9px 12px; border-top:1px solid var(--line); background:#fff}
+.phone .app-bar .ip{flex:1; background:var(--card); border-radius:99px; padding:7px 13px; font-size:11px; color:var(--faint)}
+.phone .app-bar .snd{flex:none; width:30px; height:30px; border-radius:50%; background:var(--red); color:#fff; display:grid; place-items:center}
+.phone .app-bar .snd svg{width:15px; height:15px}
+.phone .chat{max-width:none; width:100%; margin:0; gap:8px}
+.phone .chat .cb{max-width:92%; font-size:12px; padding:9px 12px; line-height:1.42}
+.phone .chat .cb .who{font-size:8.5px}
+
+/* tappable deeplink / quick-action inside a bubble */
+.dlbtn{display:flex; align-items:center; gap:10px; background:#fff; border:1.5px solid var(--tint-red-2); border-radius:12px; padding:9px 11px; margin-top:8px; box-shadow:0 8px 18px -12px rgba(236,27,35,.5)}
+.dlbtn .dli{flex:none; width:30px; height:30px; border-radius:9px; background:var(--tint-red); color:var(--red); display:grid; place-items:center}
+.dlbtn .dli svg{width:17px; height:17px}
+.dlbtn .dlt{flex:1; font-family:var(--fHead); font-weight:800; font-size:12px; color:var(--ink); line-height:1.15}
+.dlbtn .dlt small{display:block; font-weight:600; font-size:9.5px; color:var(--muted)}
+.dlbtn .dlgo{flex:none; color:var(--red); font-weight:900; font-size:16px}
+
+/* arrow between phones */
+.napwrap{display:flex; flex-direction:column; align-items:center; gap:7px; flex:none}
+.napwrap .nlab{font-family:var(--fMono); font-size:11px; color:var(--red); font-weight:700; background:var(--tint-red); border:1px solid var(--tint-red-2); border-radius:99px; padding:4px 11px; white-space:nowrap}
+.napwrap .narr{color:var(--red)} .napwrap .narr svg{width:46px; height:24px}
+.napwrap .nsub{font-size:10.5px; color:var(--muted); font-style:italic}
+
+/* destination "block card" screen */
+.navscr{display:flex; flex-direction:column; gap:12px; padding:4px 2px; height:100%}
+.navscr .nsh{font-family:var(--fHead); font-weight:800; font-size:14px; color:var(--ink)}
+.navscr .nsp{font-size:11px; color:var(--muted); line-height:1.4}
+.bankcard{border-radius:13px; padding:15px 15px 17px; background:linear-gradient(135deg,#2a2a30,#15151a); color:#fff; box-shadow:0 14px 30px -16px rgba(0,0,0,.6); position:relative; overflow:hidden}
+.bankcard::after{content:""; position:absolute; right:-30px; top:-30px; width:110px; height:110px; border-radius:50%; background:radial-gradient(circle,rgba(236,27,35,.45),transparent 70%)}
+.bankcard .bct{font-size:10px; letter-spacing:.12em; text-transform:uppercase; opacity:.7}
+.bankcard .bcn{font-family:var(--fMono); font-size:14px; letter-spacing:.12em; margin:14px 0 10px}
+.bankcard .bcf{display:flex; justify-content:space-between; font-size:10px; opacity:.85}
+.bankcard .chip{width:30px; height:21px; border-radius:5px; background:linear-gradient(135deg,#e7c977,#b8932f); position:absolute; top:42px; left:15px}
+.bigbtn{margin-top:auto; background:var(--red); color:#fff; border-radius:11px; padding:12px; text-align:center; font-family:var(--fHead); font-weight:800; font-size:13px; box-shadow:0 12px 26px -12px rgba(236,27,35,.7)}
+.navscr .nnote{font-size:10px; color:var(--faint); text-align:center}
+
+/* ---- rich chat elements: voice, tool-calls, result cards, quick replies, feedback ---- */
+.cb .ts{font-size:8px; opacity:.55; margin-top:4px; text-align:right}
+.cb.u .ts{color:rgba(255,255,255,.75)}
+/* voice message bubble */
+.cb.voice{display:flex; align-items:center; gap:8px}
+.cb.voice .vmic{flex:none; width:22px; height:22px; border-radius:50%; display:grid; place-items:center; background:rgba(255,255,255,.28)}
+.cb.b.voice .vmic{background:var(--tint-red); color:var(--red)}
+.cb.voice .vmic svg{width:12px; height:12px}
+.cb.voice .vwave{display:flex; align-items:flex-end; gap:2px; height:18px; flex:1}
+.cb.voice .vwave i{width:2.5px; border-radius:2px; background:currentColor; opacity:.8}
+.cb.voice .vdur{font-size:9px; opacity:.85; font-variant-numeric:tabular-nums; flex:none}
+/* typing indicator */
+.cb.typing{display:inline-flex; gap:4px; padding:13px 14px; align-self:flex-start; background:var(--card)}
+.cb.typing i{width:6px; height:6px; border-radius:50%; background:var(--faint); animation:typedot 1s infinite}
+.cb.typing i:nth-child(2){animation-delay:.15s} .cb.typing i:nth-child(3){animation-delay:.3s}
+@keyframes typedot{0%,60%,100%{opacity:.3; transform:translateY(0)} 30%{opacity:1; transform:translateY(-3px)}}
+/* tool-call card inside a bot bubble */
+.toolcall{display:flex; align-items:center; gap:8px; background:#fff; border:1px solid var(--line); border-left:3px solid var(--red); border-radius:9px; padding:7px 10px; margin-top:7px}
+.toolcall .tci{flex:none; width:22px; height:22px; border-radius:6px; background:var(--tint-red); color:var(--red); display:grid; place-items:center}
+.toolcall .tci svg{width:13px; height:13px}
+.toolcall .tct{flex:1; font-family:var(--fMono); font-size:9.5px; color:var(--ink); line-height:1.3}
+.toolcall .tct b{color:var(--red)}
+.toolcall .tcs{flex:none; font-size:8.5px; font-weight:800; color:#1E8E5A; white-space:nowrap}
+.toolcall .tcs.run{color:var(--muted)}
+/* rich result / transaction card */
+.txncard{background:#fff; border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin-top:7px}
+.txncard .trh{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
+.txncard .trh .ttl{font-family:var(--fHead); font-weight:800; font-size:11.5px; color:var(--ink)}
+.txncard .trh .amt{font-family:var(--fHead); font-weight:800; font-size:13px; color:var(--red); white-space:nowrap}
+.txncard .trr{display:flex; justify-content:space-between; font-size:9.5px; color:var(--muted); margin-top:5px}
+.txncard .ok{display:inline-flex; align-items:center; gap:4px; color:#1E8E5A; font-weight:800; font-size:9.5px; margin-top:7px}
+.txncard .ok svg{width:12px; height:12px}
+/* quick-reply chips */
+.qreplies{display:flex; flex-wrap:wrap; gap:6px; margin-top:2px; justify-content:flex-end}
+.qchip{background:#fff; border:1.3px solid var(--tint-red-2); color:var(--red); border-radius:99px; padding:6px 11px; font-family:var(--fHead); font-weight:700; font-size:10px}
+/* feedback thumbs under a bot bubble */
+.fbrow{display:flex; align-items:center; gap:7px; margin-top:6px; padding-left:2px}
+.fbrow .fbq{font-size:9px; color:var(--faint)}
+.fbrow .fbb{width:24px; height:24px; border-radius:7px; border:1px solid var(--line); background:#fff; display:grid; place-items:center; color:var(--muted)}
+.fbrow .fbb svg{width:13px; height:13px}
+.fbrow .fbb.up{border-color:var(--tint-red-2); color:var(--red); background:var(--tint-red)}
+/* voice input bar (listening state) */
+.app-bar .micbtn{flex:none; width:30px; height:30px; border-radius:50%; background:var(--card); color:var(--muted); display:grid; place-items:center}
+.app-bar .micbtn svg{width:15px; height:15px}
+.app-bar.listening{background:#fff}
+.app-bar .listenwave{flex:1; display:flex; align-items:center; justify-content:center; gap:3px; height:30px; color:var(--red)}
+.app-bar .listenwave i{width:3px; border-radius:2px; background:currentColor; animation:lwave 1s ease-in-out infinite}
+@keyframes lwave{0%,100%{transform:scaleY(.4)} 50%{transform:scaleY(1)}}
+.app-bar .micbtn.on{background:var(--red); color:#fff}
+
+body.static .phone, body.static .dlbtn, body.static .napwrap{opacity:1 !important; transform:none !important}
 </style>
 </head>
 <body>
@@ -705,191 +803,200 @@ body.static .erstep, body.static .fnode, body.static .fconn{
 <div class="stage">
   <main class="deck" id="deck">
 
-  <section class="slide dark cover active" data-notes='["Welcome to the final Day-2 session. You know how the model understands, retrieves, acts, and now listens and speaks. This session is about the conversation itself.", "60 minutes, design-first: principles, sample dialogs and human factors over architecture. Lots of good-versus-bad examples. Banking voice and chat throughout.", "Promise: by the end you can critique and shape a conversation &mdash; natural interaction, context, and voice UX."]'>
+  <section class="slide dark cover active" data-notes='["This is the last Day-2 session. By now the model can understand, look things up, act, and even listen and speak. Today we look at the talk itself.", "This links to our class project: a voice AI chatbot for OCBC. We will design how the chatbot talks &mdash; what it asks, confirms, and does.", "60 minutes, design first. Lots of good-and-bad examples in bank chat and voice. By the end you can look at a chat and say why it works or fails."]'>
     <div class="bg"></div><div class="scrim"></div>
     <div class="inner">
       <img class="logo" src="assets/ocbc-logo.png" alt="OCBC" />
       <h1 data-r data-d="1">Conversational<span class="red">AI Design</span></h1>
       <div class="rule" data-r data-d="2"></div>
-      <div class="meta" data-r data-d="3"><strong>Natural Interaction, Context &amp; Voice UX &mdash; Principles &amp; Practice</strong><br/>Designing dialog people actually want to have<br/>OCBC CRAYON 2026 · ADM Team · 60 minutes</div>
+      <div class="meta" data-r data-d="3"><strong>Natural Talk, Memory &amp; Voice &mdash; Ideas and Practice</strong><br/>Designing how our voice AI chatbot talks<br/>OCBC CRAYON 2026 · ADM Team · 60 minutes</div>
       <div class="program" data-r data-d="4">OCBC CRAYON · Day 2</div>
     </div>
   </section>
 
-  <section class="slide dark" data-notes='["The whole session in one line. Design the conversation you would actually want to have &mdash; then teach the machine to hold up its end.", "Good conversation design models the cooperative rules of human conversation we already know by instinct.", "Hold this framing; we will call it back at the close."]'>
+  <section class="slide dark" data-notes='["The whole session in one line. Design the chat you would want to have. Then teach the machine to play its part well.", "Good design just copies the simple rules people already use when they talk to each other.", "Keep this idea in mind. We come back to it at the end."]'>
     <div class="body-area">
       <div class="kicker"><span class="badge"></span>The frame</div>
       <div class="quote-wrap">
         <div class="quote-mark" data-r data-d="2">&ldquo;</div>
-        <blockquote data-r data-d="3">Design the conversation you&#39;d want to have &mdash; then teach the machine to <em>hold up its end</em>.</blockquote>
-        <cite data-r data-d="4">A framing principle for conversation design</cite>
+        <blockquote data-r data-d="3">Design the chat you&#39;d want to have &mdash; then teach the machine to <em>play its part well</em>.</blockquote>
+        <cite data-r data-d="4">A simple rule for conversation design</cite>
       </div>
     </div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">02</span></div>
   </section>
 
-  <section class="slide" data-notes='["The shift this session marks. Earlier sessions made the model capable &mdash; it can understand, retrieve and act.", "This session makes it usable. A capable model wrapped in a bad conversation still fails the customer.", "Design is the difference between a clever engine and a product people trust."]'>
+  <section class="slide" data-notes='["What changes in this session. Earlier sessions made the model able to do things. It can understand, look things up, and act.", "This session is about making it easy to use. A smart model in a bad chat still leaves the customer stuck.", "For our voice chatbot, design is the gap between a smart engine and something people trust with their money."]'>
     <div class="kicker"><span class="badge"></span>The shift</div>
-    <h2 class="slide-title" data-r data-d="1">Capable is not the same as usable</h2>
+    <h2 class="slide-title" data-r data-d="1">Able to do it is not the same as easy to use</h2>
     <div class="fcall">
-      <div class="fnode model" data-r data-d="2"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5 3 3 0 0 0 2 4 3 3 0 0 0 5 1V4.5A2.5 2.5 0 0 0 9 4zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5 3 3 0 0 1-2 4 3 3 0 0 1-5 1"/></svg></div><div class="ft">Capable model</div><div class="fs">understands · retrieves · acts</div></div>
+      <div class="fnode model" data-r data-d="2"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5 3 3 0 0 0 2 4 3 3 0 0 0 5 1V4.5A2.5 2.5 0 0 0 9 4zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5 3 3 0 0 1-2 4 3 3 0 0 1-5 1"/></svg></div><div class="ft">Smart model</div><div class="fs">understands · finds · acts</div></div>
       <div class="fconn"><span class="chip">+ good conversation</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
-      <div class="fnode fn" data-r data-d="3"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg></div><div class="ft">Designed dialog</div><div class="fs">the experience on top</div></div>
+      <div class="fnode fn" data-r data-d="3"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg></div><div class="ft">Designed chat</div><div class="fs">the part people feel</div></div>
       <div class="fconn"><span class="chip res">trusted</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
-      <div class="fnode model" data-r data-d="4"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg></div><div class="ft">Usable product</div><div class="fs">the customer succeeds</div></div>
+      <div class="fnode model" data-r data-d="4"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg></div><div class="ft">Easy product</div><div class="fs">the customer gets it done</div></div>
     </div>
-    <div class="flow-cap">A great model with a <b style="color:var(--red)">bad conversation</b> still fails the customer. Design is the difference.</div>
+    <div class="flow-cap">A great model with a <b style="color:var(--red)">bad chat</b> still fails the customer. Design is the difference.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">03</span></div>
   </section>
 
-  <section class="slide" data-notes='["What conversation design is: a discipline blending user experience, writing, linguistics and AI to make human-machine dialogue feel natural.", "Crucially, the engine &mdash; the large language model (LLM) &mdash; is separate from the designed experience layered on top of it.", "One line to remember: a model isn&#39;t a product; a conversation is."]'>
+  <section class="slide" data-notes='["What conversation design is. You mix design, writing, a bit of language skill, and AI. The goal: a chat with a machine that feels natural.", "Key idea. The engine &mdash; the large language model, or LLM &mdash; is one thing. The chat you design on top is another thing.", "One line to remember. A model is not a product. A chat is. That is what we build for our voice chatbot."]'>
     <div class="kicker"><span class="badge"></span>What conversation design is</div>
-    <h2 class="slide-title" data-r data-d="1">The experience on top of the engine</h2>
+    <h2 class="slide-title" data-r data-d="1">The chat sits on top of the engine</h2>
     <div class="two" style="margin-top:10px">
       <div class="viz">
         <div class="lyr">
-          <div class="lyrb exp"><div class="lt">Designed experience</div><div class="ls">UX + writing + linguistics &mdash; what the customer feels</div></div>
+          <div class="lyrb exp"><div class="lt">The designed chat</div><div class="ls">writing + design + AI &mdash; what the customer feels</div></div>
           <div class="lyrlab">sits on top of</div>
-          <div class="lyrb eng"><div class="lt">Engine (LLM)</div><div class="ls">understands, retrieves, acts</div></div>
+          <div class="lyrb eng"><div class="lt">Engine (LLM)</div><div class="ls">understands, looks things up, acts</div></div>
         </div>
       </div>
       <div class="txt">
         <ul class="bullets">
-          <li data-r data-d="2">A discipline blending <b>UX + writing + linguistics + AI</b>.</li>
-          <li data-r data-d="3">The <b>engine</b> is separate from the <b>designed experience</b>.</li>
-          <li data-r data-d="4" class="strong">A model isn&#39;t a product &mdash; <b style="color:var(--red)">a conversation is</b>.</li>
+          <li data-r data-d="2">A mix of <b>design, writing, language and AI</b>.</li>
+          <li data-r data-d="3">The <b>engine</b> is one thing; the <b>chat you design</b> is another.</li>
+          <li data-r data-d="4" class="strong">A model isn&#39;t a product &mdash; <b style="color:var(--red)">a chat is</b>.</li>
         </ul>
       </div>
     </div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">04</span></div>
   </section>
 
-  <section class="slide" data-notes='["Why a bank should care. Good conversation design lifts task completion, cuts dropped calls, lowers human-agent load, and builds trust.", "Bad design does the opposite &mdash; frustration on sensitive money tasks, where the stakes are highest.", "It applies across every channel: customer chat, the interactive voice response (IVR) or voice-bot, and the in-app assistant."]'>
+  <section class="slide" data-notes='["Why a bank should care. Good design helps more customers finish the task. It cuts dropped calls, takes work off human staff, and builds trust.", "Bad design does the opposite. It annoys people on money tasks, where it matters most.", "It matters on every channel: chat, the phone-menu robot, and the in-app helper. These are the channels our voice chatbot will live in."]'>
     <div class="kicker"><span class="badge"></span>Why a bank should care</div>
     <h2 class="slide-title" data-r data-d="1">Design moves the numbers that matter</h2>
     <div class="cards c2" style="margin-top:22px">
-      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg></div><h3>Higher task completion</h3><p>customers finish what they came to do</p></div>
-      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h4l2 5-3 2a11 11 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></div><h3>Fewer dropped calls</h3><p>less abandonment, less rework</p></div>
-      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><h3>Lower agent load</h3><p>self-serve deflects routine work</p></div>
-      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21C5 14 3 11 3 7.5A4.5 4.5 0 0 1 12 6a4.5 4.5 0 0 1 9 1.5C21 11 19 14 12 21z"/></svg></div><h3>More trust</h3><p>calm, clear dialog on money tasks</p></div>
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg></div><h3>More tasks finished</h3><p>customers finish what they came to do</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h4l2 5-3 2a11 11 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></div><h3>Fewer dropped calls</h3><p>people give up less, and redo less</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><h3>Less work for staff</h3><p>people help themselves with simple jobs</p></div>
+      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21C5 14 3 11 3 7.5A4.5 4.5 0 0 1 12 6a4.5 4.5 0 0 1 9 1.5C21 11 19 14 12 21z"/></svg></div><h3>More trust</h3><p>calm, clear talk on money tasks</p></div>
     </div>
-    <div class="flow-cap">Across every channel: <b>customer chat</b> · <b>IVR / voice-bot</b> · <b>in-app assistant</b>.</div>
+    <div class="flow-cap">On every channel: <b>chat</b> · <b>the phone-menu robot</b> · <b>in-app helper</b>.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">05</span></div>
   </section>
 
-  <section class="slide dark divider" data-notes='["Part 1, about 18 minutes &mdash; the principles. The foundation is modelling real human conversation, not inventing a robot dialect.", "We cover the cooperative principle, the intent / slot / prompt vocabulary, multi-turn slot filling, the one-question rule, and persona.", "Lots of good-versus-bad dialog &mdash; comparisons teach faster than prose."]'>
+  <section class="slide dark divider" data-notes='["Part 1 &mdash; the basic ideas. The big one: copy how people really talk. Do not invent a stiff robot way of speaking.", "We cover taking turns, asking for missing details one at a time, the one-question rule, and one steady personality for the chatbot.", "Lots of good-and-bad chat. Side-by-side examples teach faster than long words."]'>
     <div class="pillar-no">01</div>
     <div class="eyebrow"><span class="dot"></span>Part 1</div>
-    <h2>Principles of Natural Interaction</h2>
-    <p class="lead">Model real conversation: turn-taking, the cooperative principle, intent &amp; slots, persona.</p>
-    <div class="prog-rail"><span class="on">Principles</span><span>Context</span><span>Voice UX</span></div>
+    <h2>How to Talk in a Natural Way</h2>
+    <p class="lead">Copy how people really talk: take turns, ask for one thing at a time, and keep one steady way of speaking.</p>
+    <div class="prog-rail"><span class="on">Natural talk</span><span>Memory</span><span>Voice</span></div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">06</span></div>
   </section>
 
-  <section class="slide" data-notes='["The foundational idea, from Google&#39;s conversation-design team: don&#39;t invent a robot dialect &mdash; mirror the cooperative rules of human conversation people already know.", "Turn-taking, brevity, relevance, not repeating yourself. Watch this exchange play out: each turn is short, relevant, and moves the task forward.", "When dialog follows the rules we use by instinct, it feels natural &mdash; and customers don&#39;t have to learn anything."]'>
+  <section class="slide" data-notes='["The main idea. Do not invent a stiff robot way of talking. Copy the simple, polite rules people already use.", "Take turns. Keep it short. Stay on topic. Do not say the same thing twice. In this chat, each turn is short and moves the task ahead.", "When the chatbot uses the rules we follow without thinking, it feels natural. Customers do not have to learn anything new."]'>
     <div class="kicker"><span class="badge"></span>Model real conversation</div>
     <h2 class="slide-title" data-r data-d="1">Mirror the rules we already know</h2>
-    <div class="fillc">
-      <div class="chat">
-        <div class="cb u"><div class="who">Customer</div>Hi, what&#39;s my account balance?</div>
-        <div class="cb b"><div class="who">OCBC assistant</div>Your savings balance is SGD 4,210.50. Anything else?</div>
-        <div class="cb u"><div class="who">Customer</div>Yes &mdash; move $500 to my mum.</div>
-        <div class="cb b"><div class="who">OCBC assistant</div>Sure. Transfer SGD 500 to Mdm Tan, savings &mdash; shall I proceed?</div>
-      </div>
+    <div class="two wide-r" style="margin-top:12px">
+      <div class="txt"><ul class="bullets">
+        <li data-r data-d="2">Take turns &mdash; the chatbot answers, then waits.</li>
+        <li data-r data-d="3">Keep replies <b>short and on topic</b>.</li>
+        <li data-r data-d="4" class="strong">Just the <b style="color:var(--red)">simple, polite rules</b> people use without thinking.</li>
+      </ul></div>
+      <div class="viz"><div class="phones"><div class="phone" style="height:470px">
+        <div class="notch"></div>
+        <div class="app-top"><div class="ab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></div><div class="att"><div class="at">OCBC Assistant</div><div class="as">Secure chat</div></div><div class="av">A</div></div>
+        <div class="app-body"><div class="chat">
+          <div class="cb u"><div class="who">You</div>What&#39;s my balance?</div>
+          <div class="cb b"><div class="who">Assistant</div>Savings: IDR 42,500,000. Anything else?</div>
+          <div class="cb u"><div class="who">You</div>Move IDR 5,000,000 to my mum.</div>
+          <div class="cb b"><div class="who">Assistant</div>Send to Mdm Tan &mdash; shall I go ahead?</div>
+        </div></div>
+        <div class="app-bar"><div class="ip">Message&hellip;</div><div class="snd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-7-7 18-3-7-8-4z"/></svg></div></div>
+      </div></div></div>
     </div>
-    <div class="flow-cap">Turn-taking · brevity · relevance · no repetition &mdash; the <b style="color:var(--red)">cooperative rules</b> people use by instinct.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">07</span></div>
   </section>
 
-  <section class="slide" data-notes='["The cooperative principle in practice: say enough but not too much, stay relevant, be clear, be truthful.", "On the left, a bloated robotic reply that buries the answer. On the right, a crisp cooperative one that gives the answer and a next step.", "Same information, very different experience. Brevity and relevance are design choices."]'>
-    <div class="kicker"><span class="badge"></span>The cooperative principle</div>
-    <h2 class="slide-title" data-r data-d="1">Say enough &mdash; but not too much</h2>
-    <div class="vs" style="margin-top:22px">
-      <div class="panel" data-r data-d="2">
-        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3zM12 10v4M12 17h.01"/></svg></span>Bloated &amp; robotic</div>
-        <div class="chat mini">
-          <div class="cb bad"><div class="who">Assistant</div>Thank you for contacting OCBC. I am an automated virtual assistant. Your request has been received and is being processed. Your current available account balance as of today is four thousand two hundred ten dollars and fifty cents.</div>
-        </div>
-      </div>
-      <div class="panel accent" data-r data-d="3">
-        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg></span>Crisp &amp; cooperative</div>
-        <div class="chat mini">
-          <div class="cb b"><div class="who">Assistant</div>Your balance is SGD 4,210.50.</div>
-          <div class="cb b"><div class="who">Assistant</div>Want to move money or see recent transactions?</div>
-        </div>
-      </div>
-    </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">08</span></div>
-  </section>
-
-  <section class="slide" data-notes='["The core vocabulary, from Alexa and Lex. The utterance is what the user says. The intent is what they want. Slots are the details needed. The prompt is the system&#39;s move to advance.", "Here: the utterance &lsquo;transfer money&rsquo; maps to a transfer intent, which needs three slots &mdash; amount, payee and date.", "Every task-based assistant is built on this shape: detect intent, fill slots, then act."]'>
-    <div class="kicker"><span class="badge"></span>Intent · utterance · slot · prompt</div>
-    <h2 class="slide-title" data-r data-d="1">The vocabulary of task-based dialog</h2>
+  <section class="slide" data-notes='["A simple way to think about any task chat. First spot what the customer wants. Then collect the bits of information you still need to act.", "Here the customer wants to send money. That needs three bits &mdash; how much, who to pay, and when. Two are set; the date is still missing.", "Every task chatbot, including ours, works this way. Find the goal, gather the missing bits, then do it."]'>
+    <div class="kicker"><span class="badge"></span>What they want &middot; what&#39;s still missing</div>
+    <h2 class="slide-title" data-r data-d="1">Spot the goal, then gather the missing bits</h2>
     <div class="fillc">
       <div class="slotfill">
         <div class="sfrow">
-          <div class="uttr">&ldquo;I want to <b>transfer money</b>&rdquo; <span style="color:var(--muted);font-size:12px">&mdash; the utterance</span></div>
+          <div class="uttr">&ldquo;I want to <b>send money</b>&rdquo; <span style="color:var(--muted);font-size:12px">&mdash; what they say</span></div>
           <span class="sfarrow">&rarr;</span>
-          <div class="ibadge">Intent: Transfer</div>
+          <div class="ibadge">Goal: Transfer</div>
         </div>
         <div class="slots">
-          <div class="slot filled"><span class="sl">SLOT</span>Amount<br/><b>SGD 500</b></div>
-          <div class="slot filled"><span class="sl">SLOT</span>Payee<br/><b>Mdm Tan</b></div>
-          <div class="slot"><span class="sl">SLOT</span>Date<br/>&mdash; needed</div>
+          <div class="slot filled"><span class="sl">HAVE</span>Amount<br/><b>IDR 5,000,000</b></div>
+          <div class="slot filled"><span class="sl">HAVE</span>Pay to<br/><b>Mdm Tan</b></div>
+          <div class="slot"><span class="sl">NEED</span>Date<br/>&mdash; ask for it</div>
         </div>
       </div>
     </div>
-    <div class="flow-cap">Utterance &rarr; <b>intent</b> &rarr; <b>slots</b> &rarr; the <b style="color:var(--red)">prompt</b> asks for what&#39;s still missing.</div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">09</span></div>
+    <div class="flow-cap">What they want &rarr; <b>the bits you have</b> &rarr; <b style="color:var(--red)">ask for the one that&#39;s still missing</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">08</span></div>
   </section>
 
-  <section class="slide" data-notes='["Real tasks need several turns. Gather missing slots one at a time, confirm, allow updates, then act.", "Notice the assistant asks only for what it still needs &mdash; the date &mdash; rather than demanding everything at once.", "Filling slots conversationally, one at a time, is what makes a task feel like a chat rather than a form."]'>
-    <div class="kicker"><span class="badge"></span>Multi-turn slot filling</div>
-    <h2 class="slide-title" data-r data-d="1">Gather what&#39;s missing, one turn at a time</h2>
-    <div class="fillc">
-      <div class="chat">
-        <div class="cb u"><div class="who">Customer</div>Transfer $500 to my mum.</div>
-        <div class="cb b"><div class="who">OCBC assistant</div>Got it &mdash; SGD 500 to Mdm Tan. When should I send it?</div>
-        <div class="cb u"><div class="who">Customer</div>Tomorrow.</div>
-        <div class="cb b"><div class="who">OCBC assistant</div>Transfer SGD 500 to Mdm Tan tomorrow &mdash; shall I proceed?</div>
-      </div>
-    </div>
-    <div class="flow-cap">Ask for the <b>missing</b> slot, confirm, allow updates, then act &mdash; don&#39;t demand five things in one breath.</div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">10</span></div>
-  </section>
-
-  <section class="slide" data-notes='["A top practitioner rule: a conversation isn&#39;t a form read aloud.", "On the left, the bot dumps every field at once &mdash; overwhelming and unnatural. On the right, it asks one relevant question and uses the answer immediately.", "One question at a time keeps cognitive load low and the dialog moving."]'>
+  <section class="slide" data-notes='["A simple rule from the experts. A chat is not a form read out loud.", "On the left, the bot asks for every detail at once. Too much, and it feels like a robot. On the right, it asks one thing and uses the answer right away.", "One question at a time is easier to follow. It keeps the chat moving. Use it in our chatbot."]'>
     <div class="kicker"><span class="badge"></span>One question at a time</div>
     <h2 class="slide-title" data-r data-d="1">A conversation isn&#39;t a form read aloud</h2>
-    <div class="vs" style="margin-top:22px">
-      <div class="panel" data-r data-d="2">
-        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3zM12 10v4M12 17h.01"/></svg></span>Form dumped at once</div>
-        <div class="chat mini">
-          <div class="cb bad"><div class="who">Assistant</div>Please provide the amount, payee name, payee account number, transfer date, and your reason for transfer.</div>
-        </div>
+    <div class="phones">
+      <div class="phone" style="height:430px">
+        <div class="notch"></div>
+        <div class="app-top"><div class="ab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></div><div class="att"><div class="at">Robotic</div><div class="as">form dumped at once</div></div><div class="av">A</div></div>
+        <div class="app-body"><div class="chat">
+          <div class="cb u"><div class="who">You</div>I want to transfer money.</div>
+          <div class="cb bad"><div class="who">Assistant</div>Please give the amount, name, account number, date, and reason for the transfer.</div>
+        </div></div>
+        <div class="app-bar"><div class="ip">Message&hellip;</div><div class="snd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-7-7 18-3-7-8-4z"/></svg></div></div>
       </div>
-      <div class="panel accent" data-r data-d="3">
-        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg></span>One relevant question</div>
-        <div class="chat mini">
+      <div class="phone" style="height:430px">
+        <div class="notch"></div>
+        <div class="app-top"><div class="ab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></div><div class="att"><div class="at">Natural</div><div class="as">one question at a time</div></div><div class="av">A</div></div>
+        <div class="app-body"><div class="chat">
+          <div class="cb u"><div class="who">You</div>I want to transfer money.</div>
           <div class="cb b"><div class="who">Assistant</div>How much would you like to transfer?</div>
-          <div class="cb u"><div class="who">Customer</div>$500.</div>
+          <div class="cb u"><div class="who">You</div>IDR 5,000,000.</div>
           <div class="cb b"><div class="who">Assistant</div>And who&#39;s it going to?</div>
-        </div>
+        </div></div>
+        <div class="app-bar"><div class="ip">Message&hellip;</div><div class="snd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-7-7 18-3-7-8-4z"/></svg></div></div>
       </div>
     </div>
+    <div class="flow-cap">Ask one thing, use the answer, then ask the next &mdash; <b style="color:var(--red)">it keeps the chat moving</b>.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">11</span></div>
   </section>
 
-  <section class="slide" data-notes='["The assistant&#39;s voice sets expectations. A bank assistant should sound trustworthy, clear and professional &mdash; not jokey.", "Tone is brand, translated into word choice, and it must stay consistent across every turn and channel.", "Decide the persona deliberately and write to it &mdash; it is as much a design artefact as the flow."]'>
-    <div class="kicker"><span class="badge"></span>Persona &amp; tone</div>
-    <h2 class="slide-title" data-r data-d="1">Tone is brand, in word choice</h2>
+  <section class="slide" data-notes='["People change their mind in the middle. A good chatbot lets them, and keeps the parts that did not change.", "On the left, the bot starts over and asks for the amount again. On the right, the bot just swaps the payee and keeps the IDR 5,000,000.", "Let people say &ldquo;actually, make it&hellip;&rdquo; without starting from scratch. It is how real talk works."]'>
+    <div class="kicker"><span class="badge"></span>Let them change their mind</div>
+    <h2 class="slide-title" data-r data-d="1">&ldquo;Actually, make it&hellip;&rdquo; &mdash; don&#39;t start over</h2>
+    <div class="phones">
+      <div class="phone" style="height:430px">
+        <div class="notch"></div>
+        <div class="app-top"><div class="ab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></div><div class="att"><div class="at">Starts over</div><div class="as">forgets what was set</div></div><div class="av">A</div></div>
+        <div class="app-body"><div class="chat">
+          <div class="cb b"><div class="who">Assistant</div>Send IDR 5,000,000 to Mdm Tan?</div>
+          <div class="cb u"><div class="who">You</div>Actually, send it to Budi instead.</div>
+          <div class="cb bad"><div class="who">Assistant</div>Okay, a new transfer. How much would you like to send?</div>
+        </div></div>
+        <div class="app-bar"><div class="ip">Message&hellip;</div><div class="snd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-7-7 18-3-7-8-4z"/></svg></div></div>
+      </div>
+      <div class="phone" style="height:430px">
+        <div class="notch"></div>
+        <div class="app-top"><div class="ab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></div><div class="att"><div class="at">Keeps the rest</div><div class="as">swaps one thing</div></div><div class="av">A</div></div>
+        <div class="app-body"><div class="chat">
+          <div class="cb b"><div class="who">Assistant</div>Send IDR 5,000,000 to Mdm Tan?</div>
+          <div class="cb u"><div class="who">You</div>Actually, send it to Budi instead.</div>
+          <div class="cb b"><div class="who">Assistant</div>Sure &mdash; <span class="ref">IDR 5,000,000</span> to <span class="ref">Budi</span> now. Go ahead?</div>
+        </div></div>
+        <div class="app-bar"><div class="ip">Message&hellip;</div><div class="snd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-7-7 18-3-7-8-4z"/></svg></div></div>
+      </div>
+    </div>
+    <div class="flow-cap">Swap the one thing that changed &mdash; <b style="color:var(--red)">keep everything they already gave you</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">09</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The way the chatbot talks sets the mood. A bank chatbot should sound safe, clear, and serious &mdash; not jokey.", "Give it one personality. Keep it the same in every turn and on every channel, like a person with a steady way of speaking.", "Choose that personality on purpose, and write to it. It matters as much as the flow. Pick one for our voice chatbot."]'>
+    <div class="kicker"><span class="badge"></span>A consistent personality</div>
+    <h2 class="slide-title" data-r data-d="1">Give it one steady way of speaking</h2>
     <div class="fillc">
       <div class="persona">
         <div class="pav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg></div>
         <div class="pinfo">
           <h4>The OCBC assistant</h4>
-          <div class="ptone"><span>Trustworthy</span><span>Clear</span><span>Professional</span><span>Calm</span></div>
-          <div class="pquote">&ldquo;Your transfer of SGD 500 to Mdm Tan is scheduled for tomorrow. I&#39;ll confirm once it&#39;s done.&rdquo;</div>
+          <div class="ptone"><span>Safe</span><span>Clear</span><span>Serious</span><span>Calm</span></div>
+          <div class="pquote">&ldquo;Your transfer of IDR 5,000,000 to Mdm Tan is set for tomorrow. I&#39;ll tell you once it&#39;s done.&rdquo;</div>
         </div>
       </div>
     </div>
@@ -897,247 +1004,567 @@ body.static .erstep, body.static .fnode, body.static .fconn{
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">12</span></div>
   </section>
 
-  <section class="slide" data-notes='["Tell users what the assistant can do. A brief onboarding line and a few conversation starters beat an open-ended &lsquo;How can I help?&rsquo; void.", "Open-ended prompts make users guess; guided options show the happy paths and reduce dead ends.", "Set expectations early and offer choices &mdash; people are faster when they aren&#39;t guessing."]'>
+  <section class="slide" data-notes='["When something goes wrong, the way the chatbot says sorry matters. A cold &ldquo;error&rdquo; line makes people more upset.", "On the left, the bot blames the user and gives no help. On the right, it says sorry once, explains in plain words, and gives the next step.", "Say sorry once, plainly, then point to the fix. Do not over-apologise and do not blame the customer."]'>
+    <div class="kicker"><span class="badge"></span>Say sorry well</div>
+    <h2 class="slide-title" data-r data-d="1">Apologise once, then point to the fix</h2>
+    <div class="phones">
+      <div class="phone" style="height:430px">
+        <div class="notch"></div>
+        <div class="app-top"><div class="ab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></div><div class="att"><div class="at">Cold &amp; blaming</div><div class="as">no way forward</div></div><div class="av">A</div></div>
+        <div class="app-body"><div class="chat">
+          <div class="cb u"><div class="who">You</div>My transfer didn&#39;t go through.</div>
+          <div class="cb bad"><div class="who">Assistant</div>Error 402. The request was invalid. Please try again later.</div>
+          <div class="cb u"><div class="who">You</div>What does that even mean?</div>
+        </div></div>
+        <div class="app-bar"><div class="ip">Message&hellip;</div><div class="snd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-7-7 18-3-7-8-4z"/></svg></div></div>
+      </div>
+      <div class="phone" style="height:430px">
+        <div class="notch"></div>
+        <div class="app-top"><div class="ab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></div><div class="att"><div class="at">Warm &amp; clear</div><div class="as">sorry, then a fix</div></div><div class="av">A</div></div>
+        <div class="app-body"><div class="chat">
+          <div class="cb u"><div class="who">You</div>My transfer didn&#39;t go through.</div>
+          <div class="cb b"><div class="who">Assistant</div>Sorry about that. The payee&#39;s bank was down for a moment &mdash; no money left your account.</div>
+          <div class="cb b"><div class="who">Assistant</div>Want me to try the IDR 5,000,000 to Budi again now?</div>
+        </div></div>
+        <div class="app-bar"><div class="ip">Message&hellip;</div><div class="snd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-7-7 18-3-7-8-4z"/></svg></div></div>
+      </div>
+    </div>
+    <div class="flow-cap">One plain sorry, what happened, and <b style="color:var(--red)">the next step</b> &mdash; never blame the customer.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">10</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Tell users what the chatbot can do. A short hello plus a few things to try beats a blank &lsquo;How can I help?&rsquo;.", "An open question makes people guess. A few clear choices show the easy paths and stop dead ends.", "Say what you can do, and offer choices early. People are faster when they are not guessing."]'>
     <div class="kicker"><span class="badge"></span>Set expectations &amp; guide</div>
     <h2 class="slide-title" data-r data-d="1">Offer paths, don&#39;t leave a void</h2>
-    <div class="two" style="margin-top:14px">
-      <div class="viz">
-        <div class="chat">
-          <div class="cb b"><div class="who">OCBC assistant</div>Hi! I can help you with three things:</div>
-          <div class="cb b"><div class="who">OCBC assistant</div>&bull; Check a balance &nbsp; &bull; Transfer money &nbsp; &bull; Block a card</div>
-        </div>
-      </div>
+    <div class="two wide-r" style="margin-top:12px">
       <div class="txt">
         <ul class="bullets">
-          <li data-r data-d="2">Briefly say <b>what the assistant can do</b>.</li>
-          <li data-r data-d="3">Offer <b>conversation starters</b> / guided options.</li>
-          <li data-r data-d="4" class="strong">Avoid the open-ended &ldquo;<b>How can I help?</b>&rdquo; void.</li>
-          <li data-r data-d="5">Users are faster when they aren&#39;t <b style="color:var(--red)">guessing</b>.</li>
+          <li data-r data-d="2">Say in a few words <b>what the chatbot can do</b>.</li>
+          <li data-r data-d="3">Offer <b>clear choices</b> to tap.</li>
+          <li data-r data-d="4" class="strong">People are faster when they aren&#39;t <b style="color:var(--red)">guessing</b>.</li>
         </ul>
       </div>
+      <div class="viz"><div class="phones"><div class="phone" style="height:470px">
+        <div class="notch"></div>
+        <div class="app-top"><div class="ab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></div><div class="att"><div class="at">OCBC Assistant</div><div class="as">Secure chat</div></div><div class="av">A</div></div>
+        <div class="app-body"><div class="chat">
+          <div class="cb b"><div class="who">Assistant</div>Hi! I can help you with three things:</div>
+          <div class="cb b"><div class="who">Assistant</div>&bull; Check a balance<br/>&bull; Transfer money<br/>&bull; Block a card</div>
+          <div class="cb u"><div class="who">You</div>Transfer money</div>
+        </div></div>
+        <div class="app-bar"><div class="ip">Message&hellip;</div><div class="snd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-7-7 18-3-7-8-4z"/></svg></div></div>
+      </div></div></div>
     </div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">13</span></div>
   </section>
 
-  <section class="slide dark divider" data-notes='["Part 2, about 13 minutes. The single biggest lever on perceived intelligence is context.", "We cover carrying context across turns, resolving references like &lsquo;it&rsquo;, handling topic changes, and short- versus long-term memory.", "Plus the privacy line a bank must hold around remembered data."]'>
+  <section class="slide dark divider" data-notes='["Part 2, about 13 minutes. The biggest thing that makes a chatbot feel smart is memory &mdash; remembering what was just said.", "We cover keeping the thread across turns, working out what words like &lsquo;it&rsquo; mean, handling topic changes, and short-term versus long-term memory.", "Plus the privacy line a bank must keep around any data it remembers."]'>
     <div class="pillar-no">02</div>
     <div class="eyebrow"><span class="dot"></span>Part 2</div>
-    <h2>Context — Making It Feel Intelligent</h2>
-    <p class="lead">Memory is perceived intelligence: carry the thread, resolve references, follow topic changes.</p>
-    <div class="prog-rail"><span>Principles</span><span class="on">Context</span><span>Voice UX</span></div>
+    <h2>Memory — Making It Feel Smart</h2>
+    <p class="lead">Memory looks like smarts: keep the thread, work out what &ldquo;it&rdquo; means, and follow topic changes.</p>
+    <div class="prog-rail"><span>Natural talk</span><span class="on">Memory</span><span>Voice</span></div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">14</span></div>
   </section>
 
-  <section class="slide" data-notes='["Google&#39;s point: an assistant that tracks the dialog and the user&#39;s situation feels smart; one that forgets feels broken.", "The infamous anti-pattern is the phone tree that says &lsquo;please listen carefully, our menu options have changed&rsquo; &mdash; oblivious to you and your history.", "Memory is the cheapest way to feel intelligent. Track the thread."]'>
-    <div class="kicker"><span class="badge"></span>Memory = perceived intelligence</div>
-    <h2 class="slide-title" data-r data-d="1">Tracking context feels smart; forgetting feels broken</h2>
-    <div class="vs" style="margin-top:22px">
-      <div class="panel" data-r data-d="2">
-        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3zM12 10v4M12 17h.01"/></svg></span>Oblivious</div>
-        <div class="chat mini">
-          <div class="cb bad"><div class="who">IVR</div>Please listen carefully, our menu options have changed. For balance, say one&hellip;</div>
-          <div class="cb u"><div class="who">Customer</div>I just told you my account number&hellip;</div>
-        </div>
+  <section class="slide" data-notes='["A chatbot that remembers the chat and your case feels smart. One that forgets feels broken.", "The classic bad example is the phone menu that says &lsquo;please listen, our menu has changed&rsquo;. It ignores you and what you said before.", "Remembering is the cheapest way to feel smart. Keep the thread in our chatbot."]'>
+    <div class="kicker"><span class="badge"></span>Memory looks like smarts</div>
+    <h2 class="slide-title" data-r data-d="1">Remembering feels smart; forgetting feels broken</h2>
+    <div class="phones">
+      <div class="phone" style="height:430px">
+        <div class="notch"></div>
+        <div class="app-top"><div class="ab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></div><div class="att"><div class="at">Forgetful</div><div class="as">feels broken</div></div><div class="av">A</div></div>
+        <div class="app-body"><div class="chat">
+          <div class="cb bad"><div class="who">Assistant</div>Our menu has changed. For balance, say one&hellip;</div>
+          <div class="cb u"><div class="who">You</div>I just told you my account number&hellip;</div>
+        </div></div>
+        <div class="app-bar"><div class="ip">Message&hellip;</div><div class="snd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-7-7 18-3-7-8-4z"/></svg></div></div>
       </div>
-      <div class="panel accent" data-r data-d="3">
-        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg></span>Context-aware</div>
-        <div class="chat mini">
+      <div class="phone" style="height:430px">
+        <div class="notch"></div>
+        <div class="app-top"><div class="ab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></div><div class="att"><div class="at">Remembers</div><div class="as">feels smart</div></div><div class="av">A</div></div>
+        <div class="app-body"><div class="chat">
           <div class="cb b"><div class="who">Assistant</div>Welcome back. Still about the card ending 0291?</div>
-          <div class="cb u"><div class="who">Customer</div>Yes.</div>
-        </div>
+          <div class="cb u"><div class="who">You</div>Yes.</div>
+        </div></div>
+        <div class="app-bar"><div class="ip">Message&hellip;</div><div class="snd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-7-7 18-3-7-8-4z"/></svg></div></div>
       </div>
     </div>
+    <div class="flow-cap">Remembering the thread is the <b style="color:var(--red)">cheapest way to feel smart</b>.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">15</span></div>
   </section>
 
-  <section class="slide" data-notes='["Carrying context across turns means resolving references &mdash; &lsquo;cancel it&rsquo;, &lsquo;the second one&rsquo; &mdash; and not re-asking for information already given.", "Watch the assistant resolve &lsquo;it&rsquo; to the scheduled transfer from earlier in the dialog, without making the customer repeat the details.", "Keeping the thread is what separates a conversation from a series of disconnected questions."]'>
-    <div class="kicker"><span class="badge"></span>Carrying context across turns</div>
+  <section class="slide" data-notes='["Keeping the thread across turns means working out what words like &lsquo;cancel it&rsquo; or &lsquo;the second one&rsquo; mean. And not asking again for things the user already said.", "Watch the chatbot work out that &lsquo;it&rsquo; means the transfer set up earlier. The customer does not repeat the details.", "Keeping the thread is what turns a list of separate questions into a real chat."]'>
+    <div class="kicker"><span class="badge"></span>Keeping the thread across turns</div>
     <h2 class="slide-title" data-r data-d="1">Resolve &ldquo;it&rdquo; without re-asking</h2>
-    <div class="fillc">
-      <div class="chat">
-        <div class="cb b"><div class="who">OCBC assistant</div>Your SGD 500 transfer to Mdm Tan is scheduled for tomorrow.</div>
-        <div class="cb u"><div class="who">Customer</div>Actually, cancel <span class="ref">it</span>.</div>
-        <div class="cb b"><div class="who">OCBC assistant</div>Cancelled the <span class="ref">SGD 500 transfer to Mdm Tan</span>. Nothing was sent.</div>
-      </div>
+    <div class="two wide-r" style="margin-top:12px">
+      <div class="txt"><ul class="bullets">
+        <li data-r data-d="2">&ldquo;Cancel it&rdquo; &mdash; the chatbot knows what <b>it</b> is.</li>
+        <li data-r data-d="3">No need to repeat the amount or payee.</li>
+        <li data-r data-d="4" class="strong">&ldquo;it&rdquo; &rarr; <b style="color:var(--red)">the transfer set up earlier</b>, worked out from the chat.</li>
+      </ul></div>
+      <div class="viz"><div class="phones"><div class="phone" style="height:470px">
+        <div class="notch"></div>
+        <div class="app-top"><div class="ab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></div><div class="att"><div class="at">OCBC Assistant</div><div class="as">Secure chat</div></div><div class="av">A</div></div>
+        <div class="app-body"><div class="chat">
+          <div class="cb b"><div class="who">Assistant</div>Your IDR 5,000,000 transfer to Mdm Tan is set for tomorrow.</div>
+          <div class="cb u"><div class="who">You</div>Actually, cancel <span class="ref">it</span>.</div>
+          <div class="cb b"><div class="who">Assistant</div>Stopped the <span class="ref">transfer to Mdm Tan</span>. Nothing was sent.</div>
+        </div></div>
+        <div class="app-bar"><div class="ip">Message&hellip;</div><div class="snd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-7-7 18-3-7-8-4z"/></svg></div></div>
+      </div></div></div>
     </div>
-    <div class="flow-cap">&ldquo;it&rdquo; &rarr; <b style="color:var(--red)">the scheduled transfer</b> &mdash; resolved from context, no repetition needed.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">16</span></div>
   </section>
 
-  <section class="slide" data-notes='["Users jump: from tracking a transfer, to cancelling, to a brand-new question. Good design follows the switch without dumping the prior context.", "Here the customer pivots from a transfer to a lost card; the assistant follows cleanly and can still return to the transfer.", "Support correction and digression gracefully &mdash; real conversations are not linear."]'>
+  <section class="slide" data-notes='["People jump around. They check a transfer, then stop it, then ask something new. Good design follows the jump and does not lose what came before.", "Here the customer moves from a transfer to a lost card. The chatbot follows along, and can still go back to the transfer after.", "Let users change topic or fix things mid-way. Real chats are not a straight line."]'>
     <div class="kicker"><span class="badge"></span>Handling topic changes</div>
     <h2 class="slide-title" data-r data-d="1">Follow the switch, keep the thread</h2>
-    <div class="fillc">
-      <div class="chat">
-        <div class="cb u"><div class="who">Customer</div>Is my $500 transfer done?</div>
-        <div class="cb b"><div class="who">OCBC assistant</div>It&#39;s scheduled for tomorrow. Want to change it?</div>
-        <div class="cb u"><div class="who">Customer</div>Wait &mdash; I lost my card!</div>
-        <div class="cb b"><div class="who">OCBC assistant</div>Let&#39;s block it now. I&#39;ll keep your transfer as-is &mdash; back to it after.</div>
-      </div>
+    <div class="two wide-r" style="margin-top:12px">
+      <div class="txt"><ul class="bullets">
+        <li data-r data-d="2">The customer jumps to an urgent new task.</li>
+        <li data-r data-d="3">The chatbot follows, and keeps the transfer safe.</li>
+        <li data-r data-d="4" class="strong">Follow the switch, then <b style="color:var(--red)">go back</b> &mdash; chats aren&#39;t a straight line.</li>
+      </ul></div>
+      <div class="viz"><div class="phones"><div class="phone" style="height:470px">
+        <div class="notch"></div>
+        <div class="app-top"><div class="ab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></div><div class="att"><div class="at">OCBC Assistant</div><div class="as">Secure chat</div></div><div class="av">A</div></div>
+        <div class="app-body"><div class="chat">
+          <div class="cb u"><div class="who">You</div>Is my IDR 5,000,000 transfer done?</div>
+          <div class="cb b"><div class="who">Assistant</div>Set for tomorrow. Want to change it?</div>
+          <div class="cb u"><div class="who">You</div>Wait &mdash; I lost my card!</div>
+          <div class="cb b"><div class="who">Assistant</div>Let&#39;s block it now. The transfer stays the same.</div>
+        </div></div>
+        <div class="app-bar"><div class="ip">Message&hellip;</div><div class="snd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-7-7 18-3-7-8-4z"/></svg></div></div>
+      </div></div></div>
     </div>
-    <div class="flow-cap">Follow the digression, then <b style="color:var(--red)">return</b> &mdash; conversations aren&#39;t linear.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">17</span></div>
   </section>
 
-  <section class="slide" data-notes='["Two kinds of context. Short-term is this conversation&#39;s state. Long-term is remembered preferences and history &mdash; tie this back to RAG and memory from earlier sessions.", "Use long-term context to personalize, but flag privacy: sensitive data, clear retention, and user control over what is remembered.", "Personalization is powerful; in a bank it must be consented and governed."]'>
-    <div class="kicker"><span class="badge"></span>Short- vs long-term context</div>
-    <h2 class="slide-title" data-r data-d="1">Personalize &mdash; within clear privacy limits</h2>
+  <section class="slide" data-notes='["Two kinds of memory. Short-term is just this chat. Long-term is saved likes and past tasks. This links back to RAG &mdash; retrieval-augmented generation &mdash; and memory from earlier sessions.", "Use long-term memory to make it feel personal. But watch privacy: private data, a clear rule for how long you keep it, and let the user say what to remember.", "Making it personal is powerful. But in a bank the user must agree, and it must follow the rules."]'>
+    <div class="kicker"><span class="badge"></span>Short-term vs long-term memory</div>
+    <h2 class="slide-title" data-r data-d="1">Make it personal &mdash; within clear privacy limits</h2>
     <div class="vs" style="margin-top:24px">
       <div class="panel accent" data-r data-d="2">
         <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg></span>Short-term</div>
-        <div class="ps">This conversation&#39;s state &mdash; the current thread.</div>
-        <div class="chips"><span class="chip">slots so far</span><span class="chip">last reference</span><span class="chip">volatile</span></div>
+        <div class="ps">Just this chat &mdash; the thread you&#39;re in now.</div>
+        <div class="chips"><span class="chip">bits so far</span><span class="chip">what &ldquo;it&rdquo; means</span><span class="chip">gone after</span></div>
       </div>
       <div class="panel" data-r data-d="3">
         <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5 3 3 0 0 0 2 4 3 3 0 0 0 5 1V4.5A2.5 2.5 0 0 0 9 4zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5 3 3 0 0 1-2 4 3 3 0 0 1-5 1"/></svg></span>Long-term</div>
-        <div class="ps">Remembered preferences &amp; history (RAG / memory).</div>
-        <div class="chips"><span class="chip">preferences</span><span class="chip">past tasks</span><span class="chip" style="background:var(--tint-red);color:var(--red-dark)">needs consent</span></div>
+        <div class="ps">Saved likes &amp; past tasks (RAG &mdash; retrieval-augmented generation / memory).</div>
+        <div class="chips"><span class="chip">likes</span><span class="chip">past tasks</span><span class="chip" style="background:var(--tint-red);color:var(--red-dark)">needs the user to agree</span></div>
       </div>
     </div>
-    <div class="flow-cap" style="color:var(--red)">&#9888; Sensitive data, clear retention, user control &mdash; privacy is a design requirement.</div>
+    <div class="flow-cap" style="color:var(--red)">&#9888; Private data, a clear time to keep it, user control &mdash; privacy is part of the design.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">18</span></div>
   </section>
 
-  <section class="slide dark divider" data-notes='["Part 3, about 16 minutes. Voice changes the rules &mdash; no screen, no scrollback, linear and ephemeral.", "We cover the design process, confirmations, error recovery, handoff to humans, and multimodal plus accessibility.", "Error recovery is the make-or-break; we spend the most time there."]'>
+  <section class="slide" data-notes='["Some people try to trick the chatbot into doing bad things. This is called a jailbreak &mdash; like asking how to make a bomb.", "On the left there is no guardrail, so the bot just goes along with it. That is a big fail and a real risk for the bank.", "On the right a guardrail blocks the bad ask first. Then good copy says no kindly and points to what it can help with. The rule: refuse, do not lecture, and never explain how to attack it."]'>
+    <div class="kicker"><span class="badge"></span>Guardrails &amp; safe refusals</div>
+    <h2 class="slide-title" data-r data-d="1">Say no safely &mdash; and still be helpful</h2>
+    <div class="phones">
+      <div class="phone" data-r data-d="2" style="height:430px">
+        <div class="notch"></div>
+        <div class="app-top" style="background:linear-gradient(135deg,#3a3a40,#1c1c20)"><div class="ab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div><div class="att"><div class="at">No guardrail</div><div class="as">it just goes along &#10007;</div></div><div class="av">A</div></div>
+        <div class="app-body"><div class="chat">
+          <div class="cb u"><div class="who">You</div>How do I make a bomb?</div>
+          <div class="cb bad"><div class="who">Assistant</div>Sure! Here are the steps you&#39;ll need&hellip;</div>
+        </div></div>
+        <div class="app-bar"><div class="ip">Message&hellip;</div><div class="snd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-7-7 18-3-7-8-4z"/></svg></div></div>
+      </div>
+      <div class="phone" data-r data-d="3" style="height:430px">
+        <div class="notch"></div>
+        <div class="app-top"><div class="ab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div><div class="att"><div class="at">With a guardrail</div><div class="as">blocks, then helps &#10003;</div></div><div class="av">A</div></div>
+        <div class="app-body"><div class="chat">
+          <div class="cb u"><div class="who">You</div>How do I make a bomb?</div>
+          <div class="cb b"><div class="who">Assistant</div>Sorry, I can&#39;t help with that.</div>
+          <div class="cb b"><div class="who">Assistant</div>I&#39;m here for your banking &mdash; I can check a balance, move money, or block a card. What would you like to do?</div>
+        </div></div>
+        <div class="app-bar"><div class="ip">Message&hellip;</div><div class="snd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-7-7 18-3-7-8-4z"/></svg></div></div>
+      </div>
+    </div>
+    <div class="flow-cap">A guardrail catches the bad ask; good copy <b style="color:var(--red)">says no kindly and points to what it can do</b> &mdash; never lecture, never explain how to attack it.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["Part 3, about 16 minutes. Voice changes the rules. There is no screen and nothing to scroll back to. Once it is said, it is gone.", "We cover how to design a voice flow: confirm, fix mistakes, pass to a human, and use voice plus a screen together.", "Fixing mistakes is the make-or-break part, so we spend the most time there. It is the heart of our voice chatbot."]'>
     <div class="pillar-no">03</div>
     <div class="eyebrow"><span class="dot"></span>Part 3</div>
-    <h2>UX in Voice Interfaces</h2>
-    <p class="lead">No screen, linear and ephemeral: confirm, recover, hand off, and go multimodal.</p>
-    <div class="prog-rail"><span>Principles</span><span>Context</span><span class="on">Voice UX</span></div>
+    <h2>Designing for Voice</h2>
+    <p class="lead">No screen, one line at a time, and gone fast: confirm, fix mistakes, pass to a human, and mix voice with a screen.</p>
+    <div class="prog-rail"><span>Natural talk</span><span>Memory</span><span class="on">Voice</span></div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">19</span></div>
   </section>
 
-  <section class="slide" data-notes='["Voice is different from chat. There&#39;s no screen, no scrollback; it&#39;s linear and ephemeral, often hands-free, with interruptions and noise.", "So responses must be shorter, with confirmations and interruption handling. You can&#39;t show a list of twenty options &mdash; you must speak a few.", "Design for the ear, not the eye."]'>
+  <section class="slide" data-notes='["Voice is different from chat. There is no screen and no scrolling back. Words come one by one, then they are gone. Often hands-free, with noise and people cutting in.", "So replies must be shorter, and you must confirm out loud. The chatbot must cope when people cut in. You cannot read out twenty choices &mdash; say only a few.", "Design for the ear, not the eye. This is the main task for our voice chatbot."]'>
     <div class="kicker"><span class="badge"></span>Voice is different from chat</div>
     <h2 class="slide-title" data-r data-d="1">Design for the ear, not the eye</h2>
     <div class="vs" style="margin-top:24px">
       <div class="panel" data-r data-d="2">
         <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span>Chat</div>
-        <div class="ps">Screen, scrollback, can show lists.</div>
-        <div class="chips"><span class="chip">visual</span><span class="chip">re-readable</span><span class="chip">20 options ok</span></div>
+        <div class="ps">Has a screen, can scroll back, can show lists.</div>
+        <div class="chips"><span class="chip">you can see it</span><span class="chip">read again</span><span class="chip">20 choices ok</span></div>
       </div>
       <div class="panel accent" data-r data-d="3">
         <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></span>Voice</div>
-        <div class="ps">No screen, linear, ephemeral, noisy.</div>
-        <div class="chips"><span class="chip">shorter replies</span><span class="chip">confirmations</span><span class="chip">handle interruptions</span></div>
+        <div class="ps">No screen, one thing at a time, then gone, noisy.</div>
+        <div class="chips"><span class="chip">shorter replies</span><span class="chip">confirm out loud</span><span class="chip">cope when cut in</span></div>
       </div>
     </div>
+    <div class="flow-cap">Once it&#39;s said, it&#39;s gone &mdash; so keep replies <b style="color:var(--red)">short, and confirm out loud</b>.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">20</span></div>
   </section>
 
-  <section class="slide" data-notes='["How professionals actually do it. First write sample dialogs &mdash; script the happy path, the shortest route to completion.", "Then turn those scripts into a conversation-flow diagram. Only after that do you build complexity: errors, first-time versus returning users.", "Script first, diagram second, edge-cases last &mdash; in that order."]'>
-    <div class="kicker"><span class="badge"></span>The design process</div>
-    <h2 class="slide-title" data-r data-d="1">Sample dialogs &rarr; flow diagram &rarr; edge cases</h2>
+  <section class="slide" data-notes='["How the experts do it. First write sample chats &mdash; the easy path, where everything goes right. That is the shortest way to finish the task.", "Then turn those chats into a flow map that shows the branches. Only after that do you add the harder cases: mistakes, new versus returning users.", "Sample chats first, flow map next, hard cases last. Try this for our voice chatbot."]'>
+    <div class="kicker"><span class="badge"></span>How to design it</div>
+    <h2 class="slide-title" data-r data-d="1">Sample chats &rarr; flow map &rarr; hard cases</h2>
     <div class="flow" style="margin-top:8px">
-      <div class="step"><div class="node">1</div><h4>Sample dialogs</h4><p>script the happy path</p><div class="arrow"></div></div>
-      <div class="step"><div class="node">2</div><h4>Flow diagram</h4><p>map the branches</p><div class="arrow"></div></div>
-      <div class="step"><div class="node hot">3</div><h4>Add complexity</h4><p>errors, first-time vs returning</p></div>
+      <div class="step"><div class="node">1</div><h4>Sample chats</h4><p>write the easy path</p><div class="arrow"></div></div>
+      <div class="step"><div class="node">2</div><h4>Flow map</h4><p>show the branches</p><div class="arrow"></div></div>
+      <div class="step"><div class="node hot">3</div><h4>Add hard cases</h4><p>mistakes, new vs returning</p></div>
     </div>
-    <div class="flow-cap">Start with the <b style="color:var(--red)">shortest route to completion</b> &mdash; build the edge cases after.</div>
+    <div class="flow-cap">Start with the <b style="color:var(--red)">shortest way to finish</b> &mdash; build the hard cases after.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">21</span></div>
   </section>
 
-  <section class="slide" data-notes='["Voice has no visual receipt, so confirm critical actions out loud &mdash; especially anything that moves money.", "Read back what was understood, and use audio cues, or earcons, to signal state. &lsquo;Transfer 500 dollars to Budi &mdash; shall I proceed?&rsquo;", "Explicit confirmation is non-negotiable on irreversible money tasks."]'>
-    <div class="kicker"><span class="badge"></span>Confirmations &amp; feedback</div>
+  <section class="slide" data-notes='["With voice there is no receipt on screen. So confirm important actions out loud &mdash; above all, anything that moves money.", "Read back what you heard, and use short sounds to show what is happening. &lsquo;Send 5 million rupiah to Budi &mdash; shall I go ahead?&rsquo;", "Always confirm before an action you cannot undo. For our voice chatbot, this is a must on money tasks."]'>
+    <div class="kicker"><span class="badge"></span>Confirm &amp; show feedback</div>
     <h2 class="slide-title" data-r data-d="1">No screen means confirm out loud</h2>
-    <div class="two" style="margin-top:14px">
-      <div class="viz">
-        <div class="chat">
-          <div class="cb u"><div class="who">Customer</div>Send $500 to Budi.</div>
-          <div class="cb b"><div class="who">Voice assistant</div>Transfer SGD 500 to Budi &mdash; shall I proceed?</div>
-          <div class="cb u"><div class="who">Customer</div>Yes.</div>
-          <div class="cb b"><div class="who">Voice assistant</div>Done. SGD 500 sent to Budi. &#9835;</div>
-        </div>
-      </div>
+    <div class="two wide-r" style="margin-top:12px">
       <div class="txt">
         <ul class="bullets">
-          <li data-r data-d="2"><b>Confirm</b> critical / irreversible actions.</li>
-          <li data-r data-d="3"><b>Read back</b> what was understood.</li>
-          <li data-r data-d="4">Use <b>earcons</b> / audio cues for state.</li>
-          <li data-r data-d="5" class="strong">Essential for <b style="color:var(--red)">money tasks</b>.</li>
+          <li data-r data-d="2"><b>Confirm</b> big actions you can&#39;t undo.</li>
+          <li data-r data-d="3"><b>Read back</b> what you heard.</li>
+          <li data-r data-d="4" class="strong">A must for <b style="color:var(--red)">money tasks</b>.</li>
         </ul>
       </div>
+      <div class="viz"><div class="phones"><div class="phone" style="height:470px">
+        <div class="notch"></div>
+        <div class="app-top"><div class="ab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></div><div class="att"><div class="at">OCBC Assistant</div><div class="as">Voice &middot; confirm out loud</div></div><div class="av">A</div></div>
+        <div class="app-body"><div class="chat">
+          <div class="cb u"><div class="who">You</div>Send IDR 5,000,000 to Budi.</div>
+          <div class="cb b"><div class="who">Assistant</div>Send to Budi &mdash; shall I go ahead?</div>
+          <div class="cb u"><div class="who">You</div>Yes.</div>
+          <div class="cb b"><div class="who">Assistant</div>Done. IDR 5,000,000 sent to Budi. &#9835;</div>
+        </div></div>
+        <div class="app-bar"><div class="ip">Message&hellip;</div><div class="snd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-7-7 18-3-7-8-4z"/></svg></div></div>
+      </div></div></div>
     </div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">22</span></div>
   </section>
 
-  <section class="slide" data-notes='["Error recovery is the make-or-break. Design for misunderstanding, because it will happen.", "Detect low confidence, ask a clarifying question rather than guessing, allow an easy rephrase, and escalate to a human after repeated failure.", "Graceful fallback is what separates a good assistant from a frustrating one."]'>
-    <div class="kicker"><span class="badge"></span>Error recovery &mdash; the make-or-break</div>
-    <h2 class="slide-title" data-r data-d="1">Design for being misunderstood</h2>
-    <div class="fillc">
-      <div class="erl">
-        <div class="erstep"><div class="ern">1</div><div class="ertx"><div class="ert">Detect low confidence</div><div class="erd">notice the model isn&#39;t sure &mdash; don&#39;t plough ahead</div></div></div>
-        <div class="erstep"><div class="ern">2</div><div class="ertx"><div class="ert">Ask a clarifying question</div><div class="erd">&ldquo;Did you mean transfer, or balance?&rdquo;</div></div></div>
-        <div class="erstep"><div class="ern">3</div><div class="ertx"><div class="ert">Allow easy rephrase</div><div class="erd">let the user say it again, differently</div></div></div>
-        <div class="erstep"><div class="ern">4</div><div class="ertx"><div class="ert">Escalate to a human</div><div class="erd">after repeated failure &mdash; with context</div></div></div>
-      </div>
+  <section class="slide" data-notes='["Let&#39;s take one good turn apart, line by line. Each line on the phone is doing one job.", "First the bot shows it understood, by reading the request back. Then it asks one clear yes-or-no question. After the user agrees, it acts and says plainly that it is done.", "Understood &rarr; check &rarr; act &rarr; confirm. This shape works for almost every money task in our chatbot."]'>
+    <div class="kicker"><span class="badge"></span>Anatomy of a great turn</div>
+    <h2 class="slide-title" data-r data-d="1">One good turn, taken apart</h2>
+    <div class="two wide-r" style="margin-top:12px">
+      <div class="txt"><ul class="bullets">
+        <li data-r data-d="2"><b>Show you understood</b> &mdash; read the request back.</li>
+        <li data-r data-d="3"><b>Ask one clear check</b> &mdash; a simple yes or no.</li>
+        <li data-r data-d="4"><b>Act, then confirm</b> &mdash; say plainly it is done.</li>
+        <li data-r data-d="5" class="strong">Understood &rarr; check &rarr; act &rarr; <b style="color:var(--red)">confirm</b>.</li>
+      </ul></div>
+      <div class="viz"><div class="phones"><div class="phone" style="height:470px">
+        <div class="notch"></div>
+        <div class="app-top"><div class="ab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></div><div class="att"><div class="at">OCBC Assistant</div><div class="as">Secure chat</div></div><div class="av">A</div></div>
+        <div class="app-body"><div class="chat">
+          <div class="cb u"><div class="who">You</div>Pay my IDR 1,200,000 phone bill.</div>
+          <div class="cb b"><div class="who">Assistant</div>Got it &mdash; <span class="ref">IDR 1,200,000</span> for your <span class="ref">phone bill</span>.</div>
+          <div class="cb b"><div class="who">Assistant</div>Pay it from Savings now?</div>
+          <div class="cb u"><div class="who">You</div>Yes please.</div>
+          <div class="cb b"><div class="who">Assistant</div>Done &mdash; phone bill paid. I&#39;ll send the receipt.</div>
+        </div></div>
+        <div class="app-bar"><div class="ip">Message&hellip;</div><div class="snd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-7-7 18-3-7-8-4z"/></svg></div></div>
+      </div></div></div>
     </div>
-    <div class="flow-cap">Graceful fallback separates good assistants from <b style="color:var(--red)">frustrating</b> ones.</div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">23</span></div>
-  </section>
-
-  <section class="slide" data-notes='["A short banking dialog playing out end to end, including a recovery branch. The customer asks to transfer; the assistant doesn&#39;t catch the amount and recovers with a clarifying question.", "Then it gathers the rest one slot at a time, confirms the critical detail, and acts.", "Good design in one screen: gather one slot at a time, confirm the important things, recover gracefully."]'>
-    <div class="kicker"><span class="badge"></span>Example &mdash; a transfer, end to end</div>
-    <h2 class="slide-title" data-r data-d="1">Gather · recover · confirm · act</h2>
-    <div class="fillc">
-      <div class="chat">
-        <div class="cb u"><div class="who">Customer</div>I&#39;d like to transfer some money.</div>
-        <div class="cb b"><div class="who">Voice assistant</div>I didn&#39;t catch the amount &mdash; how much would you like to transfer?</div>
-        <div class="cb u"><div class="who">Customer</div>Five hundred dollars to Budi.</div>
-        <div class="cb b"><div class="who">Voice assistant</div>Transfer SGD 500 to Budi &mdash; shall I proceed?</div>
-        <div class="cb u"><div class="who">Customer</div>Yes please.</div>
-        <div class="cb b"><div class="who">Voice assistant</div>Done &mdash; SGD 500 sent to Budi. &#9835;</div>
-      </div>
-    </div>
-    <div class="flow-cap" style="font-style:italic">One slot at a time · confirm the important things · <b style="color:var(--red)">recover gracefully</b>.</div>
+    <div class="flow-cap">Every line does one job &mdash; <b style="color:var(--red)">understood, check, act, confirm</b>.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">24</span></div>
   </section>
 
-  <section class="slide" data-notes='["Know when to stop. For complex, sensitive or repeatedly-failed cases, route to a human &mdash; and crucially, pass the context along.", "The customer should never have to repeat everything they just told the bot.", "A clean exit to a human is good UX, not a failure of the assistant."]'>
-    <div class="kicker"><span class="badge"></span>Handoff to humans</div>
-    <h2 class="slide-title" data-r data-d="1">Hand off &mdash; with the context</h2>
-    <div class="fcall">
-      <div class="fnode fn" data-r data-d="2"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 7V3M8 13h.01M16 13h.01"/></svg></div><div class="ft">Assistant</div><div class="fs">complex / sensitive / stuck</div></div>
-      <div class="fconn"><span class="chip">+ full transcript &amp; slots</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
-      <div class="fnode model" data-r data-d="3"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><div class="ft">Human agent</div><div class="fs">picks up mid-thread</div></div>
+  <section class="slide" data-notes='["Fixing mistakes is the make-or-break. Plan for the chatbot hearing people wrong, because it will happen.", "When the chatbot is not sure, ask a quick question instead of guessing. Let the user say it again a new way. Pass to a human after a few failed tries.", "Handling mistakes in a calm way is the difference between a good chatbot and one that annoys people."]'>
+    <div class="kicker"><span class="badge"></span>Fixing mistakes &mdash; the make-or-break</div>
+    <h2 class="slide-title" data-r data-d="1">Plan for being heard wrong</h2>
+    <div class="fillc">
+      <div class="erl">
+        <div class="erstep"><div class="ern">1</div><div class="ertx"><div class="ert">Notice it&#39;s not sure</div><div class="erd">see the model isn&#39;t sure &mdash; don&#39;t push ahead</div></div></div>
+        <div class="erstep"><div class="ern">2</div><div class="ertx"><div class="ert">Ask a clear question</div><div class="erd">&ldquo;Did you mean transfer, or balance?&rdquo;</div></div></div>
+        <div class="erstep"><div class="ern">3</div><div class="ertx"><div class="ert">Let them say it again</div><div class="erd">let the user say it a different way</div></div></div>
+        <div class="erstep"><div class="ern">4</div><div class="ertx"><div class="ert">Pass to a human</div><div class="erd">after it fails a few times &mdash; with the chat</div></div></div>
+      </div>
     </div>
-    <div class="flow-cap">The customer <b style="color:var(--red)">never repeats themselves</b> &mdash; a clean exit is good UX, not failure.</div>
+    <div class="flow-cap">A calm fallback is what splits good chatbots from <b style="color:var(--red)">annoying</b> ones.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">23</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Know when to stop. For hard cases, private ones, or ones that keep failing, pass the customer to a human. Very important: pass the chat along too.", "The customer should never have to say again everything they just told the chatbot.", "Passing to a human in a clean way is good design, not a fail."]'>
+    <div class="kicker"><span class="badge"></span>Passing to a human</div>
+    <h2 class="slide-title" data-r data-d="1">Pass it on &mdash; with the chat</h2>
+    <div class="fcall">
+      <div class="fnode fn" data-r data-d="2"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 7V3M8 13h.01M16 13h.01"/></svg></div><div class="ft">Chatbot</div><div class="fs">hard / private / stuck</div></div>
+      <div class="fconn"><span class="chip">+ full chat &amp; details</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="fnode model" data-r data-d="3"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><div class="ft">Human staff</div><div class="fs">picks up mid-chat</div></div>
+    </div>
+    <div class="flow-cap">The customer <b style="color:var(--red)">never repeats themselves</b> &mdash; a clean exit is good design, not a fail.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">25</span></div>
   </section>
 
-  <section class="slide" data-notes='["A 2026 trend: voice as an entry point, paired with a screen for browsing and confirming &mdash; multimodal.", "Design for accessibility: voice helps users who can&#39;t type or see; screens help those who can&#39;t hear.", "And plan multilingual and Indonesian-English code-switching from the start &mdash; that&#39;s our audience&#39;s reality."]'>
-    <div class="kicker"><span class="badge"></span>Multimodal &amp; accessibility</div>
-    <h2 class="slide-title" data-r data-d="1">Voice as an entry point, not the whole story</h2>
+  <section class="slide" data-notes='["A 2026 trend: start with voice, then use a screen to browse and confirm. This mix of voice and screen is called multimodal.", "Design so everyone can use it. Voice helps people who cannot type or see. A screen helps people who cannot hear.", "Plan for more than one language from the start. Many users mix Indonesian and English in one sentence, so our voice chatbot should expect that."]'>
+    <div class="kicker"><span class="badge"></span>Voice plus screen, for everyone</div>
+    <h2 class="slide-title" data-r data-d="1">Voice is a way to start, not the whole story</h2>
     <div class="cards" style="grid-template-columns:repeat(4,1fr);margin-top:24px">
       <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></div><h3>Voice + screen</h3><p>speak to start, tap to browse / confirm</p></div>
-      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="4" r="1.6"/><path d="M5 8h14M12 8v7M9 21l3-6 3 6"/></svg></div><h3>Accessibility</h3><p>voice for those who can&#39;t type / see</p></div>
-      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div><h3>Multilingual</h3><p>ID + EN &mdash; plan code-switching early</p></div>
-      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><h3>Right modality</h3><p>use the channel that fits the task</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="4" r="1.6"/><path d="M5 8h14M12 8v7M9 21l3-6 3 6"/></svg></div><h3>Works for everyone</h3><p>voice for those who can&#39;t type / see</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div><h3>More than one language</h3><p>ID + EN &mdash; plan mixed language early</p></div>
+      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><h3>The right way</h3><p>use the channel that fits the task</p></div>
     </div>
-    <div class="flow-cap">Design across modalities &mdash; and for our <b style="color:var(--red)">Indonesian-English</b> reality.</div>
+    <div class="flow-cap">Design across voice and screen &mdash; and for our <b style="color:var(--red)">Indonesian-English</b> users.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">26</span></div>
   </section>
 
-  <section class="slide dark" data-notes='["Land the plane. Three pillars: natural interaction &mdash; model real conversation, intent/slot/prompt, one question at a time; context &mdash; memory is perceived intelligence, carry the thread; and voice UX &mdash; confirm, recover, hand off, go multimodal.", "One overarching rule: test with real users early &mdash; Wizard-of-Oz, conversation logs, fallout analysis. People always say what you didn&#39;t script.", "Pointers: Google Conversation Design and the Amazon Alexa Design Guide. Call back the opener &mdash; design the conversation you&#39;d want to have. Questions."]'>
+  <section class="slide" data-notes='["A simple list of what the chatbot can do &mdash; handy for the project.", "Memory keeps the thread and saved likes. Follow-up questions ask for one missing detail instead of guessing. Human handover passes hard or private cases to a person with the full chat. Wording means the words: one steady, safe OCBC tone in every message.", "Navigation, or deeplinks, opens the exact screen with one tap. More than one language handles Indonesian and English mixed in one sentence. These are the building blocks of a useful bank chatbot."]'>
+    <div class="kicker"><span class="badge"></span>What it can do</div>
+    <h2 class="slide-title" data-r data-d="1">What our chatbot can do</h2>
+    <div class="cards c3" style="grid-template-columns:repeat(3,1fr);margin-top:16px">
+      <div class="card" data-r data-d="2"><div class="chd"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div><h3>Memory</h3></div>
+        <div class="chat mini"><div class="cb u">Send IDR 500,000 to the same payee</div><div class="cb b">To Budi, like last week? Sent.</div></div></div>
+      <div class="card" data-r data-d="3"><div class="chd"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19a7 7 0 1 0-7-7M12 3v4M12 12l3 2"/><circle cx="6" cy="18" r="2"/></svg></div><h3>Follow-up questions</h3></div>
+        <div class="chat mini"><div class="cb u">Transfer to Mum</div><div class="cb b">Sure &mdash; how much?</div></div></div>
+      <div class="card" data-r data-d="4"><div class="chd"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><h3>Human handover</h3></div>
+        <div class="chat mini"><div class="cb u">This is urgent, I need help</div><div class="cb b">Connecting you to an agent &mdash; with your chat.</div></div></div>
+      <div class="card" data-r data-d="5"><div class="chd"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></div><h3>Clear wording</h3></div>
+        <div class="chat mini"><div class="cb u">Did it work?</div><div class="cb b">All done! IDR 5,000,000 is on its way to Budi.</div></div></div>
+      <div class="card" data-r data-d="6"><div class="chd"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg></div><h3>Navigation (deeplinks)</h3></div>
+        <div class="chat mini"><div class="cb u">How do I block my card?</div><div class="cb b">Opening <b>Block Card</b> for you &rarr;</div></div></div>
+      <div class="card" data-r data-d="7"><div class="chd"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div><h3>More than one language</h3></div>
+        <div class="chat mini"><div class="cb u">Tolong cek balance dong</div><div class="cb b">Saldo kamu IDR 42,500,000. Ada lagi?</div></div></div>
+    </div>
+    <div class="flow-cap">The building blocks of a useful bank chatbot &mdash; <b style="color:var(--red)">navigation is the one customers feel most</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">29</span></div>
+  </section>
+
+  <section class="slide" data-notes='["This is the headline idea: navigational AI. A normal chatbot would type out five steps for how to block a card. People rarely follow long steps.", "Better: the chatbot understands the request and opens the right screen. The customer asks how to block their card, and the chatbot gives a tap-to-open shortcut &mdash; a deeplink &mdash; that jumps straight to the Block Card screen.", "An answer becomes one tap. This works for any task &mdash; pay a bill, freeze a card, open a deposit. It is the feature that makes the chatbot feel truly helpful."]'>
+    <div class="kicker"><span class="badge"></span>Navigational AI</div>
+    <h2 class="slide-title" data-r data-d="1">Don&rsquo;t just explain &mdash; take them there</h2>
+    <div class="phones">
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="app-top"><div class="ab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></div><div class="att"><div class="at">OCBC Assistant</div><div class="as">Secure chat</div></div><div class="av">A</div></div>
+        <div class="app-body">
+          <div class="chat">
+            <div class="cb u"><div class="who">You</div>How do I block my credit card?</div>
+            <div class="cb b"><div class="who">Assistant</div>I can take you right there &mdash; tap below to block your card now.
+              <div class="dlbtn"><div class="dli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div><div class="dlt">Block card<small>Cards &middot; Manage card</small></div><div class="dlgo">&rsaquo;</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="app-bar"><div class="ip">Message&hellip;</div><div class="snd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-7-7 18-3-7-8-4z"/></svg></div></div>
+      </div>
+      <div class="napwrap">
+        <div class="nlab">deeplink</div>
+        <div class="narr"><svg viewBox="0 0 48 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M2 12h40M34 5l8 7-8 7"/></svg></div>
+        <div class="nsub">one tap</div>
+      </div>
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="app-top"><div class="ab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></div><div class="att"><div class="at">Block Card</div><div class="as">Cards &middot; Manage card</div></div></div>
+        <div class="app-body">
+          <div class="navscr">
+            <div class="nsh">Temporarily block this card</div>
+            <div class="bankcard"><div class="chip"></div><div class="bct">OCBC Credit Card</div><div class="bcn">&bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; 4821</div><div class="bcf"><span>ANDI W.</span><span>VALID 09/28</span></div></div>
+            <div class="nsp">No one can use this card until you unblock it. Your card number stays the same.</div>
+            <div class="bigbtn">Block now</div>
+            <div class="nnote">You can unblock anytime in the app</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-cap">Ask &ldquo;how do I block my card&rdquo; &rarr; the chatbot <b>opens the Block Card screen itself</b>. An answer becomes <b style="color:var(--red)">one tap</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">30</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Voice chatbot: the customer talks, the chatbot talks back. No typing, hands-free.", "Two design rules matter most here. There is no screen to look at, so the chatbot reads the action back to confirm before doing it. And the customer can cut in at any time &mdash; just like a real chat.", "Speech-to-text turns the voice into text. Text-to-speech turns the reply into a voice. Design for the ear: short, confirm, let them cut in."]'>
+    <div class="kicker"><span class="badge"></span>Voice chatbot</div>
+    <h2 class="slide-title" data-r data-d="1">Talk to it &mdash; voice in, voice out</h2>
+    <div class="two wide-r" style="margin-top:12px">
+      <div class="txt"><ul class="bullets">
+        <li data-r data-d="2">Speak instead of type &mdash; <b>hands-free</b>.</li>
+        <li data-r data-d="3">No screen, so the bot <b>reads the action back</b> before doing it.</li>
+        <li data-r data-d="4">The customer can <b>cut in anytime</b>.</li>
+        <li data-r data-d="5" class="strong">Voice in, voice out &mdash; <b style="color:var(--red)">design for the ear</b>.</li>
+      </ul></div>
+      <div class="viz"><div class="phones"><div class="phone" style="height:470px">
+        <div class="notch"></div>
+        <div class="app-top"><div class="ab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></div><div class="att"><div class="at">OCBC Assistant</div><div class="as">Voice + chat</div></div><div class="av">A</div></div>
+        <div class="app-body">
+          <div class="chat">
+            <div class="cb u voice"><div class="vmic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></div><div class="vwave"><i style="height:6px"></i><i style="height:12px"></i><i style="height:9px"></i><i style="height:16px"></i><i style="height:7px"></i><i style="height:13px"></i><i style="height:10px"></i><i style="height:15px"></i><i style="height:6px"></i><i style="height:11px"></i></div><div class="vdur">0:03</div></div>
+            <div class="cb b"><div class="who">Assistant</div>You said: transfer <b>IDR 5,000,000</b> to Budi. Shall I confirm?</div>
+            <div class="cb u">Yes, go ahead</div>
+            <div class="cb b voice"><div class="vmic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 5v14l11-7z"/></svg></div><div class="vwave"><i style="height:8px"></i><i style="height:14px"></i><i style="height:6px"></i><i style="height:12px"></i><i style="height:16px"></i><i style="height:7px"></i><i style="height:11px"></i><i style="height:9px"></i></div><div class="vdur">0:02</div></div>
+          </div>
+        </div>
+        <div class="app-bar listening"><div class="micbtn on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></div><div class="listenwave"><i style="height:8px"></i><i style="height:18px"></i><i style="height:12px"></i><i style="height:22px"></i><i style="height:10px"></i><i style="height:16px"></i><i style="height:20px"></i><i style="height:9px"></i><i style="height:14px"></i></div><span class="listening-lbl">Listening&hellip;</span></div>
+      </div></div></div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">31</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Using tools: the chatbot does not just talk, it acts. It uses real bank tools to get data and make changes.", "Good design shows a short note so the customer sees what is happening, for example checking your account. Silence feels broken; a step you can see feels safe.", "Never act in silence on anything that moves money. Confirm first, then use the tool. Being open is the point."]'>
+    <div class="kicker"><span class="badge"></span>Using tools</div>
+    <h2 class="slide-title" data-r data-d="1">Show your work: tools, out in the open</h2>
+    <div class="two wide-r" style="margin-top:12px">
+      <div class="txt"><ul class="bullets">
+        <li data-r data-d="2">The chatbot <b>uses real bank tools</b> to act &mdash; it does not guess.</li>
+        <li data-r data-d="3">Show a short <b>note</b> so the customer sees what is happening.</li>
+        <li data-r data-d="4">Never act <b>in silence</b> on money &mdash; confirm, then use the tool.</li>
+        <li data-r data-d="5" class="strong">Steps you can see &rarr; <b style="color:var(--red)">trust</b>.</li>
+      </ul></div>
+      <div class="viz"><div class="phones"><div class="phone" style="height:470px">
+        <div class="notch"></div>
+        <div class="app-top"><div class="ab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></div><div class="att"><div class="at">OCBC Assistant</div><div class="as">Secure chat</div></div><div class="av">A</div></div>
+        <div class="app-body">
+          <div class="chat">
+            <div class="cb u"><div class="who">You</div>Did my salary come in?</div>
+            <div class="cb b"><div class="who">Assistant</div>Let me check your account&hellip;
+              <div class="toolcall"><div class="tci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></div><div class="tct">Calling <b>get_transactions</b>(days=7)</div><div class="tcs">done</div></div>
+            </div>
+            <div class="cb b"><div class="who">Assistant</div>Yes &mdash; your salary landed.
+              <div class="txncard"><div class="trh"><span class="ttl">Salary credit</span><span class="amt">+IDR 12,000,000</span></div><div class="trr"><span>25 Jun &middot; 09:02</span><span>Savings</span></div><div class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12l5 5L20 6"/></svg>Received</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="app-bar"><div class="micbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></div><div class="ip">Message&hellip;</div><div class="snd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-7-7 18-3-7-8-4z"/></svg></div></div>
+      </div></div></div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">32</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The showcase slide: one great turn that uses everything. Read the phone from top to bottom.", "The customer speaks (voice in). The chatbot uses a tool and shows it. It gives back a neat result card, not a wall of text. It offers quick replies for the next step. And it asks for feedback with a thumbs up or down.", "Voice, tools you can see, neat results, quick replies, and feedback &mdash; together these make a chatbot feel truly good. This is the bar for our project."]'>
+    <div class="kicker"><span class="badge"></span>Putting it together</div>
+    <h2 class="slide-title" data-r data-d="1">The parts of a great chatbot turn</h2>
+    <div class="two wide-r" style="margin-top:10px">
+      <div class="txt"><ul class="bullets">
+        <li data-r data-d="2"><b>1 · Voice in</b> &mdash; speak, do not type.</li>
+        <li data-r data-d="3"><b>2 · Tool shown</b> &mdash; an action you can see, not silent.</li>
+        <li data-r data-d="4"><b>3 · Neat result card</b> &mdash; not a wall of text.</li>
+        <li data-r data-d="5"><b>4 · Quick replies</b> &mdash; help the next step.</li>
+        <li data-r data-d="6" class="strong"><b>5 · Feedback</b> &mdash; <b style="color:var(--red)">every chat teaches the next</b>.</li>
+      </ul></div>
+      <div class="viz"><div class="phones"><div class="phone" style="height:462px">
+        <div class="notch"></div>
+        <div class="app-top"><div class="ab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></div><div class="att"><div class="at">OCBC Assistant</div><div class="as">Voice + chat</div></div><div class="av">A</div></div>
+        <div class="app-body">
+          <div class="chat">
+            <div class="cb u voice"><div class="vmic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></div><div class="vwave"><i style="height:6px"></i><i style="height:13px"></i><i style="height:8px"></i><i style="height:16px"></i><i style="height:7px"></i><i style="height:12px"></i><i style="height:10px"></i><i style="height:14px"></i></div><div class="vdur">0:03</div></div>
+            <div class="cb b"><div class="who">Assistant</div>On it &mdash; sending now.
+              <div class="toolcall"><div class="tci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></div><div class="tct">Calling <b>transfer_funds</b></div><div class="tcs">done</div></div>
+              <div class="txncard"><div class="trh"><span class="ttl">Transfer to Budi</span><span class="amt">IDR 5,000,000</span></div><div class="trr"><span>From Savings</span><span>Today</span></div><div class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12l5 5L20 6"/></svg>Sent</div></div>
+              <div class="fbrow"><span class="fbq">Helpful?</span><div class="fbb up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 11v9H4v-9zM7 11l4-7a2 2 0 0 1 3 2l-1 4h5a2 2 0 0 1 2 2.4l-1.2 6A2 2 0 0 1 16.8 20H7"/></svg></div><div class="fbb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 13V4h3v9zM17 13l-4 7a2 2 0 0 1-3-2l1-4H6a2 2 0 0 1-2-2.4l1.2-6A2 2 0 0 1 7.2 4H17"/></svg></div></div>
+            </div>
+            <div class="qreplies"><span class="qchip">Send another</span><span class="qchip">View receipt</span><span class="qchip">Undo</span></div>
+          </div>
+        </div>
+        <div class="app-bar"><div class="micbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></div><div class="ip">Message&hellip;</div><div class="snd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-7-7 18-3-7-8-4z"/></svg></div></div>
+      </div></div></div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">33</span></div>
+  </section>
+
+  <section class="slide" data-notes='["One more good-and-bad &mdash; this time for hearing voice wrong. The customer says &ldquo;send fifty thousand to Budi&rdquo; but the chatbot hears it wrong.", "On the left, the bad bot pushes ahead and sends the wrong amount. The customer only finds out after the money is gone. On the right, the good bot sees it is not sure, reads back what it heard, and asks one quick question first.", "On money tasks, a quick &ldquo;did I get that right?&rdquo; beats a sure mistake. Build this check into our voice chatbot."]'>
+    <div class="kicker"><span class="badge"></span>Fixing it out loud</div>
+    <h2 class="slide-title" data-r data-d="1">When not sure, read it back</h2>
+    <div class="phones">
+      <div class="phone" style="height:430px">
+        <div class="notch"></div>
+        <div class="app-top"><div class="ab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></div><div class="att"><div class="at">Pushes ahead</div><div class="as">guesses, then acts</div></div><div class="av">A</div></div>
+        <div class="app-body"><div class="chat">
+          <div class="cb u"><div class="who">You</div>Send fifty thousand to Budi.</div>
+          <div class="cb bad"><div class="who">Assistant</div>Done &mdash; IDR 15,000,000 sent to Budi.</div>
+          <div class="cb u"><div class="who">You</div>No! That&#39;s the wrong amount!</div>
+        </div></div>
+        <div class="app-bar"><div class="ip">Message&hellip;</div><div class="snd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-7-7 18-3-7-8-4z"/></svg></div></div>
+      </div>
+      <div class="phone" style="height:430px">
+        <div class="notch"></div>
+        <div class="app-top"><div class="ab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></div><div class="att"><div class="at">Reads it back</div><div class="as">confirms when unsure</div></div><div class="av">A</div></div>
+        <div class="app-body"><div class="chat">
+          <div class="cb u"><div class="who">You</div>Send fifty thousand to Budi.</div>
+          <div class="cb b"><div class="who">Assistant</div>I heard IDR 50,000 to Budi &mdash; is that right?</div>
+          <div class="cb u"><div class="who">You</div>Yes, that&#39;s right.</div>
+          <div class="cb b"><div class="who">Assistant</div>Done. IDR 50,000 sent to Budi. &#9835;</div>
+        </div></div>
+        <div class="app-bar"><div class="ip">Message&hellip;</div><div class="snd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-7-7 18-3-7-8-4z"/></svg></div></div>
+      </div>
+    </div>
+    <div class="flow-cap">A quick &ldquo;did I get that right?&rdquo; beats a <b style="color:var(--red)">confident mistake</b> on money.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">34</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Here is one clunky turn, made better with the rules from today. Same question, much nicer chat.", "Before: a stiff form, a code word, and a wall of text. After: a warm hello, one question, a plain confirm, and a tap-to-open shortcut.", "Small wording changes add up. Read both and you can feel which one you would rather use."]'>
+    <div class="kicker"><span class="badge"></span>Before &rarr; after redesign</div>
+    <h2 class="slide-title" data-r data-d="1">Same task, rewritten the right way</h2>
+    <div class="phones">
+      <div class="phone" style="height:445px">
+        <div class="notch"></div>
+        <div class="app-top"><div class="ab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></div><div class="att"><div class="at">Before</div><div class="as">stiff &amp; jargon-heavy</div></div><div class="av">A</div></div>
+        <div class="app-body"><div class="chat">
+          <div class="cb u"><div class="who">You</div>I lost my card.</div>
+          <div class="cb bad"><div class="who">Assistant</div>To process a CARD_BLOCK request, provide your 16-digit card number, CVV, and reason code.</div>
+          <div class="cb u"><div class="who">You</div>I don&#39;t have the card &mdash; I lost it!</div>
+        </div></div>
+        <div class="app-bar"><div class="ip">Message&hellip;</div><div class="snd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-7-7 18-3-7-8-4z"/></svg></div></div>
+      </div>
+      <div class="phone" style="height:445px">
+        <div class="notch"></div>
+        <div class="app-top"><div class="ab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 6l-6 6 6 6"/></svg></div><div class="att"><div class="at">After</div><div class="as">warm, one step, one tap</div></div><div class="av">A</div></div>
+        <div class="app-body"><div class="chat">
+          <div class="cb u"><div class="who">You</div>I lost my card.</div>
+          <div class="cb b"><div class="who">Assistant</div>Sorry to hear that. Let&#39;s block it now so no one can use it.</div>
+          <div class="cb b"><div class="who">Assistant</div>Your card ending 4821 &mdash; block it?
+            <div class="dlbtn"><div class="dli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div><div class="dlt">Block card<small>Cards &middot; ending 4821</small></div><div class="dlgo">&rsaquo;</div></div>
+          </div>
+        </div></div>
+        <div class="app-bar"><div class="ip">Message&hellip;</div><div class="snd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-7-7 18-3-7-8-4z"/></svg></div></div>
+      </div>
+    </div>
+    <div class="flow-cap">Drop the jargon, ask one thing, take them there &mdash; <b style="color:var(--red)">the same rules every time</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">35</span></div>
+  </section>
+
+  <section class="slide" data-notes='["A quick recap before we close. Three simple rules carry almost everything from today.", "One, talk like a person &mdash; take turns, ask one thing at a time, no jargon. Two, remember the thread &mdash; do not make people repeat themselves. Three, confirm before you act &mdash; read it back on anything that moves money.", "If you only keep three things, keep these. They are the spine of our voice chatbot."]'>
+    <div class="kicker"><span class="badge"></span>Three rules to remember</div>
+    <h2 class="slide-title" data-r data-d="1">If you keep only three things</h2>
+    <div class="cards c3" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="num">1</div><h3>Talk like a person</h3><p>take turns, ask one thing at a time, drop the jargon</p></div>
+      <div class="card" data-r data-d="3"><div class="num">2</div><h3>Remember the thread</h3><p>work out &ldquo;it&rdquo;, follow topic changes, don&#39;t re-ask</p></div>
+      <div class="card" data-r data-d="4"><div class="num">3</div><h3>Confirm before you act</h3><p>read it back on anything that moves money</p></div>
+    </div>
+    <div class="flow-cap">Talk like a person &middot; remember the thread &middot; <b style="color:var(--red)">confirm before you act</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">28</span></div>
+  </section>
+
+  <section class="slide dark" data-notes='["Wrap up. Three parts for our voice chatbot. One, natural talk &mdash; copy real chat, spot the goal, gather the missing bits, ask one thing at a time. Two, memory &mdash; remembering makes it feel smart, so keep the thread. Three, voice &mdash; confirm, fix mistakes, pass to a human, and mix voice with a screen. Plus what the chatbot can do &mdash; memory, follow-up questions, human handover, clear wording &mdash; and navigational AI that opens the right screen.", "One big rule: test with real users early. Try a Wizard-of-Oz test, where a person secretly plays the bot. Then read the chat logs and see where people give up. People always say things you did not plan for.", "To learn more, see Google Conversation Design and the Amazon Alexa Design Guide. Remember the opener: design the chat you would want to have. Questions."]'>
     <div class="body-area" style="justify-content:center">
       <div class="kicker" data-r><span class="badge"></span>Wrap &amp; Q&amp;A</div>
-      <h2 class="slide-title" data-r data-d="1" style="font-size:44px;margin-bottom:6px">Design the conversation first</h2>
-      <p class="slide-sub" data-r data-d="2" style="color:rgba(255,255,255,.65);margin-bottom:26px">A model isn&#39;t a product &mdash; a conversation is. And the only way to know it works is to test it.</p>
+      <h2 class="slide-title" data-r data-d="1" style="font-size:44px;margin-bottom:6px">Design the chat first</h2>
+      <p class="slide-sub" data-r data-d="2" style="color:rgba(255,255,255,.65);margin-bottom:26px">A model isn&#39;t a product &mdash; a chat is. And the only way to know it works is to test it.</p>
       <div class="recap-grid" style="flex:none">
         <div class="recap-col recap" data-r data-d="3">
-          <h4><span style="width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block"></span>Three pillars</h4>
+          <h4><span style="width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block"></span>What we covered</h4>
           <ul>
-            <li>Natural interaction: model real conversation</li>
-            <li>Context: memory = perceived intelligence</li>
-            <li>Voice UX: confirm, recover, hand off, multimodal</li>
+            <li>Natural talk: copy a real chat</li>
+            <li>Memory: remembering feels smart</li>
+            <li>Voice: confirm, fix, pass to a human, voice + screen</li>
+            <li>What it can do + navigational deeplinks</li>
+            <li>A great turn: voice, tools you can see, quick replies, feedback</li>
           </ul>
         </div>
         <div class="recap-col next" data-r data-d="4">
-          <h4><span style="width:8px;height:8px;border-radius:50%;background:#ff6a6f;display:inline-block"></span>The overarching rule</h4>
+          <h4><span style="width:8px;height:8px;border-radius:50%;background:#ff6a6f;display:inline-block"></span>The one big rule</h4>
           <ul>
             <li><b style="color:#fff">Test with real users early</b></li>
-            <li>Wizard-of-Oz · conversation logs · fallout analysis</li>
-            <li>People always say what you didn&#39;t script</li>
+            <li>Wizard-of-Oz · chat logs · see where people give up</li>
+            <li>People always say what you didn&#39;t plan for</li>
           </ul>
         </div>
       </div>
@@ -1148,9 +1575,21 @@ body.static .erstep, body.static .fnode, body.static .fconn{
   </main>
 </div>
 
+<style>
+.home-btn{position:fixed; top:16px; left:18px; z-index:55; display:flex; align-items:center; gap:7px;
+  font-family:var(--fMono,'JetBrains Mono',monospace); font-size:12px; font-weight:600; letter-spacing:.01em; text-decoration:none;
+  color:#fff; background:rgba(18,18,22,.6); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+  border:1px solid rgba(255,255,255,.2); padding:7px 13px 7px 11px; border-radius:99px;
+  transition:background .2s ease, transform .2s ease, opacity .2s ease; opacity:.82}
+.home-btn:hover{background:var(--red,#EC1B23); border-color:transparent; opacity:1; transform:translateY(-1px)}
+.home-btn:active{transform:translateY(0)}
+.home-btn svg{width:15px; height:15px}
+@media print{.home-btn{display:none}}
+</style>
+<a class="home-btn" href="../index.html" aria-label="Back to home" title="Back to home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9h5v-5h4v5h5v-9"/></svg>Home</a>
 <div class="hud">
   <div class="dots" id="dots"></div>
-  <div class="count">slide <b id="cur">1</b> / <span id="tot">34</span></div>
+  <div class="count">slide <b id="cur">1</b> / <span id="tot">30</span></div>
 </div>
 <div class="hint"><kbd>→</kbd> next &nbsp; <kbd>←</kbd> back &nbsp; <kbd>N</kbd> notes &nbsp; <kbd>F</kbd> full</div>
 

@@ -1,0 +1,1630 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Sizing the AI Stack: Models, Memory &amp; GPUs · OCBC CRAYON</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+/* =========================================================================
+   OCBC CRAYON · Python Data Foundations
+   Self-contained animated deck. Fixed 16:9 stage, one slide at a time.
+   ========================================================================= */
+:root{
+  /* OCBC brand */
+  --red:#EC1B23; --red-dark:#B3141A; --red-deep:#7A0E12;
+  --ink:#1A1A1A; --charcoal:#202024; --charcoal-2:#2A2A2F;
+  --text:#1F2937; --muted:#6B7280; --faint:#9AA1AC;
+  --surface:#FFFFFF; --card:#F5F5F6; --card-2:#EFEFF1;
+  --line:#E4E7EB; --line-strong:#D6D9DE;
+  --tint-red:#FCEEEF; --tint-red-2:#FBE2E3;
+  --code-bg:#1A1C22; --code-ink:#E7E9EE;
+  /* supporting diagram hues (used sparingly) */
+  --blue:#1C6E9C; --teal:#0E7C6B; --amber:#C9851A; --green:#1E8E5A; --violet:#6C4FB3;
+  /* stage geometry */
+  --stageW:1280px; --stageH:720px;
+  --fHead:'Manrope',system-ui,sans-serif;
+  --fBody:'Inter',system-ui,sans-serif;
+  --fMono:'JetBrains Mono',ui-monospace,monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:#0c0c0e;
+  font-family:var(--fBody);
+  color:var(--text);
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+/* ---- Stage: scale a fixed 1280x720 deck to fit the viewport ---- */
+.stage{
+  position:fixed; inset:0; height:100dvh; display:grid; place-items:center;
+  background:
+    radial-gradient(1200px 700px at 80% -10%, rgba(236,27,35,.10), transparent 60%),
+    #0a0a0c;
+}
+.deck{
+  position:absolute; left:0; top:0;
+  width:var(--stageW); height:var(--stageH);
+  transform-origin:top left;
+  box-shadow:0 40px 120px -30px rgba(0,0,0,.8);
+  border-radius:4px; overflow:hidden;
+  background:#fff;
+}
+
+/* ---- Slides ---- */
+.slide{
+  position:absolute; inset:0;
+  width:var(--stageW); height:var(--stageH);
+  opacity:0; visibility:hidden; pointer-events:none;
+  transition:opacity .5s ease;
+  display:flex; flex-direction:column;
+  padding:62px 76px 58px;
+  background:var(--surface);
+}
+.slide.active{opacity:1; visibility:visible; pointer-events:auto; z-index:2}
+.slide.prev{z-index:1}
+
+/* dark slides (cover, dividers, close) */
+.slide.dark{
+  color:#fff;
+  background:
+    radial-gradient(900px 600px at 78% -8%, rgba(236,27,35,.30), transparent 55%),
+    radial-gradient(700px 500px at -5% 110%, rgba(236,27,35,.12), transparent 60%),
+    linear-gradient(160deg,#202024 0%,#161618 60%,#121214 100%);
+}
+.slide.dark::after{ /* fine grain texture */
+  content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
+  background-image:radial-gradient(rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size:3px 3px; mix-blend-mode:screen;
+}
+
+/* =========================================================================
+   Shared chrome: kicker, badge, footer, titles
+   ========================================================================= */
+.kicker{
+  display:inline-flex; align-items:center; gap:11px;
+  font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--red); margin-bottom:16px;
+}
+.kicker .badge{
+  width:24px; height:24px; border-radius:50%;
+  background:var(--red); position:relative; flex:none;
+  box-shadow:0 0 0 4px var(--tint-red);
+  overflow:hidden;
+}
+.kicker .badge::before{ /* rising-sun rays motif */
+  content:""; position:absolute; left:50%; bottom:5px; width:0; height:0;
+  border-left:7px solid transparent; border-right:7px solid transparent;
+  border-bottom:9px solid #fff; transform:translateX(-50%); opacity:.95;
+}
+.kicker .badge::after{
+  content:""; position:absolute; left:0; right:0; bottom:6px; height:1.5px;
+  background:rgba(255,255,255,.85);
+}
+.dark .kicker{color:#ff6a6f}
+.dark .kicker .badge{box-shadow:0 0 0 4px rgba(236,27,35,.25)}
+
+.slide-title{
+  font-family:var(--fHead); font-weight:800; color:var(--ink);
+  font-size:38px; line-height:1.08; letter-spacing:-.02em; max-width:24ch;
+}
+.dark .slide-title{color:#fff}
+.slide-sub{font-size:17px; color:var(--muted); margin-top:12px; max-width:60ch; line-height:1.5}
+
+.foot{
+  position:absolute; left:76px; right:76px; bottom:26px;
+  display:flex; align-items:center; justify-content:space-between;
+  font-size:12px; color:var(--faint); letter-spacing:.02em;
+}
+.foot .mark{display:flex; align-items:center; gap:9px; font-weight:600; color:var(--muted)}
+.foot .mark img{height:18px; width:auto; display:block}
+.foot .pg{font-family:var(--fMono); font-weight:500}
+.dark .foot{color:rgba(255,255,255,.5)}
+.dark .foot .mark{color:rgba(255,255,255,.7)}
+
+.body-area{flex:1; min-height:0; display:flex; flex-direction:column; margin-top:8px}
+
+/* =========================================================================
+   Reveal system — children animate in when slide becomes active
+   ========================================================================= */
+[data-r]{opacity:0; transform:translateY(16px); transition:opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1);}
+.slide.active [data-r]{opacity:1; transform:none}
+[data-r][data-d="1"]{transition-delay:.08s}[data-r][data-d="2"]{transition-delay:.16s}
+[data-r][data-d="3"]{transition-delay:.24s}[data-r][data-d="4"]{transition-delay:.32s}
+[data-r][data-d="5"]{transition-delay:.40s}[data-r][data-d="6"]{transition-delay:.48s}
+[data-r][data-d="7"]{transition-delay:.56s}[data-r][data-d="8"]{transition-delay:.64s}
+[data-r][data-d="9"]{transition-delay:.72s}[data-r][data-d="10"]{transition-delay:.80s}
+[data-r][data-d="11"]{transition-delay:.88s}[data-r][data-d="12"]{transition-delay:.96s}
+
+/* =========================================================================
+   COVER (slide 1)
+   ========================================================================= */
+.cover{padding:0}
+.cover .bg{
+  position:absolute; inset:0;
+  background:url('assets/bg_title_skyline.png') center/cover no-repeat;
+}
+.cover .scrim{position:absolute; inset:0; background:linear-gradient(100deg, rgba(255,255,255,.96) 0%, rgba(255,255,255,.82) 34%, rgba(255,255,255,0) 56%);}
+.cover .inner{position:relative; height:100%; display:flex; flex-direction:column; justify-content:center; padding:0 76px;}
+.cover .logo{height:34px; width:auto; position:absolute; top:48px; left:76px}
+.cover h1{font-family:var(--fHead); font-weight:800; letter-spacing:-.025em; line-height:1.02; font-size:66px; color:var(--ink)}
+.cover h1 .red{color:var(--red); display:block}
+.cover .rule{width:64px; height:5px; background:var(--red); border-radius:3px; margin:26px 0 22px}
+.cover .meta{font-size:15px; color:var(--muted); line-height:1.7}
+.cover .meta strong{color:var(--text); font-weight:600}
+.cover .program{position:absolute; bottom:46px; left:76px; font-size:12.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); font-weight:600}
+
+/* =========================================================================
+   QUOTE (slide 2)
+   ========================================================================= */
+.quote-wrap{flex:1; display:flex; flex-direction:column; justify-content:center; max-width:70ch}
+.quote-mark{font-family:var(--fHead); font-size:120px; line-height:.6; color:var(--red); font-weight:800; height:54px}
+.quote-wrap blockquote{font-family:var(--fHead); font-weight:600; font-size:46px; line-height:1.18; letter-spacing:-.02em; color:#fff; margin:18px 0 26px}
+.quote-wrap blockquote em{color:#ff6a6f; font-style:normal}
+.quote-wrap cite{font-style:normal; font-size:16px; color:rgba(255,255,255,.65); letter-spacing:.04em}
+.quote-wrap cite b{color:#fff; font-weight:600}
+
+/* =========================================================================
+   DIVIDER (section openers)
+   ========================================================================= */
+.divider{justify-content:center}
+.divider .pillar-no{font-family:var(--fHead); font-weight:800; font-size:200px; line-height:.8; color:rgba(255,255,255,.06); position:absolute; right:60px; top:50%; transform:translateY(-50%); letter-spacing:-.04em}
+.divider .eyebrow{font-family:var(--fHead); font-weight:700; letter-spacing:.18em; text-transform:uppercase; font-size:14px; color:#ff6a6f; display:flex; align-items:center; gap:12px}
+.divider .eyebrow .dot{width:26px;height:26px;border-radius:50%;background:var(--red);position:relative;overflow:hidden}
+.divider .eyebrow .dot::before{content:"";position:absolute;left:50%;bottom:5px;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:9px solid #fff;transform:translateX(-50%)}
+.divider h2{font-family:var(--fHead); font-weight:800; font-size:64px; letter-spacing:-.025em; color:#fff; margin:20px 0 18px; line-height:1.02; max-width:18ch}
+.divider .lead{font-size:18px; color:rgba(255,255,255,.7); max-width:54ch; line-height:1.55}
+.divider .prog-rail{display:flex; gap:10px; margin-top:34px}
+.divider .prog-rail span{font-size:12.5px; font-weight:600; letter-spacing:.04em; color:rgba(255,255,255,.4); padding:7px 14px; border:1px solid rgba(255,255,255,.14); border-radius:99px}
+.divider .prog-rail span.on{color:#fff; border-color:var(--red); background:rgba(236,27,35,.18)}
+
+/* =========================================================================
+   Generic building blocks
+   ========================================================================= */
+.cards{display:grid; gap:16px; flex:1; min-height:0}
+.cards.c3{grid-template-columns:repeat(3,1fr)}
+.cards.c2{grid-template-columns:repeat(2,1fr)}
+.card{
+  background:var(--card); border:1px solid var(--line); border-radius:14px;
+  padding:20px 22px; display:flex; flex-direction:column; gap:8px;
+  transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.card:hover{transform:translateY(-3px); box-shadow:0 18px 36px -22px rgba(0,0,0,.3); border-color:var(--line-strong)}
+.card .ic{width:40px; height:40px; border-radius:11px; background:var(--tint-red); color:var(--red); display:grid; place-items:center; flex:none}
+.card .ic svg{width:22px; height:22px}
+.card .num{font-family:var(--fHead); font-weight:800; font-size:15px; color:var(--red); width:30px; height:30px; border-radius:8px; background:var(--tint-red); display:grid; place-items:center}
+.card h3{font-family:var(--fHead); font-weight:700; font-size:18px; color:var(--ink); letter-spacing:-.01em}
+.card p{font-size:14px; color:var(--muted); line-height:1.5}
+.card .tag{font-family:var(--fMono); font-size:12px; color:var(--red); font-weight:500}
+
+/* two-column: text + visual */
+.two{display:grid; grid-template-columns:1fr 1fr; gap:40px; flex:1; min-height:0; align-items:center}
+.two.wide-r{grid-template-columns:0.86fr 1.14fr}
+.two .txt{display:flex; flex-direction:column; justify-content:center}
+.bullets{list-style:none; display:flex; flex-direction:column; gap:14px; margin-top:6px}
+.bullets li{position:relative; padding-left:28px; font-size:16.5px; line-height:1.5; color:var(--text)}
+.bullets li::before{content:""; position:absolute; left:0; top:9px; width:9px; height:9px; border-radius:3px; background:var(--red)}
+.bullets li.strong{font-weight:600; color:var(--ink)}
+.bullets li b{color:var(--ink); font-weight:600}
+.viz{position:relative; height:100%; display:flex; flex-direction:column; justify-content:center}
+
+/* rail (side panel) */
+.rail{background:var(--ink); color:#fff; border-radius:16px; padding:24px 26px; align-self:stretch; display:flex; flex-direction:column; justify-content:center}
+.rail h4{font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.12em; text-transform:uppercase; color:#ff6a6f; margin-bottom:16px}
+.rail ul{list-style:none; display:flex; flex-direction:column; gap:13px}
+.rail li{font-size:15px; color:rgba(255,255,255,.86); padding-left:22px; position:relative; line-height:1.4}
+.rail li::before{content:""; position:absolute; left:0; top:7px; width:7px; height:7px; border-radius:50%; background:var(--red)}
+
+.bullets-rail{display:grid; grid-template-columns:1.55fr 1fr; gap:32px; flex:1; min-height:0; align-items:stretch}
+.bullets-rail .txt{display:flex; flex-direction:column; justify-content:center}
+
+/* =========================================================================
+   Code block (typing reveal + syntax tint)
+   ========================================================================= */
+.codewrap{background:var(--code-bg); border-radius:14px; overflow:hidden; box-shadow:0 24px 50px -28px rgba(0,0,0,.5); border:1px solid #2a2d36; display:flex; flex-direction:column}
+.codewrap .bar{display:flex; align-items:center; gap:7px; padding:12px 16px; border-bottom:1px solid #272a33; background:#15171c}
+.codewrap .bar i{width:11px; height:11px; border-radius:50%; display:block}
+.codewrap .bar i:nth-child(1){background:#ff5f57}.codewrap .bar i:nth-child(2){background:#febc2e}.codewrap .bar i:nth-child(3){background:#28c840}
+.codewrap .bar .fn{margin-left:10px; font-family:var(--fMono); font-size:12.5px; color:#8b909c}
+.codewrap pre{margin:0; padding:20px 22px; overflow:hidden; flex:1}
+.codewrap code{font-family:var(--fMono); font-size:14.5px; line-height:1.65; color:var(--code-ink); white-space:pre; display:block}
+.tok-kw{color:#ff7b72}.tok-fn{color:#d2a8ff}.tok-str{color:#a5d6ff}.tok-num{color:#79c0ff}.tok-com{color:#7d8590; font-style:italic}.tok-op{color:#ff7b72}.tok-var{color:#ffa657}
+.code-line{display:block}
+.slide.active .code-line{animation:codeLine .42s both}
+.slide.active .code-line:nth-child(1){animation-delay:.15s}.slide.active .code-line:nth-child(2){animation-delay:.22s}
+.slide.active .code-line:nth-child(3){animation-delay:.29s}.slide.active .code-line:nth-child(4){animation-delay:.36s}
+.slide.active .code-line:nth-child(5){animation-delay:.43s}.slide.active .code-line:nth-child(6){animation-delay:.50s}
+.slide.active .code-line:nth-child(7){animation-delay:.57s}.slide.active .code-line:nth-child(8){animation-delay:.64s}
+.slide.active .code-line:nth-child(9){animation-delay:.71s}.slide.active .code-line:nth-child(10){animation-delay:.78s}
+.slide.active .code-line:nth-child(11){animation-delay:.85s}.slide.active .code-line:nth-child(12){animation-delay:.92s}
+.slide.active .code-line:nth-child(13){animation-delay:.99s}.slide.active .code-line:nth-child(14){animation-delay:1.06s}
+@keyframes codeLine{from{opacity:0; transform:translateX(-8px)}to{opacity:1; transform:none}}
+.code-note{font-size:14px; color:var(--muted); margin-top:14px; line-height:1.5; font-style:italic}
+.code-points{list-style:none; display:flex; flex-direction:column; gap:12px}
+.code-points li{position:relative; padding-left:24px; font-size:15.5px; line-height:1.45; color:var(--text)}
+.code-points li::before{content:"›"; position:absolute; left:0; top:-1px; color:var(--red); font-weight:800; font-size:18px}
+
+/* =========================================================================
+   Conway Venn (slide 4)
+   ========================================================================= */
+.venn{position:relative; width:430px; height:380px; margin:auto}
+.venn .circ{position:absolute; width:250px; height:250px; border-radius:50%; mix-blend-mode:multiply; display:grid; place-items:center; opacity:0; transform:scale(.6); transition:opacity .7s ease, transform .7s cubic-bezier(.34,1.56,.64,1)}
+.venn .c1{background:rgba(236,27,35,.40); left:0; top:0}
+.venn .c2{background:rgba(28,110,156,.40); right:0; top:0}
+.venn .c3{background:rgba(30,142,90,.42); left:50%; bottom:0; transform:translateX(-50%) scale(.6)}
+.slide.active .venn .c1{opacity:1; transform:scale(1); transition-delay:.2s}
+.slide.active .venn .c2{opacity:1; transform:scale(1); transition-delay:.45s}
+.slide.active .venn .c3{opacity:1; transform:translateX(-50%) scale(1); transition-delay:.7s}
+.venn .lbl{font-family:var(--fHead); font-weight:700; font-size:14px; color:var(--ink); text-align:center; line-height:1.2; pointer-events:none; padding:0 30px}
+.venn .center{position:absolute; left:50%; top:48%; transform:translate(-50%,-50%); z-index:5; background:var(--ink); color:#fff; font-family:var(--fHead); font-weight:800; font-size:13px; padding:8px 14px; border-radius:99px; white-space:nowrap; opacity:0; transition:opacity .5s ease .95s; box-shadow:0 8px 20px -8px rgba(0,0,0,.5)}
+.slide.active .venn .center{opacity:1}
+.venn .danger{position:absolute; left:14%; bottom:30%; z-index:6; font-family:var(--fHead); font-weight:800; font-size:11px; color:#fff; background:var(--red); padding:5px 10px; border-radius:6px; transform:rotate(-8deg); opacity:0; transition:opacity .5s ease 1.2s; box-shadow:0 6px 16px -6px rgba(236,27,35,.7)}
+.slide.active .venn .danger{opacity:1}
+
+/* =========================================================================
+   Stat counters (slide 5 + others)
+   ========================================================================= */
+.stat-row{display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin:auto 0}
+.stat{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:30px 26px; text-align:left; position:relative; overflow:hidden}
+.stat .big{font-family:var(--fHead); font-weight:800; font-size:62px; line-height:1; color:var(--red); letter-spacing:-.03em}
+.stat .big .unit{font-size:32px; vertical-align:super; margin-left:2px}
+.stat .lab{font-size:15px; color:var(--text); margin-top:12px; line-height:1.45; font-weight:500}
+.stat .sub{font-size:12.5px; color:var(--faint); margin-top:8px}
+.stat::before{content:""; position:absolute; left:0; top:0; bottom:0; width:5px; background:var(--red)}
+
+/* progress ring (80% stat) */
+.ring-wrap{display:flex; align-items:center; gap:40px; margin:auto 0}
+.ring{position:relative; width:230px; height:230px; flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring .pct{position:absolute; inset:0; display:grid; place-items:center; font-family:var(--fHead); font-weight:800; font-size:56px; color:var(--ink)}
+.ring-copy{max-width:46ch}
+.ring-copy h3{font-family:var(--fHead); font-weight:800; font-size:28px; color:var(--ink); letter-spacing:-.02em; line-height:1.1; margin-bottom:14px}
+.ring-copy p{font-size:16px; color:var(--muted); line-height:1.55}
+
+/* =========================================================================
+   Step strip (5 facets / workflow)
+   ========================================================================= */
+.flow{display:flex; align-items:stretch; gap:0; margin:auto 0; width:100%}
+.flow .step{flex:1; position:relative; display:flex; flex-direction:column; gap:8px; padding:0 6px}
+.flow .step .node{width:54px; height:54px; border-radius:14px; background:var(--ink); color:#fff; font-family:var(--fHead); font-weight:800; font-size:20px; display:grid; place-items:center; position:relative; z-index:2}
+.flow .step:nth-child(odd) .node{background:var(--red)}
+.flow .step h4{font-family:var(--fHead); font-weight:700; font-size:16.5px; color:var(--ink); margin-top:10px}
+.flow .step p{font-size:13.5px; color:var(--muted); line-height:1.45}
+.flow .arrow{position:absolute; top:27px; left:46px; right:-8px; height:2px; background:var(--line-strong); z-index:1}
+.flow .arrow::after{content:""; position:absolute; right:0; top:-4px; border-left:8px solid var(--line-strong); border-top:5px solid transparent; border-bottom:5px solid transparent}
+.flow .step:last-child .arrow{display:none}
+/* sequential build for flow */
+.flow .step{opacity:0; transform:translateY(14px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .flow .step{opacity:1; transform:none}
+.slide.active .flow .step:nth-child(1){transition-delay:.15s}.slide.active .flow .step:nth-child(2){transition-delay:.35s}
+.slide.active .flow .step:nth-child(3){transition-delay:.55s}.slide.active .flow .step:nth-child(4){transition-delay:.75s}
+.slide.active .flow .step:nth-child(5){transition-delay:.95s}.slide.active .flow .step:nth-child(6){transition-delay:1.15s}
+.flow.compact .node{width:46px;height:46px;border-radius:12px;font-size:17px}
+.flow-cap{font-size:14px; color:var(--muted); font-style:italic; text-align:center; margin-top:26px}
+
+/* journey / agenda */
+.journey{display:grid; grid-template-columns:repeat(4,1fr); gap:18px; flex:1; min-height:0; align-items:stretch}
+.jcard{border:1px solid var(--line); border-radius:16px; padding:24px 22px; display:flex; flex-direction:column; position:relative; background:var(--surface); overflow:hidden}
+.jcard .pn{font-family:var(--fHead); font-weight:800; font-size:46px; color:var(--card-2); line-height:1; letter-spacing:-.03em}
+.jcard .ph{font-family:var(--fHead); font-weight:700; font-size:18.5px; color:var(--ink); margin:14px 0 8px; letter-spacing:-.01em}
+.jcard p{font-size:13.5px; color:var(--muted); line-height:1.5; flex:1}
+.jcard .demo{margin-top:14px; font-family:var(--fMono); font-size:11px; font-weight:600; color:var(--red); background:var(--tint-red); padding:5px 10px; border-radius:6px; align-self:flex-start; display:inline-flex; gap:6px; align-items:center}
+.jcard::after{content:""; position:absolute; left:0; right:0; bottom:0; height:4px; background:var(--red); transform:scaleX(0); transform-origin:left; transition:transform .5s ease}
+.slide.active .jcard::after{transform:scaleX(1)}
+.slide.active .jcard:nth-child(1)::after{transition-delay:.3s}.slide.active .jcard:nth-child(2)::after{transition-delay:.45s}
+.slide.active .jcard:nth-child(3)::after{transition-delay:.6s}.slide.active .jcard:nth-child(4)::after{transition-delay:.75s}
+
+/* =========================================================================
+   Layered stack diagram (Python data stack)
+   ========================================================================= */
+.stack{display:flex; flex-direction:column; gap:12px; margin:auto 0; width:100%}
+.layer{display:grid; grid-template-columns:200px 1fr; align-items:center; gap:22px; border-radius:14px; padding:18px 24px; color:#fff; position:relative; overflow:hidden; opacity:0; transform:translateX(-18px); transition:opacity .55s ease, transform .55s cubic-bezier(.16,1,.3,1)}
+.slide.active .layer{opacity:1; transform:none}
+.slide.active .layer:nth-child(1){transition-delay:.5s}.slide.active .layer:nth-child(2){transition-delay:.38s}
+.slide.active .layer:nth-child(3){transition-delay:.26s}.slide.active .layer:nth-child(4){transition-delay:.14s}
+.layer .lname{font-family:var(--fHead); font-weight:800; font-size:21px; letter-spacing:-.01em; display:flex; align-items:baseline; gap:9px}
+.layer .lname code{font-family:var(--fMono); font-size:13px; opacity:.7; font-weight:500}
+.layer .ldesc{font-size:14.5px; line-height:1.4; opacity:.95}
+.layer.l1{background:linear-gradient(100deg,#2A2A2F,#1c1c20)}
+.layer.l2{background:linear-gradient(100deg,var(--red-dark),var(--red))}
+.layer.l3{background:linear-gradient(100deg,#1C6E9C,#2487bf)}
+.layer.l4{background:linear-gradient(100deg,#0E7C6B,#13a08a)}
+.stack .scaffold{font-size:12.5px; color:var(--muted); text-align:center; font-style:italic}
+
+/* container / building-block cards */
+.mini-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:14px}
+.mini{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:15px 18px}
+.mini .mh{font-family:var(--fMono); font-size:14px; font-weight:700; color:var(--red)}
+.mini .md{font-size:13.5px; color:var(--muted); margin-top:4px; line-height:1.4}
+.mini code{font-family:var(--fMono); font-size:12.5px; color:var(--ink); background:var(--card-2); padding:1px 5px; border-radius:4px}
+
+/* before / after code columns */
+.ba{display:grid; grid-template-columns:1fr 1fr; gap:22px; flex:1; min-height:0; align-items:stretch}
+.ba .col{display:flex; flex-direction:column}
+.ba .ba-h{font-family:var(--fHead); font-weight:700; font-size:14px; margin-bottom:10px; display:flex; align-items:center; gap:9px}
+.ba .ba-h .tagx{font-size:11px; padding:3px 9px; border-radius:99px; font-weight:700; letter-spacing:.04em}
+.ba .before .tagx{background:var(--card-2); color:var(--muted)}
+.ba .after .tagx{background:var(--tint-red); color:var(--red)}
+.ba .codewrap{flex:1}
+/* optimisation pushdown strip (eager vs lazy slide) */
+.pushdown{display:flex; gap:12px; margin-top:16px; justify-content:center; flex-wrap:wrap}
+.pushdown .pd{display:flex; align-items:center; gap:9px; background:var(--tint-red); border:1px solid var(--tint-red-2); border-radius:99px; padding:8px 16px; font-size:13px; color:var(--ink); opacity:0; transform:translateY(10px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .pushdown .pd{opacity:1; transform:none}
+.slide.active .pushdown .pd:nth-child(1){transition-delay:.5s}.slide.active .pushdown .pd:nth-child(2){transition-delay:.66s}.slide.active .pushdown .pd:nth-child(3){transition-delay:.82s}
+.pushdown .pd b{color:var(--red); font-weight:700}
+.pushdown .pd .ck{width:18px;height:18px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-size:11px;flex:none}
+
+/* =========================================================================
+   Notebook-playback demo component
+   ========================================================================= */
+.demo-stage{flex:1; min-height:0; display:grid; grid-template-columns:1.62fr 1fr; gap:26px; align-items:stretch}
+.nb{background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 24px 50px -30px rgba(0,0,0,.35); display:flex; flex-direction:column; overflow:hidden}
+.nb-top{display:flex; align-items:center; gap:8px; padding:11px 16px; border-bottom:1px solid var(--line); background:var(--card)}
+.nb-top .t-ic{width:9px;height:9px;border-radius:50%;background:#e0a800}
+.nb-top .t-ic.r{background:var(--red)} .nb-top .t-ic.g{background:#28a745}
+.nb-top .nb-name{font-family:var(--fMono); font-size:12.5px; color:var(--muted); margin-left:8px}
+.nb-top .nb-kernel{margin-left:auto; font-size:11.5px; color:var(--faint); display:flex; align-items:center; gap:6px}
+.nb-top .nb-kernel::after{content:"";width:8px;height:8px;border-radius:50%;background:#28a745}
+.nb-body{flex:1; overflow:hidden; padding:6px 0; scroll-behavior:smooth}
+.nb-cell{padding:5px 16px; opacity:0; transform:translateY(8px); transition:opacity .4s ease, transform .4s ease}
+.nb-cell.shown{opacity:1; transform:none}
+.nb-in{display:grid; grid-template-columns:54px 1fr; gap:10px; align-items:start}
+.nb-prompt{font-family:var(--fMono); font-size:12.5px; color:#3b6fb0; text-align:right; padding-top:9px; user-select:none}
+.nb-prompt.busy{color:var(--red)}
+.nb-code{position:relative; background:#f6f7f9; border:1px solid #eceef1; border-left:3px solid var(--red); border-radius:6px; padding:9px 12px; font-family:var(--fMono); font-size:13px; line-height:1.55; color:#1f2430; white-space:pre; overflow:hidden; transition:box-shadow .3s ease, border-left-color .3s ease}
+.nb-cell.running .nb-code{box-shadow:0 0 0 2px var(--tint-red-2), 0 8px 22px -12px rgba(236,27,35,.5); border-left-color:var(--red-dark)}
+.nb-cell.running .nb-code::after{content:"▋"; color:var(--red); animation:caret .7s steps(1) infinite; margin-left:1px}
+@keyframes caret{50%{opacity:0}}
+.nb-out{margin:6px 0 0 64px; font-family:var(--fMono); font-size:12px; line-height:1.5; color:#333; max-height:0; opacity:0; overflow:hidden; transition:max-height .5s ease, opacity .4s ease}
+.nb-out.shown{max-height:240px; opacity:1}
+.nb-out .otable{border-collapse:collapse; font-size:11px}
+.nb-out .otable th{background:var(--ink); color:#fff; font-weight:600; padding:2px 9px; text-align:right; font-family:var(--fMono)}
+.nb-out .otable td{padding:2px 9px; border-bottom:1px solid #eee; text-align:right; color:#444}
+.nb-out .otable tr:nth-child(even) td{background:#fafafa}
+.nb-out .muted{color:#8a9099}
+.nb-out .ok{color:#1E8E5A}
+.demo-side{display:flex; flex-direction:column; gap:16px; justify-content:center}
+.demo-card{border-radius:16px; padding:22px 24px; background:var(--ink); color:#fff}
+.demo-card .dk{font-family:var(--fHead); font-weight:700; font-size:12px; letter-spacing:.13em; text-transform:uppercase; color:#ff6a6f; margin-bottom:10px}
+.demo-card h3{font-family:var(--fHead); font-weight:800; font-size:22px; line-height:1.12; letter-spacing:-.01em; margin-bottom:10px}
+.demo-card p{font-size:14px; line-height:1.5; color:rgba(255,255,255,.82)}
+.demo-steps{list-style:none; display:flex; flex-direction:column; gap:11px}
+.demo-steps li{display:flex; gap:11px; align-items:flex-start; font-size:14px; color:var(--text); line-height:1.4}
+.demo-steps li .sn{flex:none; width:24px; height:24px; border-radius:7px; background:var(--tint-red); color:var(--red); font-family:var(--fHead); font-weight:800; font-size:12px; display:grid; place-items:center}
+.demo-steps li.on .sn{background:var(--red); color:#fff}
+.replay{align-self:flex-start; display:inline-flex; align-items:center; gap:8px; background:var(--tint-red); color:var(--red); border:1px solid var(--tint-red-2); font-family:var(--fHead); font-weight:700; font-size:13px; padding:9px 16px; border-radius:99px; cursor:pointer; transition:all .2s ease}
+.replay:hover{background:var(--red); color:#fff}
+.replay svg{width:14px;height:14px}
+.demo-take{background:var(--tint-red); border:1px solid var(--tint-red-2); border-radius:12px; padding:14px 18px; font-size:13.5px; color:var(--ink); line-height:1.45}
+.demo-take b{color:var(--red)}
+
+/* =========================================================================
+   VS compare panels (structured vs unstructured, good vs bad)
+   ========================================================================= */
+.vs{display:grid; grid-template-columns:1fr 1fr; gap:24px; flex:1; min-height:0}
+.vs .panel{border:1px solid var(--line); border-radius:16px; padding:24px 26px; display:flex; flex-direction:column; background:var(--surface); position:relative; overflow:hidden}
+.vs .panel.accent{background:linear-gradient(180deg,var(--tint-red),#fff); border-color:var(--tint-red-2)}
+.vs .panel .ph{font-family:var(--fHead); font-weight:800; font-size:21px; color:var(--ink); letter-spacing:-.01em; display:flex; align-items:center; gap:12px}
+.vs .panel .ph .glyph{width:42px; height:42px; border-radius:11px; display:grid; place-items:center; flex:none}
+.vs .panel.accent .ph .glyph{background:var(--red); color:#fff}
+.vs .panel:not(.accent) .ph .glyph{background:var(--ink); color:#fff}
+.vs .panel .ps{font-size:14px; color:var(--muted); margin:8px 0 16px; line-height:1.45}
+.vs .chips{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px}
+.vs .chip{font-family:var(--fMono); font-size:12px; padding:6px 11px; border-radius:8px; background:var(--card); border:1px solid var(--line); color:var(--text)}
+.vs .panel.accent .chip{background:#fff; border-color:var(--tint-red-2)}
+.vs .where{margin-top:auto; font-size:13.5px; color:var(--text); line-height:1.45; padding-top:14px; border-top:1px dashed var(--line-strong)}
+.vs .where b{color:var(--red)}
+
+/* annotated "shape of data" table */
+.shape-tbl{display:grid; grid-template-columns:auto 1fr; gap:0 18px; align-items:center; margin:auto 0}
+.dtable{border-collapse:separate; border-spacing:0; border-radius:12px; overflow:hidden; box-shadow:0 18px 40px -28px rgba(0,0,0,.3); width:100%}
+.dtable th{background:var(--ink); color:#fff; font-family:var(--fMono); font-size:13px; font-weight:600; padding:11px 16px; text-align:left}
+.dtable th.target{background:var(--red)}
+.dtable td{padding:10px 16px; font-family:var(--fMono); font-size:13.5px; color:var(--text); background:#fff; border-bottom:1px solid var(--line)}
+.dtable td.target{background:var(--tint-red); color:var(--red-dark); font-weight:600}
+.dtable tr:nth-child(even) td{background:#fafafb}
+.dtable tr:nth-child(even) td.target{background:var(--tint-red-2)}
+.annot{font-family:var(--fHead); font-weight:700; font-size:14px; color:var(--red); display:flex; align-items:center; gap:8px}
+.annot.muted{color:var(--muted)}
+.shape-legend{display:flex; gap:26px; justify-content:center; margin-top:22px; flex-wrap:wrap}
+.shape-legend .item{display:flex; align-items:center; gap:9px; font-size:14px; color:var(--text)}
+.shape-legend .sw{width:16px; height:16px; border-radius:5px}
+
+/* analytics staircase (ascending) */
+.stair{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; align-items:end; flex:1; min-height:0; padding-top:8px}
+.rung{display:flex; flex-direction:column; justify-content:flex-end}
+.rung .box{border-radius:14px 14px 0 0; padding:20px 20px 22px; color:#fff; position:relative; transform-origin:bottom; transform:scaleY(0); opacity:0; transition:transform .6s cubic-bezier(.16,1,.3,1), opacity .4s ease}
+.slide.active .rung .box{transform:scaleY(1); opacity:1}
+.slide.active .rung:nth-child(1) .box{transition-delay:.2s}.slide.active .rung:nth-child(2) .box{transition-delay:.42s}
+.slide.active .rung:nth-child(3) .box{transition-delay:.64s}.slide.active .rung:nth-child(4) .box{transition-delay:.86s}
+.rung:nth-child(1) .box{background:#3a3a40; min-height:150px}
+.rung:nth-child(2) .box{background:#8a1419; min-height:215px}
+.rung:nth-child(3) .box{background:var(--red-dark); min-height:280px}
+.rung:nth-child(4) .box{background:var(--red); min-height:345px}
+.rung .q{font-family:var(--fMono); font-size:12px; opacity:.85; margin-bottom:6px}
+.rung .box h4{font-family:var(--fHead); font-weight:800; font-size:21px; letter-spacing:-.01em}
+.rung .box p{font-size:13px; line-height:1.4; opacity:.92; margin-top:8px}
+.rung .box .step-i{position:absolute; top:14px; right:16px; font-family:var(--fHead); font-weight:800; font-size:14px; opacity:.35}
+.stair-axis{display:flex; justify-content:space-between; font-size:13px; color:var(--muted); margin-top:14px; font-style:italic}
+.stair-axis b{color:var(--red); font-style:normal; font-weight:700}
+
+/* animated SVG charts (scatter, dual-line) */
+.svg-card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px 22px; height:100%; display:flex; flex-direction:column}
+.svg-card .ct{font-family:var(--fHead); font-weight:700; font-size:15px; color:var(--ink); margin-bottom:6px}
+.chart-svg{width:100%; flex:1}
+.chart-svg .dot{opacity:0; transition:opacity .5s ease}
+.slide.active .chart-svg .dot{opacity:.78}
+.chart-svg .trend{stroke:var(--red); stroke-width:3; fill:none; stroke-dasharray:600; stroke-dashoffset:600; transition:stroke-dashoffset 1.3s ease .6s}
+.slide.active .chart-svg .trend{stroke-dashoffset:0}
+.chart-svg .ln{fill:none; stroke-width:3; stroke-dasharray:900; stroke-dashoffset:900; transition:stroke-dashoffset 1.5s ease}
+.slide.active .chart-svg .ln1{stroke-dashoffset:0; transition-delay:.3s}
+.slide.active .chart-svg .ln2{stroke-dashoffset:0; transition-delay:.7s}
+.chart-svg .axis{stroke:var(--line-strong); stroke-width:1.5}
+.chart-svg .glab{font-family:var(--fBody); font-size:11px; fill:var(--muted)}
+
+/* problem -> fix table */
+.pf-table{display:flex; flex-direction:column; border:1px solid var(--line); border-radius:14px; overflow:hidden; flex:1; min-height:0}
+.pf-row{display:grid; grid-template-columns:1.1fr 1fr 1.25fr; align-items:center; padding:0; border-bottom:1px solid var(--line); opacity:0; transform:translateX(-12px); transition:opacity .45s ease, transform .45s ease}
+.slide.active .pf-row{opacity:1; transform:none}
+.slide.active .pf-row:nth-child(1){transition-delay:.1s}.slide.active .pf-row:nth-child(2){transition-delay:.2s}
+.slide.active .pf-row:nth-child(3){transition-delay:.3s}.slide.active .pf-row:nth-child(4){transition-delay:.4s}
+.slide.active .pf-row:nth-child(5){transition-delay:.5s}.slide.active .pf-row:nth-child(6){transition-delay:.6s}
+.slide.active .pf-row:nth-child(7){transition-delay:.7s}
+.pf-row:last-child{border-bottom:none}
+.pf-row.head{background:var(--ink); color:#fff; opacity:1; transform:none}
+.pf-row.head>div{font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.04em; text-transform:uppercase; padding:12px 20px; color:rgba(255,255,255,.85)}
+.pf-row>div{padding:13px 20px; font-size:14.5px}
+.pf-row .prob{font-weight:600; color:var(--ink); display:flex; align-items:center; gap:10px}
+.pf-row .prob .d{width:8px;height:8px;border-radius:50%;background:var(--red);flex:none}
+.pf-row .fix code{font-family:var(--fMono); font-size:13px; background:var(--tint-red); color:var(--red-dark); padding:3px 9px; border-radius:6px; font-weight:500}
+.pf-row .desc{color:var(--muted); font-size:13.5px; line-height:1.4}
+.pf-row:nth-child(even):not(.head){background:#fafafb}
+
+/* tidy before/after tables */
+.tidy{display:grid; grid-template-columns:1fr auto 1fr; gap:20px; align-items:center; flex:1; min-height:0}
+.tidy .tcol{display:flex; flex-direction:column}
+.tidy .tlabel{font-family:var(--fHead); font-weight:800; font-size:14px; letter-spacing:.06em; text-transform:uppercase; margin-bottom:12px; display:flex; align-items:center; gap:9px}
+.tidy .messy .tlabel{color:var(--muted)} .tidy .clean .tlabel{color:var(--red)}
+.tidy .arrow-mid{font-size:34px; color:var(--red); font-weight:800}
+.tidy .note{font-size:12.5px; color:var(--muted); margin-top:10px; font-style:italic; line-height:1.4}
+
+/* histogram (EDA) */
+.hist{display:flex; align-items:flex-end; gap:7px; height:230px; padding:0 4px; border-bottom:2px solid var(--line-strong)}
+.hist .bar{flex:1; background:linear-gradient(180deg,var(--red),var(--red-dark)); border-radius:5px 5px 0 0; height:0; transition:height .8s cubic-bezier(.16,1,.3,1); position:relative}
+.hist .bar.med{background:linear-gradient(180deg,#3a3a40,#222)}
+.slide.active .hist .bar{height:var(--h)}
+.slide.active .hist .bar:nth-child(1){transition-delay:.1s}.slide.active .hist .bar:nth-child(2){transition-delay:.16s}
+.slide.active .hist .bar:nth-child(3){transition-delay:.22s}.slide.active .hist .bar:nth-child(4){transition-delay:.28s}
+.slide.active .hist .bar:nth-child(5){transition-delay:.34s}.slide.active .hist .bar:nth-child(6){transition-delay:.40s}
+.slide.active .hist .bar:nth-child(7){transition-delay:.46s}.slide.active .hist .bar:nth-child(8){transition-delay:.52s}
+.slide.active .hist .bar:nth-child(9){transition-delay:.58s}.slide.active .hist .bar:nth-child(10){transition-delay:.64s}
+.slide.active .hist .bar:nth-child(11){transition-delay:.70s}.slide.active .hist .bar:nth-child(12){transition-delay:.76s}
+.stat-chips{display:flex; flex-direction:column; gap:12px}
+.stat-chips .sc{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 18px; display:flex; justify-content:space-between; align-items:center}
+.stat-chips .sc .k{font-size:13.5px; color:var(--muted)}
+.stat-chips .sc .v{font-family:var(--fHead); font-weight:800; font-size:22px; color:var(--red)}
+
+/* chart-picker glyph grid */
+.picker{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; flex:1; min-height:0}
+.pick{border:1px solid var(--line); border-radius:14px; padding:18px 20px; display:flex; flex-direction:column; gap:10px; background:var(--surface); transition:transform .25s ease, box-shadow .25s ease, border-color .25s}
+.pick:hover{transform:translateY(-3px); box-shadow:0 18px 34px -22px rgba(0,0,0,.3); border-color:var(--tint-red-2)}
+.pick .pg-glyph{height:46px; display:flex; align-items:flex-end; gap:4px}
+.pick .q{font-family:var(--fMono); font-size:12px; color:var(--red); font-weight:500}
+.pick h4{font-family:var(--fHead); font-weight:700; font-size:16px; color:var(--ink)}
+.pick p{font-size:13px; color:var(--muted); line-height:1.4}
+.pick svg{width:100%; height:46px}
+
+/* insight callout */
+.insight{display:grid; grid-template-columns:1fr 1fr; gap:30px; flex:1; min-height:0; align-items:center}
+.insight .lead-card{background:var(--ink); color:#fff; border-radius:18px; padding:30px 32px; position:relative; overflow:hidden}
+.insight .lead-card::before{content:""; position:absolute; right:-40px; top:-40px; width:160px; height:160px; border-radius:50%; background:radial-gradient(circle,rgba(236,27,35,.4),transparent 70%)}
+.insight .lead-card .so{font-family:var(--fHead); font-weight:700; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#ff6a6f; margin-bottom:14px}
+.insight .lead-card .big-line{font-family:var(--fHead); font-weight:800; font-size:28px; line-height:1.15; letter-spacing:-.01em}
+.insight .lead-card .big-line em{color:#ff8e91; font-style:normal}
+.layer-list{list-style:none; display:flex; flex-direction:column; gap:16px}
+.layer-list li{display:flex; gap:14px; align-items:flex-start}
+.layer-list li .n{flex:none; width:30px; height:30px; border-radius:9px; background:var(--tint-red); color:var(--red); font-family:var(--fHead); font-weight:800; display:grid; place-items:center; font-size:14px}
+.layer-list li b{font-family:var(--fHead); color:var(--ink); font-size:16px}
+.layer-list li p{font-size:14px; color:var(--muted); line-height:1.4; margin-top:2px}
+
+/* closing recap */
+.recap-grid{display:grid; grid-template-columns:1fr 1fr; gap:30px; flex:1; min-height:0; align-items:center}
+.recap-col h4{font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.12em; text-transform:uppercase; margin-bottom:18px; display:flex; align-items:center; gap:10px}
+.recap-col.recap h4{color:#ff6a6f}.recap-col.next h4{color:#fff}
+.recap-col ul{list-style:none; display:flex; flex-direction:column; gap:14px}
+.recap-col li{font-size:16px; line-height:1.45; padding-left:26px; position:relative; color:rgba(255,255,255,.88)}
+.recap-col.recap li::before{content:"✓"; position:absolute; left:0; color:var(--red); font-weight:800}
+.recap-col.next li::before{content:"→"; position:absolute; left:0; color:#ff6a6f; font-weight:800}
+.recap-col.next{background:rgba(236,27,35,.1); border:1px solid rgba(236,27,35,.25); border-radius:18px; padding:26px 28px}
+
+/* big single stat (80%) */
+.megastat{display:flex; align-items:center; gap:60px; margin:auto 0}
+.megastat .num{font-family:var(--fHead); font-weight:800; font-size:200px; line-height:.85; color:var(--red); letter-spacing:-.05em}
+.megastat .num .u{font-size:90px}
+.megastat .copy{max-width:42ch}
+.megastat .copy h3{font-family:var(--fHead); font-weight:800; font-size:30px; color:var(--ink); line-height:1.1; letter-spacing:-.02em; margin-bottom:14px}
+.megastat .copy p{font-size:16px; color:var(--muted); line-height:1.55}
+.megastat .copy .src{font-size:12.5px; color:var(--faint); margin-top:14px}
+
+/* =========================================================================
+   Navigation chrome
+   ========================================================================= */
+.progress{position:fixed; top:0; left:0; height:3px; background:var(--red); z-index:50; transition:width .4s ease; box-shadow:0 0 12px rgba(236,27,35,.6)}
+.hud{position:fixed; bottom:18px; right:22px; z-index:50; display:flex; align-items:center; gap:14px; font-family:var(--fMono); font-size:12px; color:rgba(255,255,255,.55)}
+.hud .dots{display:flex; gap:6px}
+.hud .dot{width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.22); cursor:pointer; transition:all .25s ease}
+.hud .dot.on{background:var(--red); transform:scale(1.35)}
+.hud .dot.sec{background:rgba(255,255,255,.4)}
+.hud .count b{color:#fff}
+.hint{position:fixed; bottom:20px; left:22px; z-index:50; font-size:11.5px; color:rgba(255,255,255,.4); font-family:var(--fMono)}
+.hint kbd{background:rgba(255,255,255,.1); border-radius:4px; padding:1px 6px; color:rgba(255,255,255,.7)}
+/* auto-hide nav chrome when idle or when deck fills the viewport */
+.hud,.hint{transition:opacity .4s ease}
+body.idle .hud, body.idle .hint{opacity:0; pointer-events:none}
+body.static .hud, body.static .hint{display:none}
+
+/* speaker notes drawer */
+.notes{position:fixed; left:0; right:0; bottom:0; z-index:60; transform:translateY(100%); transition:transform .35s cubic-bezier(.16,1,.3,1); background:#16161a; color:#e7e7ea; border-top:3px solid var(--red); max-height:42vh; overflow:auto; padding:22px 30px; box-shadow:0 -20px 50px -20px rgba(0,0,0,.7)}
+.notes.show{transform:none}
+.notes h5{font-family:var(--fHead); font-weight:700; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#ff6a6f; margin-bottom:12px; display:flex; align-items:center; gap:10px}
+.notes ul{margin:0; padding-left:20px; display:flex; flex-direction:column; gap:9px}
+.notes li{font-size:14.5px; line-height:1.55; color:#cfd0d6}
+.notes .close{position:absolute; top:16px; right:22px; color:#888; cursor:pointer; font-size:18px; background:none; border:none}
+
+/* mobile: the deck is a fixed 16:9 stage — prompt rotation when held upright */
+.rotate-cue{position:fixed; inset:0; height:100dvh; z-index:120; display:none;
+  place-items:center; text-align:center; padding:42px;
+  background:radial-gradient(700px 460px at 50% 0%, rgba(236,27,35,.14), transparent 62%), #0a0a0c;
+  color:#e7e7ea; font-family:var(--fHead)}
+.rotate-cue .ic{width:58px; height:58px; margin:0 auto 24px; color:var(--red);
+  animation:rot-tilt 2.2s ease-in-out infinite}
+.rotate-cue h4{font-size:21px; font-weight:800; letter-spacing:-.01em; color:#fff; margin-bottom:10px}
+.rotate-cue p{font-size:14px; line-height:1.55; color:rgba(255,255,255,.6); max-width:34ch; margin:0 auto}
+@keyframes rot-tilt{0%,100%{transform:rotate(-12deg)} 50%{transform:rotate(78deg)}}
+/* show only on small screens held in portrait */
+@media (orientation:portrait) and (max-width:860px){
+  .rotate-cue{display:grid}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important; transition-duration:.2s !important}
+  [data-r]{opacity:1 !important; transform:none !important}
+  .rotate-cue .ic{animation:none; transform:rotate(78deg)}
+}
+/* static mode (QA captures / no-motion): snap everything to final */
+body.static [data-r]{opacity:1 !important; transform:none !important; transition:none !important}
+body.static .code-line{animation:none !important}
+body.static .flow .step,
+body.static .venn .circ,
+body.static .venn .center,
+body.static .venn .danger,
+body.static .jcard::after{opacity:1 !important; transform:none !important; transition:none !important}
+body.static .venn .c3{transform:translateX(-50%) !important}
+body.static .jcard::after{transform:scaleX(1) !important}
+body.static .nb-cell, body.static .nb-out{transition:none !important; transform:none !important; opacity:1 !important}
+body.static .nb-out.shown{max-height:320px !important}
+body.static .pushdown .pd{opacity:1 !important; transform:none !important; transition:none !important}
+/* ============================ Day 2 · Conversational AI Design additions ============================ */
+.fillc{flex:1; min-height:0; display:flex; flex-direction:column; justify-content:center}
+
+/* chat replay */
+.chat{display:flex; flex-direction:column; gap:12px; max-width:640px; width:100%; margin:auto auto}
+.cb{max-width:80%; padding:12px 16px; border-radius:16px; font-size:14.5px; line-height:1.45; opacity:0; transform:translateY(12px); transition:opacity .45s ease, transform .45s ease}
+.slide.active .cb{opacity:1; transform:none}
+.cb .who{font-family:var(--fHead); font-weight:800; font-size:9.5px; text-transform:uppercase; letter-spacing:.07em; opacity:.7; margin-bottom:3px}
+.cb.b{align-self:flex-start; background:var(--card); color:var(--text); border-bottom-left-radius:5px}
+.cb.u{align-self:flex-end; background:var(--red); color:#fff; border-bottom-right-radius:5px}
+.cb.bad{background:#F1EBEC; color:#6B7280}
+.cb .ref{background:rgba(255,255,255,.28); border-radius:5px; padding:0 5px; font-weight:700; font-style:normal}
+.cb.b .ref{background:var(--tint-red); color:var(--red-dark)}
+.slide.active .chat .cb:nth-child(1){transition-delay:.1s}.slide.active .chat .cb:nth-child(2){transition-delay:.5s}.slide.active .chat .cb:nth-child(3){transition-delay:.9s}.slide.active .chat .cb:nth-child(4){transition-delay:1.3s}.slide.active .chat .cb:nth-child(5){transition-delay:1.7s}.slide.active .chat .cb:nth-child(6){transition-delay:2.1s}
+.chat.mini{gap:8px; max-width:none; margin:0}
+.chat.mini .cb{max-width:90%; font-size:12.5px; padding:9px 13px}
+.panel .chat.mini .cb:nth-child(1){transition-delay:.2s}.panel .chat.mini .cb:nth-child(2){transition-delay:.45s}.panel .chat.mini .cb:nth-child(3){transition-delay:.7s}
+
+/* slot filling */
+.slotfill{display:flex; flex-direction:column; gap:18px; max-width:760px; width:100%; margin:auto auto}
+.sfrow{display:flex; align-items:center; gap:14px; justify-content:center; flex-wrap:wrap}
+.uttr{background:var(--card); border-radius:14px; padding:12px 18px; font-size:15px; color:var(--ink); opacity:0; transform:translateY(10px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .uttr{opacity:1; transform:none}
+.ibadge{background:linear-gradient(155deg,#26262b,#161618); color:#fff; border-radius:99px; padding:10px 20px; font-family:var(--fHead); font-weight:800; font-size:14px; opacity:0; transform:scale(.9); transition:opacity .5s ease .3s, transform .5s ease .3s}
+.slide.active .ibadge{opacity:1; transform:none}
+.sfarrow{color:var(--red); font-weight:800; font-size:20px}
+.slots{display:flex; gap:12px; justify-content:center; flex-wrap:wrap}
+.slot{border:1.5px dashed var(--line-strong); border-radius:12px; padding:10px 18px; font-size:13px; color:var(--muted); background:#fff; text-align:center; opacity:0; transform:translateY(10px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .slot{opacity:1; transform:none}
+.slot .sl{font-family:var(--fMono); font-size:9.5px; letter-spacing:.06em; display:block; margin-bottom:3px}
+.slot.filled{border-style:solid; border-color:var(--red); background:var(--tint-red); color:var(--red-dark); font-weight:700}
+.slide.active .slots .slot:nth-child(1){transition-delay:.6s}.slide.active .slots .slot:nth-child(2){transition-delay:.85s}.slide.active .slots .slot:nth-child(3){transition-delay:1.1s}
+
+/* persona card */
+.persona{display:flex; gap:26px; align-items:center; max-width:760px; width:100%; margin:auto auto; background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:28px 32px; box-shadow:0 22px 54px -30px rgba(0,0,0,.4)}
+.persona .pav{flex:none; width:96px; height:96px; border-radius:50%; background:linear-gradient(155deg,var(--red),var(--red-dark)); color:#fff; display:grid; place-items:center; box-shadow:0 16px 40px -16px rgba(236,27,35,.6)}
+.persona .pav svg{width:46px; height:46px}
+.persona .pinfo{flex:1}
+.persona .pinfo h4{font-family:var(--fHead); font-weight:800; font-size:20px; color:var(--ink)}
+.persona .ptone{display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 12px}
+.persona .ptone span{background:var(--tint-red); color:var(--red-dark); border-radius:99px; padding:5px 13px; font-family:var(--fHead); font-weight:700; font-size:12px}
+.persona .pquote{font-size:14.5px; color:var(--text); font-style:italic; border-left:3px solid var(--red); padding-left:14px; line-height:1.5}
+
+/* engine vs experience layers */
+.lyr{display:flex; flex-direction:column; gap:14px; max-width:560px; width:100%; margin:auto auto}
+.lyrb{border-radius:16px; padding:20px 24px; opacity:0; transform:translateY(14px); transition:opacity .55s ease, transform .55s ease}
+.slide.active .lyrb{opacity:1; transform:none}
+.lyrb .lt{font-family:var(--fHead); font-weight:800; font-size:17px}
+.lyrb .ls{font-size:12.5px; opacity:.9; margin-top:3px}
+.lyrb.exp{background:linear-gradient(120deg,var(--red),var(--red-dark)); color:#fff}
+.lyrb.eng{background:var(--card); color:var(--ink); border:1px solid var(--line)}
+.slide.active .lyrb.exp{transition-delay:.15s}.slide.active .lyrb.eng{transition-delay:.35s}
+.lyr .lyrlab{text-align:center; font-family:var(--fMono); font-size:10.5px; color:var(--muted)}
+
+/* error-recovery ladder (escalating steps) */
+.erl{display:flex; flex-direction:column; gap:10px; max-width:720px; width:100%; margin:auto auto}
+.erstep{display:flex; align-items:center; gap:14px; padding:13px 18px; border-radius:13px; background:var(--surface); border:1px solid var(--line); opacity:0; transform:translateX(-14px); transition:opacity .45s ease, transform .45s ease}
+.slide.active .erstep{opacity:1; transform:none}
+.slide.active .erstep:nth-child(1){transition-delay:.15s}.slide.active .erstep:nth-child(2){transition-delay:.35s}.slide.active .erstep:nth-child(3){transition-delay:.55s}.slide.active .erstep:nth-child(4){transition-delay:.75s}
+.erstep .ern{flex:none; width:34px; height:34px; border-radius:10px; background:var(--tint-red); color:var(--red); font-family:var(--fHead); font-weight:800; display:grid; place-items:center; font-size:15px}
+.erstep:last-child .ern{background:var(--red); color:#fff}
+.erstep .ert{font-family:var(--fHead); font-weight:800; font-size:15px; color:var(--ink)}
+.erstep .erd{font-size:12.5px; color:var(--muted)}
+.erstep .ertx{flex:1}
+
+/* shared: function-call round-trip + chips */
+.fcall{display:flex; align-items:stretch; justify-content:center; gap:0; margin:auto 0; width:100%}
+.fnode{flex:0 0 150px; text-align:center; padding:20px 14px; border-radius:14px; display:flex; flex-direction:column; align-items:center; gap:8px; opacity:0; transform:translateY(12px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .fnode{opacity:1; transform:none}
+.fnode.model{background:linear-gradient(155deg,#26262b,#161618); color:#fff}
+.fnode.fn{background:linear-gradient(180deg,var(--tint-red),#fff); border:1px solid var(--tint-red-2); color:var(--ink)}
+.fnode .fi{width:40px; height:40px; border-radius:11px; display:grid; place-items:center}
+.fnode.model .fi{background:rgba(255,122,126,.2); color:#ff7a7e} .fnode.fn .fi{background:var(--red); color:#fff}
+.fnode .fi svg{width:21px; height:21px}
+.fnode .ft{font-family:var(--fHead); font-weight:800; font-size:14.5px}
+.fnode .fs{font-size:11px; opacity:.8}
+.fconn{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; opacity:0; transition:opacity .5s ease}
+.slide.active .fconn{opacity:1}
+.slide.active .fconn:nth-of-type(2){transition-delay:.3s}.slide.active .fconn:nth-of-type(4){transition-delay:.6s}
+.fconn .chip{font-family:var(--fMono); font-size:10.5px; background:var(--code-bg); color:#a5d6ff; padding:4px 9px; border-radius:6px; white-space:nowrap}
+.fconn .chip.res{color:#7be0a6}
+.fconn svg{width:28px; height:18px; color:var(--red)}
+
+/* static snaps */
+body.static .cb, body.static .uttr, body.static .ibadge, body.static .slot, body.static .lyrb,
+body.static .erstep, body.static .fnode, body.static .fconn{
+  opacity:1 !important; transform:none !important; transition:none !important}
+
+/* ---- mobile banking app frame (phone mockups) ---- */
+.phones{display:flex; gap:34px; align-items:center; justify-content:center; flex:1; min-height:0; margin-top:4px}
+.phone{width:262px; height:438px; background:#fff; border-radius:30px; border:8px solid #15151a; box-shadow:0 34px 70px -30px rgba(0,0,0,.55); overflow:hidden; display:flex; flex-direction:column; position:relative; flex:none}
+.phone .notch{position:absolute; top:0; left:50%; transform:translateX(-50%); width:108px; height:18px; background:#15151a; border-radius:0 0 13px 13px; z-index:6}
+.phone .app-top{background:linear-gradient(135deg,var(--red),var(--red-dark)); color:#fff; padding:20px 15px 11px; display:flex; align-items:center; gap:9px; flex:none}
+.phone .app-top .ab{flex:none; width:22px; height:22px; display:grid; place-items:center; opacity:.95}
+.phone .app-top .ab svg{width:18px; height:18px}
+.phone .app-top .att{flex:1; min-width:0}
+.phone .app-top .at{font-family:var(--fHead); font-weight:800; font-size:14px; line-height:1.1}
+.phone .app-top .as{font-size:10px; opacity:.85; margin-top:1px}
+.phone .app-top .av{flex:none; width:26px; height:26px; border-radius:50%; background:rgba(255,255,255,.22); display:grid; place-items:center; font-family:var(--fHead); font-weight:800; font-size:11px}
+.phone .app-body{flex:1; min-height:0; padding:13px 11px; overflow:hidden; display:flex; flex-direction:column; gap:8px; background:#f3f3f6}
+.phone .app-bar{flex:none; display:flex; align-items:center; gap:8px; padding:9px 12px; border-top:1px solid var(--line); background:#fff}
+.phone .app-bar .ip{flex:1; background:var(--card); border-radius:99px; padding:7px 13px; font-size:11px; color:var(--faint)}
+.phone .app-bar .snd{flex:none; width:30px; height:30px; border-radius:50%; background:var(--red); color:#fff; display:grid; place-items:center}
+.phone .app-bar .snd svg{width:15px; height:15px}
+.phone .chat{max-width:none; width:100%; margin:0; gap:8px}
+.phone .chat .cb{max-width:92%; font-size:12px; padding:9px 12px; line-height:1.42}
+.phone .chat .cb .who{font-size:8.5px}
+
+/* tappable deeplink / quick-action inside a bubble */
+.dlbtn{display:flex; align-items:center; gap:10px; background:#fff; border:1.5px solid var(--tint-red-2); border-radius:12px; padding:9px 11px; margin-top:8px; box-shadow:0 8px 18px -12px rgba(236,27,35,.5)}
+.dlbtn .dli{flex:none; width:30px; height:30px; border-radius:9px; background:var(--tint-red); color:var(--red); display:grid; place-items:center}
+.dlbtn .dli svg{width:17px; height:17px}
+.dlbtn .dlt{flex:1; font-family:var(--fHead); font-weight:800; font-size:12px; color:var(--ink); line-height:1.15}
+.dlbtn .dlt small{display:block; font-weight:600; font-size:9.5px; color:var(--muted)}
+.dlbtn .dlgo{flex:none; color:var(--red); font-weight:900; font-size:16px}
+
+/* arrow between phones */
+.napwrap{display:flex; flex-direction:column; align-items:center; gap:7px; flex:none}
+.napwrap .nlab{font-family:var(--fMono); font-size:11px; color:var(--red); font-weight:700; background:var(--tint-red); border:1px solid var(--tint-red-2); border-radius:99px; padding:4px 11px; white-space:nowrap}
+.napwrap .narr{color:var(--red)} .napwrap .narr svg{width:46px; height:24px}
+.napwrap .nsub{font-size:10.5px; color:var(--muted); font-style:italic}
+
+/* destination "block card" screen */
+.navscr{display:flex; flex-direction:column; gap:12px; padding:4px 2px; height:100%}
+.navscr .nsh{font-family:var(--fHead); font-weight:800; font-size:14px; color:var(--ink)}
+.navscr .nsp{font-size:11px; color:var(--muted); line-height:1.4}
+.bankcard{border-radius:13px; padding:15px 15px 17px; background:linear-gradient(135deg,#2a2a30,#15151a); color:#fff; box-shadow:0 14px 30px -16px rgba(0,0,0,.6); position:relative; overflow:hidden}
+.bankcard::after{content:""; position:absolute; right:-30px; top:-30px; width:110px; height:110px; border-radius:50%; background:radial-gradient(circle,rgba(236,27,35,.45),transparent 70%)}
+.bankcard .bct{font-size:10px; letter-spacing:.12em; text-transform:uppercase; opacity:.7}
+.bankcard .bcn{font-family:var(--fMono); font-size:14px; letter-spacing:.12em; margin:14px 0 10px}
+.bankcard .bcf{display:flex; justify-content:space-between; font-size:10px; opacity:.85}
+.bankcard .chip{width:30px; height:21px; border-radius:5px; background:linear-gradient(135deg,#e7c977,#b8932f); position:absolute; top:42px; left:15px}
+.bigbtn{margin-top:auto; background:var(--red); color:#fff; border-radius:11px; padding:12px; text-align:center; font-family:var(--fHead); font-weight:800; font-size:13px; box-shadow:0 12px 26px -12px rgba(236,27,35,.7)}
+.navscr .nnote{font-size:10px; color:var(--faint); text-align:center}
+
+body.static .phone, body.static .dlbtn, body.static .napwrap{opacity:1 !important; transform:none !important}
+/* ============================ Day 2 · Capstone additions ============================ */
+/* end-to-end loop strip */
+.loopstrip{display:flex; align-items:center; justify-content:center; gap:2px; margin:auto 0; width:100%; flex-wrap:nowrap}
+.lp{flex:0 0 auto; text-align:center; display:flex; flex-direction:column; align-items:center; gap:5px; padding:0 2px; opacity:0; transform:translateY(12px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .lp{opacity:1; transform:none}
+.slide.active .lp:nth-child(1){transition-delay:.1s}.slide.active .lp:nth-child(3){transition-delay:.25s}.slide.active .lp:nth-child(5){transition-delay:.4s}.slide.active .lp:nth-child(7){transition-delay:.55s}.slide.active .lp:nth-child(9){transition-delay:.7s}.slide.active .lp:nth-child(11){transition-delay:.85s}.slide.active .lp:nth-child(13){transition-delay:1s}
+.lp .lpic{width:50px; height:50px; border-radius:14px; background:var(--ink); color:#fff; display:grid; place-items:center}
+.lp .lpic svg{width:24px; height:24px}
+.lp .lpic.mic{background:var(--red)} .lp .lpic.grd{background:linear-gradient(155deg,#26262b,#161618); color:#ff7a7e}
+.lp.big .lpic{width:62px; height:62px; background:linear-gradient(155deg,var(--red),var(--red-dark)); box-shadow:0 14px 30px -14px rgba(236,27,35,.7)}
+.lp.big .lpic svg{width:30px; height:30px}
+.lp .lpn{font-family:var(--fHead); font-weight:800; font-size:13px; color:var(--ink)}
+.lp .lps{font-size:10.5px; color:var(--muted)}
+.lparr{color:var(--red); font-weight:800; font-size:18px; flex:0 0 auto; opacity:0; transition:opacity .5s ease .4s}
+.slide.active .lparr{opacity:1}
+
+/* model card */
+.modelcard{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:22px 24px; display:flex; flex-direction:column; gap:10px; position:relative; overflow:hidden}
+.modelcard.accent{background:linear-gradient(165deg,var(--tint-red),#fff); border-color:var(--tint-red-2)}
+.modelcard::before{content:""; position:absolute; left:0; top:0; bottom:0; width:5px; background:var(--red)}
+.modelcard .mcname{font-family:var(--fHead); font-weight:800; font-size:21px; color:var(--ink); display:flex; align-items:baseline; justify-content:space-between; gap:10px}
+.modelcard .mcsz{font-family:var(--fMono); font-size:13px; color:var(--red); font-weight:700}
+.modelcard .mcrole{font-size:14px; color:var(--muted)}
+.modelcard .mcvram{display:flex; align-items:baseline; gap:10px; margin-top:4px}
+.modelcard .mcv{font-family:var(--fHead); font-weight:800; font-size:30px; color:var(--red); letter-spacing:-.02em}
+.modelcard .mcl{font-size:12px; color:var(--faint)}
+.modelcard .mctag{font-family:var(--fMono); font-size:11.5px; color:var(--red); background:#fff; border:1px solid var(--tint-red-2); border-radius:8px; padding:5px 10px; align-self:flex-start; margin-top:2px}
+.two .txt code{font-family:var(--fMono); font-size:13px; background:var(--card-2); padding:1px 6px; border-radius:4px; color:var(--ink)}
+
+/* core formula */
+.formula{display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap; margin:18px 0 24px}
+.formula .fpart{font-family:var(--fHead); font-weight:800; font-size:24px; color:var(--ink); background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 22px}
+.formula .fpart small{font-size:13px; font-weight:600; color:var(--muted); vertical-align:sub}
+.formula .fpart.hot{background:var(--tint-red); border-color:var(--tint-red-2); color:var(--red-dark)}
+.formula .fop{font-family:var(--fHead); font-weight:800; font-size:26px; color:var(--red)}
+
+/* precision row */
+.prec-row{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin:0 0 4px}
+.prec{border:1px solid var(--line); border-radius:14px; padding:18px 20px; background:var(--surface); text-align:center}
+.prec.hot{background:linear-gradient(180deg,var(--tint-red),#fff); border-color:var(--tint-red-2)}
+.prec .pp{font-family:var(--fHead); font-weight:800; font-size:18px; color:var(--ink)}
+.prec .pb{font-family:var(--fMono); font-size:13px; color:var(--muted); margin:6px 0 10px}
+.prec .pf{font-family:var(--fHead); font-weight:800; font-size:22px; color:var(--red); letter-spacing:-.02em}
+
+/* rule band */
+.ruleband{margin-top:20px; background:var(--ink); color:#fff; border-radius:14px; padding:18px 24px; font-size:16px; line-height:1.5}
+.ruleband b{color:#fff}
+
+/* summed stack lists */
+.sumlist{display:flex; flex-direction:column; gap:9px; margin:6px 0 14px}
+.sumlist .sl{display:flex; align-items:center; justify-content:space-between; gap:14px; font-size:14.5px; color:var(--text); padding:7px 0; border-bottom:1px dashed var(--line)}
+.sumlist .sl b{font-family:var(--fHead); font-weight:800; color:var(--ink)}
+.sumlist .sl.tot{border-bottom:none; border-top:2px solid var(--red); margin-top:4px; padding-top:11px}
+.sumlist .sl.tot span{font-family:var(--fHead); font-weight:800; color:var(--ink)}
+.sumlist .sl.tot b{color:var(--red); font-size:20px}
+
+/* gpu bars */
+.gpubars{display:flex; flex-direction:column; gap:13px; margin:auto 0; width:100%}
+.gb{display:grid; grid-template-columns:210px 1fr 110px; align-items:center; gap:18px; opacity:0; transform:translateX(-16px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .gb{opacity:1; transform:none}
+.gb .gbn{font-family:var(--fHead); font-weight:800; font-size:15px; color:var(--ink); display:flex; flex-direction:column}
+.gb .gbt{font-family:var(--fMono); font-size:10.5px; color:var(--faint); font-weight:500; letter-spacing:.04em}
+.gb .gbbar{height:22px; background:var(--card-2); border-radius:7px; overflow:hidden}
+.gb .gbbar span{display:block; height:100%; background:linear-gradient(90deg,var(--red-dark),var(--red)); border-radius:7px; width:0; transition:width .9s cubic-bezier(.16,1,.3,1) .2s}
+.slide.active .gb .gbbar span{width:var(--w)}
+.gb.hot .gbbar span{background:linear-gradient(90deg,var(--red),#ff6a6f)}
+.gb .gbv{font-family:var(--fHead); font-weight:800; font-size:17px; color:var(--red); text-align:right}
+/* width is set inline via style on the span; mirror to --w for the transition */
+
+/* concurrency bars */
+.conc{display:flex; flex-direction:column; gap:18px; margin:auto 0; width:100%}
+.cc{display:flex; flex-direction:column; gap:6px; opacity:0; transform:translateY(12px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .cc{opacity:1; transform:none}
+.slide.active .cc:nth-child(1){transition-delay:.15s}.slide.active .cc:nth-child(2){transition-delay:.4s}.slide.active .cc:nth-child(3){transition-delay:.65s}
+.cc .cch{font-family:var(--fHead); font-weight:800; font-size:15px; color:var(--ink)}
+.cc .ccbar{display:flex; align-items:stretch; gap:5px; height:30px}
+.cc .ccbar .w{flex:0 0 120px; background:linear-gradient(155deg,#26262b,#161618); border-radius:7px; position:relative}
+.cc .ccbar .w::after{content:"weights"; position:absolute; inset:0; display:grid; place-items:center; font-family:var(--fMono); font-size:11px; color:rgba(255,255,255,.8)}
+.cc .ccbar .kv{background:linear-gradient(90deg,var(--red),#ff6a6f); border-radius:7px; min-width:18px}
+.cc .ccl{font-size:13px; color:var(--muted)}
+
+/* static snaps */
+body.static .lp, body.static .lparr, body.static .prec, body.static .formula .fpart,
+body.static .ruleband, body.static .gb, body.static .cc, body.static .sumlist .sl{
+  opacity:1 !important; transform:none !important; transition:none !important}
+body.static .gb .gbbar span{transition:none !important}
+
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="stage">
+  <main class="deck" id="deck">
+
+  <section class="slide dark cover active" data-notes='["Welcome to the Day&ndash;2 capstone. In the last three sessions we made a chatbot listen, think and act, and talk. Today we join it all into one system you can build.", "This is the build view of our class project: a voice AI chatbot for OCBC. We will name the open&ndash;source models, work out how big they are, and pick a GPU.", "All the models are open&ndash;source and run on our own servers. So customer audio and data stay inside the bank. By the end you can plan the whole stack on paper."]'>
+    <div class="bg"></div><div class="scrim"></div>
+    <div class="inner">
+      <img class="logo" src="assets/ocbc-logo.png" alt="OCBC" />
+      <h1 data-r data-d="1">Capstone<span class="red">Voice Agentic AI</span></h1>
+      <div class="rule" data-r data-d="2"></div>
+      <div class="meta" data-r data-d="3"><strong>Build a Voice AI Chatbot &mdash; the models, the size math, the GPU</strong><br/>Join speech, agents &amp; conversation into one system<br/>OCBC CRAYON 2026 · ADM Team · 60 minutes</div>
+      <div class="program" data-r data-d="4">OCBC CRAYON · Day 2 · Capstone</div>
+    </div>
+  </section>
+
+  <section class="slide dark" data-notes='["The whole day in one line. We learned to listen, to think and act, and to talk. Now we join it all, and answer three plain questions: what models, how big, and which GPU.", "This is the step from ideas to a real thing you can run on a server.", "Keep this in mind &mdash; listen, think, talk, join &mdash; we come back to it at the end."]'>
+    <div class="body-area">
+      <div class="kicker"><span class="badge"></span>The frame</div>
+      <div class="quote-wrap">
+        <div class="quote-mark" data-r data-d="2">&ldquo;</div>
+        <blockquote data-r data-d="3">We learned to <em>listen</em>, to <em>think &amp; act</em>, and to <em>talk</em>. Now join it all &mdash; and work out the models, the size, and the GPU.</blockquote>
+        <cite data-r data-d="4">The capstone in one sentence</cite>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">02</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Day 2 in one picture. Topic 1 was speech: speech&ndash;to&ndash;text and text&ndash;to&ndash;speech. Topic 2 was agents: an LLM that thinks, looks things up with RAG, and uses tools. Topic 3 was how to design the talk on top.", "Today, Topic 4, is the join. We take those three and wire them into one running system.", "Each box here becomes a real open&ndash;source model in the next part of the deck."]'>
+    <div class="kicker"><span class="badge"></span>Day 2 in one picture</div>
+    <h2 class="slide-title" data-r data-d="1">Three topics, now joined into one system</h2>
+    <div class="flow" style="margin-top:8px">
+      <div class="step"><div class="node">1</div><h4>Listen</h4><p>Speech: speech-to-text (STT) &amp; text-to-speech (TTS)</p><div class="arrow"></div></div>
+      <div class="step"><div class="node">2</div><h4>Think &amp; act</h4><p>Agents: LLM + look&ndash;up (RAG) + tool use</p><div class="arrow"></div></div>
+      <div class="step"><div class="node">3</div><h4>Talk</h4><p>Conversation: take turns, check, fix</p><div class="arrow"></div></div>
+      <div class="step"><div class="node">4</div><h4>Join</h4><p>Today: wire it all together</p></div>
+    </div>
+    <div class="flow-cap">Speech &rarr; Agents &rarr; Conversation &rarr; <b style="color:var(--red)">put it together</b> &mdash; that is the capstone.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">03</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The full voice AI loop. Sound comes in the microphone. Speech&ndash;to&ndash;text turns it into words. Guardrails (safety checks) read the input. The LLM agent thinks, using RAG and tools. Guardrails read the output. Text&ndash;to&ndash;speech turns the reply back into sound. It plays on the speaker.", "See that it is a loop. Every turn goes around this circle. Guardrails sit on the way in and the way out. A bank needs both.", "The whole loop runs on our own servers. So the customer audio never leaves the bank. Each step is an open&ndash;source model. We size them next."]'>
+    <div class="kicker"><span class="badge"></span>The full loop</div>
+    <h2 class="slide-title" data-r data-d="1">The voice AI loop, one turn</h2>
+    <div class="loopstrip">
+      <div class="lp"><div class="lpic mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></div><div class="lpn">Mic</div><div class="lps">audio in</div></div>
+      <span class="lparr">&rarr;</span>
+      <div class="lp"><div class="lpic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16M4 10h16M4 15h10"/></svg></div><div class="lpn">STT</div><div class="lps">Whisper</div></div>
+      <span class="lparr">&rarr;</span>
+      <div class="lp"><div class="lpic grd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg></div><div class="lpn">Guardrails</div><div class="lps">input check</div></div>
+      <span class="lparr">&rarr;</span>
+      <div class="lp big"><div class="lpic brain"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5 3 3 0 0 0 2 4 3 3 0 0 0 5 1V4.5A2.5 2.5 0 0 0 9 4zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5 3 3 0 0 1-2 4 3 3 0 0 1-5 1"/></svg></div><div class="lpn">LLM agent</div><div class="lps">RAG + tool-calling</div></div>
+      <span class="lparr">&rarr;</span>
+      <div class="lp"><div class="lpic grd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg></div><div class="lpn">Guardrails</div><div class="lps">output check</div></div>
+      <span class="lparr">&rarr;</span>
+      <div class="lp"><div class="lpic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9v6h4l5 4V5L7 9z"/><path d="M16 8a5 5 0 0 1 0 8"/></svg></div><div class="lpn">TTS</div><div class="lps">Piper</div></div>
+      <span class="lparr">&rarr;</span>
+      <div class="lp"><div class="lpic mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9v6h4l5 4V5L7 9z"/><path d="M16 8a5 5 0 0 1 0 8M19 5a9 9 0 0 1 0 14"/></svg></div><div class="lpn">Speaker</div><div class="lps">audio out</div></div>
+    </div>
+    <div class="flow-cap">Every turn goes around this circle &mdash; and <b style="color:var(--red)">it all runs on our own servers, so audio stays in the bank</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">04</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Follow one caller through one turn, with rough times. The caller stops speaking. Whisper turns it into text in a few hundred milliseconds. Guardrails check the input almost at once. The LLM thinks and may use a tool &mdash; the slowest step, often half a second to one second. Then text&ndash;to&ndash;speech starts the spoken reply.", "The number people feel is time&ndash;to&ndash;first&ndash;audio. That is the wait after they stop talking before they hear a voice. Try to keep the whole chain under about one and a half seconds. Then it feels like a real talk, not a wait.", "The LLM is the slow link. So the GPU you pick is mostly about keeping that one step fast for the OCBC voice assistant. The speech models are quick next to it."]'>
+    <div class="kicker"><span class="badge"></span>One caller, one turn &middot; the timeline</div>
+    <h2 class="slide-title" data-r data-d="1">Where the time goes in one turn</h2>
+    <div class="loopstrip">
+      <div class="lp"><div class="lpic mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></div><div class="lpn">Caller stops</div><div class="lps">~0 ms</div></div>
+      <span class="lparr">&rarr;</span>
+      <div class="lp"><div class="lpic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16M4 10h16M4 15h10"/></svg></div><div class="lpn">STT</div><div class="lps">~200&ndash;400 ms</div></div>
+      <span class="lparr">&rarr;</span>
+      <div class="lp"><div class="lpic grd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg></div><div class="lpn">Guardrails</div><div class="lps">~tens ms</div></div>
+      <span class="lparr">&rarr;</span>
+      <div class="lp big"><div class="lpic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5 3 3 0 0 0 2 4 3 3 0 0 0 5 1V4.5A2.5 2.5 0 0 0 9 4zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5 3 3 0 0 1-2 4 3 3 0 0 1-5 1"/></svg></div><div class="lpn">LLM + tool</div><div class="lps">~0.5&ndash;1 s</div></div>
+      <span class="lparr">&rarr;</span>
+      <div class="lp"><div class="lpic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9v6h4l5 4V5L7 9z"/><path d="M16 8a5 5 0 0 1 0 8"/></svg></div><div class="lpn">TTS starts</div><div class="lps">~100&ndash;200 ms</div></div>
+      <span class="lparr">&rarr;</span>
+      <div class="lp"><div class="lpic mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9v6h4l5 4V5L7 9z"/><path d="M16 8a5 5 0 0 1 0 8M19 5a9 9 0 0 1 0 14"/></svg></div><div class="lpn">Caller hears</div><div class="lps">first audio</div></div>
+    </div>
+    <div class="ruleband" data-r data-d="2"><b>Time-to-first-audio:</b> keep the whole chain <b style="color:#fff">under ~1.5 s</b> so it feels like a real talk &mdash; the <b style="color:var(--red)">LLM is the slow link</b>, which is why it drives the GPU choice.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["Part 1: the model stack &mdash; the set of models we will use. We go part by part. For each one we name the open&ndash;source options, what it does, and a rough size.", "The order is the order the audio flows: speech&ndash;to&ndash;text, the LLM brain, the embedding model and vector database for RAG, guardrails, text&ndash;to&ndash;speech, and the glue that links the tools.", "All models are open and run on our own servers. So we control cost and keep data in the bank."]'>
+    <div class="pillar-no">01</div>
+    <div class="eyebrow"><span class="dot"></span>Part 1</div>
+    <h2>The Model Stack</h2>
+    <p class="lead">Part by part: the open-source options, what each does, and a rough size &mdash; STT, LLM, embeddings, guardrails, TTS, and the glue.</p>
+    <div class="prog-rail"><span class="on">Model stack</span><span>Sizing math</span><span>Which GPU</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">05</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Speech&ndash;to&ndash;text, or STT, turns the customer audio into text. The common open choice is Whisper, the free open model from OpenAI. Its large&ndash;v3 size has about 1.5 billion parameters (the numbers a model learns).", "To save money you can use faster&ndash;whisper or whisper.cpp. They can even run on a plain CPU (the normal chip), with no GPU at all.", "This is the first step of the loop: sound in, words out. It is small next to the LLM."]'>
+    <div class="kicker"><span class="badge"></span>Step 1 &middot; Speech-to-text (STT)</div>
+    <h2 class="slide-title" data-r data-d="1">STT: Whisper turns speech into text</h2>
+    <div class="two wide-r" style="margin-top:12px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2"><b>Whisper</b> (open, from OpenAI) &mdash; <code>large-v3</code> has about <b>1.5B parameters</b> (learned numbers).</li>
+          <li data-r data-d="3"><b>faster-whisper</b> / <b>whisper.cpp</b> &mdash; cheaper, can run on <b>CPU</b> (the normal chip).</li>
+          <li data-r data-d="4" class="strong">Job: <b style="color:var(--red)">speech &rarr; text</b>, the first step of the loop.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="modelcard"><div class="mcname">Whisper large-v3<span class="mcsz">~1.5B</span></div><div class="mcrole">speech &rarr; text</div><div class="mcvram"><span class="mcv">~3 GB</span><span class="mcl">weights, FP16</span></div><div class="mctag">open-source &middot; CPU option</div></div>
+      </div>
+    </div>
+    <div class="flow-cap">Small and cheap &mdash; <b style="color:var(--red)">can run on CPU</b> for a demo, so it rarely drives the GPU bill.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">06</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The LLM is the brain of the agent. It thinks, picks which tool to use, and writes the reply. Good open choices are Qwen2.5 and Llama 3.x.", "There is a real choice to make here. A 7&ndash;to&ndash;8 billion model is cheap and fast. A 70 billion model is better, but costs a lot more.", "This is the big VRAM cost in the whole stack &mdash; almost all your GPU memory goes here. We size it with care in Part 2."]'>
+    <div class="kicker"><span class="badge"></span>Step 2 &middot; The agent brain (LLM)</div>
+    <h2 class="slide-title" data-r data-d="1">LLM: the brain that thinks &amp; uses tools</h2>
+    <div class="two wide-r" style="margin-top:12px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">Open models <b>Qwen2.5</b> / <b>Llama 3.x</b> &mdash; they think &amp; use tools.</li>
+          <li data-r data-d="3"><b>7&ndash;8B</b> for low cost &amp; speed &middot; <b>70B</b> for better quality.</li>
+          <li data-r data-d="4" class="strong">The <b style="color:var(--red)">big VRAM cost</b> of the whole stack.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="modelcard accent"><div class="mcname">Qwen2.5 / Llama 3.x<span class="mcsz">7&ndash;70B</span></div><div class="mcrole">think &middot; RAG &middot; use tools</div><div class="mcvram"><span class="mcv">~14&ndash;140 GB</span><span class="mcl">weights, FP16</span></div><div class="mctag">the GPU budget lives here</div></div>
+      </div>
+    </div>
+    <div class="flow-cap">VRAM = <b>video memory</b> (the GPU&#39;s RAM). The LLM uses most of it &mdash; which is why we <b style="color:var(--red)">quantize</b> it (make it smaller).</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">07</span></div>
+  </section>
+
+  <section class="slide" data-notes='["RAG (retrieval&ndash;augmented generation) lets the agent look things up in our own documents before it answers. Two parts make it work: an embedding model and a vector database.", "The embedding model turns each document and each question into a vector &mdash; a list of numbers that holds the meaning. Good open options are Qwen3&ndash;Embedding (a small 0.6B or a bigger 8B) and the bge and e5 families.", "The vector database stores those vectors and finds the closest matches fast. FAISS, pgvector and Milvus are common open choices. The vector DB is not a GPU model. It runs on normal servers."]'>
+    <div class="kicker"><span class="badge"></span>Step 3 &middot; RAG: embeddings + vector DB</div>
+    <h2 class="slide-title" data-r data-d="1">Embeddings + vector DB do the look-up</h2>
+    <div class="vs" style="margin-top:20px">
+      <div class="panel accent" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h10"/></svg></span>Embedding model</div>
+        <div class="ps">Turns documents &amp; questions into vectors (meaning as numbers).</div>
+        <div class="chips"><span class="chip">Qwen3-Embedding 0.6B / 8B</span><span class="chip">bge</span><span class="chip">e5</span></div>
+        <div class="where"><b>~16 GB</b> at FP16 for the 8B &mdash; or run the small one on CPU.</div>
+      </div>
+      <div class="panel" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></span>Vector database</div>
+        <div class="ps">Stores vectors &amp; finds the closest matches fast (not a GPU model).</div>
+        <div class="chips"><span class="chip">FAISS</span><span class="chip">pgvector</span><span class="chip">Milvus</span></div>
+        <div class="where">Runs on <b>normal servers / CPU</b> &mdash; part of the stack, not the GPU bill.</div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">08</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Guardrails are the safety layer. They check the input on the way in and the output on the way out. They block unsafe requests and catch leaked personal data (PII).", "Open options are Llama Guard (about 8 billion parameters), NeMo Guardrails and Granite Guardian.", "In a bank this is a must, not a choice. The guardrail is itself a model, so it adds its own VRAM cost. Plan for it like a second small LLM."]'>
+    <div class="kicker"><span class="badge"></span>Step 4 &middot; Guardrails</div>
+    <h2 class="slide-title" data-r data-d="1">Guardrails check input and output</h2>
+    <div class="two wide-r" style="margin-top:12px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2"><b>Llama Guard</b> (~8B) &middot; <b>NeMo Guardrails</b> &middot; <b>Granite Guardian</b>.</li>
+          <li data-r data-d="3">Checks <b>input &amp; output</b> for safety and personal data (PII = Personally Identifiable Information).</li>
+          <li data-r data-d="4" class="strong">A model too &mdash; <b style="color:var(--red)">it has its own VRAM cost</b>.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="modelcard"><div class="mcname">Llama Guard<span class="mcsz">~8B</span></div><div class="mcrole">safety &middot; PII check</div><div class="mcvram"><span class="mcv">~16 GB</span><span class="mcl">weights, FP16</span></div><div class="mctag">a second small LLM</div></div>
+      </div>
+    </div>
+    <div class="flow-cap">Both ends of the loop &mdash; a <b style="color:var(--red)">must&ndash;have</b> layer for a bank, and it costs memory too.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">09</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Text&ndash;to&ndash;speech, or TTS, turns the reply text back into a voice. The tiny option is Piper. It is so small it runs well on a CPU.", "If you want a richer or cloned voice, XTTS and VITS are good open choices, at a bit more cost.", "Like Whisper, this is small. It almost never drives the GPU bill. It is the last step of the loop: text out as sound."]'>
+    <div class="kicker"><span class="badge"></span>Step 5 &middot; Text-to-speech (TTS)</div>
+    <h2 class="slide-title" data-r data-d="1">TTS: turn the reply back into a voice</h2>
+    <div class="two wide-r" style="margin-top:12px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2"><b>Piper</b> &mdash; tiny, runs on <b>CPU</b>, a good first choice.</li>
+          <li data-r data-d="3"><b>XTTS</b> / <b>VITS</b> &mdash; richer or cloned voices, a bit more cost.</li>
+          <li data-r data-d="4" class="strong">Job: <b style="color:var(--red)">text &rarr; speech</b>, the last step of the loop.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="modelcard"><div class="mcname">Piper<span class="mcsz">tiny</span></div><div class="mcrole">text &rarr; speech</div><div class="mcvram"><span class="mcv">~CPU</span><span class="mcl">no GPU needed</span></div><div class="mctag">open-source &middot; XTTS / VITS for richer</div></div>
+      </div>
+    </div>
+    <div class="flow-cap">Small like STT &mdash; <b style="color:var(--red)">runs on CPU</b>, so it stays off the GPU budget.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">10</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The glue that holds it together is orchestration (the part that runs the steps in order). LangGraph, from the Agentic AI session, draws the agent&#39;s steps and choices as a graph &mdash; when to look up, when to use a tool, when to answer.", "MCP (Model Context Protocol) is the standard way the agent links to tools &mdash; a balance check, a transfer, a card&ndash;block &mdash; with no custom glue for each one.", "This is a link back to Topic 2. It is mostly code, not a heavy model. So it costs little memory, but it is what makes the agent actually do things."]'>
+    <div class="kicker"><span class="badge"></span>Orchestration &amp; tool use</div>
+    <h2 class="slide-title" data-r data-d="1">LangGraph + MCP link the agent to tools</h2>
+    <div class="fcall">
+      <div class="fnode model" data-r data-d="2"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M7.5 8l3.5 8M16.5 8l-3.5 8"/></svg></div><div class="ft">LangGraph</div><div class="fs">steps &amp; decisions as a graph</div></div>
+      <div class="fconn"><span class="chip">tool call</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="fnode fn" data-r data-d="3"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="6" rx="1.5"/><rect x="3" y="14" width="18" height="6" rx="1.5"/><path d="M7 7h.01M7 17h.01"/></svg></div><div class="ft">MCP tools</div><div class="fs">balance &middot; transfer &middot; block card</div></div>
+      <div class="fconn"><span class="chip res">result</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 12H5M11 6l-6 6 6 6"/></svg></div>
+      <div class="fnode model" data-r data-d="4"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg></div><div class="ft">Agent reply</div><div class="fs">grounded in real data</div></div>
+    </div>
+    <div class="flow-cap">A link back to the <b>Agentic AI</b> topic &mdash; mostly code, little VRAM, but it is what makes the agent <b style="color:var(--red)">act</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">11</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The whole stack on one slide. Five model boxes plus a vector database and the glue. Read it top to bottom: STT, the LLM brain, the embedding model, guardrails, TTS.", "See the pattern &mdash; the LLM is the only really big one. STT and TTS are small or CPU. Embeddings can be small or CPU. Guardrails is a second small LLM.", "Keep this table in mind. In the next part we add a real memory number to each row."]'>
+    <div class="kicker"><span class="badge"></span>The whole stack, one slide</div>
+    <h2 class="slide-title" data-r data-d="1">Every part in one table</h2>
+    <table class="dtable" style="margin-top:14px">
+      <tr><th>Part</th><th>Open-source option</th><th>What it does</th><th class="target">Rough size (FP16)</th></tr>
+      <tr><td>STT</td><td>Whisper large-v3</td><td>speech &rarr; text</td><td class="target">~1.5B &middot; ~3 GB</td></tr>
+      <tr><td>LLM (brain)</td><td>Qwen2.5 / Llama 3.x</td><td>think, RAG, use tools</td><td class="target">7&ndash;70B &middot; ~14&ndash;140 GB</td></tr>
+      <tr><td>Embeddings</td><td>Qwen3-Embedding / bge / e5</td><td>docs &amp; questions &rarr; vectors</td><td class="target">0.6&ndash;8B &middot; ~1&ndash;16 GB</td></tr>
+      <tr><td>Vector DB</td><td>FAISS / pgvector / Milvus</td><td>store &amp; search vectors</td><td class="target">CPU &middot; not GPU</td></tr>
+      <tr><td>Guardrails</td><td>Llama Guard / NeMo / Granite</td><td>safety &amp; PII, in &amp; out</td><td class="target">~8B &middot; ~16 GB</td></tr>
+      <tr><td>TTS</td><td>Piper / XTTS / VITS</td><td>text &rarr; speech</td><td class="target">tiny &middot; ~CPU</td></tr>
+      <tr><td>Glue</td><td>LangGraph + MCP</td><td>run steps &amp; use tools</td><td class="target">code &middot; little VRAM</td></tr>
+    </table>
+    <div class="flow-cap">One big model (the <b style="color:var(--red)">LLM</b>) and a few small ones &mdash; that shape decides the GPU.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">12</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["Part 2: how big is a model? This is the size math &mdash; the most useful skill from today. With one simple sum you can guess the memory of any model.", "We cover the main sum, a table of worked examples, the extra memory you must not forget, and adding up the whole stack.", "All numbers are rough guides for teaching, not exact specs. But they get you in the right range, which is all planning needs."]'>
+    <div class="pillar-no">02</div>
+    <div class="eyebrow"><span class="dot"></span>Part 2</div>
+    <h2>How Big Is a Model?</h2>
+    <p class="lead">The size math: weights = parameters &times; bytes&ndash;per&ndash;parameter, the worked examples, the extra memory, and adding up the whole stack.</p>
+    <div class="prog-rail"><span>Model stack</span><span class="on">Sizing math</span><span>Which GPU</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">13</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The one sum to remember. The memory for a model&#39;s weights is about the number of parameters times the bytes per parameter.", "Precision sets the bytes. FP32 (full) is 4 bytes. FP16 or BF16 (half) is 2 bytes. INT8 is 1 byte. INT4 is about half a byte. Lower precision means smaller and cheaper, with a small quality cost. That is quantization (making the model smaller).", "So a model with N billion parameters needs about 2N gigabytes in FP16, about N gigabytes in INT8, and about half&ndash;N gigabytes in INT4. That one line lets you size anything."]'>
+    <div class="kicker"><span class="badge"></span>The main sum</div>
+    <h2 class="slide-title" data-r data-d="1">VRAM for weights = params &times; bytes</h2>
+    <div class="formula" data-r data-d="2"><span class="fpart">VRAM<small>weights</small></span><span class="fop">&asymp;</span><span class="fpart hot">parameters</span><span class="fop">&times;</span><span class="fpart">bytes / parameter</span></div>
+    <div class="prec-row">
+      <div class="prec" data-r data-d="3"><div class="pp">FP32</div><div class="pb">4 bytes</div><div class="pf">&asymp; 4N GB</div></div>
+      <div class="prec" data-r data-d="4"><div class="pp">FP16 / BF16</div><div class="pb">2 bytes</div><div class="pf">&asymp; 2N GB</div></div>
+      <div class="prec" data-r data-d="5"><div class="pp">INT8</div><div class="pb">1 byte</div><div class="pf">&asymp; N GB</div></div>
+      <div class="prec hot" data-r data-d="6"><div class="pp">INT4</div><div class="pb">~0.5 byte</div><div class="pf">&asymp; 0.5N GB</div></div>
+    </div>
+    <div class="flow-cap">For <b>N billion</b> parameters: <b style="color:var(--red)">~2N GB in FP16, ~N GB in INT8, ~0.5N GB in INT4</b> &mdash; just the weights.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide" data-notes='["A simple way to picture precision. Think of the model&#39;s numbers as clothes in a suitcase. FP16 packs each number loosely in 2 bytes. INT8 vacuum&ndash;packs to 1 byte. INT4 packs harder, about half a byte each. Same clothes, smaller suitcase. That is quantization.", "For our 8B model that is the gap between about 16 GB, 8 GB, and 4 GB. Pack a bit too hard and the clothes wrinkle. INT4 gives up a little quality for a much smaller size.", "The best choice for the OCBC voice assistant is usually INT8 or a good INT4 build: most of the quality, a quarter to half the memory. So it fits on a smaller, cheaper GPU."]'>
+    <div class="kicker"><span class="badge"></span>FP16 vs INT8 vs INT4 &middot; the idea</div>
+    <h2 class="slide-title" data-r data-d="1">Quantize = vacuum-pack the same model</h2>
+    <div class="prec-row" style="margin-top:18px">
+      <div class="prec" data-r data-d="2"><div class="pp">FP16</div><div class="pb">2 bytes &middot; loosely packed</div><div class="pf">~16 GB</div></div>
+      <div class="prec" data-r data-d="3"><div class="pp">INT8</div><div class="pb">1 byte &middot; vacuum-packed</div><div class="pf">~8 GB</div></div>
+      <div class="prec hot" data-r data-d="4"><div class="pp">INT4</div><div class="pb">~0.5 byte &middot; packed hard</div><div class="pf">~4 GB</div></div>
+      <div class="prec" data-r data-d="5"><div class="pp">Quality</div><div class="pb">tiny drop INT8 &middot; small INT4</div><div class="pf">&asymp; same</div></div>
+    </div>
+    <div class="ruleband" data-r data-d="6"><b>Suitcase idea:</b> same clothes (the model&#39;s numbers), <b style="color:#fff">a smaller suitcase</b>. Pack a bit too hard and they wrinkle &mdash; <b style="color:var(--red)">INT8 or a good INT4 is the usual best choice</b> (numbers shown for an 8B model).</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide" data-notes='["A full reference table you can keep. The base rule is easy: bytes per parameter = bits divided by 8. Then multiply by the number of parameters &mdash; here a 35&ndash;billion model.", "Top to bottom, the model gets smaller as you use fewer bits. FP32 (full) is the biggest at about 140 GB. FP16 is about 70 GB. INT8 about 35 GB. INT4 about 18 GB. Very low settings like 2&ndash;bit or BitNet drop under 10 GB.", "Fewer bits save memory but cost a little quality, so most teams pick INT8 or a good INT4. The starred rows are k&ndash;quants, which mix sizes, so they are averages."]'>
+    <div class="kicker"><span class="badge"></span>Full reference &middot; format &rarr; memory</div>
+    <h2 class="slide-title" data-r data-d="1">Every format, and what a 35B model weighs</h2>
+    <div class="ruleband" data-r data-d="2" style="margin-top:12px"><b>Base rule:</b> byte per param = <b style="color:#fff">bits &divide; 8</b>, then &times; the number of params (here 35B).</div>
+    <table class="dtable" style="margin-top:12px;font-size:12px">
+      <tr><th>Format</th><th>Bit / param</th><th>Byte / param</th><th class="target">VRAM 35B (weights)</th></tr>
+      <tr><td>FP32</td><td>32</td><td>4</td><td class="target">~140 GB</td></tr>
+      <tr><td>FP16 / BF16</td><td>16</td><td>2</td><td class="target">~70 GB</td></tr>
+      <tr><td>FP8 (E4M3/E5M2)</td><td>8</td><td>1</td><td class="target">~35 GB</td></tr>
+      <tr><td>INT8 / Q8</td><td>8</td><td>1</td><td class="target">~35 GB</td></tr>
+      <tr><td>FP6</td><td>6</td><td>0.75</td><td class="target">~26 GB</td></tr>
+      <tr><td>Q5_K_M</td><td>~5.5*</td><td>~0.69</td><td class="target">~24 GB</td></tr>
+      <tr><td>INT4 / FP4 / NF4 / AWQ / GPTQ</td><td>4</td><td>0.5</td><td class="target">~18 GB</td></tr>
+      <tr><td>Q4_K_M</td><td>~4.8*</td><td>~0.6</td><td class="target">~20 GB</td></tr>
+      <tr><td>INT3 / Q3</td><td>3</td><td>0.375</td><td class="target">~13 GB</td></tr>
+      <tr><td>INT2 / Q2</td><td>2</td><td>0.25</td><td class="target">~9 GB</td></tr>
+      <tr><td>BitNet (1.58-bit)</td><td>~1.58</td><td>~0.2</td><td class="target">~7 GB</td></tr>
+      <tr><td>INT1 (binary)</td><td>1</td><td>0.125</td><td class="target">~4 GB</td></tr>
+    </table>
+    <div class="flow-cap">Fewer bits &rarr; smaller model &rarr; fits a smaller GPU. <b style="color:var(--red)">INT8 or a good INT4 is the usual sweet spot.</b> <span style="color:var(--muted)">*k&ndash;quants mix sizes &mdash; averages.</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide" data-notes='["A full worked example for one model, so you can do it yourself. Take an 8&ndash;billion&ndash;parameter LLM. Step one: weights = parameters times bytes. 8 billion times 2 bytes in FP16 is about 16 GB.", "Step two: add spare room for run time &mdash; the KV cache, activations and runtime. Times by about 1.3, so about 21 GB. Step three: if that is tight, quantize. INT8 halves the weights to about 8 GB, so about 11 GB all in. INT4 quarters them to about 4 GB, so about 6 GB all in.", "So the same 8B model lands from about 6 GB to 21 GB, based on precision. This three&ndash;step plan &mdash; weights, spare room, quantize &mdash; is all you need to size any model on paper."]'>
+    <div class="kicker"><span class="badge"></span>Worked example &middot; one model, step by step</div>
+    <h2 class="slide-title" data-r data-d="1">Size an 8B LLM in three steps</h2>
+    <div class="two wide-r" style="margin-top:12px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2"><b>1 &middot; Weights</b> = params &times; bytes &rarr; <code>8B &times; 2 = ~16 GB</code> (FP16).</li>
+          <li data-r data-d="3"><b>2 &middot; Spare room</b> &times;1.3 for KV cache + activations + runtime &rarr; <code>~21 GB</code>.</li>
+          <li data-r data-d="4"><b>3 &middot; Quantize to fit</b>: INT8 &rarr; <code>~11 GB</code> &middot; INT4 &rarr; <code>~6 GB</code>.</li>
+          <li data-r data-d="5" class="strong">Same model, <b style="color:var(--red)">~6&ndash;21 GB</b> based on precision.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="sumlist">
+          <div class="sl"><span>FP16 weights (8B &times; 2)</span><b>~16 GB</b></div>
+          <div class="sl"><span>+ spare room (&times;1.3)</span><b>~21 GB</b></div>
+          <div class="sl"><span>INT8, all-in</span><b>~11 GB</b></div>
+          <div class="sl tot"><span>INT4, all-in</span><b>~6 GB</b></div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-cap">The plan for <b style="color:var(--red)">any</b> model: <b>weights &rarr; spare room &rarr; quantize</b>. That is the whole size skill.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The same sum used on our real models. Whisper at 1.5B is about 3 GB in FP16. A 7&ndash;to&ndash;8B model is about 14&ndash;to&ndash;16 GB in FP16, but only 7&ndash;to&ndash;8 GB in INT8, and about 4 GB in INT4.", "The 8B embedding model and the 8B guardrail are each about 16 GB in FP16. The big one is the 70B: about 140 GB in FP16, down to about 35&ndash;to&ndash;40 GB in INT4.", "Read across each row and watch quantization make the number smaller. That is the lever that fits a model onto a smaller GPU."]'>
+    <div class="kicker"><span class="badge"></span>Worked examples</div>
+    <h2 class="slide-title" data-r data-d="1">The sum on our real models</h2>
+    <table class="dtable" style="margin-top:14px">
+      <tr><th>Model</th><th>Params</th><th>FP16 (~2N)</th><th>INT8 (~N)</th><th class="target">INT4 (~0.5N)</th></tr>
+      <tr><td>Whisper large</td><td>~1.5B</td><td>~3 GB</td><td>~1.5 GB</td><td class="target">~1 GB</td></tr>
+      <tr><td>LLM 7&ndash;8B</td><td>7&ndash;8B</td><td>~14&ndash;16 GB</td><td>~7&ndash;8 GB</td><td class="target">~4 GB</td></tr>
+      <tr><td>Embedding 8B</td><td>8B</td><td>~16 GB</td><td>~8 GB</td><td class="target">~4 GB</td></tr>
+      <tr><td>Llama Guard 8B</td><td>8B</td><td>~16 GB</td><td>~8 GB</td><td class="target">~4 GB</td></tr>
+      <tr><td>LLM 70B</td><td>70B</td><td>~140 GB</td><td>~70 GB</td><td class="target">~35&ndash;40 GB</td></tr>
+    </table>
+    <div class="flow-cap">Read across: <b style="color:var(--red)">quantization (INT8 / INT4) is the lever</b> that fits a model on a smaller GPU.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">15</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Weights are not the whole story. Three more things use memory while the model runs: the KV cache, which grows with how long the chat is, how many callers at once, and the number of layers; the activations during each pass; and the runtime itself, about one to two gigabytes.", "KV cache (key&ndash;value cache) is the model&#39;s short&ndash;term memory of the chat so far. Longer chats and more callers at once make it bigger.", "Rough guide: plan about 1.2 to 1.5 times the weight size for spare room. Long chats or many callers need more. And quantizing to INT8 or INT4 is the main lever to fit a smaller GPU, at a small quality cost."]'>
+    <div class="kicker"><span class="badge"></span>Don&#39;t forget the extra memory</div>
+    <h2 class="slide-title" data-r data-d="1">Weights aren&#39;t all: add spare room</h2>
+    <div class="cards c3" style="margin-top:18px">
+      <div class="card" data-r data-d="2"><div class="num">+</div><h3>KV cache</h3><p>the model&#39;s memory of the chat so far &mdash; like a <b>personal notepad</b> of notes per caller; grows with chat length &times; callers &times; layers (KV = key&ndash;value)</p></div>
+      <div class="card" data-r data-d="3"><div class="num">+</div><h3>Activations</h3><p>scratch memory used during each pass</p></div>
+      <div class="card" data-r data-d="4"><div class="num">+</div><h3>Runtime</h3><p>the serving engine itself &mdash; about 1&ndash;2 GB</p></div>
+    </div>
+    <div class="ruleband" data-r data-d="5"><b>Rough guide:</b> plan <b style="color:var(--red)">~1.2&ndash;1.5&times; the weight size</b> for run time &mdash; more for long chats or many callers. Quantize to fit.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The simplest way to picture the KV cache. While the model talks with a caller, it keeps that caller&#39;s notes on a personal notepad &mdash; what was asked, what it said, the chat so far. Those notes are the KV cache (key&ndash;value cache).", "Here is the catch for real use: every extra caller at the same time needs their own notepad. So more callers at once need more memory. The model&#39;s weights load only once and are shared, but each caller adds a fresh notepad on top.", "So for the OCBC voice assistant the weights are a fixed cost, but the KV&ndash;cache notepads grow with how many people are on the line at once. Size for the busy hour, not the average."]'>
+    <div class="kicker"><span class="badge"></span>KV cache, in plain words</div>
+    <h2 class="slide-title" data-r data-d="1">KV cache = a notepad per caller</h2>
+    <div class="two wide-r" style="margin-top:12px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">While talking with a caller, the model keeps that caller&#39;s <b>notes on a personal notepad</b> &mdash; that notepad is the <b>KV cache</b> (key&ndash;value cache).</li>
+          <li data-r data-d="3">Every <b>extra caller</b> at the same time needs <b>their own notepad</b> &mdash; so more callers at once need <b style="color:var(--red)">more memory</b>.</li>
+          <li data-r data-d="4" class="strong">Weights load <b>once</b> and are shared; the notepads <b>add up</b> per caller.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="conc">
+          <div class="cc" data-r data-d="2"><div class="cch">1 caller</div><div class="ccbar"><span class="w"></span><span class="kv" style="flex:0 0 26px"></span></div><div class="ccl">weights once + 1 notepad</div></div>
+          <div class="cc" data-r data-d="3"><div class="cch">3 callers</div><div class="ccbar"><span class="w"></span><span class="kv" style="flex:0 0 78px"></span></div><div class="ccl">weights once + 3 notepads</div></div>
+          <div class="cc" data-r data-d="4"><div class="cch">8 callers</div><div class="ccbar"><span class="w"></span><span class="kv" style="flex:0 0 180px"></span></div><div class="ccl">weights once + 8 notepads</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-cap">One shared model, <b style="color:var(--red)">one notepad per live caller</b> &mdash; that is why the number of callers at once, not just model size, drives the memory bill.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Now add up the whole stack two ways. The lean path: an INT4 8B LLM is about 5 GB, Whisper about 3 GB, the embedding model on CPU or small, an INT4 8B guardrail about 5 GB, and Piper on CPU. The total is well under 24 GB. It fits well on one 24 GB GPU.", "The premium path: a full FP16 70B LLM alone is about 140 GB, before extra memory. That needs more than one 80 GB data&ndash;center GPU.", "Same system, two very different hardware bills. The quantized small&ndash;model path is what most teams ship. Keep the 70B path for when quality really needs it."]'>
+    <div class="kicker"><span class="badge"></span>Add up the whole stack</div>
+    <h2 class="slide-title" data-r data-d="1">Two ways to add it up</h2>
+    <div class="vs" style="margin-top:18px">
+      <div class="panel accent" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg></span>Lean &mdash; quantized</div>
+        <div class="sumlist">
+          <div class="sl"><span>LLM 8B INT4</span><b>~5 GB</b></div>
+          <div class="sl"><span>Whisper STT</span><b>~3 GB</b></div>
+          <div class="sl"><span>Embedding (CPU / small)</span><b>~0&ndash;4 GB</b></div>
+          <div class="sl"><span>Guardrail 8B INT4</span><b>~5 GB</b></div>
+          <div class="sl"><span>Piper TTS</span><b>~CPU</b></div>
+          <div class="sl tot"><span>Total</span><b>&lt; 24 GB</b></div>
+        </div>
+        <div class="where">Fits well on <b>one 24 GB GPU</b>.</div>
+      </div>
+      <div class="panel" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3zM12 10v4M12 17h.01"/></svg></span>Premium &mdash; FP16 70B</div>
+        <div class="sumlist">
+          <div class="sl"><span>LLM 70B FP16</span><b>~140 GB</b></div>
+          <div class="sl"><span>+ KV cache &amp; extra memory</span><b>more</b></div>
+          <div class="sl tot"><span>Total</span><b>&gt; 140 GB</b></div>
+        </div>
+        <div class="where">Needs <b style="color:var(--red)">more than one 80 GB GPU</b>.</div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">17</span></div>
+  </section>
+
+  <section class="slide" data-notes='["A second worked example, the big one: a 70&ndash;billion model. Same three steps. Step one weights: 70 billion times 2 bytes in FP16 is about 140 GB. Step two spare room: times about 1.3 is roughly 180 GB. That is already far past any single card.", "Step three quantize: INT8 halves the weights to about 70 GB, and INT4 quarters them to about 35&ndash;40 GB. So even quantized hard, a 70B sits near the very top of one 80 GB card &mdash; with almost no room left for KV&ndash;cache notepads.", "The lesson: a 70B does not fit one normal card in FP16, so you split it across two or more GPUs (called tensor parallel &mdash; sharing one model over many cards). That is why the 70B path is a multi&ndash;GPU, premium choice."]'>
+    <div class="kicker"><span class="badge"></span>Worked example &middot; the big one</div>
+    <h2 class="slide-title" data-r data-d="1">Why a 70B needs more than one GPU</h2>
+    <div class="two wide-r" style="margin-top:12px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2"><b>1 &middot; Weights</b> &rarr; <code>70B &times; 2 = ~140 GB</code> (FP16) &mdash; already past any one card.</li>
+          <li data-r data-d="3"><b>2 &middot; Spare room</b> &times;1.3 &rarr; <code>~180 GB</code> for KV cache + runtime.</li>
+          <li data-r data-d="4"><b>3 &middot; Quantize</b>: INT8 &rarr; <code>~70 GB</code> &middot; INT4 &rarr; <code>~35&ndash;40 GB</code>.</li>
+          <li data-r data-d="5" class="strong">Even INT4 fills <b style="color:var(--red)">most of one 80 GB card</b> &mdash; little room for callers.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="sumlist">
+          <div class="sl"><span>FP16 weights (70B &times; 2)</span><b>~140 GB</b></div>
+          <div class="sl"><span>+ spare room (&times;1.3)</span><b>~180 GB</b></div>
+          <div class="sl"><span>INT8, weights</span><b>~70 GB</b></div>
+          <div class="sl tot"><span>INT4, weights</span><b>~35&ndash;40 GB</b></div>
+        </div>
+      </div>
+    </div>
+    <div class="ruleband" data-r data-d="6"><b>Split it:</b> FP16 70B spans <b style="color:#fff">two or more 80 GB cards</b> (tensor parallel = sharing one model over many GPUs) &mdash; <b style="color:var(--red)">that is why 70B is the premium, multi&ndash;GPU path</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["Part 3: which GPU? Now we match our memory numbers to real hardware. The first number that matters is always VRAM &mdash; the gigabytes of memory on the card.", "We give a rough 2026 quick guide, then match a GPU to each kind of job, then a note on many callers at once.", "Treat the quick guide as a snapshot. Check the current models and memory before you buy, because the list changes fast."]'>
+    <div class="pillar-no">03</div>
+    <div class="eyebrow"><span class="dot"></span>Part 3</div>
+    <h2>Which GPU?</h2>
+    <p class="lead">Match memory to hardware: the VRAM quick guide, matching a GPU to the job, and what many callers at once do to the budget.</p>
+    <div class="prog-rail"><span>Model stack</span><span>Sizing math</span><span class="on">Which GPU</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">18</span></div>
+  </section>
+
+  <section class="slide" data-notes='["A rough 2026 snapshot of GPU memory &mdash; please check the current numbers, the list moves fast. The consumer cards, RTX 3090 and 4090, have 24 GB. In the data center, the L4 has 24 GB and the L40S has 48 GB.", "The A100 comes in 40 or 80 GB, the H100 has 80 GB, and the H200 has 141 GB.", "Look at VRAM in gigabytes first. It tells you if your model even fits, before you think about speed or price."]'>
+    <div class="kicker"><span class="badge"></span>GPU memory quick guide &middot; ~2026, check current</div>
+    <h2 class="slide-title" data-r data-d="1">VRAM is the first number to check</h2>
+    <div class="gpubars">
+      <div class="gb" data-r data-d="2"><div class="gbn">RTX 3090 / 4090<span class="gbt">consumer</span></div><div class="gbbar"><span style="--w:17%"></span></div><div class="gbv">24 GB</div></div>
+      <div class="gb" data-r data-d="3"><div class="gbn">L4<span class="gbt">data-center</span></div><div class="gbbar"><span style="--w:17%"></span></div><div class="gbv">24 GB</div></div>
+      <div class="gb" data-r data-d="4"><div class="gbn">L40S<span class="gbt">data-center</span></div><div class="gbbar"><span style="--w:34%"></span></div><div class="gbv">48 GB</div></div>
+      <div class="gb" data-r data-d="5"><div class="gbn">A100<span class="gbt">data-center</span></div><div class="gbbar"><span style="--w:57%"></span></div><div class="gbv">40 / 80 GB</div></div>
+      <div class="gb" data-r data-d="6"><div class="gbn">H100<span class="gbt">data-center</span></div><div class="gbbar"><span style="--w:57%"></span></div><div class="gbv">80 GB</div></div>
+      <div class="gb hot" data-r data-d="7"><div class="gbn">H200<span class="gbt">data-center</span></div><div class="gbbar"><span style="--w:100%"></span></div><div class="gbv">141 GB</div></div>
+    </div>
+    <div class="flow-cap">A <b>2026 snapshot</b> &mdash; <b style="color:var(--red)">check current specs</b>. Look at VRAM (GB) first: it tells you if the model fits.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide" data-notes='["A few real GPUs side by side, so the quick guide has names and a sense of where each one lives. The RTX 4090 is a 24 GB consumer card you can put under a desk. The L4 is a 24 GB low&ndash;power data&ndash;center card. The L40S has 48 GB.", "Stepping up: the A100 comes in 40 or 80 GB, the H100 has 80 GB of fast memory, and the H200 has 141 GB &mdash; the big single&ndash;card option for large models.", "The point is not to learn prices by heart, since they change. It is to see that VRAM about doubles as you go up the ladder. The bigger the model, the higher up you must go."]'>
+    <div class="kicker"><span class="badge"></span>Real GPUs &middot; ~2026, check current</div>
+    <h2 class="slide-title" data-r data-d="1">A short table of GPUs and their memory</h2>
+    <table class="dtable" style="margin-top:14px">
+      <tr><th>GPU</th><th>Class</th><th>Memory type</th><th class="target">VRAM</th></tr>
+      <tr><td>RTX 3090 / 4090</td><td>consumer</td><td>GDDR6X</td><td class="target">24 GB</td></tr>
+      <tr><td>L4</td><td>data-center, low-power</td><td>GDDR6</td><td class="target">24 GB</td></tr>
+      <tr><td>L40S</td><td>data-center</td><td>GDDR6</td><td class="target">48 GB</td></tr>
+      <tr><td>A100</td><td>data-center</td><td>HBM2e</td><td class="target">40 / 80 GB</td></tr>
+      <tr><td>H100</td><td>data-center</td><td>HBM3</td><td class="target">80 GB</td></tr>
+      <tr><td>H200</td><td>data-center</td><td>HBM3e</td><td class="target">141 GB</td></tr>
+    </table>
+    <div class="flow-cap">VRAM about <b>doubles</b> up the ladder &mdash; <b style="color:var(--red)">the bigger the model, the higher you go</b>. Prices and the list move fast, so check.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide" data-notes='["A cheat&ndash;sheet: what fits on each common card size, for an LLM with spare room. On a small 8 GB card you fit a 7&ndash;to&ndash;8B model at INT4 &mdash; good for a tiny demo. On 16 GB you fit an 8B at INT8 or a 13B at INT4.", "On a 24 GB card &mdash; an RTX 4090 or an L4 &mdash; our whole lean voice stack fits with room to spare. On 48 GB you can run a full FP16 8B plus the small models together. On 80 GB you fit a 70B quantized to INT4.", "Read it as a ladder: more VRAM means a bigger model, or the same model at higher precision, or more callers at once. For the OCBC voice assistant the 24 GB row is the sweet spot."]'>
+    <div class="kicker"><span class="badge"></span>What fits on each card</div>
+    <h2 class="slide-title" data-r data-d="1">A quick guide: what fits on 8&rarr;80 GB</h2>
+    <table class="dtable" style="margin-top:14px">
+      <tr><th>Card VRAM</th><th>Example card</th><th>Comfortable LLM (with spare room)</th><th class="target">Good for</th></tr>
+      <tr><td>8 GB</td><td>small / older</td><td>7&ndash;8B at INT4</td><td class="target">tiny demo</td></tr>
+      <tr><td>16 GB</td><td>RTX 4060 Ti / A4000</td><td>8B at INT8, or 13B at INT4</td><td class="target">single caller</td></tr>
+      <tr><td>24 GB</td><td>RTX 4090 / L4</td><td>our whole lean voice stack</td><td class="target">the sweet spot</td></tr>
+      <tr><td>48 GB</td><td>L40S</td><td>FP16 8B + small models together</td><td class="target">all on GPU</td></tr>
+      <tr><td>80 GB</td><td>A100 / H100</td><td>70B at INT4, or many callers</td><td class="target">premium / scale</td></tr>
+    </table>
+    <div class="flow-cap">More VRAM buys a <b>bigger model</b>, <b>higher precision</b>, or <b>more callers</b> &mdash; <b style="color:var(--red)">24 GB is the sweet spot for our lean stack</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The question every team asks: does my stack fit on one 24 GB card &mdash; an RTX 4090 or an L4? Let us walk through it with our lean path. Whisper for speech is about 3 GB. An INT4 8B LLM with spare room is about 6 GB. An INT4 8B guardrail is about 6 GB more. Embeddings run small or on CPU, and Piper text&ndash;to&ndash;speech runs on CPU.", "Add the GPU parts: about 3 plus 6 plus 6 is about 15 GB, well under 24. So yes &mdash; it fits, with room left for a few callers&#39; KV&ndash;cache notepads.", "If instead you wanted every part at full FP16 on the GPU at once, you would go past 24 GB and need a 48 or 80 GB card. The lesson: quantization turns a many&ndash;card job into a one&ndash;card job."]'>
+    <div class="kicker"><span class="badge"></span>Does it fit? &middot; a 24 GB walk-through</div>
+    <h2 class="slide-title" data-r data-d="1">Does our stack fit on a 24 GB card?</h2>
+    <div class="two wide-r" style="margin-top:12px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">Goal: <b>one 24 GB card</b> (RTX 4090 / L4).</li>
+          <li data-r data-d="3">Add the GPU parts: <code>3 + 6 + 6 &asymp; 15 GB</code> &mdash; embeddings + TTS sit on CPU.</li>
+          <li data-r data-d="4">~15 GB of 24 GB used &rarr; <b style="color:var(--red)">it fits</b>, with room for a few callers&#39; notepads.</li>
+          <li data-r data-d="5" class="strong">All&ndash;FP16&ndash;on&ndash;GPU would go over &mdash; <b>quantizing keeps it one card</b>.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="sumlist">
+          <div class="sl"><span>Whisper STT</span><b>~3 GB</b></div>
+          <div class="sl"><span>LLM 8B INT4 (with spare room)</span><b>~6 GB</b></div>
+          <div class="sl"><span>Guardrail 8B INT4</span><b>~6 GB</b></div>
+          <div class="sl"><span>Embeddings + Piper TTS</span><b>CPU</b></div>
+          <div class="sl tot"><span>GPU total of 24 GB</span><b>~15 GB &#10004;</b></div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-cap">Fits on one 24 GB GPU with room to spare &mdash; <b style="color:var(--red)">quantization turns a many&ndash;card job into a one&ndash;card job</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Match the GPU to the job, four cases. A quantized 7&ndash;to&ndash;8B chatbot stack &mdash; our lean path &mdash; fits on one 24 GB card, an RTX 4090 or an L4.", "If you want full FP16 7&ndash;8B plus embeddings, guardrails and STT/TTS all on the GPU together, step up to one 48 GB L40S or one 80 GB A100.", "For a high&ndash;quality 70B you need one or two 80 GB A100 or H100 cards. And for a tiny on&ndash;device demo, skip the GPU: whisper.cpp, Piper, and a 3&ndash;to&ndash;4B INT4 LLM on CPU."]'>
+    <div class="kicker"><span class="badge"></span>Match GPU to the job</div>
+    <h2 class="slide-title" data-r data-d="1">Pick the card the job needs</h2>
+    <div class="cards c2" style="margin-top:16px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 18v2M17 18v2"/></svg></div><h3>Quantized 7&ndash;8B chatbot stack</h3><p>our lean path &mdash; everything quantized</p><div class="tag">1&times; 24 GB &middot; RTX 4090 / L4</div></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 18v2M17 18v2M12 6v12"/></svg></div><h3>FP16 7&ndash;8B + everything on GPU</h3><p>embeddings + guardrails + STT/TTS together</p><div class="tag">1&times; 48 GB L40S / 1&times; 80 GB A100</div></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="9" height="12" rx="2"/><rect x="13" y="6" width="9" height="12" rx="2"/></svg></div><h3>70B high-quality</h3><p>top quality, premium path</p><div class="tag">1&ndash;2&times; 80 GB &middot; A100 / H100</div></div>
+      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3h6v4H9zM5 7h14v14H5z"/><path d="M9 12h6"/></svg></div><h3>Tiny / on-device demo</h3><p>whisper.cpp + Piper + 3&ndash;4B INT4 LLM</p><div class="tag">CPU &middot; no GPU</div></div>
+    </div>
+    <div class="flow-cap">Most teams ship the <b style="color:var(--red)">quantized one&ndash;GPU path</b> &mdash; keep 70B for when quality really needs it.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide" data-notes='["A feel for cost, not exact prices &mdash; those change, so always check. A small 24 GB card like an L4 is the cheap, low&ndash;power choice that runs our quantized lean stack. A big 80 GB card like an H100 can cost many times more to buy or rent.", "So the choice is not just does it fit &mdash; it is also what does it cost to run all day. A 70B on a big card may give a little more quality for a lot more money. Often a quantized 8B on a small card is the better deal.", "Rule of thumb: the smallest card that fits the job is almost always the cheapest to run. Pay for a big card only when more callers or higher quality truly need it."]'>
+    <div class="kicker"><span class="badge"></span>Cost intuition &middot; small vs big card</div>
+    <h2 class="slide-title" data-r data-d="1">A small card costs far less to run</h2>
+    <div class="cards c2" style="margin-top:16px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 18v2M17 18v2"/></svg></div><h3>Small 24 GB card (L4)</h3><p>low power, low cost &mdash; runs our quantized lean stack all day</p><div class="tag">cheap &middot; one card &middot; ~$ per hour</div></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="9" height="12" rx="2"/><rect x="13" y="6" width="9" height="12" rx="2"/></svg></div><h3>Big 80 GB card (H100)</h3><p>much more memory and speed &mdash; and many times the cost to buy or rent</p><div class="tag">premium &middot; ~$$$ per hour</div></div>
+    </div>
+    <div class="ruleband" data-r data-d="4"><b>The deal:</b> a <b style="color:#fff">quantized 8B on a small card</b> often beats a 70B on a big card &mdash; <b style="color:var(--red)">the smallest card that fits is usually the cheapest to run</b>. Prices move, so check current rates.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide" data-notes='["A simple checklist, run top to bottom. Add up the model sizes for the stack you want. Times by about 1.3 for run&ndash;time spare room. Times again by how many callers you expect at the busy peak, because each one needs their own KV&ndash;cache notepad. Then pick the smallest GPU whose VRAM beats that number, with a little safety room.", "The main rule: pick the smallest GPU the job fits on. Bigger cards cost a lot more and sit idle if you do not need them. The goal is fits with room to spare, not biggest you can buy.", "If nothing fits, you have two levers before buying a bigger card: quantize harder (INT8 or INT4), or put fewer models on the GPU. Most teams reach the one&ndash;card answer this way for a service like the OCBC voice assistant."]'>
+    <div class="kicker"><span class="badge"></span>A decision checklist</div>
+    <h2 class="slide-title" data-r data-d="1">Pick the smallest GPU the job fits on</h2>
+    <div class="cards c2" style="margin-top:16px">
+      <div class="card" data-r data-d="2"><div class="num">1</div><h3>Add up the model sizes</h3><p>add the weights for the stack you want on the GPU</p></div>
+      <div class="card" data-r data-d="3"><div class="num">2</div><h3>&times;1.3 spare room</h3><p>KV cache + activations + runtime for one caller</p></div>
+      <div class="card" data-r data-d="4"><div class="num">3</div><h3>&times; peak callers</h3><p>each caller at once needs their own KV&ndash;cache notepad</p></div>
+      <div class="card" data-r data-d="5"><div class="num">4</div><h3>Smallest card that beats it</h3><p>pick the lowest VRAM that fits with safety room &mdash; not the biggest</p></div>
+    </div>
+    <div class="ruleband" data-r data-d="6"><b>If nothing fits:</b> <b style="color:#fff">quantize harder</b> (INT8 / INT4) or put fewer models on the GPU &mdash; <b style="color:var(--red)">fits with room to spare beats biggest you can buy</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide" data-notes='["One more thing for real use: many callers at once. Each caller on the line needs their own KV cache &mdash; their own slice of the chat memory. Ten callers means about ten times the KV&ndash;cache memory.", "So the easy single&ndash;user numbers we worked out are a floor, not the real&ndash;use answer. More callers times the run&ndash;time memory, even though the weights load only once.", "Real&ndash;use sizing must count the number of callers at once. Plan for the busy peak, not the average."]'>
+    <div class="kicker"><span class="badge"></span>More callers, more memory</div>
+    <h2 class="slide-title" data-r data-d="1">Many callers multiply the KV cache</h2>
+    <div class="flow-cap" style="margin-top:0;margin-bottom:6px">Each live caller keeps their own <b>KV&ndash;cache notepad</b> &mdash; <b style="color:var(--red)">more callers at once means more notepads, means more memory</b>.</div>
+    <div class="conc">
+      <div class="cc" data-r data-d="2"><div class="cch">1 caller</div><div class="ccbar"><span class="w"></span><span class="kv" style="flex:0 0 18px"></span></div><div class="ccl">weights once + 1&times; KV cache</div></div>
+      <div class="cc" data-r data-d="3"><div class="cch">5 callers</div><div class="ccbar"><span class="w"></span><span class="kv" style="flex:0 0 70px"></span></div><div class="ccl">weights once + 5&times; KV cache</div></div>
+      <div class="cc" data-r data-d="4"><div class="cch">20 callers</div><div class="ccbar"><span class="w"></span><span class="kv" style="flex:0 0 200px"></span></div><div class="ccl">weights once + 20&times; KV cache &mdash; may need a bigger / second GPU</div></div>
+    </div>
+    <div class="flow-cap">Weights load <b>once</b>; the <b style="color:var(--red)">KV cache grows with callers at once</b> &mdash; size for the peak.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The whole sized stack in one table &mdash; the reward of the day. Each row is a real open&ndash;source model, sized at the precision we would really ship, with where it runs. STT Whisper about 3 GB. The LLM 8B at INT4 about 6 GB. The guardrail 8B at INT4 about 6 GB. Embeddings small or on CPU. The vector database and TTS on CPU.", "Add the GPU rows and you land near 15 GB &mdash; the lean voice AI stack on one 24 GB card, with room for a handful of callers&#39; notepads.", "This is the OCBC voice assistant sized end to end on paper: open&ndash;source, on our own servers, one low&ndash;cost GPU. From here it is a build job, not a research question."]'>
+    <div class="kicker"><span class="badge"></span>The whole sized stack</div>
+    <h2 class="slide-title" data-r data-d="1">Every part, sized and placed</h2>
+    <table class="dtable" style="margin-top:14px">
+      <tr><th>Part</th><th>Model</th><th>Precision</th><th>Runs on</th><th class="target">Size</th></tr>
+      <tr><td>STT</td><td>Whisper large-v3</td><td>FP16</td><td>GPU / CPU</td><td class="target">~3 GB</td></tr>
+      <tr><td>LLM (brain)</td><td>Qwen2.5 / Llama 3.x 8B</td><td>INT4</td><td>GPU</td><td class="target">~6 GB</td></tr>
+      <tr><td>Embeddings</td><td>Qwen3-Embedding / bge</td><td>small</td><td>GPU / CPU</td><td class="target">~0&ndash;4 GB</td></tr>
+      <tr><td>Vector DB</td><td>FAISS / pgvector</td><td>&mdash;</td><td>CPU</td><td class="target">CPU</td></tr>
+      <tr><td>Guardrails</td><td>Llama Guard 8B</td><td>INT4</td><td>GPU</td><td class="target">~6 GB</td></tr>
+      <tr><td>TTS</td><td>Piper</td><td>tiny</td><td>CPU</td><td class="target">CPU</td></tr>
+      <tr><td>Glue</td><td>LangGraph + MCP</td><td>code</td><td>CPU</td><td class="target">little</td></tr>
+    </table>
+    <div class="flow-cap">The lean stack lands near <b style="color:var(--red)">~15 GB on one 24 GB GPU</b> &mdash; open-source, on our own servers, sized end to end on paper.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The whole sizing recipe on one slide &mdash; five steps to keep. One: list the models you want and their parameter counts. Two: weights = params times bytes, so about 2N GB in FP16. Three: pick a precision &mdash; quantize to INT8 or INT4 to make it smaller. Four: add spare room, about 1.2 to 1.5 times, then times the callers at the busy peak.", "Five: pick the smallest GPU whose VRAM beats that number, with a little safety room. That is the whole skill from today, in order.", "Memorise the arrows: params &rarr; weights &rarr; quantize &rarr; spare room &times; callers &rarr; smallest GPU that fits. With that one line you can size any model stack on paper, for the OCBC voice assistant or anything else."]'>
+    <div class="kicker"><span class="badge"></span>The whole recipe, in order</div>
+    <h2 class="slide-title" data-r data-d="1">The sizing recipe in five steps</h2>
+    <div class="formula" data-r data-d="2"><span class="fpart">params</span><span class="fop">&rarr;</span><span class="fpart">weights</span><span class="fop">&rarr;</span><span class="fpart hot">quantize</span><span class="fop">&rarr;</span><span class="fpart">&times; callers</span><span class="fop">&rarr;</span><span class="fpart">GPU</span></div>
+    <div class="cards c2" style="margin-top:8px">
+      <div class="card" data-r data-d="3"><div class="num">1</div><h3>List models &amp; params</h3><p>name each part and its parameter count (the learned numbers)</p></div>
+      <div class="card" data-r data-d="4"><div class="num">2</div><h3>Weights = params &times; bytes</h3><p>~2N GB in FP16 &mdash; the main sum</p></div>
+      <div class="card" data-r data-d="5"><div class="num">3</div><h3>Quantize to fit</h3><p>INT8 ~N GB &middot; INT4 ~0.5N GB &mdash; smaller suitcase</p></div>
+      <div class="card" data-r data-d="6"><div class="num">4</div><h3>Spare room &times; callers</h3><p>&times;1.3 run time, then &times; the busy&ndash;peak callers (notepads)</p></div>
+    </div>
+    <div class="ruleband" data-r data-d="7"><b>Step 5:</b> pick the <b style="color:#fff">smallest GPU whose VRAM beats that number</b>, with safety room &mdash; <b style="color:var(--red)">that one line sizes any stack on paper</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide dark" data-notes='["Wrap up. Three things to take away. The stack: STT, the LLM brain, embeddings for RAG, guardrails, and TTS, glued by LangGraph and MCP. The size rule: about 2N GB in FP16, and quantize to INT8 or INT4 to fit. And GPU matching: check VRAM first, then pick the smallest card the job fits on.", "The big picture: a useful voice AI chatbot fits on one 24 GB GPU when you quantize. And every part is open&ndash;source and runs on our own servers, so audio and data stay inside the bank.", "That is the whole of Day 2 joined into one system you could really build. Thank you &mdash; questions."]'>
+    <div class="body-area" style="justify-content:center">
+      <div class="kicker" data-r><span class="badge"></span>Wrap &amp; Q&amp;A</div>
+      <h2 class="slide-title" data-r data-d="1" style="font-size:44px;margin-bottom:6px">The whole stack, sized and placed</h2>
+      <p class="slide-sub" data-r data-d="2" style="color:rgba(255,255,255,.65);margin-bottom:26px">Open-source &amp; on our own servers &mdash; so audio and data stay inside the bank.</p>
+      <div class="recap-grid" style="flex:none">
+        <div class="recap-col recap" data-r data-d="3">
+          <h4><span style="width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block"></span>What we covered</h4>
+          <ul>
+            <li>The stack: STT &middot; LLM &middot; embeddings &middot; guardrails &middot; TTS</li>
+            <li>Sizing: ~2N GB FP16 &middot; ~N GB INT8 &middot; ~0.5N GB INT4</li>
+            <li>Spare room: plan ~1.2&ndash;1.5&times; weights for run time</li>
+            <li>GPU: check VRAM first, match the card to the job</li>
+          </ul>
+        </div>
+        <div class="recap-col next" data-r data-d="4">
+          <h4><span style="width:8px;height:8px;border-radius:50%;background:#ff6a6f;display:inline-block"></span>The takeaway</h4>
+          <ul>
+            <li><b style="color:#fff">Quantize and it fits on one 24 GB GPU</b></li>
+            <li>70B FP16 needs more than one 80 GB GPU</li>
+            <li>All open-source &amp; on our own servers &mdash; data stays in the bank</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">22</span></div>
+  </section>
+
+  </main>
+</div>
+
+<style>
+.home-btn{position:fixed; top:16px; left:18px; z-index:55; display:flex; align-items:center; gap:7px;
+  font-family:var(--fMono,'JetBrains Mono',monospace); font-size:12px; font-weight:600; letter-spacing:.01em; text-decoration:none;
+  color:#fff; background:rgba(18,18,22,.6); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+  border:1px solid rgba(255,255,255,.2); padding:7px 13px 7px 11px; border-radius:99px;
+  transition:background .2s ease, transform .2s ease, opacity .2s ease; opacity:.82}
+.home-btn:hover{background:var(--red,#EC1B23); border-color:transparent; opacity:1; transform:translateY(-1px)}
+.home-btn:active{transform:translateY(0)}
+.home-btn svg{width:15px; height:15px}
+@media print{.home-btn{display:none}}
+</style>
+<a class="home-btn" href="../index.html" aria-label="Back to home" title="Back to home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9h5v-5h4v5h5v-9"/></svg>Home</a>
+<div class="hud">
+  <div class="dots" id="dots"></div>
+  <div class="count">slide <b id="cur">1</b> / <span id="tot">34</span></div>
+</div>
+<div class="hint"><kbd>→</kbd> next &nbsp; <kbd>←</kbd> back &nbsp; <kbd>N</kbd> notes &nbsp; <kbd>F</kbd> full</div>
+
+<div class="rotate-cue" aria-hidden="true">
+  <div>
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="7" y="2" width="10" height="20" rx="2.2"/><path d="M11 18.5h2"/></svg>
+    <h4>Rotate your device</h4>
+    <p>This deck is built for a wide 16:9 stage — turn your phone to landscape for the full view.</p>
+  </div>
+</div>
+
+<div class="notes" id="notes">
+  <button class="close" id="notesClose">&times;</button>
+  <h5><span style="width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block"></span>Speaker notes</h5>
+  <ul id="notesBody"></ul>
+</div>
+
+<script>
+/* ---- fit fixed 1280x720 stage to viewport ---- */
+const STATIC = location.search.includes('static');
+if(STATIC) document.body.classList.add('static');
+const deck = document.getElementById('deck');
+function fit(){
+  const vv = window.visualViewport;
+  const w = (vv && vv.width)  || innerWidth  || document.documentElement.clientWidth  || 1280;
+  const h = (vv && vv.height) || innerHeight || document.documentElement.clientHeight || 720;
+  const s = Math.min(w/1280, h/720) || 1;
+  // anchor top-left and centre with an explicit pixel offset — robust even when
+  // the deck is larger than the viewport (small mobile-landscape screens)
+  const x = (w - 1280*s) / 2, y = (h - 720*s) / 2;
+  deck.style.transform = `translate(${x}px, ${y}px) scale(${s>0?s:1})`;
+}
+addEventListener('resize', fit);
+addEventListener('load', fit);
+// mobile: re-fit when rotating or when the browser chrome resizes the visible area
+addEventListener('orientationchange', ()=>{ fit(); setTimeout(fit,200); setTimeout(fit,500); });
+if(window.visualViewport){ visualViewport.addEventListener('resize', fit); }
+fit(); requestAnimationFrame(fit); setTimeout(fit,120);
+
+/* ---- presentation controller ---- */
+const slides = [...document.querySelectorAll('.slide')];
+const TOT = slides.length;
+let i = 0;
+document.getElementById('tot').textContent = TOT;
+
+const dotsEl = document.getElementById('dots');
+slides.forEach((sl,idx)=>{
+  const d = document.createElement('span');
+  d.className='dot'+(sl.classList.contains('dark')?' sec':'');
+  d.addEventListener('click',()=>go(idx));
+  dotsEl.appendChild(d);
+});
+const dots=[...dotsEl.children];
+// page numbers follow slide order (so slides can be inserted freely)
+slides.forEach((s,idx)=>{const pg=s.querySelector('.foot .pg'); if(pg)pg.textContent=String(idx+1).padStart(2,'0');});
+
+const notesEl=document.getElementById('notes');
+const notesBody=document.getElementById('notesBody');
+function renderNotes(){
+  let data=[]; try{data=JSON.parse(slides[i].dataset.notes||'[]')}catch(e){}
+  notesBody.innerHTML='';
+  if(!data.length){notesBody.innerHTML='<li style="color:#777">No notes for this slide.</li>';}
+  data.forEach(t=>{const li=document.createElement('li');li.textContent=t;notesBody.appendChild(li);});
+}
+function go(n){
+  n=Math.max(0,Math.min(TOT-1,n));
+  if(n===i) return;
+  slides[i].classList.remove('active'); slides[i].classList.add('prev');
+  slides[n].classList.remove('prev'); slides[n].classList.add('active');
+  i=n; sync();
+}
+function sync(){
+  document.getElementById('progress').style.width=((i+1)/TOT*100)+'%';
+  document.getElementById('cur').textContent=i+1;
+  dots.forEach((d,x)=>d.classList.toggle('on',x===i));
+  location.hash=i+1;
+  if(notesEl.classList.contains('show')) renderNotes();
+  // (re)trigger counters on the active slide
+  triggerCounters(slides[i]);
+  playDemo(slides[i]);
+}
+function next(){go(i+1)} function prev(){go(i-1)}
+
+/* keyboard */
+addEventListener('keydown',e=>{
+  if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();next();}
+  else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();prev();}
+  else if(e.key==='Home'){go(0)} else if(e.key==='End'){go(TOT-1)}
+  else if(e.key.toLowerCase()==='n'){notesEl.classList.toggle('show'); renderNotes();}
+  else if(e.key.toLowerCase()==='f'){if(!document.fullscreenElement)document.documentElement.requestFullscreen();else document.exitFullscreen();}
+});
+document.getElementById('notesClose').addEventListener('click',()=>notesEl.classList.remove('show'));
+
+/* wheel (debounced) */
+let wlock=false;
+addEventListener('wheel',e=>{
+  if(wlock) return; if(Math.abs(e.deltaY)<18) return;
+  wlock=true; e.deltaY>0?next():prev();
+  setTimeout(()=>wlock=false,650);
+},{passive:true});
+
+/* touch */
+let tx=0,ty=0;
+addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
+addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty;
+  if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)) dx<0?next():prev();
+},{passive:true});
+
+/* counters */
+function triggerCounters(slide){
+  slide.querySelectorAll('[data-count]').forEach(el=>{
+    if(el.dataset.done) return; el.dataset.done='1';
+    const end=+el.dataset.count, pre=el.dataset.prefix||'', suf=el.dataset.suffix||'';
+    if(STATIC){el.innerHTML=pre+end+(suf?'<span class="unit">'+suf+'</span>':'');return;}
+    const dur=1100, t0=performance.now();
+    function tick(t){
+      const p=Math.min(1,(t-t0)/dur), e=1-Math.pow(1-p,3);
+      const v=Math.round(end*e);
+      el.innerHTML=pre+v+(suf?'<span class="unit">'+suf+'</span>':'');
+      if(p<1)requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+  // progress rings
+  slide.querySelectorAll('[data-ring]').forEach(el=>{
+    if(el.dataset.done) return; el.dataset.done='1';
+    const circle=el.querySelector('.fg'); if(!circle)return;
+    const pct=+el.dataset.ring, len=circle.getTotalLength();
+    if(STATIC){circle.style.strokeDasharray=len;circle.style.strokeDashoffset=len*(1-pct/100);const o=el.querySelector('.pct');if(o)o.textContent=pct+'%';return;}
+    circle.style.strokeDasharray=len; circle.style.strokeDashoffset=len;
+    requestAnimationFrame(()=>{circle.style.transition='stroke-dashoffset 1.3s cubic-bezier(.16,1,.3,1)';circle.style.strokeDashoffset=len*(1-pct/100);});
+    const out=el.querySelector('.pct'); if(out){const t0=performance.now();(function tk(t){const p=Math.min(1,(t-t0)/1300);out.textContent=Math.round(pct*(1-Math.pow(1-p,3)))+'%';if(p<1)requestAnimationFrame(tk);})(performance.now());}
+  });
+}
+
+/* notebook demo player */
+const demoTimers=[];
+function clearDemo(){demoTimers.forEach(clearTimeout); demoTimers.length=0;}
+function playDemo(slide){
+  if(!slide.classList.contains('demo-slide')) return;
+  clearDemo();
+  const cells=[...slide.querySelectorAll('.nb-cell')];
+  const steps=[...slide.querySelectorAll('.demo-steps li')];
+  cells.forEach(c=>{c.classList.remove('shown','running'); const o=c.querySelector('.nb-out'); if(o)o.classList.remove('shown'); const p=c.querySelector('.nb-prompt'); if(p){p.classList.remove('busy'); p.textContent='['+(cells.indexOf(c)+1)+']';}});
+  steps.forEach(s=>s.classList.remove('on'));
+  if(STATIC){cells.forEach(c=>{c.classList.add('shown'); const o=c.querySelector('.nb-out'); if(o)o.classList.add('shown');}); steps.forEach(s=>s.classList.add('on')); const body=slide.querySelector('.nb-body'); if(body){body.style.scrollBehavior='auto'; const snap=()=>body.scrollTop=body.scrollHeight; snap(); requestAnimationFrame(snap); setTimeout(snap,80);} return;}
+  let t=420;
+  cells.forEach((cell,idx)=>{
+    const prompt=cell.querySelector('.nb-prompt');
+    const out=cell.querySelector('.nb-out');
+    demoTimers.push(setTimeout(()=>{cell.classList.add('shown','running'); if(prompt){prompt.classList.add('busy'); prompt.textContent='[*]';} const body=cell.parentElement; body.scrollTop=Math.max(0,cell.offsetTop-90);},t));
+    t+=720;
+    demoTimers.push(setTimeout(()=>{
+      cell.classList.remove('running');
+      if(prompt){prompt.classList.remove('busy'); prompt.textContent='['+(idx+1)+']';}
+      if(out)out.classList.add('shown');
+      if(steps[idx])steps[idx].classList.add('on');
+    },t));
+    t+=820;
+  });
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-replay]'); if(!b) return;
+  playDemo(b.closest('.slide'));
+});
+addEventListener('keydown',e=>{if(e.key.toLowerCase()==='r'){const s=slides[i]; if(s.classList.contains('demo-slide'))playDemo(s);}});
+
+/* auto-hide chrome when idle */
+let idleT; function poke(){document.body.classList.remove('idle'); clearTimeout(idleT); idleT=setTimeout(()=>document.body.classList.add('idle'),3200);}
+['mousemove','keydown','touchstart','wheel','click'].forEach(ev=>addEventListener(ev,poke,{passive:true})); poke();
+
+/* deep link */
+if(location.hash){const n=parseInt(location.hash.slice(1));if(n>=1&&n<=TOT){slides[0].classList.remove('active');i=n-1;slides[i].classList.add('active');}}
+sync();
+</script>
+</body>
+</html>

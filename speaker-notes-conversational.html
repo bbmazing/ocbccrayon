@@ -65,7 +65,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
 <header class="bar">
   <div>
     <div class="ttl">Speaker notes</div>
-    <div class="sub">Conversational AI Design · 27 slides</div>
+    <div class="sub">Conversational AI Design · 36 slides</div>
   </div>
   <div class="right">
     <a class="btn ghost" href="index.html">&larr; Back</a>
@@ -83,249 +83,330 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
 <div class="banner" id="banner">&#9998;&nbsp; Editing — your changes are saved in this browser. Use <b>Download .txt</b> to keep a copy.</div>
 <main>
   <h1 class="lead">Talk track <span class="red">&middot; every slide</span></h1>
-  <p class="intro">Speaker notes for the OCBC CRAYON 2026 &mdash; Conversational AI Design deck. 27 slides, in order. Press <b>Edit</b> to tweak the wording inline (saved to this browser), or <b>Download .txt</b> for a copy.</p>
+  <p class="intro">Speaker notes for the OCBC CRAYON 2026 &mdash; Conversational AI Design deck. 36 slides, in order. Press <b>Edit</b> to tweak the wording inline (saved to this browser), or <b>Download .txt</b> for a copy.</p>
   <div id="notes">
     <article class="s">
       <div class="n">Slide 1</div>
       <h2>Conversational AI Design</h2>
       <ul>
-        <li>Welcome to the final Day-2 session. You know how the model understands, retrieves, acts, and now listens and speaks. This session is about the conversation itself.</li>
-        <li>60 minutes, design-first: principles, sample dialogs and human factors over architecture. Lots of good-versus-bad examples. Banking voice and chat throughout.</li>
-        <li>Promise: by the end you can critique and shape a conversation — natural interaction, context, and voice UX.</li>
+        <li>This is the last Day-2 session. By now the model can understand, look things up, act, and even listen and speak. Today we look at the talk itself.</li>
+        <li>This links to our class project: a voice AI chatbot for OCBC. We will design how the chatbot talks — what it asks, confirms, and does.</li>
+        <li>60 minutes, design first. Lots of good-and-bad examples in bank chat and voice. By the end you can look at a chat and say why it works or fails.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 2</div>
       <h2>The frame</h2>
       <ul>
-        <li>The whole session in one line. Design the conversation you would actually want to have — then teach the machine to hold up its end.</li>
-        <li>Good conversation design models the cooperative rules of human conversation we already know by instinct.</li>
-        <li>Hold this framing; we will call it back at the close.</li>
+        <li>The whole session in one line. Design the chat you would want to have. Then teach the machine to play its part well.</li>
+        <li>Good design just copies the simple rules people already use when they talk to each other.</li>
+        <li>Keep this idea in mind. We come back to it at the end.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 3</div>
-      <h2>Capable is not the same as usable</h2>
+      <h2>Able to do it is not the same as easy to use</h2>
       <ul>
-        <li>The shift this session marks. Earlier sessions made the model capable — it can understand, retrieve and act.</li>
-        <li>This session makes it usable. A capable model wrapped in a bad conversation still fails the customer.</li>
-        <li>Design is the difference between a clever engine and a product people trust.</li>
+        <li>What changes in this session. Earlier sessions made the model able to do things. It can understand, look things up, and act.</li>
+        <li>This session is about making it easy to use. A smart model in a bad chat still leaves the customer stuck.</li>
+        <li>For our voice chatbot, design is the gap between a smart engine and something people trust with their money.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 4</div>
-      <h2>The experience on top of the engine</h2>
+      <h2>The chat sits on top of the engine</h2>
       <ul>
-        <li>What conversation design is: a discipline blending user experience, writing, linguistics and AI to make human-machine dialogue feel natural.</li>
-        <li>Crucially, the engine — the large language model (LLM) — is separate from the designed experience layered on top of it.</li>
-        <li>One line to remember: a model isn't a product; a conversation is.</li>
+        <li>What conversation design is. You mix design, writing, a bit of language skill, and AI. The goal: a chat with a machine that feels natural.</li>
+        <li>Key idea. The engine — the large language model, or LLM — is one thing. The chat you design on top is another thing.</li>
+        <li>One line to remember. A model is not a product. A chat is. That is what we build for our voice chatbot.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 5</div>
       <h2>Design moves the numbers that matter</h2>
       <ul>
-        <li>Why a bank should care. Good conversation design lifts task completion, cuts dropped calls, lowers human-agent load, and builds trust.</li>
-        <li>Bad design does the opposite — frustration on sensitive money tasks, where the stakes are highest.</li>
-        <li>It applies across every channel: customer chat, the interactive voice response (IVR) or voice-bot, and the in-app assistant.</li>
+        <li>Why a bank should care. Good design helps more customers finish the task. It cuts dropped calls, takes work off human staff, and builds trust.</li>
+        <li>Bad design does the opposite. It annoys people on money tasks, where it matters most.</li>
+        <li>It matters on every channel: chat, the phone-menu robot, and the in-app helper. These are the channels our voice chatbot will live in.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 6</div>
-      <h2>Principles of Natural Interaction</h2>
+      <h2>Part 1 — How to Talk in a Natural Way</h2>
       <ul>
-        <li>Part 1, about 18 minutes — the principles. The foundation is modelling real human conversation, not inventing a robot dialect.</li>
-        <li>We cover the cooperative principle, the intent / slot / prompt vocabulary, multi-turn slot filling, the one-question rule, and persona.</li>
-        <li>Lots of good-versus-bad dialog — comparisons teach faster than prose.</li>
+        <li>Part 1 — the basic ideas. The big one: copy how people really talk. Do not invent a stiff robot way of speaking.</li>
+        <li>We cover taking turns, asking for missing details one at a time, the one-question rule, and one steady personality for the chatbot.</li>
+        <li>Lots of good-and-bad chat. Side-by-side examples teach faster than long words.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 7</div>
       <h2>Mirror the rules we already know</h2>
       <ul>
-        <li>The foundational idea, from Google's conversation-design team: don't invent a robot dialect — mirror the cooperative rules of human conversation people already know.</li>
-        <li>Turn-taking, brevity, relevance, not repeating yourself. Watch this exchange play out: each turn is short, relevant, and moves the task forward.</li>
-        <li>When dialog follows the rules we use by instinct, it feels natural — and customers don't have to learn anything.</li>
+        <li>The main idea. Do not invent a stiff robot way of talking. Copy the simple, polite rules people already use.</li>
+        <li>Take turns. Keep it short. Stay on topic. Do not say the same thing twice. In this chat, each turn is short and moves the task ahead.</li>
+        <li>When the chatbot uses the rules we follow without thinking, it feels natural. Customers do not have to learn anything new.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 8</div>
-      <h2>Say enough — but not too much</h2>
+      <h2>Spot the goal, then gather the missing bits</h2>
       <ul>
-        <li>The cooperative principle in practice: say enough but not too much, stay relevant, be clear, be truthful.</li>
-        <li>On the left, a bloated robotic reply that buries the answer. On the right, a crisp cooperative one that gives the answer and a next step.</li>
-        <li>Same information, very different experience. Brevity and relevance are design choices.</li>
+        <li>A simple way to think about any task chat. First spot what the customer wants. Then collect the bits of information you still need to act.</li>
+        <li>Here the customer wants to send money. That needs three bits — how much, who to pay, and when. Two are set; the date is still missing.</li>
+        <li>Every task chatbot, including ours, works this way. Find the goal, gather the missing bits, then do it.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 9</div>
-      <h2>The vocabulary of task-based dialog</h2>
+      <h2>A conversation isn't a form read aloud</h2>
       <ul>
-        <li>The core vocabulary, from Alexa and Lex. The utterance is what the user says. The intent is what they want. Slots are the details needed. The prompt is the system's move to advance.</li>
-        <li>Here: the utterance ‘transfer money’ maps to a transfer intent, which needs three slots — amount, payee and date.</li>
-        <li>Every task-based assistant is built on this shape: detect intent, fill slots, then act.</li>
+        <li>A simple rule from the experts. A chat is not a form read out loud.</li>
+        <li>On the left, the bot asks for every detail at once. Too much, and it feels like a robot. On the right, it asks one thing and uses the answer right away.</li>
+        <li>One question at a time is easier to follow. It keeps the chat moving. Use it in our chatbot.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 10</div>
-      <h2>Gather what's missing, one turn at a time</h2>
+      <h2>“Actually, make it…” — don't start over</h2>
       <ul>
-        <li>Real tasks need several turns. Gather missing slots one at a time, confirm, allow updates, then act.</li>
-        <li>Notice the assistant asks only for what it still needs — the date — rather than demanding everything at once.</li>
-        <li>Filling slots conversationally, one at a time, is what makes a task feel like a chat rather than a form.</li>
+        <li>People change their mind in the middle. A good chatbot lets them, and keeps the parts that did not change.</li>
+        <li>On the left, the bot starts over and asks for the amount again. On the right, the bot just swaps the payee and keeps the IDR 5,000,000.</li>
+        <li>Let people say “actually, make it…” without starting from scratch. It is how real talk works.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 11</div>
-      <h2>A conversation isn't a form read aloud</h2>
+      <h2>Give it one steady way of speaking</h2>
       <ul>
-        <li>A top practitioner rule: a conversation isn't a form read aloud.</li>
-        <li>On the left, the bot dumps every field at once — overwhelming and unnatural. On the right, it asks one relevant question and uses the answer immediately.</li>
-        <li>One question at a time keeps cognitive load low and the dialog moving.</li>
+        <li>The way the chatbot talks sets the mood. A bank chatbot should sound safe, clear, and serious — not jokey.</li>
+        <li>Give it one personality. Keep it the same in every turn and on every channel, like a person with a steady way of speaking.</li>
+        <li>Choose that personality on purpose, and write to it. It matters as much as the flow. Pick one for our voice chatbot.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 12</div>
-      <h2>Tone is brand, in word choice</h2>
+      <h2>Apologise once, then point to the fix</h2>
       <ul>
-        <li>The assistant's voice sets expectations. A bank assistant should sound trustworthy, clear and professional — not jokey.</li>
-        <li>Tone is brand, translated into word choice, and it must stay consistent across every turn and channel.</li>
-        <li>Decide the persona deliberately and write to it — it is as much a design artefact as the flow.</li>
+        <li>When something goes wrong, the way the chatbot says sorry matters. A cold “error” line makes people more upset.</li>
+        <li>On the left, the bot blames the user and gives no help. On the right, it says sorry once, explains in plain words, and gives the next step.</li>
+        <li>Say sorry once, plainly, then point to the fix. Do not over-apologise and do not blame the customer.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 13</div>
       <h2>Offer paths, don't leave a void</h2>
       <ul>
-        <li>Tell users what the assistant can do. A brief onboarding line and a few conversation starters beat an open-ended ‘How can I help?’ void.</li>
-        <li>Open-ended prompts make users guess; guided options show the happy paths and reduce dead ends.</li>
-        <li>Set expectations early and offer choices — people are faster when they aren't guessing.</li>
+        <li>Tell users what the chatbot can do. A short hello plus a few things to try beats a blank ‘How can I help?’.</li>
+        <li>An open question makes people guess. A few clear choices show the easy paths and stop dead ends.</li>
+        <li>Say what you can do, and offer choices early. People are faster when they are not guessing.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 14</div>
-      <h2>Context — Making It Feel Intelligent</h2>
+      <h2>Part 2 — Memory — Making It Feel Smart</h2>
       <ul>
-        <li>Part 2, about 13 minutes. The single biggest lever on perceived intelligence is context.</li>
-        <li>We cover carrying context across turns, resolving references like ‘it’, handling topic changes, and short- versus long-term memory.</li>
-        <li>Plus the privacy line a bank must hold around remembered data.</li>
+        <li>Part 2, about 13 minutes. The biggest thing that makes a chatbot feel smart is memory — remembering what was just said.</li>
+        <li>We cover keeping the thread across turns, working out what words like ‘it’ mean, handling topic changes, and short-term versus long-term memory.</li>
+        <li>Plus the privacy line a bank must keep around any data it remembers.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 15</div>
-      <h2>Tracking context feels smart; forgetting feels broken</h2>
+      <h2>Remembering feels smart; forgetting feels broken</h2>
       <ul>
-        <li>Google's point: an assistant that tracks the dialog and the user's situation feels smart; one that forgets feels broken.</li>
-        <li>The infamous anti-pattern is the phone tree that says ‘please listen carefully, our menu options have changed’ — oblivious to you and your history.</li>
-        <li>Memory is the cheapest way to feel intelligent. Track the thread.</li>
+        <li>A chatbot that remembers the chat and your case feels smart. One that forgets feels broken.</li>
+        <li>The classic bad example is the phone menu that says ‘please listen, our menu has changed’. It ignores you and what you said before.</li>
+        <li>Remembering is the cheapest way to feel smart. Keep the thread in our chatbot.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 16</div>
       <h2>Resolve “it” without re-asking</h2>
       <ul>
-        <li>Carrying context across turns means resolving references — ‘cancel it’, ‘the second one’ — and not re-asking for information already given.</li>
-        <li>Watch the assistant resolve ‘it’ to the scheduled transfer from earlier in the dialog, without making the customer repeat the details.</li>
-        <li>Keeping the thread is what separates a conversation from a series of disconnected questions.</li>
+        <li>Keeping the thread across turns means working out what words like ‘cancel it’ or ‘the second one’ mean. And not asking again for things the user already said.</li>
+        <li>Watch the chatbot work out that ‘it’ means the transfer set up earlier. The customer does not repeat the details.</li>
+        <li>Keeping the thread is what turns a list of separate questions into a real chat.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 17</div>
       <h2>Follow the switch, keep the thread</h2>
       <ul>
-        <li>Users jump: from tracking a transfer, to cancelling, to a brand-new question. Good design follows the switch without dumping the prior context.</li>
-        <li>Here the customer pivots from a transfer to a lost card; the assistant follows cleanly and can still return to the transfer.</li>
-        <li>Support correction and digression gracefully — real conversations are not linear.</li>
+        <li>People jump around. They check a transfer, then stop it, then ask something new. Good design follows the jump and does not lose what came before.</li>
+        <li>Here the customer moves from a transfer to a lost card. The chatbot follows along, and can still go back to the transfer after.</li>
+        <li>Let users change topic or fix things mid-way. Real chats are not a straight line.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 18</div>
-      <h2>Personalize — within clear privacy limits</h2>
+      <h2>Make it personal — within clear privacy limits</h2>
       <ul>
-        <li>Two kinds of context. Short-term is this conversation's state. Long-term is remembered preferences and history — tie this back to RAG and memory from earlier sessions.</li>
-        <li>Use long-term context to personalize, but flag privacy: sensitive data, clear retention, and user control over what is remembered.</li>
-        <li>Personalization is powerful; in a bank it must be consented and governed.</li>
+        <li>Two kinds of memory. Short-term is just this chat. Long-term is saved likes and past tasks. This links back to RAG — retrieval-augmented generation — and memory from earlier sessions.</li>
+        <li>Use long-term memory to make it feel personal. But watch privacy: private data, a clear rule for how long you keep it, and let the user say what to remember.</li>
+        <li>Making it personal is powerful. But in a bank the user must agree, and it must follow the rules.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 19</div>
-      <h2>UX in Voice Interfaces</h2>
+      <h2>Say no safely — and still be helpful</h2>
       <ul>
-        <li>Part 3, about 16 minutes. Voice changes the rules — no screen, no scrollback, linear and ephemeral.</li>
-        <li>We cover the design process, confirmations, error recovery, handoff to humans, and multimodal plus accessibility.</li>
-        <li>Error recovery is the make-or-break; we spend the most time there.</li>
+        <li>Some people try to trick the chatbot into doing bad things. This is called a jailbreak — like asking how to make a bomb.</li>
+        <li>On the left there is no guardrail, so the bot just goes along with it. That is a big fail and a real risk for the bank.</li>
+        <li>On the right a guardrail blocks the bad ask first. Then good copy says no kindly and points to what it can help with. The rule: refuse, do not lecture, and never explain how to attack it.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 20</div>
-      <h2>Design for the ear, not the eye</h2>
+      <h2>Part 3 — Designing for Voice</h2>
       <ul>
-        <li>Voice is different from chat. There's no screen, no scrollback; it's linear and ephemeral, often hands-free, with interruptions and noise.</li>
-        <li>So responses must be shorter, with confirmations and interruption handling. You can't show a list of twenty options — you must speak a few.</li>
-        <li>Design for the ear, not the eye.</li>
+        <li>Part 3, about 16 minutes. Voice changes the rules. There is no screen and nothing to scroll back to. Once it is said, it is gone.</li>
+        <li>We cover how to design a voice flow: confirm, fix mistakes, pass to a human, and use voice plus a screen together.</li>
+        <li>Fixing mistakes is the make-or-break part, so we spend the most time there. It is the heart of our voice chatbot.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 21</div>
-      <h2>Sample dialogs → flow diagram → edge cases</h2>
+      <h2>Design for the ear, not the eye</h2>
       <ul>
-        <li>How professionals actually do it. First write sample dialogs — script the happy path, the shortest route to completion.</li>
-        <li>Then turn those scripts into a conversation-flow diagram. Only after that do you build complexity: errors, first-time versus returning users.</li>
-        <li>Script first, diagram second, edge-cases last — in that order.</li>
+        <li>Voice is different from chat. There is no screen and no scrolling back. Words come one by one, then they are gone. Often hands-free, with noise and people cutting in.</li>
+        <li>So replies must be shorter, and you must confirm out loud. The chatbot must cope when people cut in. You cannot read out twenty choices — say only a few.</li>
+        <li>Design for the ear, not the eye. This is the main task for our voice chatbot.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 22</div>
-      <h2>No screen means confirm out loud</h2>
+      <h2>Sample chats → flow map → hard cases</h2>
       <ul>
-        <li>Voice has no visual receipt, so confirm critical actions out loud — especially anything that moves money.</li>
-        <li>Read back what was understood, and use audio cues, or earcons, to signal state. ‘Transfer 500 dollars to Budi — shall I proceed?’</li>
-        <li>Explicit confirmation is non-negotiable on irreversible money tasks.</li>
+        <li>How the experts do it. First write sample chats — the easy path, where everything goes right. That is the shortest way to finish the task.</li>
+        <li>Then turn those chats into a flow map that shows the branches. Only after that do you add the harder cases: mistakes, new versus returning users.</li>
+        <li>Sample chats first, flow map next, hard cases last. Try this for our voice chatbot.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 23</div>
-      <h2>Design for being misunderstood</h2>
+      <h2>No screen means confirm out loud</h2>
       <ul>
-        <li>Error recovery is the make-or-break. Design for misunderstanding, because it will happen.</li>
-        <li>Detect low confidence, ask a clarifying question rather than guessing, allow an easy rephrase, and escalate to a human after repeated failure.</li>
-        <li>Graceful fallback is what separates a good assistant from a frustrating one.</li>
+        <li>With voice there is no receipt on screen. So confirm important actions out loud — above all, anything that moves money.</li>
+        <li>Read back what you heard, and use short sounds to show what is happening. ‘Send 5 million rupiah to Budi — shall I go ahead?’</li>
+        <li>Always confirm before an action you cannot undo. For our voice chatbot, this is a must on money tasks.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 24</div>
-      <h2>Gather · recover · confirm · act</h2>
+      <h2>One good turn, taken apart</h2>
       <ul>
-        <li>A short banking dialog playing out end to end, including a recovery branch. The customer asks to transfer; the assistant doesn't catch the amount and recovers with a clarifying question.</li>
-        <li>Then it gathers the rest one slot at a time, confirms the critical detail, and acts.</li>
-        <li>Good design in one screen: gather one slot at a time, confirm the important things, recover gracefully.</li>
+        <li>Let's take one good turn apart, line by line. Each line on the phone is doing one job.</li>
+        <li>First the bot shows it understood, by reading the request back. Then it asks one clear yes-or-no question. After the user agrees, it acts and says plainly that it is done.</li>
+        <li>Understood → check → act → confirm. This shape works for almost every money task in our chatbot.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 25</div>
-      <h2>Hand off — with the context</h2>
+      <h2>Plan for being heard wrong</h2>
       <ul>
-        <li>Know when to stop. For complex, sensitive or repeatedly-failed cases, route to a human — and crucially, pass the context along.</li>
-        <li>The customer should never have to repeat everything they just told the bot.</li>
-        <li>A clean exit to a human is good UX, not a failure of the assistant.</li>
+        <li>Fixing mistakes is the make-or-break. Plan for the chatbot hearing people wrong, because it will happen.</li>
+        <li>When the chatbot is not sure, ask a quick question instead of guessing. Let the user say it again a new way. Pass to a human after a few failed tries.</li>
+        <li>Handling mistakes in a calm way is the difference between a good chatbot and one that annoys people.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 26</div>
-      <h2>Voice as an entry point, not the whole story</h2>
+      <h2>Pass it on — with the chat</h2>
       <ul>
-        <li>A 2026 trend: voice as an entry point, paired with a screen for browsing and confirming — multimodal.</li>
-        <li>Design for accessibility: voice helps users who can't type or see; screens help those who can't hear.</li>
-        <li>And plan multilingual and Indonesian-English code-switching from the start — that's our audience's reality.</li>
+        <li>Know when to stop. For hard cases, private ones, or ones that keep failing, pass the customer to a human. Very important: pass the chat along too.</li>
+        <li>The customer should never have to say again everything they just told the chatbot.</li>
+        <li>Passing to a human in a clean way is good design, not a fail.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 27</div>
-      <h2>Design the conversation first</h2>
+      <h2>Voice is a way to start, not the whole story</h2>
       <ul>
-        <li>Land the plane. Three pillars: natural interaction — model real conversation, intent/slot/prompt, one question at a time; context — memory is perceived intelligence, carry the thread; and voice UX — confirm, recover, hand off, go multimodal.</li>
-        <li>One overarching rule: test with real users early — Wizard-of-Oz, conversation logs, fallout analysis. People always say what you didn't script.</li>
-        <li>Pointers: Google Conversation Design and the Amazon Alexa Design Guide. Call back the opener — design the conversation you'd want to have. Questions.</li>
+        <li>A 2026 trend: start with voice, then use a screen to browse and confirm. This mix of voice and screen is called multimodal.</li>
+        <li>Design so everyone can use it. Voice helps people who cannot type or see. A screen helps people who cannot hear.</li>
+        <li>Plan for more than one language from the start. Many users mix Indonesian and English in one sentence, so our voice chatbot should expect that.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 28</div>
+      <h2>What our chatbot can do</h2>
+      <ul>
+        <li>A simple list of what the chatbot can do — handy for the project.</li>
+        <li>Memory keeps the thread and saved likes. Follow-up questions ask for one missing detail instead of guessing. Human handover passes hard or private cases to a person with the full chat. Wording means the words: one steady, safe OCBC tone in every message.</li>
+        <li>Navigation, or deeplinks, opens the exact screen with one tap. More than one language handles Indonesian and English mixed in one sentence. These are the building blocks of a useful bank chatbot.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 29</div>
+      <h2>Don’t just explain — take them there</h2>
+      <ul>
+        <li>This is the headline idea: navigational AI. A normal chatbot would type out five steps for how to block a card. People rarely follow long steps.</li>
+        <li>Better: the chatbot understands the request and opens the right screen. The customer asks how to block their card, and the chatbot gives a tap-to-open shortcut — a deeplink — that jumps straight to the Block Card screen.</li>
+        <li>An answer becomes one tap. This works for any task — pay a bill, freeze a card, open a deposit. It is the feature that makes the chatbot feel truly helpful.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 30</div>
+      <h2>Talk to it — voice in, voice out</h2>
+      <ul>
+        <li>Voice chatbot: the customer talks, the chatbot talks back. No typing, hands-free.</li>
+        <li>Two design rules matter most here. There is no screen to look at, so the chatbot reads the action back to confirm before doing it. And the customer can cut in at any time — just like a real chat.</li>
+        <li>Speech-to-text turns the voice into text. Text-to-speech turns the reply into a voice. Design for the ear: short, confirm, let them cut in.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 31</div>
+      <h2>Show your work: tools, out in the open</h2>
+      <ul>
+        <li>Using tools: the chatbot does not just talk, it acts. It uses real bank tools to get data and make changes.</li>
+        <li>Good design shows a short note so the customer sees what is happening, for example checking your account. Silence feels broken; a step you can see feels safe.</li>
+        <li>Never act in silence on anything that moves money. Confirm first, then use the tool. Being open is the point.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 32</div>
+      <h2>The parts of a great chatbot turn</h2>
+      <ul>
+        <li>The showcase slide: one great turn that uses everything. Read the phone from top to bottom.</li>
+        <li>The customer speaks (voice in). The chatbot uses a tool and shows it. It gives back a neat result card, not a wall of text. It offers quick replies for the next step. And it asks for feedback with a thumbs up or down.</li>
+        <li>Voice, tools you can see, neat results, quick replies, and feedback — together these make a chatbot feel truly good. This is the bar for our project.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 33</div>
+      <h2>When not sure, read it back</h2>
+      <ul>
+        <li>One more good-and-bad — this time for hearing voice wrong. The customer says “send fifty thousand to Budi” but the chatbot hears it wrong.</li>
+        <li>On the left, the bad bot pushes ahead and sends the wrong amount. The customer only finds out after the money is gone. On the right, the good bot sees it is not sure, reads back what it heard, and asks one quick question first.</li>
+        <li>On money tasks, a quick “did I get that right?” beats a sure mistake. Build this check into our voice chatbot.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 34</div>
+      <h2>Same task, rewritten the right way</h2>
+      <ul>
+        <li>Here is one clunky turn, made better with the rules from today. Same question, much nicer chat.</li>
+        <li>Before: a stiff form, a code word, and a wall of text. After: a warm hello, one question, a plain confirm, and a tap-to-open shortcut.</li>
+        <li>Small wording changes add up. Read both and you can feel which one you would rather use.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 35</div>
+      <h2>If you keep only three things</h2>
+      <ul>
+        <li>A quick recap before we close. Three simple rules carry almost everything from today.</li>
+        <li>One, talk like a person — take turns, ask one thing at a time, no jargon. Two, remember the thread — do not make people repeat themselves. Three, confirm before you act — read it back on anything that moves money.</li>
+        <li>If you only keep three things, keep these. They are the spine of our voice chatbot.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 36</div>
+      <h2>Design the chat first</h2>
+      <ul>
+        <li>Wrap up. Three parts for our voice chatbot. One, natural talk — copy real chat, spot the goal, gather the missing bits, ask one thing at a time. Two, memory — remembering makes it feel smart, so keep the thread. Three, voice — confirm, fix mistakes, pass to a human, and mix voice with a screen. Plus what the chatbot can do — memory, follow-up questions, human handover, clear wording — and navigational AI that opens the right screen.</li>
+        <li>One big rule: test with real users early. Try a Wizard-of-Oz test, where a person secretly plays the bot. Then read the chat logs and see where people give up. People always say things you did not plan for.</li>
+        <li>To learn more, see Google Conversation Design and the Amazon Alexa Design Guide. Remember the opener: design the chat you would want to have. Questions.</li>
       </ul>
     </article>
   </div>

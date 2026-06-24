@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Speaker notes · Conversational AI Evaluation · OCBC CRAYON</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root{--red:#EC1B23;--ink:#1A1A1A;--text:#1F2937;--muted:#5b626d;--faint:#9AA1AC;
+  --line:#E7E8EB;--tint:#FCEEEF;--tint2:#FBE2E3;
+  --fHead:'Manrope',system-ui,sans-serif;--fBody:'Inter',system-ui,sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--fBody);color:var(--text);background:
+    radial-gradient(900px 500px at 100% -10%, rgba(236,27,35,.10), transparent 60%), #fbfbfc;
+  -webkit-font-smoothing:antialiased;padding-bottom:60px}
+.bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;
+  gap:14px;padding:14px 22px;background:rgba(251,251,252,.86);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line)}
+.bar .ttl{font-family:var(--fHead);font-weight:800;font-size:16px;letter-spacing:-.01em;color:var(--ink)}
+.bar .sub{font-size:12px;color:var(--faint);margin-top:2px}
+.bar .right{display:flex;align-items:center;gap:8px;flex:none;flex-wrap:wrap;justify-content:flex-end}
+.btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--fHead);font-weight:700;
+  font-size:12.5px;text-decoration:none;border-radius:99px;padding:8px 14px;white-space:nowrap;
+  cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease}
+.btn svg{width:14px;height:14px}
+.btn.ghost{color:var(--muted);border:1px solid var(--line);background:#fff}
+.btn.ghost:hover{border-color:var(--tint2);color:var(--ink)}
+.btn.red{color:var(--red);background:var(--tint);border:1px solid var(--tint2)}
+.btn.red:hover{background:var(--red);color:#fff;border-color:var(--red)}
+.btn.on{background:var(--red);color:#fff;border-color:var(--red)}
+.banner{display:none;align-items:center;gap:8px;font-size:13px;color:#8a1015;
+  background:var(--tint);border-bottom:1px solid var(--tint2);padding:10px 22px}
+.banner b{color:var(--red)}
+body.editing .banner{display:flex}
+main{max-width:820px;margin:0 auto;padding:8px 22px}
+.lead{font-family:var(--fHead);font-weight:800;letter-spacing:-.02em;font-size:clamp(1.7rem,5vw,2.4rem);
+  color:var(--ink);margin:26px 0 6px}
+.lead .red{color:var(--red)}
+.intro{color:var(--muted);font-size:14.5px;line-height:1.6;margin-bottom:14px;max-width:60ch}
+.s{padding:20px 0;border-bottom:1px solid var(--line)}
+.s:last-child{border-bottom:none}
+.s .n{font-family:var(--fHead);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--red)}
+.s h2{font-family:var(--fHead);font-weight:700;font-size:18px;letter-spacing:-.015em;color:var(--ink);margin:4px 0 11px}
+.s ul{margin:0;padding-left:19px;display:flex;flex-direction:column;gap:9px}
+.s li{font-size:14.5px;line-height:1.6;color:var(--text)}
+/* edit affordances */
+body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:1px dashed var(--tint2);
+  outline-offset:4px;border-radius:4px}
+.s h2[contenteditable]:focus,.s li[contenteditable]:focus{outline:2px solid var(--red);
+  outline-offset:4px;background:#fff}
+@media(max-width:560px){
+  .bar{padding:11px 14px}
+  .bar .sub{display:none}
+  .btn{padding:7px 10px;font-size:11.5px}
+  .btn .lbl-long{display:none}
+  .banner{padding:9px 14px;font-size:12px}
+  main{padding:6px 16px}
+  .s li{font-size:14px}
+}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div>
+    <div class="ttl">Speaker notes</div>
+    <div class="sub">Conversational AI Evaluation · 32 slides</div>
+  </div>
+  <div class="right">
+    <a class="btn ghost" href="index.html">&larr; Back</a>
+    <button class="btn ghost" id="edit" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+      <span id="editLbl">Edit</span>
+    </button>
+    <button class="btn ghost" id="reset" type="button" style="display:none">Reset</button>
+    <a class="btn red" id="dl" href="speaker-notes-conversational.txt" download="OCBC-CRAYON-Conversational-AI-Design-speaker-notes.txt">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3v12M7 11l5 5 5-5M5 21h14"/></svg>
+      <span class="lbl-long">Download&nbsp;</span>.txt
+    </a>
+  </div>
+</header>
+<div class="banner" id="banner">&#9998;&nbsp; Editing — your changes are saved in this browser. Use <b>Download .txt</b> to keep a copy.</div>
+<main>
+  <h1 class="lead">Talk track <span class="red">&middot; every slide</span></h1>
+  <p class="intro">Speaker notes for the OCBC CRAYON 2026 &mdash; Conversational AI Evaluation deck. 32 slides, in order. Press <b>Edit</b> to tweak the wording inline (saved to this browser), or <b>Download .txt</b> for a copy.</p>
+  <div id="notes">
+    <article class="s">
+      <div class="n">Slide 1</div>
+      <h2>Conversational AI Evaluation</h2>
+      <ul>
+        <li>Welcome to the evaluation session. We built an assistant that can listen, look things up, think, stay safe, and speak. Today we ask: is it any good, and how do we know?</li>
+        <li>We follow the same workflow the chatbot uses, stage by stage, and grade each stage with simple metrics.</li>
+        <li>For every metric we say what it means in plain words, and we colour the ones teams use most.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 2</div>
+      <h2>The frame</h2>
+      <ul>
+        <li>The whole session in one line: if you cannot measure it, you cannot ship it. A bank cannot launch what it cannot prove is good and safe.</li>
+        <li>Metrics turn opinions into numbers we can compare and defend.</li>
+        <li>We will get a number for every stage of the workflow.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 3</div>
+      <h2>Numbers, not feelings</h2>
+      <ul>
+        <li>A nice demo can still hide wrong answers, made-up facts, a data leak, or a slow reply. These are quiet until a real customer hits them.</li>
+        <li>Numbers let us compare versions, set a pass mark, and show risk and compliance the proof they need.</li>
+        <li>Each part of the workflow fails in its own way, so each part needs its own number.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 4</div>
+      <h2>The workflow we grade</h2>
+      <ul>
+        <li>This is the path the chatbot follows for every call. Speech becomes text, it looks up facts, the model thinks and answers, a safety check runs, and the reply is spoken back.</li>
+        <li>Each box can go wrong on its own, so each box gets its own metrics.</li>
+        <li>We will walk this workflow left to right and grade each stage.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 5</div>
+      <h2>How to read a metric</h2>
+      <ul>
+        <li>A few words first, so the tables make sense. A score is a grade — usually higher is better. A rate is how often something happens — usually lower is better.</li>
+        <li>'@k' means 'in the top k results', so Recall@5 looks at the top 5. p95 means the slow end — 95 out of 100 are faster than this, so it catches the bad cases.</li>
+        <li>For every metric we also say which way is good, and colour the ones used most.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 6</div>
+      <h2>Metrics by stage — red = most used</h2>
+      <ul>
+        <li>A map you can keep: each stage of the workflow and the metrics that go with it.</li>
+        <li>The red ones are the metrics teams use most. The gray ones are also useful, just used less.</li>
+        <li>We go through each of these stages next, one by one.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 7</div>
+      <h2>Part 1 — Grading Each Stage</h2>
+      <ul>
+        <li>Part 1: we walk the workflow stage by stage.</li>
+        <li>For each stage we explain what it does, then list its metrics with a plain meaning.</li>
+        <li>Red star means the metric is used most in real life.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 8</div>
+      <h2>Stage 1 — hearing the caller</h2>
+      <ul>
+        <li>The first stage turns the caller's speech into text. If it mishears here, every later step works on the wrong words.</li>
+        <li>It is hard because of noise, accents, names, and people switching languages.</li>
+        <li>So we grade how accurate it is, and how fast.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 9</div>
+      <h2>Speech-to-text metrics</h2>
+      <ul>
+        <li>Word Error Rate is the main one: out of all the words, how many did it hear wrong — swapped, added, or missed. Lower is better.</li>
+        <li>CER is the same idea per letter, handy for names and numbers. Real-Time Factor checks it keeps up with live speech.</li>
+        <li>Always test on our own audio, not a clean demo recording.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 10</div>
+      <h2>Stage 2 — finding the facts</h2>
+      <ul>
+        <li>Our assistant looks up real bank data before it answers. This stage fetches the right pages.</li>
+        <li>If the right fact was never fetched, no clever wording can save the answer.</li>
+        <li>So we grade the look-up on its own, before the answer.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 11</div>
+      <h2>Retrieval metrics</h2>
+      <ul>
+        <li>Recall@k asks: out of all the right pages, how many did it find in the top k. Context precision and recall check how much of the fetched text was useful, and how much of what was needed it got.</li>
+        <li>Precision@k, MRR and nDCG check how clean and how well-ranked the results are.</li>
+        <li>Recall and context metrics are the ones teams watch most.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 12</div>
+      <h2>Recall vs precision — the fishing net</h2>
+      <ul>
+        <li>A simple picture. Precision is a clean net: almost everything you pull up is a fish you wanted. Recall is a full net: you caught most of the fish that were there.</li>
+        <li>Cast a wider net and you catch more fish (recall up) but also more rubbish (precision down).</li>
+        <li>The art is catching the answer without dragging in junk for the model to wade through.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 13</div>
+      <h2>Stage 3 — the answer itself</h2>
+      <ul>
+        <li>Now the model writes the reply. This is the hardest stage to grade, because most replies have no single right wording.</li>
+        <li>We grade it two ways: against a known correct answer when there is one, and by its qualities when there is not.</li>
+        <li>The most important quality for a bank: it sticks to the real facts and makes nothing up.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 14</div>
+      <h2>When there is a known right answer</h2>
+      <ul>
+        <li>These compare the reply to a known answer. Exact Match and F1 work for closed answers like a balance or a date.</li>
+        <li>BLEU and ROUGE measure word overlap (built for translation and summaries). METEOR adds synonyms; BERTScore compares meaning, so a good paraphrase still scores well.</li>
+        <li>They are weak for open chat, because they reward matching the exact words.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 15</div>
+      <h2>Grading quality without a known answer</h2>
+      <ul>
+        <li>Most replies have no reference, so we grade qualities directly. Faithfulness asks: is every claim backed by the facts it was given — no making things up. This is the top one for a bank.</li>
+        <li>Answer relevance asks if it actually answered the question. Hallucination rate counts how often it says something the facts do not support.</li>
+        <li>These three are the ones teams watch most.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 16</div>
+      <h2>Good answer vs bad answer</h2>
+      <ul>
+        <li>Same question, same facts. The good answer uses only the real fee and points to where it came from. The bad answer guesses a number that was never given.</li>
+        <li>Faithfulness catches exactly this: the bad one has a claim with no backing.</li>
+        <li>This is the single most important check for a bank chatbot.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 17</div>
+      <h2>Stage 3c — the AI examiner</h2>
+      <ul>
+        <li>How do we grade those qualities at scale? We use a strong model as a fair examiner. We give it the question, the answer, and a marking guide (a rubric — a checklist of what a good answer needs).</li>
+        <li>It returns a score and a short reason. Asking for the reason first makes the grade checkable.</li>
+        <li>This is the workhorse — but we must check the examiner itself, coming up.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 18</div>
+      <h2>AI-examiner metrics</h2>
+      <ul>
+        <li>Pointwise score: the examiner grades one answer on a scale against the guide. Pairwise win-rate: show two answers and count how often the new one is picked as better.</li>
+        <li>Agreement checks how often the examiner agrees with human graders — so we can trust it. Bias checks make sure it is not fooled by order or by a longer answer.</li>
+        <li>Pointwise and pairwise are the everyday ones.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 19</div>
+      <h2>Stage 4 — the safety check</h2>
+      <ul>
+        <li>Before a reply goes out, a guardrail checks it. For a bank these checks are pass/fail, not nice-to-have.</li>
+        <li>We test for leaked private data, trick prompts that try to break the rules, and rude or harmful replies.</li>
+        <li>We build a set of attack prompts and run it every release.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 20</div>
+      <h2>Safety &amp; guardrail metrics</h2>
+      <ul>
+        <li>PII leak rate is how often it shows private data it should not — it must be near zero. Jailbreak rate is how often a trick prompt gets past the rules.</li>
+        <li>Refusal correctness checks it says no to harmful asks but still helps with normal ones. Toxicity rate covers rude, biased, or harmful replies.</li>
+        <li>Leak and jailbreak rates are the ones a bank watches hardest.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 21</div>
+      <h2>Stage 5 — speaking back</h2>
+      <ul>
+        <li>The last stage turns the reply text into a voice. The words can be perfect, but a flat or unclear voice still feels broken on a call.</li>
+        <li>We grade how natural and clear it sounds, and how fast it starts.</li>
+        <li>A slow or robotic voice undoes all the good work upstream.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 22</div>
+      <h2>Text-to-speech metrics</h2>
+      <ul>
+        <li>MOS is the main one: people rate how natural the voice sounds, 1 to 5. Intelligibility asks if listeners understand it clearly.</li>
+        <li>Round-trip WER is a neat auto check: speak the text, transcribe it back, and see how much survived. Latency is the delay before it starts speaking.</li>
+        <li>MOS is the headline number for a voice.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 23</div>
+      <h2>Part 2 — The Whole Picture</h2>
+      <ul>
+        <li>Part 2 zooms out from single stages to the whole conversation and to real users.</li>
+        <li>A stage can look perfect while the whole chat still fails.</li>
+        <li>These are the numbers leadership and risk watch day to day.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 24</div>
+      <h2>The whole conversation</h2>
+      <ul>
+        <li>Now we grade the whole chat, not one stage. The headline is task success: did the customer actually get what they came for.</li>
+        <li>We also look at how many turns it took, and whether it stayed on topic without contradicting itself.</li>
+        <li>These need a full conversation to score, not a single reply.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 25</div>
+      <h2>Out in production</h2>
+      <ul>
+        <li>Offline scores predict; real customers decide. Containment is the share of chats finished without a human. CSAT is the satisfaction score after the chat.</li>
+        <li>p95 latency is the slow end of response time — what your unhappiest one-in-twenty feel. Escalation, cost, and repeat-contact fill in the picture.</li>
+        <li>Containment, CSAT and p95 latency are the everyday production numbers.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 26</div>
+      <h2>How we get the live numbers</h2>
+      <ul>
+        <li>The cleanest way to test a change: send a small share of real chats to the new version and compare it with the old one on the numbers that matter.</li>
+        <li>Alongside it, watch the safety and speed numbers live, with alerts, so a problem is caught in minutes, not weeks.</li>
+        <li>Always keep a way to roll back.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 27</div>
+      <h2>Part 3 — Make It a Habit</h2>
+      <ul>
+        <li>Part 3: turning all these numbers into a routine, not a one-off.</li>
+        <li>A living test set, an automatic re-test before each update, and one scorecard.</li>
+        <li>We close with how to read the whole workflow at a glance.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 28</div>
+      <h2>Build a practice-question set</h2>
+      <ul>
+        <li>Every metric needs data to run on. Build a golden set: real chats with known good answers, taken from anonymised transcripts.</li>
+        <li>On purpose, add the hard cases — unclear asks, topic switches, angry customers, and old bugs. Each bug you fix becomes a permanent test.</li>
+        <li>Keep it growing, or it slowly stops protecting you.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 29</div>
+      <h2>Re-test before every update</h2>
+      <ul>
+        <li>Tie it together: before any change goes live, run all the stage metrics and the AI examiner over the practice set, automatically.</li>
+        <li>Set a pass mark. If faithfulness drops or a safety check fails, the change is blocked — like a smoke alarm.</li>
+        <li>Then sample for human review and watch the live numbers after launch. Evaluation becomes a loop, not a one-off.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 30</div>
+      <h2>The end-to-end scorecard</h2>
+      <ul>
+        <li>The whole workflow on one page: each stage, its key metric, and a good target. This is the scorecard you could put on a wall.</li>
+        <li>Read top to bottom, it follows the chat: hearing, finding facts, answering, staying safe, speaking, and the final result.</li>
+        <li>If any row goes red, you know exactly which stage to fix.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 31</div>
+      <h2>Which number do I look at?</h2>
+      <ul>
+        <li>A quick guide when something feels off. If it mishears, look at Word Error Rate. If it can't find the answer, look at Recall@k.</li>
+        <li>If it makes things up, look at Faithfulness. If it leaks data, look at PII leak rate. If it's slow, look at p95 latency. If customers are upset, look at CSAT and repeat-contact.</li>
+        <li>Each problem points to one stage and one metric.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 32</div>
+      <h2>Graded, stage by stage</h2>
+      <ul>
+        <li>Wrap up. Grade every stage of the workflow and the whole chat. Use a known answer where there is one, and the AI examiner where there is not — but check the examiner against people.</li>
+        <li>Safety checks are pass/fail. Live numbers like containment, p95 and CSAT decide if it really works. Run it all on a growing practice set, re-tested before each update.</li>
+        <li>For OCBC, run the examiner on our own servers so chats stay in the bank, and grade the whole workflow. Thank you — questions.</li>
+      </ul>
+    </article>
+  </div>
+</main>
+<script>
+(function(){
+  var KEY = 'ocbc-crayon-conversational-notes-v1';
+  var arts = [].slice.call(document.querySelectorAll('#notes .s'));
+  var fields = [].slice.call(document.querySelectorAll('#notes h2, #notes li'));
+  var resetBtn = document.getElementById('reset');
+
+  function collect(){
+    return arts.map(function(s){
+      return { t: (s.querySelector('h2')||{}).textContent || '',
+               n: [].slice.call(s.querySelectorAll('li')).map(function(li){ return li.textContent; }) };
+    });
+  }
+  function showReset(on){ resetBtn.style.display = on ? '' : 'none'; }
+
+  // apply any saved edits
+  try{
+    var raw = localStorage.getItem(KEY);
+    if(raw){
+      var data = JSON.parse(raw);
+      arts.forEach(function(s,i){
+        var rec = data[i]; if(!rec) return;
+        var h = s.querySelector('h2'); if(h && rec.t != null) h.textContent = rec.t;
+        var lis = [].slice.call(s.querySelectorAll('li'));
+        (rec.n||[]).forEach(function(t,k){ if(lis[k]) lis[k].textContent = t; });
+      });
+      showReset(true);
+    }
+  }catch(e){}
+
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(collect())); showReset(true); }catch(e){} }
+
+  // edit toggle
+  var editing = false, editBtn = document.getElementById('edit'), editLbl = document.getElementById('editLbl');
+  editBtn.addEventListener('click', function(){
+    editing = !editing;
+    document.body.classList.toggle('editing', editing);
+    editBtn.classList.toggle('on', editing);
+    editLbl.textContent = editing ? 'Done' : 'Edit';
+    fields.forEach(function(el){ el.contentEditable = editing ? 'true' : 'false'; });
+    if(editing){ if(fields[0]) fields[0].focus(); } else { save(); }
+  });
+  document.addEventListener('input', function(){ if(editing) save(); });
+
+  // download current (edited) content as .txt
+  function buildTxt(){
+    var L = ['OCBC CRAYON 2026 — Conversational AI Evaluation', 'Speaker notes · ' + arts.length + ' slides',
+             '================================================', ''];
+    collect().forEach(function(r,i){
+      L.push('Slide ' + (i+1) + ' — ' + r.t);
+      r.n.forEach(function(n){ L.push('  \u2022 ' + n); });
+      L.push('');
+    });
+    return L.join('\n').replace(/\s+$/, '') + '\n';
+  }
+  document.getElementById('dl').addEventListener('click', function(ev){
+    ev.preventDefault();
+    var blob = new Blob([buildTxt()], { type: 'text/plain;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'OCBC-CRAYON-Conversational-AI-Design-speaker-notes.txt';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+  });
+
+  resetBtn.addEventListener('click', function(){
+    if(!confirm('Discard your edits and restore the original notes?')) return;
+    try{ localStorage.removeItem(KEY); }catch(e){}
+    location.reload();
+  });
+})();
+</script>
+</body>
+</html>

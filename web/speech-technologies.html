@@ -766,301 +766,240 @@ body.static .fnode, body.static .fconn{opacity:1 !important; transform:none !imp
 <div class="stage">
   <main class="deck" id="deck">
 
-  <section class="slide dark cover active" data-notes='["Welcome to Day 2, Session 2. Session 1 turned sound into spectrograms and features and used Whisper to transcribe. Today we open the box: how speech-to-text really works, and the reverse direction, text-to-speech.", "90 minutes, intuition-first: no signal-processing maths. One animated demo. Banking voice examples throughout, and an open-source, self-hostable stance — sensitive customer audio cannot leave the bank.", "Promise: by the end you can reason about an STT and a TTS system end to end, and explain how to adapt them to our languages and accents."]'>
+  <section class="slide dark cover active" data-notes='["Welcome. Today is about machines that can listen and machines that can talk. This is the tech behind every voice assistant you already use.", "We will keep it simple: no maths, many everyday stories, and one live demo. The thread all day is a friendly bank voice assistant.", "By the end you will know the two halves of any voice system: turning speech into text, and text back into speech."]'>
     <div class="bg"></div><div class="scrim"></div>
     <div class="inner">
       <img class="logo" src="assets/ocbc-logo.png" alt="OCBC" />
-      <h1 data-r data-d="1">Speech Technologies<span class="red">STT &amp; TTS</span></h1>
+      <h1 data-r data-d="1">Speech Technologies<span class="red">machines that listen &amp; speak</span></h1>
       <div class="rule" data-r data-d="2"></div>
-      <div class="meta" data-r data-d="3"><strong>Day 2 &middot; Session 2 — Core Mechanisms, Models &amp; Language Adaptation</strong><br/>Teaching machines to listen, and to speak<br/>OCBC CRAYON 2026 · ADM Team · 90 minutes</div>
+      <div class="meta" data-r data-d="3"><strong>How a voice assistant hears you &mdash; and talks back</strong><br/>Teaching machines to listen, and to speak<br/>OCBC CRAYON 2026 · Day 2</div>
       <div class="program" data-r data-d="4">OCBC CRAYON · Day 2</div>
     </div>
   </section>
 
-  <section class="slide dark" data-notes='["The whole session in one line. Reading aloud and listening back are mirror images of the same problem.", "Text-to-speech goes text to sound; speech-to-text goes sound to text. Same pipeline, two directions.", "Hold this image — we will literally build it as a mirror on the next slides, and call it back at the close."]'>
+  <section class="slide dark" data-notes='["One simple idea holds the whole session together: listening and speaking are two sides of the same coin.", "Listening turns sound into words; speaking turns words into sound. Same idea, opposite directions.", "Hold this picture &mdash; everything today fits onto one side or the other."]'>
     <div class="body-area">
-      <div class="kicker"><span class="badge"></span>The frame</div>
+      <div class="kicker"><span class="badge"></span>The big idea</div>
       <div class="quote-wrap">
         <div class="quote-mark" data-r data-d="2">&ldquo;</div>
-        <blockquote data-r data-d="3">Getting a machine to read aloud and to listen back are <em>mirror images</em> of the same problem.</blockquote>
-        <cite data-r data-d="4">A framing principle for speech technology</cite>
+        <blockquote data-r data-d="3">A voice assistant is really two skills: <em>listening</em> to you, and <em>speaking</em> back &mdash; two sides of one coin.</blockquote>
+        <cite data-r data-d="4">The frame for everything today</cite>
       </div>
     </div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">02</span></div>
   </section>
 
-  <section class="slide" data-notes='["Recap Session 1 in one breath. We learned that a waveform becomes a spectrogram, then Mel and MFCC features, and that Whisper can transcribe a call.", "Today we go deeper: how that transcription actually happens inside the model, and the reverse — turning text back into natural speech.", "We build directly on Session 1 — log-Mel spectrograms reappear as the input to STT and the output of the TTS acoustic model."]'>
-    <div class="kicker"><span class="badge"></span>Session 1 &rarr; today</div>
-    <h2 class="slide-title" data-r data-d="1">From spectrograms to speech systems</h2>
-    <div class="flow" style="margin-top:6px">
-      <div class="step"><div class="node">1</div><h4>Waveform</h4><p>raw audio</p><div class="arrow"></div></div>
-      <div class="step"><div class="node">2</div><h4>Spectrogram</h4><p>Mel / MFCC</p><div class="arrow"></div></div>
-      <div class="step"><div class="node">3</div><h4>Whisper</h4><p>a transcript</p><div class="arrow"></div></div>
-      <div class="step"><div class="node hot">4</div><h4>+ STT &amp; TTS</h4><p>how &amp; reverse</p></div>
-    </div>
-    <div class="flow-cap">Session 1 got us a transcript. Today: <b style="color:var(--red)">how STT works</b>, and the reverse direction &mdash; <b style="color:var(--red)">TTS</b>.</div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">03</span></div>
-  </section>
-
-  <section class="slide" data-notes='["The core mental model: a voice system is a round-trip. Speech-to-text listens — audio becomes text. Text-to-speech speaks — text becomes audio.", "An interactive voice response (IVR) line or a voice-bot needs both halves: it has to hear the caller and answer out loud.", "Everything today slots into one side of this mirror or the other. Keep the round-trip in your head."]'>
-    <div class="kicker"><span class="badge"></span>The mirror</div>
-    <h2 class="slide-title" data-r data-d="1">Two halves of one voice system</h2>
+  <section class="slide" data-notes='["The main picture: a voice assistant is a round-trip. The listening half turns your speech into text. The speaking half turns its answer back into sound.", "Think of the listening half as a fast waiter writing down your order. Think of the speaking half as an actor reading a script out loud.", "Any voice assistant needs both halves. It must hear you, then answer out loud."]'>
+    <div class="kicker"><span class="badge"></span>The two halves</div>
+    <h2 class="slide-title" data-r data-d="1">Listening and speaking, one round-trip</h2>
     <div class="fillc">
       <div class="mirror">
         <div class="mrow r1">
           <div class="mnode"><div class="mt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg> Speech</div><div class="wv"><i style="--h:40%"></i><i style="--h:70%"></i><i style="--h:50%"></i><i style="--h:85%"></i><i style="--h:45%"></i><i style="--h:75%"></i><i style="--h:55%"></i></div></div>
-          <div class="mmid"><div class="mp">STT / ASR</div><div class="marr">&rarr;</div></div>
+          <div class="mmid"><div class="mp">listen</div><div class="marr">&rarr;</div></div>
           <div class="mnode"><div class="mt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 6h14M5 12h14M5 18h9"/></svg> Text</div><div class="mx">&ldquo;check my balance&rdquo;</div></div>
         </div>
         <div class="mrow r2">
           <div class="mnode"><div class="mt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 6h14M5 12h14M5 18h9"/></svg> Text</div><div class="mx">&ldquo;your balance is&hellip;&rdquo;</div></div>
-          <div class="mmid"><div class="mp">TTS</div><div class="marr">&rarr;</div></div>
+          <div class="mmid"><div class="mp">speak</div><div class="marr">&rarr;</div></div>
           <div class="mnode"><div class="mt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H3v6h3l5 4zM16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg> Speech</div><div class="wv dk"><i style="--h:55%"></i><i style="--h:80%"></i><i style="--h:45%"></i><i style="--h:70%"></i><i style="--h:50%"></i><i style="--h:85%"></i><i style="--h:40%"></i></div></div>
         </div>
       </div>
     </div>
-    <div class="flow-cap"><b>STT</b> listens · <b>TTS</b> speaks &mdash; an interactive voice response (IVR) line / voice-bot needs <b style="color:var(--red)">both</b>.</div>
+    <div class="flow-cap">The top row <b>listens</b> (speech &rarr; text); the bottom row <b>speaks</b> (text &rarr; speech). A voice assistant needs <b style="color:var(--red)">both</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">03</span></div>
+  </section>
+
+  <section class="slide" data-notes='["You already use this every day. Siri, Alexa and Google all do the same thing. They listen, work out an answer, then speak it back.", "It is always the same loop: hear you, decide, reply out loud. They mostly differ in where the work happens.", "A bank voice assistant is the same loop. The one difference: it runs inside the bank, so the audio never leaves."]'>
+    <div class="kicker"><span class="badge"></span>You already use this every day</div>
+    <h2 class="slide-title" data-r data-d="1">Siri, Alexa &amp; Google all do the same thing</h2>
+    <div class="cards c3" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></div><h3>Apple Siri</h3><p>&ldquo;Hey Siri&rdquo; &rarr; it listens, answers, and replies out loud &mdash; much of it on your iPhone.</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12a4 4 0 0 1 8 0M12 8v8"/></svg></div><h3>Amazon Alexa</h3><p>&ldquo;Alexa&hellip;&rdquo; &rarr; same loop, powering millions of Echo speakers in homes.</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div><h3>Google Assistant</h3><p>&ldquo;Hey Google&rdquo; &rarr; the same listen-then-speak loop, across many languages.</p></div>
+    </div>
+    <div class="flow-cap">All three: <b>listen &rarr; decide &rarr; speak</b>. A bank assistant is identical &mdash; just <b style="color:var(--red)">run inside the bank, so audio stays put</b>.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">04</span></div>
   </section>
 
-  <section class="slide" data-notes='["Map the use cases. On the listening side: transcribe and analyse calls, voice commands, and compliance quality assurance over recorded conversations.", "On the speaking side: voice-bot and IVR replies, accessibility for visually-impaired customers, and proactive voice alerts.", "Almost every voice product a bank ships uses one or both directions. This is why both halves matter."]'>
-    <div class="kicker"><span class="badge"></span>Why a bank needs both</div>
-    <h2 class="slide-title" data-r data-d="1">Listening and speaking, mapped to the bank</h2>
-    <div class="vs" style="margin-top:24px">
-      <div class="panel accent" data-r data-d="2">
-        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9a6 6 0 0 1 12 0c0 4-3 5-3 8a3 3 0 0 1-6 0"/><path d="M9 9a3 3 0 0 1 5 2"/></svg></span>STT &mdash; listening</div>
-        <div class="ps">Turn customer voice into analysable text.</div>
-        <div class="chips"><span class="chip">call transcription</span><span class="chip">voice commands</span><span class="chip">compliance QA</span></div>
-        <div class="where">&ldquo;What did the customer actually say?&rdquo;</div>
-      </div>
-      <div class="panel" data-r data-d="3">
-        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H3v6h3l5 4zM16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg></span>TTS &mdash; speaking</div>
-        <div class="ps">Turn the bank&#39;s answers into natural speech.</div>
-        <div class="chips"><span class="chip">voice-bot / IVR</span><span class="chip">accessibility</span><span class="chip">voice alerts</span></div>
-        <div class="where">&ldquo;How does the bank reply out loud?&rdquo;</div>
-      </div>
-    </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">05</span></div>
+  <section class="slide dark divider" data-notes='["Part 1: the listening half. This turns speech into text. Think of a fast waiter who writes down every word a caller says.", "We will see why this is hard, how modern AI now does it in one step, and which models to pick.", "Keep the picture simple: sound goes in, words come out."]'>
+    <div class="pillar-no">01</div>
+    <div class="eyebrow"><span class="dot"></span>Part 1</div>
+    <h2>Listening &mdash; Turning Speech into Text</h2>
+    <p class="lead">The machine as a fast waiter taking your order: sound goes in, words come out.</p>
+    <div class="prog-rail"><span class="on">Listen</span><span>Speak</span><span>Make it ours</span><span>At OCBC</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">05</span></div>
   </section>
 
-  <section class="slide" data-notes='["The constraint that shapes every recommendation today. Sensitive customer voice cannot be sent to closed cloud speech APIs — that is audio leaving the bank.", "We will explain how the big closed services work, but only for understanding. Everything we recommend is open-source and self-hostable.", "Voice is biometric and deeply personal data. The rule is simple: audio stays inside OCBC infrastructure."]'>
-    <div class="kicker"><span class="badge"></span>The open-source rule (again)</div>
-    <h2 class="slide-title" data-r data-d="1">Sensitive voice never leaves the bank</h2>
-    <div class="two" style="margin-top:18px">
+  <section class="slide" data-notes='["Picture the listening half as a fast waiter in a busy cafe. He writes down every word you say, right away, and never gets tired.", "A great waiter does three things at once. He keeps up with fast talkers. He ignores the noise. And he still spells strange names right.", "That is the job we ask the machine to do. Hold this picture as we look at why it is hard."]'>
+    <div class="kicker"><span class="badge"></span>Meet the waiter</div>
+    <h2 class="slide-title" data-r data-d="1">A fast waiter who writes down every word</h2>
+    <div class="cards c3" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg></div><h3>Keeps up</h3><p>Writes as fast as you talk. He never falls behind, and never needs a break.</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 18 0M8 12a4 4 0 0 1 8 0"/><path d="M2 5l20 14"/></svg></div><h3>Ignores noise</h3><p>Tunes out the chatter and the clatter to catch the words that matter.</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V5h16v2M9 19h6M12 5v14"/></svg></div><h3>Spells names</h3><p>Gets even strange names and words down right.</p></div>
+    </div>
+    <div class="flow-cap">That cafe waiter is our picture for the <b style="color:var(--red)">listening</b> half &mdash; sound in, words out, in real time.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Why listening is hard. First the machine turns the sound into a picture. We call it a spectrogram. It is like a heat-map of a song. It shows which tones are loud over time.", "But people run words together. They talk over noise. They switch languages in one sentence. And they use names the machine has never heard. That is why this used to be so hard.", "How well did it do? We mark it like a dictation test. We count how many words it got wrong."]'>
+    <div class="kicker"><span class="badge"></span>Why listening is hard</div>
+    <h2 class="slide-title" data-r data-d="1">First, sound becomes a picture</h2>
+    <div class="two" style="margin-top:16px">
+      <div class="viz">
+        <div class="fcall" style="flex-direction:column;gap:12px">
+          <div class="fnode fn" data-r data-d="2" style="flex:none"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></div><div class="ft">Spoken words</div></div>
+          <div class="fconn" style="flex:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 4v15M6 13l6 6 6-6"/></svg></div>
+          <div class="fnode model" data-r data-d="3" style="flex:none"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h2l2-7 3 16 3-12 2 8 2-5h4"/></svg></div><div class="ft">A picture of the sound</div><div class="fs">a &ldquo;heat-map&rdquo; of the audio</div></div>
+        </div>
+      </div>
       <div class="txt">
         <ul class="bullets">
-          <li data-r data-d="2">Closed cloud speech APIs mean <b>audio leaves OCBC</b> &mdash; not allowed.</li>
-          <li data-r data-d="3">We explain closed services only <b>for context</b>.</li>
-          <li data-r data-d="4" class="strong">Everything recommended is <b style="color:var(--red)">open-source &amp; self-hostable</b>.</li>
-          <li data-r data-d="5">Voice is biometric &mdash; treat it as sensitive personal data.</li>
+          <li data-r data-d="3">A <b>spectrogram</b> is just a <b>picture of sound</b> &mdash; like a heat-map of a song.</li>
+          <li data-r data-d="4" class="strong">Hard because people run words together, talk over <b>noise</b>, and switch languages.</li>
+          <li data-r data-d="5">And they use <b>names</b> the machine never heard before.</li>
+          <li data-r data-d="6">We mark it like a <b style="color:var(--red)">dictation test</b> &mdash; how many words did it get wrong?</li>
         </ul>
-      </div>
-      <div class="viz">
-        <div class="fcall" style="flex-direction:column;gap:14px">
-          <div class="fnode fn" data-r data-d="3" style="flex:none"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7M6 10v9h12v-9"/></svg></div><div class="ft">On-premise</div><div class="fs">models run in-house</div></div>
-          <div class="fnode model" data-r data-d="4" style="flex:none;opacity:.55"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 18a4 4 0 0 1 0-8 5 5 0 0 1 9.6-1.5A3.5 3.5 0 0 1 18 18z"/></svg></div><div class="ft">Closed cloud</div><div class="fs">audio leaves &mdash; avoid</div></div>
-        </div>
       </div>
     </div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">06</span></div>
   </section>
 
-  <section class="slide dark divider" data-notes='["Part 1, about 27 minutes. We define the task and its metric, then the heart of the session: the three architecture families for decoding speech.", "Intuition over maths — no connectionist-temporal-classification equations, just pictures of how each family works.", "End on the open-source landscape and a decision aid for choosing a model."]'>
-    <div class="pillar-no">01</div>
-    <div class="eyebrow"><span class="dot"></span>Part 1</div>
-    <h2>Speech-to-Text — Teaching Machines to Listen</h2>
-    <p class="lead">How audio becomes text: the task, the metric, and the three ways an automatic speech recognition (ASR) model decodes.</p>
-    <div class="prog-rail"><span class="on">STT</span><span>TTS</span><span>Adaptation</span><span>At OCBC</span></div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">07</span></div>
-  </section>
-
-  <section class="slide" data-notes='["The task: audio in, text out. We score quality with Word Error Rate, WER: substitutions plus insertions plus deletions, divided by the number of reference words. Lower is better.", "Worked example: the reference is six words; the model substituted one, inserted one, and deleted one — three errors over six words is fifty percent WER.", "WER governs every model choice in this section. When we say one model is more accurate, we mean lower WER on the audio we care about."]'>
-    <div class="kicker"><span class="badge"></span>The ASR task &amp; how we score it</div>
-    <h2 class="slide-title" data-r data-d="1">Word Error Rate (WER) is the yardstick</h2>
-    <div class="two" style="margin-top:16px">
-      <div class="viz">
-        <div class="schema" data-r data-d="2" style="font-size:13.5px"><span class="c"># reference vs model output</span><br/>REF: please send my <span style="color:#7be0a6">bank</span> statement <span style="color:#7be0a6">now</span><br/>HYP: please send <span style="color:#ff7a7e">a</span> &nbsp;&nbsp;<span style="color:#ff7a7e">balance</span> statement<br/><br/><span class="c"># 1 sub + 1 ins + 1 del = 3 errors</span><br/><span style="color:#79c0ff">WER</span> = 3 / 6 = <b style="color:#fff">50%</b></div>
-      </div>
+  <section class="slide" data-notes='["A worked example of why this is hard. Say &ldquo;recognise speech&rdquo; out loud, fast. It sounds almost the same as &ldquo;wreck a nice beach&rdquo;.", "The sound alone is not clear. What saves us is context. A good listener uses the words around it to pick the version that makes sense.", "Modern models use the same trick. They do not hear words one at a time. They use the whole sentence to choose what you really meant."]'>
+    <div class="kicker"><span class="badge"></span>A worked example</div>
+    <h2 class="slide-title" data-r data-d="1">&ldquo;Recognise speech&rdquo; or &ldquo;wreck a nice beach&rdquo;?</h2>
+    <div class="two" style="margin-top:18px">
       <div class="txt">
         <ul class="bullets">
-          <li data-r data-d="3"><b>WER</b> = (substitutions + insertions + deletions) / words.</li>
-          <li data-r data-d="4" class="strong">Lower is better; <b>0% = perfect</b>.</li>
-          <li data-r data-d="5">The single metric that governs every model choice here.</li>
-          <li data-r data-d="6">Always measured on <b style="color:var(--red)">your</b> audio, not a generic benchmark.</li>
+          <li data-r data-d="2">Said fast, those two phrases sound <b>almost the same</b>.</li>
+          <li data-r data-d="3">The sound alone is <b>not clear</b> &mdash; one word is not enough.</li>
+          <li data-r data-d="4" class="strong">What saves us is <b>context</b>: the words around it.</li>
+          <li data-r data-d="5">Modern models use the <b style="color:var(--red)">whole sentence</b> to pick what was meant.</li>
         </ul>
       </div>
+      <div class="viz">
+        <div class="fcall" style="flex-direction:column;gap:12px">
+          <div class="fnode fn" data-r data-d="3" style="flex:none"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></div><div class="ft">one fuzzy sound</div><div class="fs">/rek-uh-nize-speech/</div></div>
+          <div class="fconn" style="flex:none"><span class="chip">use the context</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 4v15M6 13l6 6 6-6"/></svg></div>
+          <div class="fnode model" data-r data-d="4" style="flex:none"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></div><div class="ft">&ldquo;recognise speech&rdquo;</div><div class="fs" style="color:#7be0a6">the version that makes sense</div></div>
+        </div>
+      </div>
     </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide" data-notes='["A second example, this time from the bank. Numbers are easy to mishear. &ldquo;Fifteen&rdquo; and &ldquo;fifty&rdquo; sound almost the same on a phone line.", "Get one digit wrong and a transfer goes to the wrong amount. So for a bank, listening must be very careful with numbers and names.", "A strong listening model uses the whole sentence to catch these. It hears &ldquo;fifty dollars&rdquo;, not &ldquo;fifteen&rdquo;, because the rest of the sentence fits."]'>
+    <div class="kicker"><span class="badge"></span>Why this matters for a bank</div>
+    <h2 class="slide-title" data-r data-d="1">&ldquo;Fifteen&rdquo; or &ldquo;fifty&rdquo;? Numbers are tricky</h2>
+    <div class="fillc">
+      <div class="mirror" style="max-width:760px">
+        <div class="mrow r1">
+          <div class="mnode"><div class="mt">Caller says</div><div class="mx">&ldquo;send <b>fifty</b> dollars&rdquo;</div></div>
+          <div class="mmid"><div class="mp" style="background:#3a3a40">poor listen</div><div class="marr">&rarr;</div></div>
+          <div class="mnode"><div class="mt" style="color:var(--red)">heard &ldquo;fifteen&rdquo;</div><div class="mx">wrong amount sent</div></div>
+        </div>
+        <div class="mrow r2">
+          <div class="mnode"><div class="mt">Caller says</div><div class="mx">&ldquo;send <b>fifty</b> dollars&rdquo;</div></div>
+          <div class="mmid"><div class="mp">good listen</div><div class="marr">&rarr;</div></div>
+          <div class="mnode"><div class="mt" style="color:#1E8E5A">heard &ldquo;fifty&rdquo;</div><div class="mx">right amount sent</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-cap">For a bank, one wrong digit is a real problem &mdash; so listening must be <b style="color:var(--red)">extra careful with numbers and names</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">00</span></div>
+  </section>
+
+  <style>
+/* how it works: technical (top) vs everyday analogy (bottom), step by step */
+.how2{display:flex; align-items:stretch; gap:9px; margin-top:16px; min-height:340px}
+.how2 .howside{display:flex; flex-direction:column; gap:11px; flex:none; width:104px}
+.how2 .hsl{flex:1; display:flex; align-items:center; font-family:var(--fMono); font-size:10px; font-weight:600; letter-spacing:.03em; line-height:1.25; border-radius:11px; padding:0 11px}
+.how2 .hsl.t{background:var(--ink); color:#fff}
+.how2 .hsl.a{background:var(--tint-red); color:var(--red); border:1px solid var(--tint-red-2,#fbe2e3)}
+.how2 .hstep{flex:1; display:flex; flex-direction:column; gap:11px; min-width:0}
+.how2 .harrow{flex:none; align-self:center; color:var(--red); display:flex; align-items:center}
+.how2 .harrow svg{width:22px; height:22px}
+.how2 .htech,.how2 .hlay{flex:1; border-radius:13px; padding:13px 15px; display:flex; flex-direction:column; gap:6px; justify-content:center}
+.how2 .htech{background:var(--ink); color:#fff; box-shadow:0 12px 26px -20px rgba(0,0,0,.55)}
+.how2 .hlay{background:var(--tint-red); border:1px solid var(--tint-red-2,#fbe2e3)}
+.how2 .hk{font-family:var(--fMono); font-size:9px; letter-spacing:.13em; text-transform:uppercase}
+.how2 .htech .hk{color:#ff8a8f}
+.how2 .hlay .hk{color:var(--red)}
+.how2 .htt{font-family:var(--fHead); font-weight:800; font-size:14px; line-height:1.18}
+.how2 .htech .htt{color:#fff}
+.how2 .hlay .htt{color:var(--ink)}
+.how2 .hts{font-size:11px; line-height:1.32}
+.how2 .htech .hts{color:rgba(255,255,255,.74)}
+.how2 .hlay .hts{color:var(--muted)}
+</style>
+<section class="slide" data-notes='["Here is the whole listening job, told as one story. Picture a waiter taking your order in a loud, busy cafe. The top row is what the machine really does. The bottom row is the waiter story, step by step.", "The waiter hears the messy sound, jots quick shorthand, uses the menu and your earlier words to guess what you meant, then writes the final order. That order is the text.", "Modern AI does all of this in one trained model. But the waiter story makes every step easy to see."]'>
+    <div class="kicker"><span class="badge"></span>How listening works &mdash; the whole story</div>
+    <h2 class="slide-title" data-r data-d="1">A waiter taking your order in a loud cafe</h2>
+    <div class="how2">
+      <div class="howside"><div class="hsl t">What really happens</div><div class="hsl a">The waiter story</div></div>
+      <div class="hstep" data-r data-d="2"><div class="htech"><div class="hk">Step 1 · Capture</div><div class="htt">Catch the sound</div><div class="hts">the microphone records your voice</div></div><div class="hlay"><div class="hk">the story</div><div class="htt">The waiter leans in</div><div class="hts">and hears your order over the noise</div></div></div>
+      <div class="harrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="hstep" data-r data-d="3"><div class="htech"><div class="hk">Step 2 · Spectrogram</div><div class="htt">Make a picture of the sound</div><div class="hts">a heat-map of which tones are loud</div></div><div class="hlay"><div class="hk">the story</div><div class="htt">He jots quick shorthand</div><div class="hts">a fast sketch of what he heard</div></div></div>
+      <div class="harrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="hstep" data-r data-d="4"><div class="htech"><div class="hk">Step 3 · Recognise</div><div class="htt">Read it with context</div><div class="hts">uses the whole sentence to choose the words</div></div><div class="hlay"><div class="hk">the story</div><div class="htt">He uses the menu</div><div class="hts">and what you said before to guess right</div></div></div>
+      <div class="harrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="hstep" data-r data-d="5"><div class="htech"><div class="hk">Step 4 · Output</div><div class="htt">Out comes the text</div><div class="hts">&ldquo;check my balance&rdquo;, typed out</div></div><div class="hlay"><div class="hk">the story</div><div class="htt">He writes the order</div><div class="hts">the final order is your words, on paper</div></div></div>
+    </div>
+    <div class="flow-cap"><b style="color:var(--red)">One story, left to right:</b> hear the noise &rarr; sketch the sound &rarr; use context to guess &rarr; write the words. Modern AI does it in one model.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">07</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The models that do the listening. Qwen3-ASR is a strong, modern speech-to-text model. It works in many languages and is a good first choice today. Whisper is the well-known name many people already know.", "All of these are free to run on the bank&#39;s own computers. So nothing has to be sent away.", "Model names change fast. Treat these as good options as of 2026, not a fixed list."]'>
+    <div class="kicker"><span class="badge"></span>Models that listen</div>
+    <h2 class="slide-title" data-r data-d="1">Two listening models worth knowing</h2>
+    <div class="cards c2" style="margin-top:24px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5 3 3 0 0 0 2 4 3 3 0 0 0 5 1V4.5A2.5 2.5 0 0 0 9 4zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5 3 3 0 0 1-2 4 3 3 0 0 1-5 1"/></svg></div><h3>Qwen3-ASR ★</h3><p>A strong, modern listening model &mdash; works in many languages and a solid first choice today.</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></div><h3>Whisper</h3><p>The familiar name &mdash; widely used, free, and works across many languages.</p></div>
+    </div>
+    <div class="flow-cap" style="font-style:italic"><b style="color:var(--red)">Lead with Qwen3-ASR; Whisper is the well-known fallback.</b> Both run on the bank&#39;s own machines. Names move fast (2026).</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">08</span></div>
   </section>
 
-  <section class="slide" data-notes='["For context, the classic pipeline. Old automatic-speech-recognition systems stitched together three separate parts: an acoustic model, a pronunciation lexicon, and a language model — Kaldi is the classic toolkit.", "Each part was trained and tuned separately, then glued. Powerful in expert hands, but complex and brittle.", "This complexity is exactly why the field moved to end-to-end neural models, next."]'>
-    <div class="kicker"><span class="badge"></span>The classic pipeline (for context)</div>
-    <h2 class="slide-title" data-r data-d="1">Old automatic speech recognition (ASR): three glued parts</h2>
-    <div class="flow" style="margin-top:8px">
-      <div class="step"><div class="node">1</div><h4>Acoustic model</h4><p>sound &rarr; phonemes</p><div class="arrow"></div></div>
-      <div class="step"><div class="node">2</div><h4>Lexicon</h4><p>phonemes &rarr; words</p><div class="arrow"></div></div>
-      <div class="step"><div class="node">3</div><h4>Language model</h4><p>likely word sequences</p></div>
-    </div>
-    <div class="flow-cap">Powerful but <b>complex &amp; brittle</b> &mdash; three components trained and tuned separately (e.g. Kaldi).</div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">09</span></div>
-  </section>
-
-  <section class="slide" data-notes='["The modern shift: one neural network learns audio-to-text directly, replacing the three glued parts. Simpler to train, and far more accurate given data.", "The input is the log-Mel spectrogram from Session 1 — the picture of the sound. The network maps that picture straight to text.", "Everything in the rest of this section is a different way of doing this one end-to-end mapping."]'>
-    <div class="kicker"><span class="badge"></span>The end-to-end shift</div>
-    <h2 class="slide-title" data-r data-d="1">One neural network, audio straight to text</h2>
-    <div class="fcall">
-      <div class="fnode fn" data-r data-d="2"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h2l2-7 3 16 3-12 2 8 2-5h4"/></svg></div><div class="ft">Log-Mel</div><div class="fs">spectrogram (Session 1)</div></div>
-      <div class="fconn"><span class="chip">one model</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
-      <div class="fnode model" data-r data-d="3"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5 3 3 0 0 0 2 4 3 3 0 0 0 5 1V4.5A2.5 2.5 0 0 0 9 4zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5 3 3 0 0 1-2 4 3 3 0 0 1-5 1"/></svg></div><div class="ft">Neural net</div><div class="fs">learns the mapping</div></div>
-      <div class="fconn"><span class="chip res">"check my balance"</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
-      <div class="fnode fn" data-r data-d="4"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 6h14M5 12h14M5 18h9"/></svg></div><div class="ft">Text</div><div class="fs">transcript</div></div>
-    </div>
-    <div class="flow-cap">The three glued parts collapse into <b style="color:var(--red)">one trained network</b> &mdash; simpler and more accurate.</div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">10</span></div>
-  </section>
-
-  <section class="slide" data-notes='["The key teaching slide. Three architecture families decode speech, and the differences matter for the bank.", "Connectionist temporal classification, CTC, emits a token per audio frame with a blank trick; it is fast and non-autoregressive but has no built-in language modelling. Attention encoder-decoder generates text token by token while attending to the audio — this is Whisper — accurate with built-in language modelling.", "The transducer, such as recurrent-neural-network transducer (RNN-T), emits text as audio arrives — streaming-friendly, the choice for real-time voice-bots. We unpack each next."]'>
-    <div class="kicker"><span class="badge"></span>Three ways to decode &mdash; the core mechanism</div>
-    <h2 class="slide-title" data-r data-d="1">CTC vs. attention vs. transducer</h2>
-    <div class="fillc">
-      <div class="fam">
-        <div class="famc"><div class="fh">CTC<small>per-frame voting</small></div><div class="fb"><div class="fmech"><b>Connectionist temporal classification</b>: emits a token <b>per audio frame</b>, with a &ldquo;blank&rdquo; to handle alignment, then collapses repeats.</div><div class="fchips"><span class="go">fast</span><span class="go">non-autoregressive</span><span class="no">no language model</span></div></div></div>
-        <div class="famc"><div class="fh">Attention<small>encoder&ndash;decoder</small></div><div class="fb"><div class="fmech">A decoder writes text token-by-token, <b>cross-attending</b> to the audio. This is <b>Whisper</b>.</div><div class="fchips"><span class="go">accurate</span><span class="go">built-in language model</span><span class="no">autoregressive</span></div></div></div>
-        <div class="famc"><div class="fh">Transducer<small>streaming family</small></div><div class="fb"><div class="fmech">A <b>recurrent-neural-network transducer (RNN-T)</b> emits text <b>as audio arrives</b> &mdash; no waiting for the end of the clip.</div><div class="fchips"><span class="go">streaming</span><span class="go">low-latency</span><span class="no">trickier to train</span></div></div></div>
+  <section class="slide" data-notes='["What does good listening look like? Compare a poor listener with a great one on the same sentence.", "The weak one drops words, gets the product name wrong, and skips the full stops. So the assistant acts on the wrong thing. The strong one gets it clean.", "This is the bar we want. Not perfect, but good enough that the next step gets the right words."]'>
+    <div class="kicker"><span class="badge"></span>Good vs bad listening</div>
+    <h2 class="slide-title" data-r data-d="1">Same sentence, two listeners</h2>
+    <div class="vs" style="margin-top:18px">
+      <div class="panel" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></span>A poor listener</div>
+        <div class="ps">Drops words, gets the name wrong, no full stops.</div>
+        <div class="chips"><span class="chip">&ldquo;uh transfer to... car-toe?&rdquo;</span><span class="chip">missed &ldquo;500&rdquo;</span></div>
+        <div class="where">Result: the assistant <b>acts on the wrong thing</b> &mdash; or asks the caller to say it again.</div>
+      </div>
+      <div class="panel accent" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></span>A good listener</div>
+        <div class="ps">Captures every word, the name, and the number.</div>
+        <div class="chips"><span class="chip">&ldquo;Transfer 500 to Kartono.&rdquo;</span><span class="chip">clean &amp; complete</span></div>
+        <div class="where">Result: the next step gets the <b>right words</b> and can act with confidence.</div>
       </div>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">11</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">00</span></div>
   </section>
 
-  <section class="slide" data-notes='["CTC, intuitively. Picture each slice of audio voting on a letter. The same sound spans several frames, so you get repeats, and silence votes blank.", "The trick: collapse repeated letters, then drop the blanks. H, H, blank, E, L, L, blank, L, O collapses to hello.", "This is why CTC is fast — every frame is decoded at once, in parallel — but it has no sense of language, so it can misread words that sound alike."]'>
-    <div class="kicker"><span class="badge"></span>CTC, intuitively</div>
-    <h2 class="slide-title" data-r data-d="1">Vote per frame, then collapse</h2>
-    <div class="ctc">
-      <div class="ctcrow">
-        <div class="frame">H</div><div class="frame dup">H</div><div class="frame blank">&empty;</div><div class="frame">E</div><div class="frame dup">L</div><div class="frame">L</div><div class="frame blank">&empty;</div><div class="frame dup">L</div><div class="frame">O</div>
-      </div>
-      <div class="cdown">collapse repeats &amp; drop blanks &darr;</div>
-      <div class="cout">HELLO</div>
-    </div>
-    <div class="flow-cap">Fast (all frames at once) &mdash; but <b style="color:var(--red)">no built-in language model</b>, so similar-sounding words can slip.</div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">12</span></div>
-  </section>
-
-  <section class="slide" data-notes='["Attention encoder-decoder, intuitively — a callback to the Day 1 transformer. The encoder reads the whole clip into a representation.", "The decoder then writes the transcript one token at a time, and for each token it looks back at, or cross-attends to, the relevant part of the audio — the bright cells in this attention map.", "Because it writes left to right using its own previous words, it has a built-in sense of language and is very accurate — but it is autoregressive, so slower, and it can occasionally hallucinate words that were never said."]'>
-    <div class="kicker"><span class="badge"></span>Attention encoder-decoder, intuitively</div>
-    <h2 class="slide-title" data-r data-d="1">Write text while looking back at the audio</h2>
-    <div class="two" style="margin-top:12px">
-      <div class="viz">
-        <div class="attn" data-r data-d="2">
-          <div class="ac" style="--ac:rgba(236,27,35,.85)"></div><div class="ac"></div><div class="ac"></div><div class="ac"></div><div class="ac"></div><div class="ac"></div>
-          <div class="ac"></div><div class="ac" style="--ac:rgba(236,27,35,.8)"></div><div class="ac" style="--ac:rgba(236,27,35,.2)"></div><div class="ac"></div><div class="ac"></div><div class="ac"></div>
-          <div class="ac"></div><div class="ac"></div><div class="ac" style="--ac:rgba(236,27,35,.85)"></div><div class="ac" style="--ac:rgba(236,27,35,.25)"></div><div class="ac"></div><div class="ac"></div>
-          <div class="ac"></div><div class="ac"></div><div class="ac"></div><div class="ac" style="--ac:rgba(236,27,35,.8)"></div><div class="ac" style="--ac:rgba(236,27,35,.3)"></div><div class="ac"></div>
-          <div class="ac"></div><div class="ac"></div><div class="ac"></div><div class="ac"></div><div class="ac" style="--ac:rgba(236,27,35,.85)"></div><div class="ac" style="--ac:rgba(236,27,35,.4)"></div>
-          <div class="ac"></div><div class="ac"></div><div class="ac"></div><div class="ac"></div><div class="ac"></div><div class="ac" style="--ac:rgba(236,27,35,.9)"></div>
-        </div>
-        <div style="text-align:center;font-family:var(--fMono);font-size:10px;color:var(--muted);margin-top:8px">decoder tokens &times; audio frames</div>
-      </div>
-      <div class="txt">
-        <ul class="bullets">
-          <li data-r data-d="3">Encoder reads the <b>whole clip</b> (callback: Day-1 transformer).</li>
-          <li data-r data-d="4" class="strong">Decoder writes text, <b>cross-attending</b> to the audio.</li>
-          <li data-r data-d="5">Built-in language sense &rarr; <b>accurate</b>. This is Whisper.</li>
-          <li data-r data-d="6">Autoregressive &rarr; slower; can <b style="color:var(--red)">hallucinate</b>.</li>
-        </ul>
-      </div>
-    </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">13</span></div>
-  </section>
-
-  <section class="slide" data-notes='["The transducer, intuitively. Instead of waiting for the whole clip, it emits words as you speak.", "As each chunk of audio arrives, the model decides whether it has heard enough to output the next word — so text streams out in near real-time.", "That low latency is exactly what a live voice-bot needs: the caller should not wait for silence before the system reacts."]'>
-    <div class="kicker"><span class="badge"></span>Transducer, intuitively</div>
-    <h2 class="slide-title" data-r data-d="1">Emit words as you speak</h2>
-    <div class="stream">
-      <div class="sticks"><i style="--h:30%"></i><i style="--h:55%"></i><i style="--h:40%"></i><i style="--h:70%"></i><i style="--h:45%"></i><i style="--h:80%"></i><i style="--h:50%"></i><i style="--h:65%"></i><i style="--h:38%"></i><i style="--h:75%"></i><i style="--h:48%"></i><i style="--h:60%"></i><i style="--h:35%"></i><i style="--h:70%"></i><i style="--h:52%"></i><i style="--h:82%"></i><i style="--h:44%"></i><i style="--h:58%"></i></div>
-      <div class="semit">
-        <div class="sw"><span class="tok" style="transition-delay:.2s">check</span></div>
-        <div class="sw"><span class="tok" style="transition-delay:.5s">my</span></div>
-        <div class="sw"><span class="tok" style="transition-delay:.8s">balance</span></div>
-        <div class="sw"><span class="tok" style="transition-delay:1.1s">now</span></div>
-      </div>
-    </div>
-    <div class="flow-cap">No waiting for the end of the clip &rarr; <b style="color:var(--red)">low-latency streaming</b> for live voice-bots.</div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">14</span></div>
-  </section>
-
-  <section class="slide" data-notes='["What OCBC can actually self-host, mapped to the three families. Whisper, including large-v3-turbo, is the attention encoder-decoder — multilingual with a huge ecosystem.", "wav2vec2 and XLS-R are CTC, self-supervised, and excellent bases for fine-tuning low-resource languages. NVIDIA Parakeet and Canary are transducer or encoder-decoder, optimised for speed or accuracy. Kaldi remains the classic modular toolkit.", "All open-source. Model names move fast — present these as of 2026 and verify the current best before committing."]'>
-    <div class="kicker"><span class="badge"></span>The open-source STT landscape</div>
-    <h2 class="slide-title" data-r data-d="1">What OCBC can self-host</h2>
-    <div class="cards" style="grid-template-columns:repeat(4,1fr);margin-top:24px">
-      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5 3 3 0 0 0 2 4 3 3 0 0 0 5 1V4.5A2.5 2.5 0 0 0 9 4zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5 3 3 0 0 1-2 4 3 3 0 0 1-5 1"/></svg></div><h3>Whisper</h3><p>attention enc-dec · multilingual · large-v3-turbo</p></div>
-      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l9 5-9 5-9-5zM3 12l9 5 9-5M3 17l9 5 9-5"/></svg></div><h3>wav2vec2 / XLS-R</h3><p>CTC · self-supervised · great to fine-tune</p></div>
-      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></div><h3>Parakeet / Canary</h3><p>transducer / enc-dec · very fast or very accurate</p></div>
-      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></div><h3>Kaldi</h3><p>classic · modular · expert control</p></div>
-    </div>
-    <div class="flow-cap" style="font-style:italic">All open-source &amp; self-hostable. Names move fast &mdash; <b>as of 2026, verify current</b>.</div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">15</span></div>
-  </section>
-
-  <section class="slide" data-notes='["Production STT is a model plus a toolchain. Around Whisper sits a practical open-source ecosystem.", "faster-whisper speeds inference; WhisperX adds word-level timestamps, alignment and voice-activity detection; whisper.cpp runs on central-processing-unit or on-device; Silero VAD finds where speech actually is.", "The point: do not ship the raw model alone. Real systems combine the model with these tools."]'>
-    <div class="kicker"><span class="badge"></span>The Whisper toolchain</div>
-    <h2 class="slide-title" data-r data-d="1">Model + toolchain = production STT</h2>
-    <div class="cards c2" style="margin-top:22px">
-      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></div><h3>faster-whisper</h3><p>Re-implemented for speed &amp; lower memory.</p></div>
-      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div><h3>WhisperX</h3><p>Word-level timestamps, alignment &amp; voice-activity detection (VAD).</p></div>
-      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7M6 10v9h12v-9"/></svg></div><h3>whisper.cpp</h3><p>Runs on CPU / on-device &mdash; no graphics card needed.</p></div>
-      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h2l2-7 3 16 3-12 2 8 2-5h4"/></svg></div><h3>Silero VAD</h3><p>Voice-activity detection &mdash; find speech vs. silence.</p></div>
-    </div>
-    <div class="flow-cap">Real production is <b style="color:var(--red)">model + toolchain</b>, not the model alone.</div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">16</span></div>
-  </section>
-
-  <section class="slide" data-notes='["Call analytics needs more than the words. Diarization labels who spoke when — agent versus customer. Voice-activity detection separates speech from silence and hold music.", "Punctuation and casing make a transcript readable; timestamps let you jump to the exact moment a phrase was said, which compliance needs.", "Open-source options exist for each of these. Transcription is the start, not the whole job."]'>
-    <div class="kicker"><span class="badge"></span>Beyond transcription</div>
-    <h2 class="slide-title" data-r data-d="1">What real call analytics adds on top</h2>
-    <div class="cards" style="grid-template-columns:repeat(4,1fr);margin-top:24px">
-      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><h3>Diarization</h3><p>who spoke when</p></div>
-      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h2l2-7 3 16 3-12 2 8 2-5h4"/></svg></div><h3>VAD</h3><p>speech vs. silence</p></div>
-      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 6h14M5 12h14M5 18h9"/></svg></div><h3>Punctuation</h3><p>readable casing</p></div>
-      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div><h3>Timestamps</h3><p>jump to the moment</p></div>
-    </div>
-    <div class="flow-cap">Each has an <b style="color:var(--red)">open-source</b> option &mdash; transcription is the start, not the whole job.</div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">17</span></div>
-  </section>
-
-  <section class="slide" data-notes='["A decision aid for choosing an STT model. Weigh accuracy, latency, languages and hardware.", "Overnight compliance batch? Accuracy first — Whisper large. Live voice-bot? Streaming transducer for low latency. Mixed Indonesian-English calls? Whisper, for its multilingual strength.", "There is no single best model — match the model to the job."]'>
-    <div class="kicker"><span class="badge"></span>Choosing an STT model</div>
-    <h2 class="slide-title" data-r data-d="1">Match the model to the job</h2>
-    <div class="cards c3" style="margin-top:22px">
-      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg></div><h3>Overnight compliance</h3><p>&rarr; accuracy-first (Whisper large)</p></div>
-      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></div><h3>Live voice-bot</h3><p>&rarr; streaming transducer</p></div>
-      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div><h3>Mixed ID + EN calls</h3><p>&rarr; Whisper (multilingual)</p></div>
-      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 18a8 8 0 1 1 16 0M12 14l4-4"/></svg></div><h3>Tight hardware</h3><p>&rarr; whisper.cpp / faster-whisper</p></div>
-      <div class="card" data-r data-d="6"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div><h3>Need word timing</h3><p>&rarr; WhisperX</p></div>
-      <div class="card" data-r data-d="7"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div><h3>Low-resource accent</h3><p>&rarr; fine-tune wav2vec2 / XLS-R</p></div>
-    </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">18</span></div>
-  </section>
-
-  <section class="slide dark divider" data-notes='["Part 2, about 25 minutes. Now the mirror image — turning text into natural-sounding audio.", "We assemble the three-stage pipeline, then trace how acoustic models evolved from sequential to parallel to end-to-end.", "Same open-source, self-hostable stance throughout."]'>
+  <section class="slide dark divider" data-notes='["Part 2: the other half &mdash; speaking. Now the machine is an actor reading a script out loud.", "The hard part is not just saying the words. It is saying them in a natural way, with the right rhythm and tone.", "Same idea as before, but the other way round: text in, voice out."]'>
     <div class="pillar-no">02</div>
     <div class="eyebrow"><span class="dot"></span>Part 2</div>
-    <h2>Text-to-Speech — Teaching Machines to Speak</h2>
-    <p class="lead">The reverse direction: text in, natural speech out, via a three-stage pipeline.</p>
-    <div class="prog-rail"><span>STT</span><span class="on">TTS</span><span>Adaptation</span><span>At OCBC</span></div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">19</span></div>
+    <h2>Speaking &mdash; Turning Text into Voice</h2>
+    <p class="lead">The machine as a voice actor reading a script aloud: words in, natural speech out.</p>
+    <div class="prog-rail"><span>Listen</span><span class="on">Speak</span><span>Make it ours</span><span>At OCBC</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">09</span></div>
   </section>
 
-  <section class="slide" data-notes='["The TTS task: text to natural-sounding audio. We judge it on naturalness — often a one-to-five human rating called Mean Opinion Score, MOS — plus intelligibility and speed.", "It is harder than it looks. The same sentence has infinitely many valid readings: where you pause, stress, and raise pitch all change with intent.", "So TTS is not a lookup — the model must decide a plausible prosody every time."]'>
-    <div class="kicker"><span class="badge"></span>The TTS task</div>
-    <h2 class="slide-title" data-r data-d="1">Text in, natural speech out</h2>
+  <section class="slide" data-notes='["The speaking task: turn written words into a voice that sounds natural, not like a robot.", "Here is why it is hard. The same sentence can be read in many ways. Where you pause, which word you stress, whether your voice rises &mdash; all change the feel.", "So a good actor does not just read the words. He decides how to say them. The model must do the same."]'>
+    <div class="kicker"><span class="badge"></span>The speaking task</div>
+    <h2 class="slide-title" data-r data-d="1">Words in, natural voice out</h2>
     <div class="two" style="margin-top:16px">
       <div class="txt">
         <ul class="bullets">
-          <li data-r data-d="2">Judged on <b>naturalness</b> (Mean Opinion Score, MOS, 1&ndash;5).</li>
-          <li data-r data-d="3">Also <b>intelligibility</b> and <b>speed</b>.</li>
-          <li data-r data-d="4" class="strong">Same text &rarr; <b>infinitely many</b> valid prosodies.</li>
-          <li data-r data-d="5">The model must <b style="color:var(--red)">decide</b> a plausible reading every time.</li>
+          <li data-r data-d="2">The goal is to sound <b>natural</b>, not robotic.</li>
+          <li data-r data-d="3">The same sentence can be read in <b>many ways</b>.</li>
+          <li data-r data-d="4" class="strong">Where you <b>pause</b>, what you <b>stress</b>, how your voice <b>rises</b> &mdash; all matter.</li>
+          <li data-r data-d="5">Like a voice actor, the model must <b style="color:var(--red)">decide how to say it</b>.</li>
         </ul>
       </div>
       <div class="viz">
@@ -1074,281 +1013,287 @@ body.static .fnode, body.static .fconn{opacity:1 !important; transform:none !imp
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">20</span></div>
   </section>
 
-  <section class="slide" data-notes='["The TTS spine, three stages. First the text frontend normalises the input — dollar-1,250 becomes one thousand two hundred fifty — and grapheme-to-phoneme, G2P, turns letters into sound units.", "Second, the acoustic model turns those phonemes into a Mel spectrogram — the picture of the sound from Session 1, now with decided rhythm and pitch.", "Third, the vocoder turns that spectrogram into an actual waveform you can hear. Text, to phonemes, to spectrogram, to wave."]'>
-    <div class="kicker"><span class="badge"></span>The three-stage pipeline &mdash; core mechanism</div>
-    <h2 class="slide-title" data-r data-d="1">Text &rarr; frontend &rarr; acoustic model &rarr; vocoder</h2>
+  <section class="slide" data-notes='["A worked example of why delivery matters. Take one short sentence &mdash; &ldquo;You spent it all.&rdquo; &mdash; and notice how the meaning flips depending on which word you stress.", "Stress &ldquo;you&rdquo; and it is an accusation; stress &ldquo;all&rdquo; and it is surprise; flat and even, it is just a neutral fact.", "Same words, three different messages. A good voice actor &mdash; and a good speaking model &mdash; has to choose the right one."]'>
+    <div class="kicker"><span class="badge"></span>A worked example</div>
+    <h2 class="slide-title" data-r data-d="1">Same words, very different meaning</h2>
     <div class="fillc">
-      <div class="tpipe">
-        <div class="tstage"><div class="tn">STAGE 1</div><div class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 6h14M5 12h14M5 18h9"/></svg></div><h4>Text frontend</h4><p>normalize + grapheme-to-phoneme (G2P)</p></div>
-        <div class="tarr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
-        <div class="tstage"><div class="tn">STAGE 2</div><div class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h2l2-7 3 16 3-12 2 8 2-5h4"/></svg></div><h4>Acoustic model</h4><p>phonemes &rarr; Mel spectrogram</p></div>
-        <div class="tarr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
-        <div class="tstage"><div class="tn">STAGE 3</div><div class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H3v6h3l5 4zM16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg></div><h4>Vocoder</h4><p>spectrogram &rarr; waveform</p></div>
+      <div class="mirror" style="max-width:760px">
+        <div class="mrow r1">
+          <div class="mnode"><div class="mt">Stress &ldquo;<span style="color:var(--red)">you</span>&rdquo;</div><div class="mx">&ldquo;<b>You</b> spent it all.&rdquo;</div></div>
+          <div class="mmid"><div class="mp">means</div><div class="marr">&rarr;</div></div>
+          <div class="mnode"><div class="mt">an accusation</div><div class="mx">it was your fault</div></div>
+        </div>
+        <div class="mrow r2">
+          <div class="mnode"><div class="mt">Stress &ldquo;<span style="color:var(--red)">all</span>&rdquo;</div><div class="mx">&ldquo;You spent it <b>all</b>.&rdquo;</div></div>
+          <div class="mmid"><div class="mp">means</div><div class="marr">&rarr;</div></div>
+          <div class="mnode"><div class="mt">surprise</div><div class="mx">every last cent?</div></div>
+        </div>
       </div>
     </div>
-    <div class="flow-cap">Three stages: <b>normalize &rarr; predict the picture &rarr; make it audible</b>.</div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">21</span></div>
+    <div class="flow-cap">Same five words, <b style="color:var(--red)">three different messages</b> &mdash; the speaking model has to pick the right delivery.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">00</span></div>
   </section>
 
-  <section class="slide" data-notes='["Stage one: the unglamorous but critical text frontend. Normalization expands numbers, dates, currency and abbreviations into spoken words.", "Then grapheme-to-phoneme maps letters to sound units — how c-a-t becomes the phonemes K AE T. This is deeply language-dependent.", "Flag it now: this stage is where language adaptation begins, because every language pronounces letters differently."]'>
-    <div class="kicker"><span class="badge"></span>Stage 1 &mdash; text frontend &amp; G2P</div>
-    <h2 class="slide-title" data-r data-d="1">Normalize the text, then map letters to sounds</h2>
-    <div class="two" style="margin-top:16px">
-      <div class="viz">
-        <div class="schema" data-r data-d="2" style="font-size:13.5px"><span class="c"># normalization</span><br/>&ldquo;$1,250 on 3/4&rdquo;<br/>&rarr; &ldquo;one thousand two hundred<br/>&nbsp;&nbsp;&nbsp;fifty dollars on March fourth&rdquo;<br/><br/><span class="c"># grapheme-to-phoneme (G2P)</span><br/>cat &rarr; <span style="color:#7be0a6">K AE T</span></div>
-      </div>
-      <div class="txt">
-        <ul class="bullets">
-          <li data-r data-d="3"><b>Normalize</b>: numbers, dates, currency, abbreviations.</li>
-          <li data-r data-d="4" class="strong"><b>G2P</b>: letters &rarr; phonemes (sound units).</li>
-          <li data-r data-d="5">Deeply <b>language-dependent</b>.</li>
-          <li data-r data-d="6">Where <b style="color:var(--red)">language adaptation begins</b> (Part 3).</li>
-        </ul>
-      </div>
-    </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">22</span></div>
-  </section>
-
-  <section class="slide" data-notes='["Stage two: the acoustic model predicts the Mel spectrogram from the phonemes — the same picture we met in Session 1, but now generated rather than measured.", "This is where prosody lives: rhythm, stress and pitch are all decided here, frame by frame.", "Get this stage wrong and speech sounds robotic or mis-stressed, even if every word is correct."]'>
-    <div class="kicker"><span class="badge"></span>Stage 2 &mdash; acoustic model</div>
-    <h2 class="slide-title" data-r data-d="1">Phonemes become the spectrogram picture</h2>
+  <section class="slide" data-notes='["Like listening, speaking used to take many separate steps. Modern AI now does it in one step. Written words go straight to a natural voice.", "So picture it simply: text in, voice out, from one model.", "Both halves now match. Each one is a single AI model that does the whole job."]'>
+    <div class="kicker"><span class="badge"></span>The modern shift, again</div>
+    <h2 class="slide-title" data-r data-d="1">One model: text straight to voice</h2>
     <div class="fcall">
-      <div class="fnode fn" data-r data-d="2"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 6h14M5 12h14M5 18h9"/></svg></div><div class="ft">Phonemes</div><div class="fs">K AE T &hellip;</div></div>
-      <div class="fconn"><span class="chip">acoustic model</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
-      <div class="fnode model" data-r data-d="3"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h2l2-7 3 16 3-12 2 8 2-5h4"/></svg></div><div class="ft">Mel spectrogram</div><div class="fs">rhythm + pitch decided</div></div>
+      <div class="fnode fn" data-r data-d="2"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 6h14M5 12h14M5 18h9"/></svg></div><div class="ft">Text</div><div class="fs">&ldquo;Your balance is&hellip;&rdquo;</div></div>
+      <div class="fconn"><span class="chip">one AI model</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="fnode model" data-r data-d="3"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5 3 3 0 0 0 2 4 3 3 0 0 0 5 1V4.5A2.5 2.5 0 0 0 9 4zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5 3 3 0 0 1-2 4 3 3 0 0 1-5 1"/></svg></div><div class="ft">One model</div><div class="fs">reads it aloud</div></div>
+      <div class="fconn"><span class="chip res">natural voice</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="fnode fn" data-r data-d="4"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H3v6h3l5 4zM16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg></div><div class="ft">Speech</div><div class="wv"><i style="--h:45%"></i><i style="--h:75%"></i><i style="--h:55%"></i><i style="--h:85%"></i><i style="--h:50%"></i><i style="--h:70%"></i><i style="--h:60%"></i></div></div>
     </div>
-    <div class="flow-cap">This is where <b style="color:var(--red)">prosody</b> &mdash; rhythm, stress, pitch &mdash; is decided. (The Session 1 picture, now generated.)</div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">23</span></div>
+    <div class="flow-cap">It used to take a chain of steps. Now <b style="color:var(--red)">one AI model</b> goes from text straight to a natural voice.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">11</span></div>
   </section>
 
-  <section class="slide" data-notes='["Stage three: the vocoder turns the spectrogram into an audible waveform. This is the final mile, and its quality makes or breaks naturalness.", "A modern open-source vocoder like HiFi-GAN produces clean, natural audio fast.", "A great acoustic model with a poor vocoder still sounds buzzy — naturalness lives in both stages two and three."]'>
-    <div class="kicker"><span class="badge"></span>Stage 3 &mdash; vocoder</div>
-    <h2 class="slide-title" data-r data-d="1">Turn the picture into sound</h2>
-    <div class="fcall">
-      <div class="fnode fn" data-r data-d="2"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h2l2-7 3 16 3-12 2 8 2-5h4"/></svg></div><div class="ft">Mel spectrogram</div><div class="fs">the picture</div></div>
-      <div class="fconn"><span class="chip">vocoder (HiFi-GAN)</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
-      <div class="fnode model" data-r data-d="3"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H3v6h3l5 4zM16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg></div><div class="ft">Waveform</div><div class="wv"><i style="--h:40%"></i><i style="--h:70%"></i><i style="--h:50%"></i><i style="--h:85%"></i><i style="--h:45%"></i><i style="--h:75%"></i><i style="--h:55%"></i><i style="--h:65%"></i></div></div>
-    </div>
-    <div class="flow-cap">Quality here <b style="color:var(--red)">makes or breaks</b> naturalness &mdash; e.g. HiFi-GAN.</div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">24</span></div>
-  </section>
-
-  <section class="slide" data-notes='["How acoustic models matured. Tacotron 2 is an attention sequence-to-sequence model that generates frames one after another — natural, but slow, and it can skip or repeat words.", "FastSpeech 2 predicts durations up front and generates the whole spectrogram in parallel — fast and stable.", "VITS and other end-to-end models fuse the acoustic model and vocoder into one network: text straight to wave. The trend is sequential, to parallel, to one unified model."]'>
-    <div class="kicker"><span class="badge"></span>Architecture evolution</div>
-    <h2 class="slide-title" data-r data-d="1">Sequential &rarr; parallel &rarr; end-to-end</h2>
-    <div class="fillc">
-      <div class="evo">
-        <div class="evorow seq"><div class="el">Tacotron 2<small>attention seq2seq</small></div><div class="evobar"><div class="blk" style="width:30px"></div><div class="blk" style="width:30px"></div><div class="blk" style="width:30px"></div><div class="blk" style="width:30px"></div><div class="blk" style="width:30px"></div><span class="tag">frame-by-frame · slow</span></div></div>
-        <div class="evorow par"><div class="el">FastSpeech 2<small>duration + parallel</small></div><div class="evobar"><div class="blk" style="flex:1"></div><span class="tag">all at once · fast &amp; stable</span></div></div>
-        <div class="evorow e2e"><div class="el">VITS<small>end-to-end</small></div><div class="evobar"><div class="blk" style="flex:1"></div><span class="tag">text &rarr; wave · one model</span></div></div>
+  <section class="slide" data-notes='["What makes a robot voice different from a natural one? Same words, two very different ways of saying them.", "The robot voice reads every word at the same flat pace, says numbers wrong, and pauses in odd places. It sounds like a machine. The natural voice groups the number, says the money clearly, and breathes between phrases.", "For a bank, this is not just a nice extra. A clear, natural voice is easier to trust and easier to hear on a phone line."]'>
+    <div class="kicker"><span class="badge"></span>Robotic vs natural</div>
+    <h2 class="slide-title" data-r data-d="1">&ldquo;Your balance is $1,250&rdquo; &mdash; said two ways</h2>
+    <div class="vs" style="margin-top:18px">
+      <div class="panel" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="7" width="16" height="12" rx="2"/><path d="M9 7V4h6v3M9 12h.01M15 12h.01"/></svg></span>Robotic</div>
+        <div class="ps">Flat, even pace. Numbers read one digit at a time. Odd pauses.</div>
+        <div class="chips"><span class="chip">&ldquo;one. two. five. zero.&rdquo;</span><span class="chip">no rhythm</span></div>
+        <div class="where">Sounds like a <b>machine</b> &mdash; tiring to listen to, easy to mishear.</div>
+      </div>
+      <div class="panel accent" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H3v6h3l5 4zM16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg></span>Natural</div>
+        <div class="ps">Groups the number, says the money clearly, pauses to breathe.</div>
+        <div class="chips"><span class="chip">&ldquo;twelve-fifty&rdquo;</span><span class="chip">human rhythm</span></div>
+        <div class="where">Sounds like a <b>person</b> &mdash; easier to trust and to follow on a call.</div>
       </div>
     </div>
-    <div class="flow-cap">Tacotron generates <b>one frame at a time</b>; FastSpeech generates the <b style="color:var(--red)">whole spectrogram at once</b>; VITS fuses both stages.</div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">25</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">00</span></div>
   </section>
 
-  <section class="slide" data-notes='["Newer open models can clone a voice from seconds of audio — zero-shot TTS, including LLM-style speech models like XTTS v2.", "That is powerful for a consistent branded voice across every IVR prompt. But for a bank it carries real risk.", "Cloning is a deepfake and voice-biometrics threat. Flag consent and misuse explicitly — capability here outruns comfort, and governance must keep up."]'>
-    <div class="kicker"><span class="badge"></span>Modern voice cloning &amp; zero-shot TTS</div>
-    <h2 class="slide-title" data-r data-d="1">Mimic a voice from seconds of audio</h2>
+  <section class="slide" data-notes='["A powerful new skill: from just a few seconds of someone&#39;s voice, models can make that voice say anything. This is useful for one steady brand voice.", "But it is also how voice deepfakes are made. This is a real worry for a bank, where a voice can be a password.", "So the rule is simple: only copy a voice with clear permission, and stop bad use."]'>
+    <div class="kicker"><span class="badge"></span>Copying a voice</div>
+    <h2 class="slide-title" data-r data-d="1">A few seconds can copy a voice</h2>
     <div class="two" style="margin-top:18px">
       <div class="txt">
         <ul class="bullets">
-          <li data-r data-d="2">Open models (e.g. <b>XTTS v2</b>) clone a voice from a short sample.</li>
-          <li data-r data-d="3">Great for a consistent <b>branded voice</b>.</li>
-          <li data-r data-d="4" class="strong">But: <b style="color:var(--red)">deepfake &amp; voice-biometrics risk</b>.</li>
-          <li data-r data-d="5">Requires <b>consent</b> and strict misuse controls.</li>
+          <li data-r data-d="2">From a <b>short sample</b>, models can mimic someone&#39;s voice.</li>
+          <li data-r data-d="3">Useful for one steady <b>brand voice</b>.</li>
+          <li data-r data-d="4" class="strong">But it&#39;s also how <b style="color:var(--red)">voice deepfakes</b> are made.</li>
+          <li data-r data-d="5">Only copy a voice <b>with clear permission</b>.</li>
         </ul>
       </div>
       <div class="viz">
         <div class="fcall" style="flex-direction:column;gap:12px">
-          <div class="fnode fn" data-r data-d="3" style="flex:none"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></div><div class="ft">6 seconds of a voice</div></div>
-          <div class="fconn" style="flex:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 4v15M6 13l6 6 6-6"/></svg><span class="chip">zero-shot clone</span></div>
-          <div class="fnode model" data-r data-d="4" style="flex:none"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3zM12 10v4M12 17h.01"/></svg></div><div class="ft">any text, that voice</div><div class="fs" style="color:#ff7a7e">consent &amp; deepfake risk</div></div>
+          <div class="fnode fn" data-r data-d="3" style="flex:none"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></div><div class="ft">A few seconds of a voice</div></div>
+          <div class="fconn" style="flex:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 4v15M6 13l6 6 6-6"/></svg><span class="chip">copy the voice</span></div>
+          <div class="fnode model" data-r data-d="4" style="flex:none"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3zM12 10v4M12 17h.01"/></svg></div><div class="ft">any words, that voice</div><div class="fs" style="color:#ff7a7e">deepfake risk &mdash; get consent</div></div>
         </div>
       </div>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">26</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">12</span></div>
   </section>
 
-  <section class="slide" data-notes='["Self-hostable TTS options. Piper is fast and lightweight, runs on-device, and is ideal for IVR prompts. Coqui TTS and XTTS are multilingual with voice cloning.", "ESPnet and PaddleSpeech are research toolkits with many recipes; VITS is the end-to-end option.", "All open-source. As with STT, names move fast — present as of 2026 and verify."]'>
-    <div class="kicker"><span class="badge"></span>The open-source TTS landscape</div>
-    <h2 class="slide-title" data-r data-d="1">What OCBC can self-host</h2>
-    <div class="cards" style="grid-template-columns:repeat(4,1fr);margin-top:24px">
-      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7M6 10v9h12v-9"/></svg></div><h3>Piper</h3><p>fast · lightweight · on-device IVR</p></div>
-      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div><h3>Coqui / XTTS</h3><p>multilingual · voice cloning</p></div>
-      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></div><h3>ESPnet / PaddleSpeech</h3><p>research toolkits · many recipes</p></div>
-      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l9 5-9 5-9-5zM3 12l9 5 9-5M3 17l9 5 9-5"/></svg></div><h3>VITS</h3><p>end-to-end · text &rarr; wave</p></div>
+  <section class="slide" data-notes='["The models that do the speaking. Qwen3-TTS is a strong, modern model. It turns text into a natural voice in many languages. Piper is a well-known, light option. It is great when speed and small size matter.", "Both run on the bank&#39;s own machines. So the assistant&#39;s voice is made inside the bank.", "Like the listening models, names change fast. These are good picks as of 2026."]'>
+    <div class="kicker"><span class="badge"></span>Models that speak</div>
+    <h2 class="slide-title" data-r data-d="1">Two speaking models worth knowing</h2>
+    <div class="cards c2" style="margin-top:24px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H3v6h3l5 4zM16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg></div><h3>Qwen3-TTS ★</h3><p>A strong, modern speaking model &mdash; natural and works in many languages; a good first choice today.</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7M6 10v9h12v-9"/></svg></div><h3>Piper</h3><p>A well-known, light option &mdash; fast and small, great when speed matters.</p></div>
     </div>
-    <div class="flow-cap" style="font-style:italic">All open-source &amp; self-hostable. <b>As of 2026, verify current</b>.</div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">27</span></div>
+    <div class="flow-cap" style="font-style:italic"><b style="color:var(--red)">Lead with Qwen3-TTS; Piper is the light, fast option.</b> Both run on the bank&#39;s own machines. Names move fast (2026).</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">13</span></div>
   </section>
 
-  <section class="slide" data-notes='["Choosing a TTS model: weigh naturalness, latency, footprint, and languages or voices.", "On-device IVR prompts that must be instant and tiny? Piper. An expressive, multilingual voice-bot? XTTS or VITS.", "Again, no single winner — pick by the constraint that dominates the use case."]'>
-    <div class="kicker"><span class="badge"></span>Choosing a TTS model</div>
-    <h2 class="slide-title" data-r data-d="1">Match the voice to the use case</h2>
-    <div class="cards c3" style="margin-top:22px">
-      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7M6 10v9h12v-9"/></svg></div><h3>On-device IVR prompts</h3><p>&rarr; Piper (fast, tiny)</p></div>
-      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div><h3>Expressive voice-bot</h3><p>&rarr; XTTS / VITS</p></div>
-      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><h3>Branded voice</h3><p>&rarr; cloning (+ consent)</p></div>
-      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 18a8 8 0 1 1 16 0M12 14l4-4"/></svg></div><h3>Tight footprint</h3><p>&rarr; Piper</p></div>
-      <div class="card" data-r data-d="6"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l9 5-9 5-9-5zM3 12l9 5 9-5M3 17l9 5 9-5"/></svg></div><h3>Many languages</h3><p>&rarr; XTTS / Coqui</p></div>
-      <div class="card" data-r data-d="7"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg></div><h3>Top naturalness</h3><p>&rarr; VITS / end-to-end</p></div>
+  <section class="slide" data-notes='["Here is the whole speaking job, told as one story. Picture an actor who is handed a script. The top row is what the machine really does. The bottom row is the actor story, step by step.", "The actor reads and tidies the script, so &lsquo;$1,250&rsquo; becomes &lsquo;twelve-fifty&rsquo;. Then he decides how to perform it &mdash; where to pause, what to stress. Then he speaks it aloud in a natural voice.", "One model now does all three. But the actor story shows why a good voice sounds like a person, not a robot."]'>
+    <div class="kicker"><span class="badge"></span>How speaking works &mdash; the whole story</div>
+    <h2 class="slide-title" data-r data-d="1">An actor given a script to perform</h2>
+    <div class="how2">
+      <div class="howside"><div class="hsl t">What really happens</div><div class="hsl a">The actor story</div></div>
+      <div class="hstep" data-r data-d="2"><div class="htech"><div class="hk">Step 1 · Tidy text</div><div class="htt">Tidy the words</div><div class="hts">&ldquo;$1,250&rdquo; &rarr; &ldquo;twelve-fifty&rdquo;</div></div><div class="hlay"><div class="hk">the story</div><div class="htt">He reads the script</div><div class="hts">and works out how each word is said</div></div></div>
+      <div class="harrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="hstep" data-r data-d="3"><div class="htech"><div class="hk">Step 2 · Plan delivery</div><div class="htt">Plan rhythm &amp; stress</div><div class="hts">where to pause, what to stress</div></div><div class="hlay"><div class="hk">the story</div><div class="htt">He plans the performance</div><div class="hts">he chooses how to say each line</div></div></div>
+      <div class="harrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="hstep" data-r data-d="4"><div class="htech"><div class="hk">Step 3 · Make sound</div><div class="htt">Make the sound</div><div class="hts">turn the plan into real audio</div></div><div class="hlay"><div class="hk">the story</div><div class="htt">He speaks it aloud</div><div class="hts">in a warm, natural voice</div></div></div>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">28</span></div>
+    <div class="flow-cap"><b style="color:var(--red)">One story, left to right:</b> tidy the script &rarr; plan how to say it &rarr; speak it aloud. One model now does all three.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">00</span></div>
   </section>
 
-  <section class="slide" data-notes='["An honest comparison. Closed cloud TTS and STT can be a touch more turnkey and occasionally a notch more natural.", "But they send audio off-premise — disqualifying for sensitive banking voice. That single fact, data residency, decides it.", "Open models have closed the gap and keep every byte of audio inside OCBC. Frame it as a deliberate, well-understood trade-off, not a compromise."]'>
-    <div class="kicker"><span class="badge"></span>Closed vs. open, honestly</div>
-    <h2 class="slide-title" data-r data-d="1">Data residency decides it</h2>
-    <div class="vs" style="margin-top:24px">
-      <div class="panel" data-r data-d="2">
-        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 18a4 4 0 0 1 0-8 5 5 0 0 1 9.6-1.5A3.5 3.5 0 0 1 18 18z"/></svg></span>Closed cloud</div>
-        <div class="ps">A touch more turnkey; sometimes a notch more natural.</div>
-        <div class="chips"><span class="chip">managed</span><span class="chip">no infra</span><span class="chip" style="background:var(--tint-red);color:var(--red-dark)">audio leaves the bank</span></div>
-        <div class="where" style="color:var(--red)">Disqualified for sensitive voice.</div>
+  <section class="slide" data-notes='["We have now seen both halves. Let us put them side by side, so the shape is clear. They are mirror images of each other.", "Listening goes sound to text, like a waiter taking your order. Speaking goes text to sound, like an actor reading a script. Same idea, opposite direction.", "Hold this picture. Every voice system is just these two halves joined together."]'>
+    <div class="kicker"><span class="badge"></span>Both halves, side by side</div>
+    <h2 class="slide-title" data-r data-d="1">Listening and speaking are mirror images</h2>
+    <div class="vs" style="margin-top:18px">
+      <div class="panel accent" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></span>Listening</div>
+        <div class="ps">Sound goes in, words come out.</div>
+        <div class="chips"><span class="chip">speech &rarr; text</span><span class="chip">the waiter</span><span class="chip">Qwen3-ASR</span></div>
+        <div class="where">Like a <b>waiter</b> writing down your order in a loud cafe.</div>
       </div>
-      <div class="panel accent" data-r data-d="3">
-        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7M6 10v9h12v-9"/></svg></span>Open &amp; self-hosted</div>
-        <div class="ps">Gap has closed; audio stays in OCBC infrastructure.</div>
-        <div class="chips"><span class="chip">data stays in-house</span><span class="chip">full control</span><span class="chip">no per-call fee</span></div>
-        <div class="where">The deliberate choice for a bank.</div>
+      <div class="panel" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H3v6h3l5 4zM16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg></span>Speaking</div>
+        <div class="ps">Words go in, sound comes out.</div>
+        <div class="chips"><span class="chip">text &rarr; speech</span><span class="chip">the actor</span><span class="chip">Qwen3-TTS</span></div>
+        <div class="where">Like an <b>actor</b> reading a script aloud in a natural voice.</div>
       </div>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">29</span></div>
+    <div class="flow-cap">Two halves, <b style="color:var(--red)">opposite directions</b> &mdash; join them and you have a full voice assistant.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">00</span></div>
   </section>
 
-  <section class="slide dark divider" data-notes='["Part 3, about 18 minutes. Base models stumble on our accents, our code-switching, and our product names.", "We climb the adaptation ladder from cheap prompting to full fine-tuning, with LoRA as the practical default.", "The concrete case throughout: Indonesian-English code-switched banking calls."]'>
+  <section class="slide dark divider" data-notes='["Part 3: the base models are good in general. But they trip on our accents, our mix of languages, and our product names.", "So we teach them about us. We start with the cheapest, simplest fixes. We only go further if we need to.", "Our example is a customer switching between Indonesian and English in one sentence."]'>
     <div class="pillar-no">03</div>
     <div class="eyebrow"><span class="dot"></span>Part 3</div>
-    <h2>Making It Work for Our Languages &amp; Voices</h2>
-    <p class="lead">Adapting base models to accents, code-switching and banking jargon &mdash; cheapest first.</p>
-    <div class="prog-rail"><span>STT</span><span>TTS</span><span class="on">Adaptation</span><span>At OCBC</span></div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">30</span></div>
+    <h2>Making It Work for Our Voices</h2>
+    <p class="lead">Teaching a good general model about our accents, our languages, and our product names &mdash; cheapest fixes first.</p>
+    <div class="prog-rail"><span>Listen</span><span>Speak</span><span class="on">Make it ours</span><span>At OCBC</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">14</span></div>
   </section>
 
-  <section class="slide" data-notes='["Why adaptation is needed. Base models drop accuracy on accents, on code-switching between Indonesian and English mid-sentence, on local terms, on product names, and on noisy phone audio.", "Banking piles on jargon and proper nouns the model never saw in training.", "This is the Indonesian and Bahasa reality for our audience — the gap is real and measurable in WER."]'>
-    <div class="kicker"><span class="badge"></span>Why adaptation is needed</div>
-    <h2 class="slide-title" data-r data-d="1">Base models stumble on our audio</h2>
+  <section class="slide" data-notes='["Why we need to adapt. A general model is good. But it trips on the things that make us us: local accents, switching between Indonesian and English in one sentence, and our own product names.", "Phone lines are noisy too, which makes it harder.", "None of this is a fault. The model just has not met our world yet. That is what we fix next."]'>
+    <div class="kicker"><span class="badge"></span>Why we adapt</div>
+    <h2 class="slide-title" data-r data-d="1">A general model trips on our world</h2>
     <div class="cards c2" style="margin-top:22px">
-      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div><h3>Accents &amp; code-switching</h3><p>Indonesian &harr; English mid-sentence trips the model.</p></div>
-      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 21V4h11l-1.5 4L16 12H5"/></svg></div><h3>Local terms &amp; names</h3><p>Product names &amp; proper nouns it never saw.</p></div>
-      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h2l2-7 3 16 3-12 2 8 2-5h4"/></svg></div><h3>Noisy phone audio</h3><p>Call-center lines are far from clean studio audio.</p></div>
-      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></div><h3>Banking jargon</h3><p>Domain vocabulary absent from training data.</p></div>
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div><h3>Accents &amp; mixed languages</h3><p>Switching Indonesian and English in one sentence trips it up.</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 21V4h11l-1.5 4L16 12H5"/></svg></div><h3>Our names &amp; terms</h3><p>Product names it has simply never heard before.</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h2l2-7 3 16 3-12 2 8 2-5h4"/></svg></div><h3>Noisy phone lines</h3><p>Real calls are far from a clean studio recording.</p></div>
+      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></div><h3>Banking words</h3><p>Everyday bank vocabulary the model rarely saw.</p></div>
     </div>
-    <div class="flow-cap" style="color:var(--red)">The Indonesian / Bahasa reality &mdash; a real, measurable WER gap.</div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">31</span></div>
+    <div class="flow-cap" style="color:var(--red)">Not a flaw &mdash; the model just hasn&#39;t met our accents and names yet.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">15</span></div>
   </section>
 
-  <section class="slide" data-notes='["The adaptation ladder, cheapest to most expensive. Rung one: prompting, biasing and a custom vocabulary — bias the model toward product names and jargon. Almost free.", "Rung two: a better frontend or lexicon — fix G2P pronunciations and add domain terms, mainly for TTS. Rung three: parameter-efficient fine-tuning with LoRA or adapters — small added weights, little data, avoids forgetting.", "Rung four: full fine-tuning — retrain on labelled domain and accent audio. Most powerful, most data and compute. Climb only as high as the gap demands."]'>
-    <div class="kicker"><span class="badge"></span>The adaptation ladder</div>
-    <h2 class="slide-title" data-r data-d="1">Cheap &rarr; expensive: climb only as needed</h2>
-    <div class="fillc">
-      <div class="ladder">
-        <div class="lstep"><div class="lbar"><div class="lk">cheapest</div><h4>Custom vocabulary</h4><p>bias toward names &amp; jargon</p></div></div>
-        <div class="lstep"><div class="lbar"><div class="lk">low cost</div><h4>Frontend / lexicon</h4><p>fix G2P, add domain terms</p></div></div>
-        <div class="lstep"><div class="lbar"><div class="lk">moderate</div><h4>LoRA / adapters</h4><p>small added weights, little data</p></div></div>
-        <div class="lstep"><div class="lbar"><div class="lk">most effort</div><h4>Full fine-tuning</h4><p>retrain on labelled audio</p></div></div>
+  <section class="slide" data-notes='["Here is the cheapest fix in action. A customer says one of our product names &mdash; say &ldquo;FRANK account&rdquo;. The plain model has never heard it. So it guesses something close: &ldquo;frank a count&rdquo;.", "We do not retrain anything. We just give the model a short list of words we expect to hear &mdash; our product and branch names. So it leans towards them.", "Same audio, but now it spells the name right. A tiny, almost-free change that fixes many mistakes."]'>
+    <div class="kicker"><span class="badge"></span>The cheapest fix in action</div>
+    <h2 class="slide-title" data-r data-d="1">Just give it our list of names</h2>
+    <div class="two" style="margin-top:18px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">Caller says a product name the model has <b>never met</b>.</li>
+          <li data-r data-d="3">Plain model guesses something close but <b>wrong</b>.</li>
+          <li data-r data-d="4" class="strong">We hand it a <b>short word list</b> of our names &mdash; no retraining.</li>
+          <li data-r data-d="5">Now it leans towards the <b style="color:var(--red)">right spelling</b>.</li>
+        </ul>
       </div>
-    </div>
-    <div class="flow-cap">Effort &amp; impact rise left &rarr; right &mdash; <b style="color:var(--red)">start at the cheapest rung that works</b>.</div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">32</span></div>
-  </section>
-
-  <section class="slide" data-notes='["Fine-tuning, intuitively. Start from a multilingual base such as Whisper or XLS-R, then continue training on your own audio.", "You do not start from scratch — you nudge a model that already knows speech toward your accent and vocabulary.", "Even ten minutes to twenty hours of in-domain data can sharply cut WER on a specific accent. A little targeted data goes a long way."]'>
-    <div class="kicker"><span class="badge"></span>Fine-tuning, intuitively</div>
-    <h2 class="slide-title" data-r data-d="1">Nudge a base model toward our audio</h2>
-    <div class="fcall">
-      <div class="fnode model" data-r data-d="2"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5 3 3 0 0 0 2 4 3 3 0 0 0 5 1V4.5A2.5 2.5 0 0 0 9 4zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5 3 3 0 0 1-2 4 3 3 0 0 1-5 1"/></svg></div><div class="ft">Multilingual base</div><div class="fs">Whisper / XLS-R</div></div>
-      <div class="fconn"><span class="chip">+ our audio</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
-      <div class="fnode fn" data-r data-d="3"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8h4M12 8h8M4 16h8M16 16h4"/><circle cx="10" cy="8" r="2"/><circle cx="14" cy="16" r="2"/></svg></div><div class="ft">Continue training</div><div class="fs">10 min &ndash; 20 hrs</div></div>
-      <div class="fconn"><span class="chip res">lower WER</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
-      <div class="fnode model" data-r data-d="4"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg></div><div class="ft">Adapted model</div><div class="fs">our accent &amp; terms</div></div>
-    </div>
-    <div class="flow-cap">Even <b style="color:var(--red)">a little in-domain data</b> sharply cuts WER on a specific accent.</div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">33</span></div>
-  </section>
-
-  <section class="slide" data-notes='["LoRA and adapters — the practical default, and a callback to Day 1 fine-tuning. Freeze the big base model and train only tiny inserted matrices.", "That is cheap, fast, and swappable: you can keep a separate small adapter per accent and load the right one on demand.", "Because the base stays frozen, you avoid catastrophic forgetting — the model keeps its general ability while gaining your specialism."]'>
-    <div class="kicker"><span class="badge"></span>LoRA / adapters</div>
-    <h2 class="slide-title" data-r data-d="1">Freeze the base, train a tiny adapter</h2>
-    <div class="fillc">
-      <div class="lora">
-        <div class="lbase"><div class="lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div><div class="bt">Base model</div><div class="bs">Whisper / XLS-R</div><div class="frozen">frozen &mdash; unchanged</div></div>
-        <div style="font-size:26px;color:var(--red);font-weight:800">+</div>
-        <div class="ladp">
-          <div class="ad">ID accent adapter<small>a few MB</small></div>
-          <div class="ad">Jargon adapter<small>swappable</small></div>
-          <div class="ad">Noisy-line adapter<small>per use case</small></div>
+      <div class="viz">
+        <div class="mirror" style="max-width:none;gap:16px">
+          <div class="mrow r1">
+            <div class="mnode"><div class="mt">Without the list</div><div class="mx" style="color:var(--red)">&ldquo;open a frank a count&rdquo;</div></div>
+            <div class="mmid"><div class="mp" style="background:#3a3a40">plain</div></div>
+            <div class="mnode"><div class="mt">misheard name</div><div class="mx">acts on nothing</div></div>
+          </div>
+          <div class="mrow r2">
+            <div class="mnode"><div class="mt">With the list</div><div class="mx" style="color:#1E8E5A">&ldquo;open a FRANK account&rdquo;</div></div>
+            <div class="mmid"><div class="mp">+list</div></div>
+            <div class="mnode"><div class="mt">correct name</div><div class="mx">acts correctly</div></div>
+          </div>
         </div>
       </div>
     </div>
-    <div class="flow-cap">Cheap, fast, <b>swappable per accent</b>, and <b style="color:var(--red)">no catastrophic forgetting</b> (callback: Day-1 fine-tuning).</div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">34</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">00</span></div>
   </section>
 
-  <section class="slide" data-notes='["Data is the real bottleneck. Adaptation needs labelled audio — transcribed calls — and that is the hard part to get.", "Tactics: transcribe a sample of in-house calls, use public Indonesian corpora like Common Voice, and use TTS data augmentation — synthesise accented audio to bootstrap STT training.", "Flag privacy and consent before using any real customer calls. Data sourcing is a governance question as much as a technical one."]'>
-    <div class="kicker"><span class="badge"></span>Data is the bottleneck</div>
-    <h2 class="slide-title" data-r data-d="1">Adaptation needs labelled audio</h2>
-    <div class="cards c3" style="margin-top:22px">
-      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></div><h3>In-house calls</h3><p>transcribe a sample (with consent)</p></div>
-      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div><h3>Public corpora</h3><p>e.g. Common Voice (Indonesian)</p></div>
-      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H3v6h3l5 4zM16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg></div><h3>TTS augmentation</h3><p>synthesize accented audio to bootstrap</p></div>
+  <section class="slide" data-notes='["How we teach the model about us &mdash; cheapest first, like a ladder. The lowest step is just giving it a list of our product names. Then it expects to hear them.", "Next, fix a few tricky words so it says them right. Then give it a little extra practice on our own recordings. This light fix does not make it forget everything else.", "Only the top step &mdash; a big retraining on lots of our audio &mdash; is heavy. Climb only as high as you need."]'>
+    <div class="kicker"><span class="badge"></span>The ladder of fixes</div>
+    <h2 class="slide-title" data-r data-d="1">Cheapest fix first &mdash; climb only as needed</h2>
+    <div class="fillc">
+      <div class="ladder">
+        <div class="lstep"><div class="lbar"><div class="lk">cheapest</div><h4>Give it a word list</h4><p>tell it our product names</p></div></div>
+        <div class="lstep"><div class="lbar"><div class="lk">low cost</div><h4>Fix how words sound</h4><p>correct a few tricky words</p></div></div>
+        <div class="lstep"><div class="lbar"><div class="lk">moderate</div><h4>Light touch-up</h4><p>a little practice on our audio</p></div></div>
+        <div class="lstep"><div class="lbar"><div class="lk">most effort</div><h4>Full retraining</h4><p>lots of our own recordings</p></div></div>
+      </div>
     </div>
-    <div class="flow-cap" style="color:var(--red)">&#9888; Privacy &amp; consent first before using any real customer calls.</div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">35</span></div>
+    <div class="flow-cap">Even a <b>little</b> practice on our own recordings goes a long way &mdash; <b style="color:var(--red)">start at the cheapest rung that works</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">16</span></div>
   </section>
 
-  <section class="slide" data-notes='["Evaluate adaptation properly. Measure WER on a held-out set of our own calls and accents — not a generic leaderboard.", "Track error per accent and per term, so you know whether product names specifically improved. For TTS, run MOS listening tests with real listeners.", "Do not trust leaderboard numbers for your audio. The only score that matters is on data that looks like production."]'>
-    <div class="kicker"><span class="badge"></span>Evaluate adaptation properly</div>
-    <h2 class="slide-title" data-r data-d="1">Measure on our data, not a leaderboard</h2>
-    <div class="cards c2" style="margin-top:22px">
-      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 18a8 8 0 1 1 16 0M12 14l4-4"/></svg></div><h3>WER on our calls</h3><p>held-out set of real OCBC-style audio</p></div>
-      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div><h3>Per-accent &amp; per-term</h3><p>did product names actually improve?</p></div>
-      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><h3>MOS for TTS</h3><p>human listening tests for naturalness</p></div>
-      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3zM12 10v4M12 17h.01"/></svg></div><h3>Distrust leaderboards</h3><p>generic numbers &ne; your audio</p></div>
+  <section class="slide" data-notes='["Things still go wrong on real calls. The good news: each common problem has a simple, cheap fix. Read each row left to right &mdash; the problem, then the fix.", "A wrong product name? Give it our word list. A noisy line? Clean the sound first. A long silence? Start speaking sooner. None of these need a big retraining.", "The lesson: most mistakes have an easy answer. We try the cheap fix first, and only do more if we must."]'>
+    <div class="kicker"><span class="badge"></span>What can go wrong &mdash; and the fix</div>
+    <h2 class="slide-title" data-r data-d="1">Common problems have simple fixes</h2>
+    <div class="pf-table" style="margin-top:16px">
+      <div class="pf-row head"><div>What goes wrong</div><div>The simple fix</div><div>Why it helps</div></div>
+      <div class="pf-row"><div class="prob"><span class="d"></span>Wrong product name</div><div class="fix"><code>give it our word list</code></div><div class="desc">It leans towards our real names, like &ldquo;FRANK&rdquo;.</div></div>
+      <div class="pf-row"><div class="prob"><span class="d"></span>Noisy phone line</div><div class="fix"><code>clean the sound first</code></div><div class="desc">Remove background noise before the model listens.</div></div>
+      <div class="pf-row"><div class="prob"><span class="d"></span>Mixed languages</div><div class="fix"><code>practice on our audio</code></div><div class="desc">A little training on our calls handles the mix.</div></div>
+      <div class="pf-row"><div class="prob"><span class="d"></span>Robotic voice</div><div class="fix"><code>tidy numbers &amp; dates</code></div><div class="desc">&ldquo;$1,250&rdquo; becomes &ldquo;twelve-fifty&rdquo;, said clearly.</div></div>
+      <div class="pf-row"><div class="prob"><span class="d"></span>Long silent gap</div><div class="fix"><code>start speaking sooner</code></div><div class="desc">Reply as soon as the first words are ready.</div></div>
     </div>
-    <div class="flow-cap">The only score that matters is on data that <b style="color:var(--red)">looks like production</b>.</div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">36</span></div>
+    <div class="flow-cap" style="font-style:italic">Most mistakes have an <b style="color:var(--red)">easy, cheap fix</b> &mdash; try that first, before any big retraining.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">00</span></div>
   </section>
 
-  <section class="slide" data-notes='["Governance for voice — bank-specific guardrails. Get explicit consent for voice biometrics, and treat cloning as a deepfake risk to control.", "Transcripts contain personally identifiable information, so apply retention limits and access controls. Keep a human in the loop for any compliance decision.", "Capability is not permission. Responsible-use framing is non-negotiable for customer voice."]'>
-    <div class="kicker"><span class="badge"></span>Governance for voice</div>
-    <h2 class="slide-title" data-r data-d="1">Capability is not permission</h2>
-    <div class="cards" style="grid-template-columns:repeat(4,1fr);margin-top:24px">
-      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><h3>Biometrics consent</h3><p>explicit opt-in for voice ID</p></div>
-      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3zM12 10v4M12 17h.01"/></svg></div><h3>Deepfake / cloning</h3><p>control &amp; watermark synthetic voice</p></div>
-      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg></div><h3>PII in transcripts</h3><p>personally identifiable information &mdash; retention &amp; access controls</p></div>
-      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg></div><h3>Human review</h3><p>for any compliance decision</p></div>
-    </div>
-    <div class="flow-cap" style="color:var(--red)">Responsible-use framing is <b>non-negotiable</b> for customer voice.</div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">37</span></div>
-  </section>
-
-  <section class="slide dark divider" data-notes='["The last stretch, about 8 minutes. We tie both directions into one end-to-end voice-bot.", "Everything open-source and on-premise — audio never leaves OCBC.", "Then recap the mirror, the mechanisms, and the adaptation ladder."]'>
+  <section class="slide dark divider" data-notes='["The last stretch: putting both halves together into one bank voice assistant.", "Everything runs inside the bank, so customer audio never leaves &mdash; then we recap.", "This is where the whole story lands."]'>
     <div class="pillar-no">04</div>
     <div class="eyebrow"><span class="dot"></span>Part 4</div>
-    <h2>Speech Tech at OCBC</h2>
-    <p class="lead">Wiring STT and TTS into one open-source, on-premise voice system &mdash; with the Day-1 retrieval-augmented generation (RAG) and large language model (LLM) stack.</p>
-    <div class="prog-rail"><span>STT</span><span>TTS</span><span>Adaptation</span><span class="on">At OCBC</span></div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">38</span></div>
+    <h2>Putting It Together at OCBC</h2>
+    <p class="lead">Wiring the listening half and the speaking half into one bank voice assistant &mdash; all inside the bank.</p>
+    <div class="prog-rail"><span>Listen</span><span>Speak</span><span>Make it ours</span><span class="on">At OCBC</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">17</span></div>
   </section>
 
-  <section class="slide" data-notes='["Tie the day together: an end-to-end voice-bot, entirely open-source and on-premise. The caller speaks; voice-activity detection plus streaming STT — a transducer or Whisper — turns it into text.", "That text goes to the Day-1 RAG and LLM stack, which picks an answer. TTS — Piper or XTTS — speaks the answer back.", "Every block is self-hosted; audio never leaves OCBC. Specifics here are illustrative unless we have real internal details."]'>
-    <div class="kicker"><span class="badge"></span>End-to-end voice-bot, all open-source</div>
-    <h2 class="slide-title" data-r data-d="1">Listen &rarr; understand &rarr; speak, on-prem</h2>
-    <div class="flow" style="margin-top:6px">
-      <div class="step"><div class="node">1</div><h4>Caller speaks</h4><p>VAD + audio in</p><div class="arrow"></div></div>
-      <div class="step"><div class="node">2</div><h4>Streaming STT</h4><p>transducer / Whisper</p><div class="arrow"></div></div>
-      <div class="step"><div class="node">3</div><h4>RAG / LLM</h4><p>Day-1 stack picks answer</p><div class="arrow"></div></div>
-      <div class="step"><div class="node hot">4</div><h4>TTS speaks</h4><p>Piper / XTTS</p></div>
+  <section class="slide" data-notes='["Why do we run all of this inside the bank? A caller&#39;s voice is very personal data. It can show who they are. In some systems a voice is even used as a password.", "If we sent the audio to an outside service, that recording would leave our walls. Instead, the listening and speaking models run on our own machines. So the sound never goes anywhere.", "This is the one real difference from Siri or Alexa: same loop, but the audio stays put. It is why we use free, self-hosted models."]'>
+    <div class="kicker"><span class="badge"></span>Why it all stays inside the bank</div>
+    <h2 class="slide-title" data-r data-d="1">A voice is personal &mdash; so it never leaves</h2>
+    <div class="cards c3" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div><h3>A voice is sensitive</h3><p>It can reveal who someone is &mdash; sometimes it&#39;s even used as a password.</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16v10H4z"/><path d="M4 7l8 6 8-6"/><path d="M2 5l20 14"/></svg></div><h3>So nothing is sent out</h3><p>Send audio to an outside service and the recording leaves our walls.</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21V8l9-5 9 5v13M9 21v-6h6v6"/></svg></div><h3>We host it ourselves</h3><p>Free, self-hosted models run on our machines &mdash; the sound stays put.</p></div>
     </div>
-    <div class="flow-cap" style="font-style:italic">All self-hosted &mdash; <b style="color:var(--red)">audio never leaves OCBC</b>. Blocks illustrative unless real details apply.</div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">39</span></div>
+    <div class="flow-cap">Same loop as Siri or Alexa, one difference: <b style="color:var(--red)">the audio never leaves the bank</b>. That&#39;s why we self-host.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">00</span></div>
   </section>
 
-  <section class="slide demo-slide" data-demo="1" data-notes='["Recorded demo, replayed live. The voice round-trip in a few lines of open-source Python — listen with Whisper, speak with Piper, both on-prem.", "Cell 1 loads faster-whisper. Cell 2 transcribes a call, returning Indonesian-English code-switched text. Cell 3 loads a Piper voice. Cell 4 synthesizes a reply to a .wav — shown as a small mock waveform.", "Press R to replay. That is the whole mirror in code: audio to text, then text back to audio, never leaving the bank."]'>
-    <div class="kicker" data-r><span class="badge"></span>Recorded Demo · the voice round-trip</div>
-    <h2 class="slide-title" data-r data-d="1">Listen with Whisper, speak with Piper</h2>
+  <section class="slide" data-notes='["The whole story in one line: the assistant listens, works out an answer, then speaks. The listening model turns the caller&#39;s words into text.", "That text goes to the assistant&#39;s brain to pick an answer, and the speaking model reads the answer back out loud.", "The key point: every step runs inside the bank, so customer audio never leaves OCBC."]'>
+    <div class="kicker"><span class="badge"></span>One bank voice assistant, end to end</div>
+    <h2 class="slide-title" data-r data-d="1">Listen &rarr; decide &rarr; speak &mdash; all inside the bank</h2>
+    <div class="flow" style="margin-top:6px">
+      <div class="step"><div class="node">1</div><h4>Caller speaks</h4><p>the audio comes in</p><div class="arrow"></div></div>
+      <div class="step"><div class="node">2</div><h4>Listen</h4><p>Qwen3-ASR &rarr; text</p><div class="arrow"></div></div>
+      <div class="step"><div class="node">3</div><h4>Decide</h4><p>assistant picks an answer</p><div class="arrow"></div></div>
+      <div class="step"><div class="node hot">4</div><h4>Speak</h4><p>Qwen3-TTS reads it back</p></div>
+    </div>
+    <div class="flow-cap" style="font-style:italic">Every step runs inside the bank &mdash; <b style="color:var(--red)">customer audio never leaves the bank</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">18</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Let us walk one real call, step by step. A customer calls and says, in a mix of Indonesian and English, &ldquo;Tolong cek balance saya.&rdquo;", "The listening model turns that into clean text. The assistant&#39;s brain reads the text, looks up the balance, and writes a short reply. The speaking model reads the reply back in a warm voice.", "Follow the four boxes left to right. This is the whole round-trip on one real OCBC call &mdash; and every box runs inside the bank."]'>
+    <div class="kicker"><span class="badge"></span>One real call, start to finish</div>
+    <h2 class="slide-title" data-r data-d="1">A customer asks for their balance</h2>
+    <div class="how2">
+      <div class="howside"><div class="hsl t">What the machine does</div><div class="hsl a">On the call</div></div>
+      <div class="hstep" data-r data-d="2"><div class="htech"><div class="hk">Step 1 · Listen</div><div class="htt">Speech &rarr; text</div><div class="hts">Qwen3-ASR writes the words</div></div><div class="hlay"><div class="hk">on the call</div><div class="htt">Caller speaks</div><div class="hts">&ldquo;Tolong cek balance saya.&rdquo;</div></div></div>
+      <div class="harrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="hstep" data-r data-d="3"><div class="htech"><div class="hk">Step 2 · Decide</div><div class="htt">Pick the answer</div><div class="hts">looks up the account balance</div></div><div class="hlay"><div class="hk">on the call</div><div class="htt">It understands</div><div class="hts">the caller wants their balance</div></div></div>
+      <div class="harrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="hstep" data-r data-d="4"><div class="htech"><div class="hk">Step 3 · Write reply</div><div class="htt">Build the words</div><div class="hts">&ldquo;Saldo Anda Rp 1.250.000.&rdquo;</div></div><div class="hlay"><div class="hk">on the call</div><div class="htt">It forms a reply</div><div class="hts">short, clear, in the caller&#39;s language</div></div></div>
+      <div class="harrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="hstep" data-r data-d="5"><div class="htech"><div class="hk">Step 4 · Speak</div><div class="htt">Text &rarr; speech</div><div class="hts">Qwen3-TTS reads it aloud</div></div><div class="hlay"><div class="hk">on the call</div><div class="htt">Caller hears</div><div class="hts">a warm, natural voice reply</div></div></div>
+    </div>
+    <div class="flow-cap"><b style="color:var(--red)">One call, left to right:</b> hear the caller &rarr; understand &rarr; write the reply &rarr; speak it back. Every box stays inside the bank.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide" data-notes='["One thing the round-trip diagram hides: speed. A real talk has a rhythm, and a voice assistant must keep up with it.", "If the reply comes in about a second, it feels like a natural chat. Wait several seconds in silence and the caller thinks the line dropped. They start talking over it, or hang up.", "So we do not wait for the whole sentence to finish. We start listening as the caller speaks, and start speaking as soon as the first words are ready. The trick is to feel instant."]'>
+    <div class="kicker"><span class="badge"></span>Why speed matters</div>
+    <h2 class="slide-title" data-r data-d="1">A real conversation can&#39;t wait</h2>
+    <div class="vs" style="margin-top:18px">
+      <div class="panel" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l4 2"/></svg></span>Too slow</div>
+        <div class="ps">Several seconds of silence after the caller stops.</div>
+        <div class="chips"><span class="chip">&ldquo;...hello? are you there?&rdquo;</span><span class="chip">talks over it</span></div>
+        <div class="where">The caller assumes the line <b>dropped</b> &mdash; and hangs up.</div>
+      </div>
+      <div class="panel accent" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></span>Feels instant</div>
+        <div class="ps">Starts listening while you talk; replies in about a second.</div>
+        <div class="chips"><span class="chip">no awkward gap</span><span class="chip">natural rhythm</span></div>
+        <div class="where">Feels like a <b>real chat</b> &mdash; so people keep talking to it.</div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide demo-slide" data-demo="1" data-notes='["A short recorded demo, replayed live: the full round-trip in a few lines of code &mdash; first listen, then speak, both running in-house.", "It takes a recording, turns it into text (here with mixed Indonesian and English), then turns a reply back into a spoken audio file &mdash; shown as a little waveform.", "Press R to replay. This is the whole story in code: sound to words, then words back to sound, never leaving the bank."]'>
+    <div class="kicker" data-r><span class="badge"></span>Recorded Demo · the round-trip</div>
+    <h2 class="slide-title" data-r data-d="1">Listen, then speak &mdash; in a few lines</h2>
     <div class="body-area">
       <div class="demo-stage">
         <div class="nb" id="nb1">
@@ -1365,51 +1310,86 @@ voice.synthesize(reply, <span style="color:#0a7">"reply.wav"</span>)</div></div>
           </div>
         </div>
         <div class="demo-side">
-          <div class="demo-card" data-r data-d="2"><div class="dk">&#9654; Demo · learning goal</div><h3>The mirror, in code</h3><p>Audio &rarr; text with Whisper, then text &rarr; audio with Piper. Both <b>open-source</b>, both <b>on-prem</b>.</p></div>
+          <div class="demo-card" data-r data-d="2"><div class="dk">&#9654; Demo · the goal</div><h3>Both halves, in code</h3><p>Sound &rarr; text to listen, then text &rarr; sound to speak. Both run <b>inside the bank</b>.</p></div>
           <ul class="demo-steps" id="demo1steps" data-r data-d="3">
-            <li data-step="0"><span class="sn">1</span>Load faster-whisper (local)</li>
-            <li data-step="1"><span class="sn">2</span>Transcribe a call (ID + EN)</li>
-            <li data-step="2"><span class="sn">3</span>Load a Piper voice</li>
-            <li data-step="3"><span class="sn">4</span>Synthesize the reply &rarr; .wav</li>
+            <li data-step="0"><span class="sn">1</span>Load the listening model</li>
+            <li data-step="1"><span class="sn">2</span>Turn a call into text (mixed ID + EN)</li>
+            <li data-step="2"><span class="sn">3</span>Load a speaking voice</li>
+            <li data-step="3"><span class="sn">4</span>Turn the reply into audio</li>
           </ul>
           <button class="replay" data-replay="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 109-9 9 9 0 00-7 3.3M3 3v4h4"/></svg>Replay demo</button>
         </div>
       </div>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">40</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">19</span></div>
   </section>
 
-  <section class="slide dark" data-notes='["Land the plane. The mirror: STT listens, TTS speaks — two directions of one pipeline.", "The mechanisms: STT decodes via CTC, attention, or transducer; TTS runs frontend, then acoustic model, then vocoder. Adaptation climbs from prompting to frontend to LoRA to full fine-tuning — always open-source.", "Three takeaways: pick the STT architecture by latency versus accuracy; naturalness lives in the acoustic model plus vocoder; adapt to our languages and measure on our data. Pointers: the Whisper repo, Coqui and Piper, and the Hugging Face Open ASR leaderboard. Questions."]'>
+  <section class="slide" data-notes='["A quick, simple guide for picking a model. For the listening half, start with Qwen3-ASR. It is strong and handles our mix of languages. Use Whisper when you want the most well-known option.", "For the speaking half, start with Qwen3-TTS for the most natural voice. Use Piper when speed and small size matter more &mdash; for example on a small server.", "The simple rule: start with the Qwen3 models. Keep Whisper and Piper as trusted, lighter backups. Names move fast, so check again each year."]'>
+    <div class="kicker"><span class="badge"></span>Which model, when</div>
+    <h2 class="slide-title" data-r data-d="1">A simple cheat-sheet for choosing</h2>
+    <div class="cards c2" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></div><h3>Listening &mdash; start here</h3><p><b>Qwen3-ASR</b> first: strong and handles mixed languages. <b>Whisper</b> when you want the most familiar option.</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H3v6h3l5 4zM16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg></div><h3>Speaking &mdash; start here</h3><p><b>Qwen3-TTS</b> first: most natural voice. <b>Piper</b> when speed and small size matter more.</p></div>
+    </div>
+    <div class="flow-cap" style="font-style:italic">Lead with the <b style="color:var(--red)">Qwen3</b> models; keep Whisper and Piper as trusted, lighter fallbacks. Re-check yearly.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Before we close, three plain words to take home. These are the big ideas, with no jargon.", "Listen means turning speech into text, like a waiter. Speak means turning text into a voice, like an actor. Adapt means teaching the model our accents and names.", "If you remember only these three words, you remember the whole session."]'>
+    <div class="kicker"><span class="badge"></span>Three words to remember</div>
+    <h2 class="slide-title" data-r data-d="1">The whole session in three plain words</h2>
+    <div class="cards c3" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="num">1</div><h3>Listen</h3><p>Turn speech into text. Like a <b>waiter</b> taking your order in a loud cafe.</p><span class="tag">speech &rarr; text</span></div>
+      <div class="card" data-r data-d="3"><div class="num">2</div><h3>Speak</h3><p>Turn text into a voice. Like an <b>actor</b> reading a script out loud.</p><span class="tag">text &rarr; speech</span></div>
+      <div class="card" data-r data-d="4"><div class="num">3</div><h3>Adapt</h3><p>Teach the model our accents and names. Cheapest fix first.</p><span class="tag">make it ours</span></div>
+    </div>
+    <div class="flow-cap">Listen, speak, adapt &mdash; and keep all the audio <b style="color:var(--red)">inside the bank</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide dark" data-notes='["Let us wrap up. A voice assistant is two sides of one coin: it listens, then it speaks.", "Modern AI now does each half in one step. We teach it our accents and names, cheapest fixes first. Our bank assistant uses all of this, running inside the bank.", "Three things to remember: listening and speaking are two halves of one system; one AI model now does each; and we make both work for our voices &mdash; with audio that never leaves the bank. Questions welcome."]'>
     <div class="body-area" style="justify-content:center">
       <div class="kicker" data-r><span class="badge"></span>Wrap &amp; Q&amp;A</div>
       <h2 class="slide-title" data-r data-d="1" style="font-size:44px;margin-bottom:6px">Listen, and speak &mdash; on our terms</h2>
-      <p class="slide-sub" data-r data-d="2" style="color:rgba(255,255,255,.65);margin-bottom:26px">Mirror images of one problem: STT listens, TTS speaks &mdash; and we adapt both to our voices.</p>
+      <p class="slide-sub" data-r data-d="2" style="color:rgba(255,255,255,.65);margin-bottom:26px">Two sides of one coin: the machine listens, then it speaks &mdash; and we make both work for our voices.</p>
       <div class="recap-grid" style="flex:none">
         <div class="recap-col recap" data-r data-d="3">
           <h4><span style="width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block"></span>What we covered</h4>
           <ul>
-            <li>The mirror: STT listens, TTS speaks</li>
-            <li>STT: CTC / attention / transducer</li>
-            <li>TTS: frontend &rarr; acoustic &rarr; vocoder</li>
-            <li>Adaptation: prompt &rarr; frontend &rarr; LoRA &rarr; full FT</li>
+            <li>Two halves: listening and speaking</li>
+            <li>Modern AI does each in one step</li>
+            <li>Models: Qwen3-ASR (listen), Qwen3-TTS (speak)</li>
+            <li>Teaching it our accents &amp; names, cheapest first</li>
           </ul>
         </div>
         <div class="recap-col next" data-r data-d="4">
           <h4><span style="width:8px;height:8px;border-radius:50%;background:#ff6a6f;display:inline-block"></span>Three takeaways</h4>
           <ul>
-            <li><b style="color:#fff">Pick STT by latency vs. accuracy</b></li>
-            <li>Naturalness = acoustic model + vocoder</li>
-            <li>Adapt to our languages; measure on our data</li>
+            <li><b style="color:#fff">Listening + speaking = one system</b></li>
+            <li>One AI model now does each half</li>
+            <li>Adapt to our voices; keep audio in the bank</li>
           </ul>
         </div>
       </div>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">41</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">20</span></div>
   </section>
 
   </main>
 </div>
 
+<style>
+.home-btn{position:fixed; top:16px; left:18px; z-index:55; display:flex; align-items:center; gap:7px;
+  font-family:var(--fMono,'JetBrains Mono',monospace); font-size:12px; font-weight:600; letter-spacing:.01em; text-decoration:none;
+  color:#fff; background:rgba(18,18,22,.6); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+  border:1px solid rgba(255,255,255,.2); padding:7px 13px 7px 11px; border-radius:99px;
+  transition:background .2s ease, transform .2s ease, opacity .2s ease; opacity:.82}
+.home-btn:hover{background:var(--red,#EC1B23); border-color:transparent; opacity:1; transform:translateY(-1px)}
+.home-btn:active{transform:translateY(0)}
+.home-btn svg{width:15px; height:15px}
+@media print{.home-btn{display:none}}
+</style>
+<a class="home-btn" href="../index.html" aria-label="Back to home" title="Back to home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9h5v-5h4v5h5v-9"/></svg>Home</a>
 <div class="hud">
   <div class="dots" id="dots"></div>
   <div class="count">slide <b id="cur">1</b> / <span id="tot">34</span></div>
