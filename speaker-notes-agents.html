@@ -117,7 +117,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       <h2>A chatbot answers; an agent acts</h2>
       <ul>
         <li>The core distinction. A chatbot answers a question and stops. An agent acts: it can search, call APIs, run code, update systems — and loop until a goal is met.</li>
-        <li>Banking contrast: what is this customer&amp;#39;s risk is a question a chatbot answers. Investigate and flag this alert is a goal an agent pursues across many steps.</li>
+        <li>Banking contrast: what is this customer's risk is a question a chatbot answers. Investigate and flag this alert is a goal an agent pursues across many steps.</li>
         <li>Everything else today builds on this shift from answering to acting.</li>
       </ul>
     </article>
@@ -159,7 +159,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
     </article>
     <article class="s">
       <div class="n">Slide 9</div>
-      <h2>What an Agent Is Made Of</h2>
+      <h2>Part 1 — What an Agent Is Made Of</h2>
       <ul>
         <li>Part 1, about 24 minutes. We define the augmented LLM, the think-act-observe loop, and the five workflow patterns.</li>
         <li>These are composable building blocks — most production systems are workflows, not fully autonomous agents.</li>
@@ -206,7 +206,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       <div class="n">Slide 14</div>
       <h2>Short-term vs long-term</h2>
       <ul>
-        <li>Memory comes in two kinds. Short-term is the running context window — this task&amp;#39;s steps so far.</li>
+        <li>Memory comes in two kinds. Short-term is the running context window — this task's steps so far.</li>
         <li>Long-term is persisted facts and past tasks, usually stored and pulled back via RAG or a store.</li>
         <li>Managing context — what to keep, summarise or drop — is the real constraint on how far an agent can go.</li>
       </ul>
@@ -249,7 +249,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
     </article>
     <article class="s">
       <div class="n">Slide 19</div>
-      <h2>Tools — Giving the Model Hands</h2>
+      <h2>Part 2 — Tools — Giving the Model Hands</h2>
       <ul>
         <li>Part 2, about 22 minutes. The demystifying spine: a tool is a normal function the model can ask you to run.</li>
         <li>We cover how function-calling actually works, how to write good tools, error handling, and MCP, the open standard.</li>
@@ -285,7 +285,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
     </article>
     <article class="s">
       <div class="n">Slide 23</div>
-      <h2>Design tools like you&#x27;d brief a new hire</h2>
+      <h2>Design tools like you'd brief a new hire</h2>
       <ul>
         <li>How to write tools the model uses well. Make each tool do one clear thing, with a clear description and a name that says what it is for.</li>
         <li>Do not have two tools that do almost the same job, or the model will keep flip-flopping between them. Keep the inputs few and clearly typed.</li>
@@ -330,7 +330,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
     </article>
     <article class="s">
       <div class="n">Slide 28</div>
-      <h2>Planning &amp; Reasoning</h2>
+      <h2>Part 3 — Planning &amp; Reasoning</h2>
       <ul>
         <li>Part 3, about 24 minutes. Now the agent has hands; this is the brain — how it decides the next step.</li>
         <li>We cover three reasoning patterns: ReAct, plan-and-execute, and Reflexion-style self-critique.</li>
@@ -342,7 +342,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       <h2>Real tasks have many dependent steps</h2>
       <ul>
         <li>Why planning matters. For a one-step question the model can just answer. But real banking tasks have many steps with dependencies — you must do A before you can do B.</li>
-        <li>Without a plan the agent wanders, repeats itself, or stops early. Planning is how it sequences steps toward a goal and knows when it&amp;#39;s done.</li>
+        <li>Without a plan the agent wanders, repeats itself, or stops early. Planning is how it sequences steps toward a goal and knows when it's done.</li>
         <li>The patterns that follow are different answers to one question: how much to plan up front versus decide step by step.</li>
       </ul>
     </article>
@@ -387,7 +387,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       <h2>Fraud alert, step by step</h2>
       <ul>
         <li>A concrete trajectory: an agent investigating a fraud alert, shown as think-act-observe steps. This is illustrative, not a real OCBC system.</li>
-        <li>It reasons about what to check, calls a tool to pull recent transactions, observes an unusual overseas charge, checks the customer&amp;#39;s travel notes, finds none, and drafts a case for a human.</li>
+        <li>It reasons about what to check, calls a tool to pull recent transactions, observes an unusual overseas charge, checks the customer's travel notes, finds none, and drafts a case for a human.</li>
         <li>Notice the last step: it does not block the card itself. It prepares the decision and hands off to a human. That hand-off is the whole point of the next section.</li>
       </ul>
     </article>
@@ -405,13 +405,13 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       <h2>What goes wrong in production</h2>
       <ul>
         <li>The failure modes that bite in production. Runaway loops: an agent stuck repeating actions can burn real money — one widely-cited case ran up about 47,000 US dollars in API costs from an unbounded loop.</li>
-        <li>Prompt injection: malicious text inside a document or web page hijacks the agent&amp;#39;s instructions — a serious risk when tools touch money. Hallucinated tool calls and compounding errors round it out.</li>
+        <li>Prompt injection: malicious text inside a document or web page hijacks the agent's instructions — a serious risk when tools touch money. Hallucinated tool calls and compounding errors round it out.</li>
         <li>Each of these is why the next slide is guardrails. Autonomy without limits is a liability.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 37</div>
-      <h2>Production &amp; Safety</h2>
+      <h2>Part 4 — Production &amp; Safety</h2>
       <ul>
         <li>Part 4, the last stretch, about 12 minutes. Everything so far is capability; this is responsibility.</li>
         <li>Guardrails, human-in-the-loop, and an end-to-end picture of how a bank would deploy an agent.</li>
@@ -422,7 +422,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       <div class="n">Slide 38</div>
       <h2>The agent proposes; a human disposes</h2>
       <ul>
-        <li>The control layer. Permission scopes: the agent only gets tools it truly needs — least privilege. Limits: caps on steps, spend and time so a loop can&amp;#39;t run away.</li>
+        <li>The control layer. Permission scopes: the agent only gets tools it truly needs — least privilege. Limits: caps on steps, spend and time so a loop can't run away.</li>
         <li>Human-in-the-loop: a person approves any high-stakes or irreversible action — moving money, blocking a card. Validation: check tool inputs and outputs, and sandbox anything that runs code.</li>
         <li>For a bank these are not optional. The design rule: the agent proposes, a human disposes on anything that matters.</li>
       </ul>

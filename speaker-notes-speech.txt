@@ -37,7 +37,7 @@ Slide 7 — Sensitive voice never leaves the bank
   • We will explain how the big closed services work, but only for understanding. Everything we recommend is open-source and self-hostable.
   • Voice is biometric and deeply personal data. The rule is simple: audio stays inside OCBC infrastructure.
 
-Slide 8 — Speech-to-Text — Teaching Machines to Listen
+Slide 8 — Part 1 — Speech-to-Text — Teaching Machines to Listen
   • Part 1, about 27 minutes. We define the task and its metric, then the heart of the session: the three architecture families for decoding speech.
   • Intuition over maths — no connectionist-temporal-classification equations, just pictures of how each family works.
   • End on the open-source landscape and a decision aid for choosing a model.
@@ -97,7 +97,7 @@ Slide 19 — Match the model to the job
   • Overnight compliance batch? Accuracy first — Whisper large. Live voice-bot? Streaming transducer for low latency. Mixed Indonesian-English calls? Whisper, for its multilingual strength.
   • There is no single best model — match the model to the job.
 
-Slide 20 — Text-to-Speech — Teaching Machines to Speak
+Slide 20 — Part 2 — Text-to-Speech — Teaching Machines to Speak
   • Part 2, about 25 minutes. Now the mirror image — turning text into natural-sounding audio.
   • We assemble the three-stage pipeline, then trace how acoustic models evolved from sequential to parallel to end-to-end.
   • Same open-source, self-hostable stance throughout.
@@ -152,7 +152,7 @@ Slide 30 — Data residency decides it
   • But they send audio off-premise — disqualifying for sensitive banking voice. That single fact, data residency, decides it.
   • Open models have closed the gap and keep every byte of audio inside OCBC. Frame it as a deliberate, well-understood trade-off, not a compromise.
 
-Slide 31 — Making It Work for Our Languages & Voices
+Slide 31 — Part 3 — Making It Work for Our Languages & Voices
   • Part 3, about 18 minutes. Base models stumble on our accents, our code-switching, and our product names.
   • We climb the adaptation ladder from cheap prompting to full fine-tuning, with LoRA as the practical default.
   • The concrete case throughout: Indonesian-English code-switched banking calls.
@@ -192,7 +192,7 @@ Slide 38 — Capability is not permission
   • Transcripts contain personally identifiable information, so apply retention limits and access controls. Keep a human in the loop for any compliance decision.
   • Capability is not permission. Responsible-use framing is non-negotiable for customer voice.
 
-Slide 39 — Speech Tech at OCBC
+Slide 39 — Part 4 — Speech Tech at OCBC
   • The last stretch, about 8 minutes. We tie both directions into one end-to-end voice-bot.
   • Everything open-source and on-premise — audio never leaves OCBC.
   • Then recap the mirror, the mechanisms, and the adaptation ladder.

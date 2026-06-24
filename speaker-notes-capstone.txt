@@ -10,7 +10,7 @@ Slide 1 — Capstone Voice Agentic AI
 Slide 2 — The frame
   • The whole day in one line. We learned to listen, to think and act, and to talk. Now we assemble it, and answer the practical questions: what models, how big, and which GPU.
   • This is the bridge from ideas to a thing you can actually stand up on a server.
-  • Keep this framing in mind &mdash; listen, think, talk, assemble &mdash; we return to it at the end.
+  • Keep this framing in mind — listen, think, talk, assemble — we return to it at the end.
 
 Slide 3 — Three topics, now joined into one system
   • Day 2 in one picture. Topic 1 taught speech: speech-to-text and text-to-speech. Topic 2 taught agents: an LLM that reasons, retrieves with RAG, and calls tools. Topic 3 taught the conversation design on top.
@@ -18,96 +18,96 @@ Slide 3 — Three topics, now joined into one system
   • Each box here becomes a real open-source model in the next part of the deck.
 
 Slide 4 — The voice agentic AI loop, one turn
-  • The end-to-end voice agentic loop. Sound comes in the microphone, speech-to-text turns it into words, guardrails check the input, the LLM agent reasons &mdash; using RAG and tool-calling &mdash; guardrails check the output, text-to-speech turns the reply back into sound, and it plays on the speaker.
+  • The end-to-end voice agentic loop. Sound comes in the microphone, speech-to-text turns it into words, guardrails check the input, the LLM agent reasons — using RAG and tool-calling — guardrails check the output, text-to-speech turns the reply back into sound, and it plays on the speaker.
   • Notice it is a loop: every turn goes around this circle. Guardrails sit on both the way in and the way out, which is what a bank needs.
   • The whole loop runs on-prem on our own servers, so the customer audio never leaves the bank. Each stage is an open-source model we will size next.
 
-Slide 5 — The Model Stack
+Slide 5 — Part 1 — The Model Stack
   • Part 1: the model stack. We go component by component, naming the open-source options for each, what each one does, and a rough size.
-  • Order matters &mdash; this is the order the audio flows: speech-to-text, the LLM brain, the embedding model and vector database for RAG, guardrails, text-to-speech, and the orchestration that ties tools together.
+  • Order matters — this is the order the audio flows: speech-to-text, the LLM brain, the embedding model and vector database for RAG, guardrails, text-to-speech, and the orchestration that ties tools together.
   • All open-weight and self-hostable, so we control cost and keep data in the bank.
 
 Slide 6 — STT: Whisper turns speech into text
-  • Speech-to-text, or STT, turns the customer audio into text. The open default is Whisper, the free and open model from OpenAI &mdash; large-v3 is about 1.5 billion parameters.
+  • Speech-to-text, or STT, turns the customer audio into text. The open default is Whisper, the free and open model from OpenAI — large-v3 is about 1.5 billion parameters.
   • For lower cost there are faster-whisper and whisper.cpp, which can even run on a plain CPU with no GPU at all.
   • This is the first stage of the loop: sound in, words out. It is small compared to the LLM.
 
 Slide 7 — LLM: the reasoning & tool-calling brain
   • The LLM is the brain of the agent: it reasons, decides which tool to call, and writes the reply. Good open-weight choices are Qwen2.5 and Llama 3.x.
   • There is a real trade-off here. A 7-to-8 billion parameter model is cheap and fast; a 70 billion model is higher quality but much more expensive.
-  • This is the big VRAM cost in the whole stack &mdash; nearly all your GPU memory goes here. We size it carefully in Part 2.
+  • This is the big VRAM cost in the whole stack — nearly all your GPU memory goes here. We size it carefully in Part 2.
 
 Slide 8 — Embeddings + vector DB power retrieval
   • RAG, retrieval-augmented generation, lets the agent look things up in our own documents before it answers. Two pieces make it work: an embedding model and a vector database.
-  • The embedding model turns each document and each question into a vector &mdash; a list of numbers that captures meaning. Good open options are Qwen3-Embedding, in a small 0.6B or a larger 8B, and the bge and e5 families.
-  • Then the vector database stores those vectors and finds the closest matches fast. FAISS, pgvector and Milvus are the common open choices. The vector DB is not a GPU model &mdash; it runs on ordinary servers.
+  • The embedding model turns each document and each question into a vector — a list of numbers that captures meaning. Good open options are Qwen3-Embedding, in a small 0.6B or a larger 8B, and the bge and e5 families.
+  • Then the vector database stores those vectors and finds the closest matches fast. FAISS, pgvector and Milvus are the common open choices. The vector DB is not a GPU model — it runs on ordinary servers.
 
 Slide 9 — Guardrails check input and output
-  • Guardrails are the safety layer. They check the input on the way in and the output on the way out &mdash; blocking unsafe requests and catching leaked personal data, or PII.
+  • Guardrails are the safety layer. They check the input on the way in and the output on the way out — blocking unsafe requests and catching leaked personal data, or PII.
   • Open options include Llama Guard, about 8 billion parameters, plus NeMo Guardrails and Granite Guardian.
-  • In a bank this is not optional. Notice the guardrail is itself a model, so it adds its own VRAM cost &mdash; budget for it like a second small LLM.
+  • In a bank this is not optional. Notice the guardrail is itself a model, so it adds its own VRAM cost — budget for it like a second small LLM.
 
 Slide 10 — TTS: turn the reply back into a voice
   • Text-to-speech, or TTS, turns the reply text back into a voice. The tiny option is Piper, which is so small it runs comfortably on a CPU.
   • If you want a richer or cloned voice, XTTS and VITS are good open choices, at a slightly higher cost.
-  • Like Whisper, this is small &mdash; it almost never drives the GPU bill. The last stage of the loop: text out as sound.
+  • Like Whisper, this is small — it almost never drives the GPU bill. The last stage of the loop: text out as sound.
 
 Slide 11 — LangGraph + MCP wire the agent to tools
-  • The glue that holds it together is orchestration. LangGraph, from the Agentic AI session, defines the steps and decisions of the agent as a graph &mdash; when to retrieve, when to call a tool, when to answer.
-  • MCP, the Model Context Protocol, is the standard way the agent connects to tools &mdash; a balance API, a transfer action, a card-block action &mdash; without custom glue for each.
+  • The glue that holds it together is orchestration. LangGraph, from the Agentic AI session, defines the steps and decisions of the agent as a graph — when to retrieve, when to call a tool, when to answer.
+  • MCP, the Model Context Protocol, is the standard way the agent connects to tools — a balance API, a transfer action, a card-block action — without custom glue for each.
   • This is a callback to Topic 2. It is mostly code, not a heavy model, so it costs little memory but it is what makes the agent actually do things.
 
 Slide 12 — Every component in one table
   • The whole stack on one slide. Five model boxes plus a vector database and the orchestration. Read it top to bottom: STT, the LLM brain, the embedding model, guardrails, TTS.
-  • Notice the pattern &mdash; the LLM is the only really big one. STT and TTS are small or CPU, embeddings can be small or CPU, guardrails is a second small LLM.
-  • Keep this table in your head &mdash; in the next part we attach a real memory number to each row.
+  • Notice the pattern — the LLM is the only really big one. STT and TTS are small or CPU, embeddings can be small or CPU, guardrails is a second small LLM.
+  • Keep this table in your head — in the next part we attach a real memory number to each row.
 
-Slide 13 — How Big Is a Model?
-  • Part 2: how big is a model? This is the sizing math &mdash; the most useful skill from today. With one formula you can estimate the memory of any model.
+Slide 13 — Part 2 — How Big Is a Model?
+  • Part 2: how big is a model? This is the sizing math — the most useful skill from today. With one formula you can estimate the memory of any model.
   • We cover the core formula, a worked examples table, the overhead you must not forget, and adding up the whole stack.
-  • All numbers are rules of thumb for teaching, not exact specs &mdash; but they get you within range, which is what planning needs.
+  • All numbers are rules of thumb for teaching, not exact specs — but they get you within range, which is what planning needs.
 
 Slide 14 — VRAM for weights = params × bytes
-  • The one formula to remember. The memory for a model&#39;s weights is roughly the number of parameters times the bytes per parameter.
-  • Precision sets the bytes. FP32, full precision, is 4 bytes. FP16 or BF16, half precision, is 2 bytes. INT8 is 1 byte. INT4 is about half a byte. Lower precision means smaller and cheaper, with a small quality cost &mdash; that is quantization.
+  • The one formula to remember. The memory for a model's weights is roughly the number of parameters times the bytes per parameter.
+  • Precision sets the bytes. FP32, full precision, is 4 bytes. FP16 or BF16, half precision, is 2 bytes. INT8 is 1 byte. INT4 is about half a byte. Lower precision means smaller and cheaper, with a small quality cost — that is quantization.
   • So a model with N billion parameters needs about 2N gigabytes in FP16, about N gigabytes in INT8, and about half-N gigabytes in INT4. That single line lets you size anything.
 
 Slide 15 — The formula on our actual models
   • The same formula applied to our actual models. Whisper at 1.5B is about 3 GB in FP16. A 7-to-8B model is about 14-to-16 GB in FP16, but only 7-to-8 GB in INT8, and about 4 GB in INT4.
   • The 8B embedding model and the 8B guardrail are each about 16 GB in FP16. The big one is the 70B: about 140 GB in FP16, dropping to about 35-to-40 GB in INT4.
-  • Read across each row and watch quantization shrink the number &mdash; that is the lever that fits a model onto a smaller GPU.
+  • Read across each row and watch quantization shrink the number — that is the lever that fits a model onto a smaller GPU.
 
 Slide 16 — Weights aren't everything: add headroom
   • Weights are not everything. Three more things use memory at run time: the KV cache, which grows with context length, batch size and the number of layers; the activations during a forward pass; and the runtime itself, about one to two gigabytes.
-  • KV cache, key-value cache, is the model&#39;s short-term memory of the conversation so far &mdash; longer chats and more simultaneous users make it bigger.
+  • KV cache, key-value cache, is the model's short-term memory of the conversation so far — longer chats and more simultaneous users make it bigger.
   • Rule of thumb: budget about 1.2 to 1.5 times the weight size for inference headroom. Long context or large batches need more. And quantizing to INT8 or INT4 is the main lever to fit a smaller GPU, at a small quality cost.
 
 Slide 17 — Two ways to add it up
-  • Now add up the whole stack two ways. The lean path: an INT4 8B LLM is about 5 GB, Whisper about 3 GB, the embedding model run on CPU or small, an INT4 8B guardrail about 5 GB, and Piper on CPU. Total is well under 24 GB &mdash; it fits comfortably on one 24 GB GPU.
-  • The premium path: a full-precision FP16 70B LLM alone is about 140 GB, before overhead &mdash; that needs multiple 80 GB data-center GPUs.
+  • Now add up the whole stack two ways. The lean path: an INT4 8B LLM is about 5 GB, Whisper about 3 GB, the embedding model run on CPU or small, an INT4 8B guardrail about 5 GB, and Piper on CPU. Total is well under 24 GB — it fits comfortably on one 24 GB GPU.
+  • The premium path: a full-precision FP16 70B LLM alone is about 140 GB, before overhead — that needs multiple 80 GB data-center GPUs.
   • Same system, two very different hardware bills. The quantized small-model path is what most teams ship; reserve the 70B path for when quality really demands it.
 
-Slide 18 — Which GPU?
-  • Part 3: which GPU? Now we map our memory numbers onto real hardware. The first number that matters is always VRAM &mdash; the gigabytes of memory on the card.
+Slide 18 — Part 3 — Which GPU?
+  • Part 3: which GPU? Now we map our memory numbers onto real hardware. The first number that matters is always VRAM — the gigabytes of memory on the card.
   • We give an approximate 2026 cheat-sheet, then match a GPU to each kind of job, then a note on concurrency.
-  • Treat the cheat-sheet as a snapshot &mdash; verify current models and memory before you buy, because the lineup changes fast.
+  • Treat the cheat-sheet as a snapshot — verify current models and memory before you buy, because the lineup changes fast.
 
 Slide 19 — VRAM is the first number to check
-  • An approximate 2026 snapshot of GPU memory &mdash; please verify current numbers, the lineup moves fast. The consumer cards, RTX 3090 and 4090, have 24 GB. In the data center, the L4 has 24 GB, the L40S has 48 GB.
+  • An approximate 2026 snapshot of GPU memory — please verify current numbers, the lineup moves fast. The consumer cards, RTX 3090 and 4090, have 24 GB. In the data center, the L4 has 24 GB, the L40S has 48 GB.
   • The A100 comes in 40 or 80 GB, the H100 has 80 GB, and the H200 has 141 GB.
-  • The number to look at first is always VRAM in gigabytes &mdash; it decides whether your model even fits before you worry about speed or price.
+  • The number to look at first is always VRAM in gigabytes — it decides whether your model even fits before you worry about speed or price.
 
 Slide 20 — Pick the card the job needs
-  • Match the GPU to the job, four cases. A quantized 7-to-8B chatbot stack &mdash; our lean path &mdash; fits on one 24 GB card, an RTX 4090 or an L4.
+  • Match the GPU to the job, four cases. A quantized 7-to-8B chatbot stack — our lean path — fits on one 24 GB card, an RTX 4090 or an L4.
   • If you want full-precision FP16 7-8B plus embeddings, guardrails and STT/TTS all on the GPU together, step up to one 48 GB L40S or one 80 GB A100.
   • For a high-quality 70B you need one or two 80 GB A100 or H100 cards. And for a tiny on-device demo, skip the GPU entirely: whisper.cpp, Piper, and a 3-to-4B INT4 LLM on CPU.
 
 Slide 21 — Many callers multiply the KV cache
-  • One more thing for production: concurrency. Each simultaneous caller needs their own KV cache &mdash; their own slice of the conversation memory. Ten callers means roughly ten times the KV-cache memory.
+  • One more thing for production: concurrency. Each simultaneous caller needs their own KV cache — their own slice of the conversation memory. Ten callers means roughly ten times the KV-cache memory.
   • So the comfortable single-user numbers we computed are a floor, not the production answer. More users multiplies the run-time memory, even though the weights are loaded only once.
-  • Production sizing must account for the number of concurrent callers &mdash; plan for the peak, not the average.
+  • Production sizing must account for the number of concurrent callers — plan for the peak, not the average.
 
 Slide 22 — The whole stack, sized and placed
   • Wrap up. Three things to take away. The stack: STT, the LLM brain, embeddings for RAG, guardrails, and TTS, glued by LangGraph and MCP. The sizing rule: about 2N GB in FP16, and quantize to INT8 or INT4 to fit. And GPU matching: check VRAM first, then pick the smallest card the job fits on.
   • The big picture: a useful voice agentic chatbot fits on a single 24 GB GPU when you quantize, and everything is open-source and self-hosted, so audio and data stay inside the bank.
-  • That is the whole of Day 2 assembled into one system you could actually build. Thank you &mdash; questions.
+  • That is the whole of Day 2 assembled into one system you could actually build. Thank you — questions.
