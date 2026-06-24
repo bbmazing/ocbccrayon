@@ -1,5 +1,5 @@
 OCBC CRAYON 2026 — Knowledge Retrieval & Context (RAG)
-Speaker notes · 38 slides
+Speaker notes · 39 slides
 ================================================
 
 Slide 1 — Knowledge Retrieval Grounding AI in Your Data
@@ -172,22 +172,27 @@ Slide 34 — Measure retrieval, don't vibe it
   • Context precision: of what we fetched, how much is actually relevant? Faithfulness: is the final answer grounded in those chunks, or did the model drift?
   • Build a small golden set of real questions with known answers, and tune chunking, dimensions and top-k against it. Measure, then change one thing at a time.
 
-Slide 35 — Showcase — Grounding at OCBC
+Slide 35 — Another method: graph (wiki) RAG
+  • Quick map before we close. Everything so far is one family: vector-similarity RAG — chunk, embed, and fetch the nearest passages. It is the right default and handles most questions.
+  • But there is another method worth knowing: graph, or wiki, RAG. Instead of flat chunks, you build a knowledge graph — pull out the entities (customers, products, policies) and the relationships between them, exactly like a wiki where each page links to related pages. Retrieval then walks those links, not just vector distance. Microsoft's GraphRAG is the best-known implementation, and it also writes summaries of each cluster so it can answer whole-topic questions across the corpus.
+  • Why reach for it? Vector search returns isolated passages, so it struggles with multi-hop, connect-the-dots questions that span documents — for example, which products a customer holds and the policy governing each. The catch: building the graph needs entity and relationship extraction, usually with an LLM, so it is heavier to set up. Use it when relationships and big-picture understanding matter; otherwise the vector RAG you just learned is the simpler default.
+
+Slide 36 — Showcase — Grounding at OCBC
   • Bring it home to OCBC. Everything today powers tools you already met in Topic 3.
   • Three products, mapped to the pipeline stage each leans on.
   • Where internal details are unknown, we describe generically and label as illustrative.
 
-Slide 36 — RAG behind OCBC's assistants
+Slide 37 — RAG behind OCBC's assistants
   • Map the products to the pipeline. The RM-support chatbot is RAG over the policy and product knowledge base — chunk, embed, hybrid search, answer with citations.
   • The customer assistant is grounded in approved FAQs and product info, with tight guardrails on what it can say.
   • Document Q&A runs retrieval over KYC and AML guidelines. Illustrative — real products, simplified to the concept.
 
-Slide 37 — Three things to remember
+Slide 38 — Three things to remember
   • Replay the spine. Index: chunk, embed, store. Retrieve: embed the query, hybrid search, rerank, generate with citations.
   • Safe defaults: recursive chunks around 256 to 512 tokens with 10 to 20 percent overlap, contextual retrieval, hybrid plus rerank, Qwen3-Embedding-8B in one consistent space, and always keep citations.
   • Three takeaways: chunking is the highest-leverage knob, hybrid beats pure vectors, and you must always measure.
 
-Slide 38 — Wrap — You can now reason about RAG end to end.
+Slide 39 — Wrap — You can now reason about RAG end to end.
   • Close it. They can now reason about a RAG system end to end — and explain why our chatbots can cite a real policy clause.
   • Pointers to go deeper: Anthropic's Contextual Retrieval write-up, and the Qwen3-Embedding model card.
   • Call back the opening line — the smartest model is useless if it cannot see your data — then open for questions.

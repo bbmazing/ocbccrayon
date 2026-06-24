@@ -65,7 +65,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
 <header class="bar">
   <div>
     <div class="ttl">Speaker notes</div>
-    <div class="sub">Knowledge Retrieval (RAG) · 38 slides</div>
+    <div class="sub">Knowledge Retrieval (RAG) · 39 slides</div>
   </div>
   <div class="right">
     <a class="btn ghost" href="index.html">&larr; Back</a>
@@ -83,7 +83,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
 <div class="banner" id="banner">✎&nbsp; Editing — your changes are saved in this browser. Use <b>Download .txt</b> to keep a copy.</div>
 <main>
   <h1 class="lead">Talk track <span class="red">&middot; every slide</span></h1>
-  <p class="intro">Speaker notes for the OCBC CRAYON 2026 &mdash; Knowledge Retrieval &amp; Context (RAG) deck. 38 slides, in order. Press <b>Edit</b> to tweak the wording inline (saved to this browser), or <b>Download .txt</b> for a copy.</p>
+  <p class="intro">Speaker notes for the OCBC CRAYON 2026 &mdash; Knowledge Retrieval &amp; Context (RAG) deck. 39 slides, in order. Press <b>Edit</b> to tweak the wording inline (saved to this browser), or <b>Download .txt</b> for a copy.</p>
   <div id="notes">
     <article class="s">
       <div class="n">Slide 1</div>
@@ -393,6 +393,15 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
     </article>
     <article class="s">
       <div class="n">Slide 35</div>
+      <h2>Another method: graph (wiki) RAG</h2>
+      <ul>
+        <li>Quick map before we close. Everything so far is one family: vector-similarity RAG — chunk, embed, and fetch the nearest passages. It is the right default and handles most questions.</li>
+        <li>But there is another method worth knowing: graph, or wiki, RAG. Instead of flat chunks, you build a knowledge graph — pull out the entities (customers, products, policies) and the relationships between them, exactly like a wiki where each page links to related pages. Retrieval then walks those links, not just vector distance. Microsoft's GraphRAG is the best-known implementation, and it also writes summaries of each cluster so it can answer whole-topic questions across the corpus.</li>
+        <li>Why reach for it? Vector search returns isolated passages, so it struggles with multi-hop, connect-the-dots questions that span documents — for example, which products a customer holds and the policy governing each. The catch: building the graph needs entity and relationship extraction, usually with an LLM, so it is heavier to set up. Use it when relationships and big-picture understanding matter; otherwise the vector RAG you just learned is the simpler default.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 36</div>
       <h2>Showcase — Grounding at OCBC</h2>
       <ul>
         <li>Bring it home to OCBC. Everything today powers tools you already met in Topic 3.</li>
@@ -401,7 +410,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 36</div>
+      <div class="n">Slide 37</div>
       <h2>RAG behind OCBC's assistants</h2>
       <ul>
         <li>Map the products to the pipeline. The RM-support chatbot is RAG over the policy and product knowledge base — chunk, embed, hybrid search, answer with citations.</li>
@@ -410,7 +419,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 37</div>
+      <div class="n">Slide 38</div>
       <h2>Three things to remember</h2>
       <ul>
         <li>Replay the spine. Index: chunk, embed, store. Retrieve: embed the query, hybrid search, rerank, generate with citations.</li>
@@ -419,7 +428,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 38</div>
+      <div class="n">Slide 39</div>
       <h2>Wrap — You can now reason about RAG end to end.</h2>
       <ul>
         <li>Close it. They can now reason about a RAG system end to end — and explain why our chatbots can cite a real policy clause.</li>

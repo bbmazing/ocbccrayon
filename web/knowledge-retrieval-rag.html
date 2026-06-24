@@ -1340,6 +1340,27 @@ body.static .cosbox .swing{transform:rotate(0deg) !important; transition:none !i
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">34</span></div>
   </section>
 
+  <section class="slide" data-notes='["Quick map before we close. Everything so far is one family: vector-similarity RAG — chunk, embed, and fetch the nearest passages. It is the right default and handles most questions.", "But there is another method worth knowing: graph, or wiki, RAG. Instead of flat chunks, you build a knowledge graph — pull out the entities (customers, products, policies) and the relationships between them, exactly like a wiki where each page links to related pages. Retrieval then walks those links, not just vector distance. Microsoft&#39;s GraphRAG is the best-known implementation, and it also writes summaries of each cluster so it can answer whole-topic questions across the corpus.", "Why reach for it? Vector search returns isolated passages, so it struggles with multi-hop, connect-the-dots questions that span documents — for example, which products a customer holds and the policy governing each. The catch: building the graph needs entity and relationship extraction, usually with an LLM, so it is heavier to set up. Use it when relationships and big-picture understanding matter; otherwise the vector RAG you just learned is the simpler default."]'>
+    <div class="kicker"><span class="badge"></span>Going further &middot; another method</div>
+    <h2 class="slide-title" data-r data-d="1">Another method: graph (wiki) RAG</h2>
+    <div class="vs" style="margin-top:22px">
+      <div class="panel" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="7" r="1.6"/><circle cx="13" cy="5" r="1.6"/><circle cx="18" cy="9" r="1.6"/><circle cx="8" cy="15" r="1.6"/><circle cx="16" cy="16" r="1.6"/><circle cx="11" cy="11" r="1.6"/></svg></span>Vector RAG &mdash; what we built</div>
+        <div class="ps">Chunk, embed, and fetch the top-k passages closest in meaning.</div>
+        <div class="chips"><span class="chip">flat chunks</span><span class="chip">nearest by meaning</span></div>
+        <div class="where">Best for: <b>find the passage that answers this</b>.</div>
+      </div>
+      <div class="panel accent" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7.5 7l9 1.4M8 8.5l3.4 6.5M16.2 9.4l-4 5.6"/><circle cx="6" cy="6" r="2.3"/><circle cx="18" cy="8" r="2.3"/><circle cx="12" cy="16" r="2.3"/></svg></span>Graph / wiki RAG</div>
+        <div class="ps">Link the facts into a knowledge graph &mdash; entities joined like wiki pages &mdash; then retrieve by following the links.</div>
+        <div class="chips"><span class="chip">entities + relationships</span><span class="chip">multi-hop</span><span class="chip">whole-topic summaries</span></div>
+        <div class="where">Best for: <b>connect-the-dots across many documents</b>.</div>
+      </div>
+    </div>
+    <div class="flow-cap">A wiki is a graph of linked pages &mdash; graph RAG follows the <b style="color:var(--red)">links</b>, not just the nearest vectors. Richer for relational questions, costlier to build.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Knowledge Retrieval (RAG)</div><span class="pg">35</span></div>
+  </section>
+
   <section class="slide dark divider" data-notes='["Bring it home to OCBC. Everything today powers tools you already met in Topic 3.", "Three products, mapped to the pipeline stage each leans on.", "Where internal details are unknown, we describe generically and label as illustrative."]'>
     <div class="pillar-no">&#9733;</div>
     <div class="eyebrow"><span class="dot"></span>Showcase</div>
