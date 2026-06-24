@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Speaker notes · Agentic AI Paradigms · OCBC CRAYON</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root{--red:#EC1B23;--ink:#1A1A1A;--text:#1F2937;--muted:#5b626d;--faint:#9AA1AC;
+  --line:#E7E8EB;--tint:#FCEEEF;--tint2:#FBE2E3;
+  --fHead:'Manrope',system-ui,sans-serif;--fBody:'Inter',system-ui,sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--fBody);color:var(--text);background:
+    radial-gradient(900px 500px at 100% -10%, rgba(236,27,35,.10), transparent 60%), #fbfbfc;
+  -webkit-font-smoothing:antialiased;padding-bottom:60px}
+.bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;
+  gap:14px;padding:14px 22px;background:rgba(251,251,252,.86);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line)}
+.bar .ttl{font-family:var(--fHead);font-weight:800;font-size:16px;letter-spacing:-.01em;color:var(--ink)}
+.bar .sub{font-size:12px;color:var(--faint);margin-top:2px}
+.bar .right{display:flex;align-items:center;gap:8px;flex:none;flex-wrap:wrap;justify-content:flex-end}
+.btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--fHead);font-weight:700;
+  font-size:12.5px;text-decoration:none;border-radius:99px;padding:8px 14px;white-space:nowrap;
+  cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease}
+.btn svg{width:14px;height:14px}
+.btn.ghost{color:var(--muted);border:1px solid var(--line);background:#fff}
+.btn.ghost:hover{border-color:var(--tint2);color:var(--ink)}
+.btn.red{color:var(--red);background:var(--tint);border:1px solid var(--tint2)}
+.btn.red:hover{background:var(--red);color:#fff;border-color:var(--red)}
+.btn.on{background:var(--red);color:#fff;border-color:var(--red)}
+.banner{display:none;align-items:center;gap:8px;font-size:13px;color:#8a1015;
+  background:var(--tint);border-bottom:1px solid var(--tint2);padding:10px 22px}
+.banner b{color:var(--red)}
+body.editing .banner{display:flex}
+main{max-width:820px;margin:0 auto;padding:8px 22px}
+.lead{font-family:var(--fHead);font-weight:800;letter-spacing:-.02em;font-size:clamp(1.7rem,5vw,2.4rem);
+  color:var(--ink);margin:26px 0 6px}
+.lead .red{color:var(--red)}
+.intro{color:var(--muted);font-size:14.5px;line-height:1.6;margin-bottom:14px;max-width:60ch}
+.s{padding:20px 0;border-bottom:1px solid var(--line)}
+.s:last-child{border-bottom:none}
+.s .n{font-family:var(--fHead);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--red)}
+.s h2{font-family:var(--fHead);font-weight:700;font-size:18px;letter-spacing:-.015em;color:var(--ink);margin:4px 0 11px}
+.s ul{margin:0;padding-left:19px;display:flex;flex-direction:column;gap:9px}
+.s li{font-size:14.5px;line-height:1.6;color:var(--text)}
+/* edit affordances */
+body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:1px dashed var(--tint2);
+  outline-offset:4px;border-radius:4px}
+.s h2[contenteditable]:focus,.s li[contenteditable]:focus{outline:2px solid var(--red);
+  outline-offset:4px;background:#fff}
+@media(max-width:560px){
+  .bar{padding:11px 14px}
+  .bar .sub{display:none}
+  .btn{padding:7px 10px;font-size:11.5px}
+  .btn .lbl-long{display:none}
+  .banner{padding:9px 14px;font-size:12px}
+  main{padding:6px 16px}
+  .s li{font-size:14px}
+}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div>
+    <div class="ttl">Speaker notes</div>
+    <div class="sub">Agentic AI Paradigms · 40 slides</div>
+  </div>
+  <div class="right">
+    <a class="btn ghost" href="index.html">&larr; Back</a>
+    <button class="btn ghost" id="edit" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+      <span id="editLbl">Edit</span>
+    </button>
+    <button class="btn ghost" id="reset" type="button" style="display:none">Reset</button>
+    <a class="btn red" id="dl" href="speaker-notes-agents.txt" download="OCBC-CRAYON-Agentic-AI-Paradigms-speaker-notes.txt">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3v12M7 11l5 5 5-5M5 21h14"/></svg>
+      <span class="lbl-long">Download&nbsp;</span>.txt
+    </a>
+  </div>
+</header>
+<div class="banner" id="banner">&#9998;&nbsp; Editing — your changes are saved in this browser. Use <b>Download .txt</b> to keep a copy.</div>
+<main>
+  <h1 class="lead">Talk track <span class="red">&middot; every slide</span></h1>
+  <p class="intro">Speaker notes for the OCBC CRAYON 2026 &mdash; Agentic AI Paradigms deck. 40 slides, in order. Press <b>Edit</b> to tweak the wording inline (saved to this browser), or <b>Download .txt</b> for a copy.</p>
+  <div id="notes">
+    <article class="s">
+      <div class="n">Slide 1</div>
+      <h2>Agentic AI Paradigms</h2>
+      <ul>
+        <li>Welcome to the second Day-2 session. You know LLMs, prompting and RAG. Today we give the model the ability to take actions — to become an agent.</li>
+        <li>90 minutes, intuition-first: agent = LLM + tools + a loop. One demo. Banking examples throughout, and an open-source, self-hostable stance.</li>
+        <li>Promise: by the end you can reason about an agent end to end, and explain why a bank wires a human into the loop.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 2</div>
+      <h2>The frame</h2>
+      <ul>
+        <li>The whole deck in one line. An agent is a language model that can take actions — and, crucially, decide which ones to take.</li>
+        <li>That decision-making is the leap from a chatbot that answers to a system that acts toward a goal.</li>
+        <li>Three ingredients underneath: an LLM, some tools, and a loop. We will build up to all three.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 3</div>
+      <h2>From predicting text to taking action</h2>
+      <ul>
+        <li>Recap the journey. A plain LLM only predicts text — no memory of past steps, no live data, and it cannot do anything in the world.</li>
+        <li>RAG, from Day 1, added knowledge — grounding answers in real documents. Agents add the missing piece: action.</li>
+        <li>Today is about turning a knowledgeable text predictor into something that can act toward a goal.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 4</div>
+      <h2>A chatbot answers; an agent acts</h2>
+      <ul>
+        <li>The core distinction. A chatbot answers a question and stops. An agent acts: it can search, call APIs, run code, update systems — and loop until a goal is met.</li>
+        <li>Banking contrast: what is this customer's risk is a question a chatbot answers. Investigate and flag this alert is a goal an agent pursues across many steps.</li>
+        <li>Everything else today builds on this shift from answering to acting.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 5</div>
+      <h2>A spectrum of autonomy</h2>
+      <ul>
+        <li>Anthropic draws a useful line. Workflows are LLMs and tools wired on predefined code paths — predictable and easy to debug.</li>
+        <li>Agents let the LLM dynamically direct its own steps and tool use — flexible, but less predictable.</li>
+        <li>Both are agentic systems. The art is choosing how much autonomy a task actually needs.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 6</div>
+      <h2>Start simple — add autonomy only when justified</h2>
+      <ul>
+        <li>The number-one lesson from the labs: start simple. Use the simplest thing that works.</li>
+        <li>Do not build an autonomous agent when a workflow, or even a single prompt, would do. Each step up adds latency, cost and unpredictability.</li>
+        <li>Only pay for autonomy when the flexibility is genuinely justified.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 7</div>
+      <h2>Multi-step work, across systems</h2>
+      <ul>
+        <li>What agents unlock for a bank: genuinely multi-step work that spans systems.</li>
+        <li>Multi-step KYC onboarding, investigating a fraud alert, an RM researching across internal systems, and reconciliation that chases discrepancies.</li>
+        <li>But flag the caution now: autonomy plus money needs guardrails. We dedicate the final section to that.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 8</div>
+      <h2>What an Agent Is Made Of</h2>
+      <ul>
+        <li>Part 1, about 24 minutes. We define the augmented LLM, the think-act-observe loop, and the five workflow patterns.</li>
+        <li>These are composable building blocks — most production systems are workflows, not fully autonomous agents.</li>
+        <li>End on a pragmatic take on frameworks: helpful, not required.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 9</div>
+      <h2>The augmented LLM</h2>
+      <ul>
+        <li>The building block. An agent starts as an LLM augmented with three capabilities.</li>
+        <li>Retrieval — the RAG from Day 1, to pull in knowledge. Tools — functions it can call to act. Memory — state it keeps across steps.</li>
+        <li>Everything else today composes from this augmented LLM. It is the atom of agent design.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 10</div>
+      <h2>Think → Act → Observe → repeat</h2>
+      <ul>
+        <li>The heartbeat of every agent: think, act, observe, repeat — until the goal is met or a stop condition fires.</li>
+        <li>The model reasons about what to do, calls a tool, reads the result, then decides the next step.</li>
+        <li>This loop is what separates an agent from a single LLM call. Watch it cycle.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 11</div>
+      <h2>Every step gets real feedback</h2>
+      <ul>
+        <li>Why the loop works at all: grounding. Every action returns real feedback from the environment — a tool result, code output, an API response.</li>
+        <li>The agent uses that feedback to course-correct, rather than guessing in a vacuum the way a single prompt must.</li>
+        <li>This is the deep reason agents can tackle multi-step tasks: reality checks them at every step.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 12</div>
+      <h2>What every agent needs</h2>
+      <ul>
+        <li>What every production agent needs, named. The reasoning engine is the LLM itself.</li>
+        <li>Tools are the actions; memory is context and state; orchestration is the loop and control flow; guardrails are the safety limits.</li>
+        <li>Keep this map in mind — the rest of the deck deepens tools, orchestration patterns, and guardrails.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 13</div>
+      <h2>Short-term vs long-term</h2>
+      <ul>
+        <li>Memory comes in two kinds. Short-term is the running context window — this task's steps so far.</li>
+        <li>Long-term is persisted facts and past tasks, usually stored and pulled back via RAG or a store.</li>
+        <li>Managing context — what to keep, summarise or drop — is the real constraint on how far an agent can go.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 14</div>
+      <h2>One agent first; multi only when needed</h2>
+      <ul>
+        <li>Resist the urge to go multi-agent first. Start with one agent that does one thing well.</li>
+        <li>Add an orchestrator plus worker agents only when complexity genuinely demands it — for example a researcher plus a separate verifier.</li>
+        <li>More agents means more coordination overhead and more ways to fail. Single first.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 15</div>
+      <h2>Composable building blocks</h2>
+      <ul>
+        <li>The lab-proven playbook: five composable workflow patterns. Prompt chaining runs sequential steps, each feeding the next, sometimes with check gates.</li>
+        <li>Routing classifies the input and sends it down the right specialised path. Parallelization runs independent subtasks at once, or votes for confidence.</li>
+        <li>Orchestrator-workers has a lead LLM split a task and delegate dynamically; evaluator-optimizer has one LLM draft and another critique, looping to improve.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 16</div>
+      <h2>Pick by the shape of the problem</h2>
+      <ul>
+        <li>A decision aid for picking a pattern. Clear sequential steps point to chaining; distinct input types point to routing.</li>
+        <li>Independent subtasks favour parallelization; unpredictable complexity favours orchestrator-workers; iterative refinement favours evaluator-optimizer.</li>
+        <li>Only truly open-ended problems justify a fully autonomous agent. Match the pattern to the problem shape.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 17</div>
+      <h2>You can build agents against the API directly</h2>
+      <ul>
+        <li>An honest take on frameworks. You can build a capable agent in a few lines directly against the LLM API — the loop is not complicated.</li>
+        <li>Open-source frameworks like LangGraph, LlamaIndex, CrewAI and BeeAI help with state and orchestration, but they add abstraction that can hide your prompts and your bugs.</li>
+        <li>Use them if they earn their keep, but understand what is under the hood. As of 2026 this space moves fast — verify current options.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 18</div>
+      <h2>Tools — Giving the Model Hands</h2>
+      <ul>
+        <li>Part 2, about 22 minutes. The demystifying spine: a tool is a normal function the model can ask you to run.</li>
+        <li>We cover how function-calling actually works, how to write good tools, error handling, and MCP, the open standard.</li>
+        <li>All open-source and self-hostable — you write the functions.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 19</div>
+      <h2>No proprietary magic — you write the function</h2>
+      <ul>
+        <li>The single most demystifying point of the day: a tool is just a normal function — search a database, call an API, run a calculation.</li>
+        <li>Plus a description and an input schema the model can read, so it knows when and how to use it.</li>
+        <li>There is no proprietary magic. You write the function; the description tells the model what it does.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 20</div>
+      <h2>The model requests; your code runs it</h2>
+      <ul>
+        <li>How function-calling actually works — the round-trip. You give the model the tool schemas. The model outputs structured JSON naming a tool and its arguments.</li>
+        <li>Your code runs the real function and feeds the result back. The model reads it and continues.</li>
+        <li>The crucial point: the model never executes anything itself. It only requests; your code acts. That is what keeps it controllable.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 21</div>
+      <h2>Name, description, input schema</h2>
+      <ul>
+        <li>Zoom in on the anatomy of a tool the model actually sees. Three parts: a clear name, a plain-English description of what it does and when to use it, and a typed input schema.</li>
+        <li>The model reads only these — it never sees your code. So the description and schema are effectively the prompt for the tool.</li>
+        <li>A vague description means the model calls the wrong tool at the wrong time. Treat this like UI copy for the model.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 22</div>
+      <h2>Design tools like you'd brief a new hire</h2>
+      <ul>
+        <li>How to write tools the model uses well. Make each tool do one clear thing, with an unambiguous description and a name that reads like its purpose.</li>
+        <li>Avoid overlapping tools that do nearly the same job — the model will dither between them. Keep arguments few and well-typed.</li>
+        <li>Rule of thumb from the labs: if a new hire couldn't tell from the description when to use the tool, neither can the model.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 23</div>
+      <h2>Return results the model can act on</h2>
+      <ul>
+        <li>What a tool returns matters as much as what it does. Return concise, structured results the model can read — not a 5,000-row dump that floods the context window.</li>
+        <li>Handle errors as data: instead of crashing, return a clear message like account not found so the model can recover and try another path.</li>
+        <li>Good error text turns a dead end into a course-correction. The agent is only as resilient as its tools' outputs.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 24</div>
+      <h2>A universal plug for tools</h2>
+      <ul>
+        <li>The interoperability problem: every team re-writing the same tool integrations is wasteful. The Model Context Protocol, MCP, is an open standard that fixes this.</li>
+        <li>Think of it as a universal plug: a tool or data source is wrapped once as an MCP server, and any MCP-aware agent can use it — like a USB port for tools.</li>
+        <li>It is open and self-hostable, so a bank can run its own MCP servers in-house and share tools across teams without exposing data.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 25</div>
+      <h2>All self-hostable, in-house</h2>
+      <ul>
+        <li>The open-source agent stack a bank can actually run in-house. Open-weight models like Qwen and Llama as the reasoning engine.</li>
+        <li>Frameworks such as LangGraph and LlamaIndex for orchestration; MCP for tools; and vector stores like FAISS or pgvector for memory and retrieval.</li>
+        <li>Everything here is self-hostable — no customer data leaves the bank. As of 2026 the names move fast; the layers are what to remember.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 26</div>
+      <h2>An agent loop in plain Python</h2>
+      <ul>
+        <li>Recorded demo, replayed live. The smallest possible agent loop in plain Python against the LLM API — no framework.</li>
+        <li>Cell 1 defines one tool, get_account_balance. Cell 2 sends the user question plus the tool schema. Cell 3 shows the model emitting a tool call as structured JSON; our code runs the real function. Cell 4 feeds the result back and the model writes the final answer.</li>
+        <li>Press R to replay. That is the entire pattern: define tools, let the model request, run it, return the result, repeat.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 27</div>
+      <h2>Planning & Reasoning</h2>
+      <ul>
+        <li>Part 3, about 24 minutes. Now the agent has hands; this is the brain — how it decides the next step.</li>
+        <li>We cover three reasoning patterns: ReAct, plan-and-execute, and Reflexion-style self-critique.</li>
+        <li>Then a worked banking trajectory, how to evaluate agents, and the failure modes that bite in production.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 28</div>
+      <h2>Real tasks have many dependent steps</h2>
+      <ul>
+        <li>Why planning matters. For a one-step question the model can just answer. But real banking tasks have many steps with dependencies — you must do A before you can do B.</li>
+        <li>Without a plan the agent wanders, repeats itself, or stops early. Planning is how it sequences steps toward a goal and knows when it's done.</li>
+        <li>The patterns that follow are different answers to one question: how much to plan up front versus decide step by step.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 29</div>
+      <h2>Reason + Act, one step at a time</h2>
+      <ul>
+        <li>The workhorse pattern: ReAct — Reason and Act, interleaved. The agent thinks out loud, takes one action, observes the result, then thinks again.</li>
+        <li>It plans one step at a time, using real feedback before committing to the next. That makes it robust and easy to follow — you can read its reasoning trace.</li>
+        <li>ReAct is the sensible default for most agents. Plan one step, act, observe, repeat.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 30</div>
+      <h2>Plan all steps first, then execute</h2>
+      <ul>
+        <li>Plan-and-execute flips the order: the agent writes a full plan up front, then carries out each step, optionally re-planning if something changes.</li>
+        <li>Up-front planning is more efficient for long tasks — fewer expensive reasoning calls — and the plan is easy to review before anything runs.</li>
+        <li>The trade-off: a plan made too early can be wrong. Good systems let the agent revise the plan when reality disagrees.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 31</div>
+      <h2>The agent critiques its own work</h2>
+      <ul>
+        <li>The third pattern adds self-critique. After an attempt the agent reflects: did that work? what went wrong? — and uses the critique to improve the next try.</li>
+        <li>Reflexion-style loops noticeably raise quality on hard tasks, because the agent learns from its own mistakes within the run.</li>
+        <li>The cost is more steps and more tokens, so reserve it for high-stakes tasks where getting it right outweighs the extra spend.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 32</div>
+      <h2>Mix patterns to fit the task</h2>
+      <ul>
+        <li>These patterns are not rivals — you combine them. ReAct for the moment-to-moment loop, a plan to give it structure, reflection at checkpoints for quality.</li>
+        <li>Match the pattern to the task: simple and reactive, use ReAct; long and structured, plan first; high-stakes, add reflection.</li>
+        <li>Start with the simplest that works and layer on only what the task demands — the golden rule, again.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 33</div>
+      <h2>Fraud alert, step by step</h2>
+      <ul>
+        <li>A concrete trajectory: an agent investigating a fraud alert, shown as think-act-observe steps. This is illustrative, not a real OCBC system.</li>
+        <li>It reasons about what to check, calls a tool to pull recent transactions, observes an unusual overseas charge, checks the customer's travel notes, finds none, and drafts a case for a human.</li>
+        <li>Notice the last step: it does not block the card itself. It prepares the decision and hands off to a human. That hand-off is the whole point of the next section.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 34</div>
+      <h2>The path matters, not just the answer</h2>
+      <ul>
+        <li>Evaluating agents is harder than evaluating a single answer, because the path matters, not just the final output.</li>
+        <li>Track four things: task success — did it achieve the goal; trajectory quality — were the steps sensible; cost and latency — tokens, tool calls, time; and safety — did it stay within bounds.</li>
+        <li>Build a test set of real tasks and score runs against it. As with any model, you cannot improve what you do not measure.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 35</div>
+      <h2>What goes wrong in production</h2>
+      <ul>
+        <li>The failure modes that bite in production. Runaway loops: an agent stuck repeating actions can burn real money — one widely-cited case ran up about 47,000 US dollars in API costs from an unbounded loop.</li>
+        <li>Prompt injection: malicious text inside a document or web page hijacks the agent's instructions — a serious risk when tools touch money. Hallucinated tool calls and compounding errors round it out.</li>
+        <li>Each of these is why the next slide is guardrails. Autonomy without limits is a liability.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 36</div>
+      <h2>Production & Safety</h2>
+      <ul>
+        <li>Part 4, the last stretch, about 12 minutes. Everything so far is capability; this is responsibility.</li>
+        <li>Guardrails, human-in-the-loop, and an end-to-end picture of how a bank would deploy an agent.</li>
+        <li>This is the section that matters most in a regulated environment — autonomy plus money demands control.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 37</div>
+      <h2>The agent proposes; a human disposes</h2>
+      <ul>
+        <li>The control layer. Permission scopes: the agent only gets tools it truly needs — least privilege. Limits: caps on steps, spend and time so a loop can't run away.</li>
+        <li>Human-in-the-loop: a person approves any high-stakes or irreversible action — moving money, blocking a card. Validation: check tool inputs and outputs, and sandbox anything that runs code.</li>
+        <li>For a bank these are not optional. The design rule: the agent proposes, a human disposes on anything that matters.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 38</div>
+      <h2>An agent, wired responsibly</h2>
+      <ul>
+        <li>Putting it all together for a bank. A request comes in; the agent plans; it calls in-house tools over MCP, all on open-weight models hosted on-premise so data never leaves.</li>
+        <li>Guardrails wrap every step — scopes, limits, validation — and any high-stakes action routes to a human for approval before it executes.</li>
+        <li>This is illustrative unless we have real details, but the shape is right: open, self-hosted, guard-railed, with a human on the critical path.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 39</div>
+      <h2>Five things to take away</h2>
+      <ul>
+        <li>Recap the whole deck. An agent is an LLM plus tools plus a loop that runs until a goal is met.</li>
+        <li>A tool is just a function with a description and schema; planning patterns — ReAct, plan-and-execute, reflection — decide the next step; and guardrails plus a human keep it safe.</li>
+        <li>Above all: start simple, add autonomy only when justified, and keep a human on anything that moves money.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 40</div>
+      <h2>From text predictor to agent</h2>
+      <ul>
+        <li>Land the plane. We turned a knowledgeable text predictor into something that can act — an agent — and saw how to do it safely in a bank.</li>
+        <li>Call back to the opener: an agent is just a language model that can take actions, and decide which ones to take. Now you can reason about one end to end.</li>
+        <li>Thank them. This wraps the CRAYON series — open the floor for questions.</li>
+      </ul>
+    </article>
+  </div>
+</main>
+<script>
+(function(){
+  var KEY = 'ocbc-crayon-agents-notes-v1';
+  var arts = [].slice.call(document.querySelectorAll('#notes .s'));
+  var fields = [].slice.call(document.querySelectorAll('#notes h2, #notes li'));
+  var resetBtn = document.getElementById('reset');
+
+  function collect(){
+    return arts.map(function(s){
+      return { t: (s.querySelector('h2')||{}).textContent || '',
+               n: [].slice.call(s.querySelectorAll('li')).map(function(li){ return li.textContent; }) };
+    });
+  }
+  function showReset(on){ resetBtn.style.display = on ? '' : 'none'; }
+
+  // apply any saved edits
+  try{
+    var raw = localStorage.getItem(KEY);
+    if(raw){
+      var data = JSON.parse(raw);
+      arts.forEach(function(s,i){
+        var rec = data[i]; if(!rec) return;
+        var h = s.querySelector('h2'); if(h && rec.t != null) h.textContent = rec.t;
+        var lis = [].slice.call(s.querySelectorAll('li'));
+        (rec.n||[]).forEach(function(t,k){ if(lis[k]) lis[k].textContent = t; });
+      });
+      showReset(true);
+    }
+  }catch(e){}
+
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(collect())); showReset(true); }catch(e){} }
+
+  // edit toggle
+  var editing = false, editBtn = document.getElementById('edit'), editLbl = document.getElementById('editLbl');
+  editBtn.addEventListener('click', function(){
+    editing = !editing;
+    document.body.classList.toggle('editing', editing);
+    editBtn.classList.toggle('on', editing);
+    editLbl.textContent = editing ? 'Done' : 'Edit';
+    fields.forEach(function(el){ el.contentEditable = editing ? 'true' : 'false'; });
+    if(editing){ if(fields[0]) fields[0].focus(); } else { save(); }
+  });
+  document.addEventListener('input', function(){ if(editing) save(); });
+
+  // download current (edited) content as .txt
+  function buildTxt(){
+    var L = ['OCBC CRAYON 2026 — Agentic AI Paradigms', 'Speaker notes · ' + arts.length + ' slides',
+             '================================================', ''];
+    collect().forEach(function(r,i){
+      L.push('Slide ' + (i+1) + ' — ' + r.t);
+      r.n.forEach(function(n){ L.push('  \u2022 ' + n); });
+      L.push('');
+    });
+    return L.join('\n').replace(/\s+$/, '') + '\n';
+  }
+  document.getElementById('dl').addEventListener('click', function(ev){
+    ev.preventDefault();
+    var blob = new Blob([buildTxt()], { type: 'text/plain;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'OCBC-CRAYON-Agentic-AI-Paradigms-speaker-notes.txt';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+  });
+
+  resetBtn.addEventListener('click', function(){
+    if(!confirm('Discard your edits and restore the original notes?')) return;
+    try{ localStorage.removeItem(KEY); }catch(e){}
+    location.reload();
+  });
+})();
+</script>
+</body>
+</html>

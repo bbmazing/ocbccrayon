@@ -1,0 +1,1584 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Agentic AI Paradigms · OCBC CRAYON</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+/* =========================================================================
+   OCBC CRAYON · Python Data Foundations
+   Self-contained animated deck. Fixed 16:9 stage, one slide at a time.
+   ========================================================================= */
+:root{
+  /* OCBC brand */
+  --red:#EC1B23; --red-dark:#B3141A; --red-deep:#7A0E12;
+  --ink:#1A1A1A; --charcoal:#202024; --charcoal-2:#2A2A2F;
+  --text:#1F2937; --muted:#6B7280; --faint:#9AA1AC;
+  --surface:#FFFFFF; --card:#F5F5F6; --card-2:#EFEFF1;
+  --line:#E4E7EB; --line-strong:#D6D9DE;
+  --tint-red:#FCEEEF; --tint-red-2:#FBE2E3;
+  --code-bg:#1A1C22; --code-ink:#E7E9EE;
+  /* supporting diagram hues (used sparingly) */
+  --blue:#1C6E9C; --teal:#0E7C6B; --amber:#C9851A; --green:#1E8E5A; --violet:#6C4FB3;
+  /* stage geometry */
+  --stageW:1280px; --stageH:720px;
+  --fHead:'Manrope',system-ui,sans-serif;
+  --fBody:'Inter',system-ui,sans-serif;
+  --fMono:'JetBrains Mono',ui-monospace,monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:#0c0c0e;
+  font-family:var(--fBody);
+  color:var(--text);
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+/* ---- Stage: scale a fixed 1280x720 deck to fit the viewport ---- */
+.stage{
+  position:fixed; inset:0; height:100dvh; display:grid; place-items:center;
+  background:
+    radial-gradient(1200px 700px at 80% -10%, rgba(236,27,35,.10), transparent 60%),
+    #0a0a0c;
+}
+.deck{
+  position:absolute; left:0; top:0;
+  width:var(--stageW); height:var(--stageH);
+  transform-origin:top left;
+  box-shadow:0 40px 120px -30px rgba(0,0,0,.8);
+  border-radius:4px; overflow:hidden;
+  background:#fff;
+}
+
+/* ---- Slides ---- */
+.slide{
+  position:absolute; inset:0;
+  width:var(--stageW); height:var(--stageH);
+  opacity:0; visibility:hidden; pointer-events:none;
+  transition:opacity .5s ease;
+  display:flex; flex-direction:column;
+  padding:62px 76px 58px;
+  background:var(--surface);
+}
+.slide.active{opacity:1; visibility:visible; pointer-events:auto; z-index:2}
+.slide.prev{z-index:1}
+
+/* dark slides (cover, dividers, close) */
+.slide.dark{
+  color:#fff;
+  background:
+    radial-gradient(900px 600px at 78% -8%, rgba(236,27,35,.30), transparent 55%),
+    radial-gradient(700px 500px at -5% 110%, rgba(236,27,35,.12), transparent 60%),
+    linear-gradient(160deg,#202024 0%,#161618 60%,#121214 100%);
+}
+.slide.dark::after{ /* fine grain texture */
+  content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
+  background-image:radial-gradient(rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size:3px 3px; mix-blend-mode:screen;
+}
+
+/* =========================================================================
+   Shared chrome: kicker, badge, footer, titles
+   ========================================================================= */
+.kicker{
+  display:inline-flex; align-items:center; gap:11px;
+  font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--red); margin-bottom:16px;
+}
+.kicker .badge{
+  width:24px; height:24px; border-radius:50%;
+  background:var(--red); position:relative; flex:none;
+  box-shadow:0 0 0 4px var(--tint-red);
+  overflow:hidden;
+}
+.kicker .badge::before{ /* rising-sun rays motif */
+  content:""; position:absolute; left:50%; bottom:5px; width:0; height:0;
+  border-left:7px solid transparent; border-right:7px solid transparent;
+  border-bottom:9px solid #fff; transform:translateX(-50%); opacity:.95;
+}
+.kicker .badge::after{
+  content:""; position:absolute; left:0; right:0; bottom:6px; height:1.5px;
+  background:rgba(255,255,255,.85);
+}
+.dark .kicker{color:#ff6a6f}
+.dark .kicker .badge{box-shadow:0 0 0 4px rgba(236,27,35,.25)}
+
+.slide-title{
+  font-family:var(--fHead); font-weight:800; color:var(--ink);
+  font-size:38px; line-height:1.08; letter-spacing:-.02em; max-width:24ch;
+}
+.dark .slide-title{color:#fff}
+.slide-sub{font-size:17px; color:var(--muted); margin-top:12px; max-width:60ch; line-height:1.5}
+
+.foot{
+  position:absolute; left:76px; right:76px; bottom:26px;
+  display:flex; align-items:center; justify-content:space-between;
+  font-size:12px; color:var(--faint); letter-spacing:.02em;
+}
+.foot .mark{display:flex; align-items:center; gap:9px; font-weight:600; color:var(--muted)}
+.foot .mark img{height:18px; width:auto; display:block}
+.foot .pg{font-family:var(--fMono); font-weight:500}
+.dark .foot{color:rgba(255,255,255,.5)}
+.dark .foot .mark{color:rgba(255,255,255,.7)}
+
+.body-area{flex:1; min-height:0; display:flex; flex-direction:column; margin-top:8px}
+
+/* =========================================================================
+   Reveal system — children animate in when slide becomes active
+   ========================================================================= */
+[data-r]{opacity:0; transform:translateY(16px); transition:opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1);}
+.slide.active [data-r]{opacity:1; transform:none}
+[data-r][data-d="1"]{transition-delay:.08s}[data-r][data-d="2"]{transition-delay:.16s}
+[data-r][data-d="3"]{transition-delay:.24s}[data-r][data-d="4"]{transition-delay:.32s}
+[data-r][data-d="5"]{transition-delay:.40s}[data-r][data-d="6"]{transition-delay:.48s}
+[data-r][data-d="7"]{transition-delay:.56s}[data-r][data-d="8"]{transition-delay:.64s}
+[data-r][data-d="9"]{transition-delay:.72s}[data-r][data-d="10"]{transition-delay:.80s}
+[data-r][data-d="11"]{transition-delay:.88s}[data-r][data-d="12"]{transition-delay:.96s}
+
+/* =========================================================================
+   COVER (slide 1)
+   ========================================================================= */
+.cover{padding:0}
+.cover .bg{
+  position:absolute; inset:0;
+  background:url('assets/bg_title_skyline.png') center/cover no-repeat;
+}
+.cover .scrim{position:absolute; inset:0; background:linear-gradient(100deg, rgba(255,255,255,.96) 0%, rgba(255,255,255,.82) 34%, rgba(255,255,255,0) 56%);}
+.cover .inner{position:relative; height:100%; display:flex; flex-direction:column; justify-content:center; padding:0 76px;}
+.cover .logo{height:34px; width:auto; position:absolute; top:48px; left:76px}
+.cover h1{font-family:var(--fHead); font-weight:800; letter-spacing:-.025em; line-height:1.02; font-size:66px; color:var(--ink)}
+.cover h1 .red{color:var(--red); display:block}
+.cover .rule{width:64px; height:5px; background:var(--red); border-radius:3px; margin:26px 0 22px}
+.cover .meta{font-size:15px; color:var(--muted); line-height:1.7}
+.cover .meta strong{color:var(--text); font-weight:600}
+.cover .program{position:absolute; bottom:46px; left:76px; font-size:12.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); font-weight:600}
+
+/* =========================================================================
+   QUOTE (slide 2)
+   ========================================================================= */
+.quote-wrap{flex:1; display:flex; flex-direction:column; justify-content:center; max-width:70ch}
+.quote-mark{font-family:var(--fHead); font-size:120px; line-height:.6; color:var(--red); font-weight:800; height:54px}
+.quote-wrap blockquote{font-family:var(--fHead); font-weight:600; font-size:46px; line-height:1.18; letter-spacing:-.02em; color:#fff; margin:18px 0 26px}
+.quote-wrap blockquote em{color:#ff6a6f; font-style:normal}
+.quote-wrap cite{font-style:normal; font-size:16px; color:rgba(255,255,255,.65); letter-spacing:.04em}
+.quote-wrap cite b{color:#fff; font-weight:600}
+
+/* =========================================================================
+   DIVIDER (section openers)
+   ========================================================================= */
+.divider{justify-content:center}
+.divider .pillar-no{font-family:var(--fHead); font-weight:800; font-size:200px; line-height:.8; color:rgba(255,255,255,.06); position:absolute; right:60px; top:50%; transform:translateY(-50%); letter-spacing:-.04em}
+.divider .eyebrow{font-family:var(--fHead); font-weight:700; letter-spacing:.18em; text-transform:uppercase; font-size:14px; color:#ff6a6f; display:flex; align-items:center; gap:12px}
+.divider .eyebrow .dot{width:26px;height:26px;border-radius:50%;background:var(--red);position:relative;overflow:hidden}
+.divider .eyebrow .dot::before{content:"";position:absolute;left:50%;bottom:5px;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:9px solid #fff;transform:translateX(-50%)}
+.divider h2{font-family:var(--fHead); font-weight:800; font-size:64px; letter-spacing:-.025em; color:#fff; margin:20px 0 18px; line-height:1.02; max-width:18ch}
+.divider .lead{font-size:18px; color:rgba(255,255,255,.7); max-width:54ch; line-height:1.55}
+.divider .prog-rail{display:flex; gap:10px; margin-top:34px}
+.divider .prog-rail span{font-size:12.5px; font-weight:600; letter-spacing:.04em; color:rgba(255,255,255,.4); padding:7px 14px; border:1px solid rgba(255,255,255,.14); border-radius:99px}
+.divider .prog-rail span.on{color:#fff; border-color:var(--red); background:rgba(236,27,35,.18)}
+
+/* =========================================================================
+   Generic building blocks
+   ========================================================================= */
+.cards{display:grid; gap:16px; flex:1; min-height:0}
+.cards.c3{grid-template-columns:repeat(3,1fr)}
+.cards.c2{grid-template-columns:repeat(2,1fr)}
+.card{
+  background:var(--card); border:1px solid var(--line); border-radius:14px;
+  padding:20px 22px; display:flex; flex-direction:column; gap:8px;
+  transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.card:hover{transform:translateY(-3px); box-shadow:0 18px 36px -22px rgba(0,0,0,.3); border-color:var(--line-strong)}
+.card .ic{width:40px; height:40px; border-radius:11px; background:var(--tint-red); color:var(--red); display:grid; place-items:center; flex:none}
+.card .ic svg{width:22px; height:22px}
+.card .num{font-family:var(--fHead); font-weight:800; font-size:15px; color:var(--red); width:30px; height:30px; border-radius:8px; background:var(--tint-red); display:grid; place-items:center}
+.card h3{font-family:var(--fHead); font-weight:700; font-size:18px; color:var(--ink); letter-spacing:-.01em}
+.card p{font-size:14px; color:var(--muted); line-height:1.5}
+.card .tag{font-family:var(--fMono); font-size:12px; color:var(--red); font-weight:500}
+
+/* two-column: text + visual */
+.two{display:grid; grid-template-columns:1fr 1fr; gap:40px; flex:1; min-height:0; align-items:center}
+.two.wide-r{grid-template-columns:0.86fr 1.14fr}
+.two .txt{display:flex; flex-direction:column; justify-content:center}
+.bullets{list-style:none; display:flex; flex-direction:column; gap:14px; margin-top:6px}
+.bullets li{position:relative; padding-left:28px; font-size:16.5px; line-height:1.5; color:var(--text)}
+.bullets li::before{content:""; position:absolute; left:0; top:9px; width:9px; height:9px; border-radius:3px; background:var(--red)}
+.bullets li.strong{font-weight:600; color:var(--ink)}
+.bullets li b{color:var(--ink); font-weight:600}
+.viz{position:relative; height:100%; display:flex; flex-direction:column; justify-content:center}
+
+/* rail (side panel) */
+.rail{background:var(--ink); color:#fff; border-radius:16px; padding:24px 26px; align-self:stretch; display:flex; flex-direction:column; justify-content:center}
+.rail h4{font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.12em; text-transform:uppercase; color:#ff6a6f; margin-bottom:16px}
+.rail ul{list-style:none; display:flex; flex-direction:column; gap:13px}
+.rail li{font-size:15px; color:rgba(255,255,255,.86); padding-left:22px; position:relative; line-height:1.4}
+.rail li::before{content:""; position:absolute; left:0; top:7px; width:7px; height:7px; border-radius:50%; background:var(--red)}
+
+.bullets-rail{display:grid; grid-template-columns:1.55fr 1fr; gap:32px; flex:1; min-height:0; align-items:stretch}
+.bullets-rail .txt{display:flex; flex-direction:column; justify-content:center}
+
+/* =========================================================================
+   Code block (typing reveal + syntax tint)
+   ========================================================================= */
+.codewrap{background:var(--code-bg); border-radius:14px; overflow:hidden; box-shadow:0 24px 50px -28px rgba(0,0,0,.5); border:1px solid #2a2d36; display:flex; flex-direction:column}
+.codewrap .bar{display:flex; align-items:center; gap:7px; padding:12px 16px; border-bottom:1px solid #272a33; background:#15171c}
+.codewrap .bar i{width:11px; height:11px; border-radius:50%; display:block}
+.codewrap .bar i:nth-child(1){background:#ff5f57}.codewrap .bar i:nth-child(2){background:#febc2e}.codewrap .bar i:nth-child(3){background:#28c840}
+.codewrap .bar .fn{margin-left:10px; font-family:var(--fMono); font-size:12.5px; color:#8b909c}
+.codewrap pre{margin:0; padding:20px 22px; overflow:hidden; flex:1}
+.codewrap code{font-family:var(--fMono); font-size:14.5px; line-height:1.65; color:var(--code-ink); white-space:pre; display:block}
+.tok-kw{color:#ff7b72}.tok-fn{color:#d2a8ff}.tok-str{color:#a5d6ff}.tok-num{color:#79c0ff}.tok-com{color:#7d8590; font-style:italic}.tok-op{color:#ff7b72}.tok-var{color:#ffa657}
+.code-line{display:block}
+.slide.active .code-line{animation:codeLine .42s both}
+.slide.active .code-line:nth-child(1){animation-delay:.15s}.slide.active .code-line:nth-child(2){animation-delay:.22s}
+.slide.active .code-line:nth-child(3){animation-delay:.29s}.slide.active .code-line:nth-child(4){animation-delay:.36s}
+.slide.active .code-line:nth-child(5){animation-delay:.43s}.slide.active .code-line:nth-child(6){animation-delay:.50s}
+.slide.active .code-line:nth-child(7){animation-delay:.57s}.slide.active .code-line:nth-child(8){animation-delay:.64s}
+.slide.active .code-line:nth-child(9){animation-delay:.71s}.slide.active .code-line:nth-child(10){animation-delay:.78s}
+.slide.active .code-line:nth-child(11){animation-delay:.85s}.slide.active .code-line:nth-child(12){animation-delay:.92s}
+.slide.active .code-line:nth-child(13){animation-delay:.99s}.slide.active .code-line:nth-child(14){animation-delay:1.06s}
+@keyframes codeLine{from{opacity:0; transform:translateX(-8px)}to{opacity:1; transform:none}}
+.code-note{font-size:14px; color:var(--muted); margin-top:14px; line-height:1.5; font-style:italic}
+.code-points{list-style:none; display:flex; flex-direction:column; gap:12px}
+.code-points li{position:relative; padding-left:24px; font-size:15.5px; line-height:1.45; color:var(--text)}
+.code-points li::before{content:"›"; position:absolute; left:0; top:-1px; color:var(--red); font-weight:800; font-size:18px}
+
+/* =========================================================================
+   Conway Venn (slide 4)
+   ========================================================================= */
+.venn{position:relative; width:430px; height:380px; margin:auto}
+.venn .circ{position:absolute; width:250px; height:250px; border-radius:50%; mix-blend-mode:multiply; display:grid; place-items:center; opacity:0; transform:scale(.6); transition:opacity .7s ease, transform .7s cubic-bezier(.34,1.56,.64,1)}
+.venn .c1{background:rgba(236,27,35,.40); left:0; top:0}
+.venn .c2{background:rgba(28,110,156,.40); right:0; top:0}
+.venn .c3{background:rgba(30,142,90,.42); left:50%; bottom:0; transform:translateX(-50%) scale(.6)}
+.slide.active .venn .c1{opacity:1; transform:scale(1); transition-delay:.2s}
+.slide.active .venn .c2{opacity:1; transform:scale(1); transition-delay:.45s}
+.slide.active .venn .c3{opacity:1; transform:translateX(-50%) scale(1); transition-delay:.7s}
+.venn .lbl{font-family:var(--fHead); font-weight:700; font-size:14px; color:var(--ink); text-align:center; line-height:1.2; pointer-events:none; padding:0 30px}
+.venn .center{position:absolute; left:50%; top:48%; transform:translate(-50%,-50%); z-index:5; background:var(--ink); color:#fff; font-family:var(--fHead); font-weight:800; font-size:13px; padding:8px 14px; border-radius:99px; white-space:nowrap; opacity:0; transition:opacity .5s ease .95s; box-shadow:0 8px 20px -8px rgba(0,0,0,.5)}
+.slide.active .venn .center{opacity:1}
+.venn .danger{position:absolute; left:14%; bottom:30%; z-index:6; font-family:var(--fHead); font-weight:800; font-size:11px; color:#fff; background:var(--red); padding:5px 10px; border-radius:6px; transform:rotate(-8deg); opacity:0; transition:opacity .5s ease 1.2s; box-shadow:0 6px 16px -6px rgba(236,27,35,.7)}
+.slide.active .venn .danger{opacity:1}
+
+/* =========================================================================
+   Stat counters (slide 5 + others)
+   ========================================================================= */
+.stat-row{display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin:auto 0}
+.stat{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:30px 26px; text-align:left; position:relative; overflow:hidden}
+.stat .big{font-family:var(--fHead); font-weight:800; font-size:62px; line-height:1; color:var(--red); letter-spacing:-.03em}
+.stat .big .unit{font-size:32px; vertical-align:super; margin-left:2px}
+.stat .lab{font-size:15px; color:var(--text); margin-top:12px; line-height:1.45; font-weight:500}
+.stat .sub{font-size:12.5px; color:var(--faint); margin-top:8px}
+.stat::before{content:""; position:absolute; left:0; top:0; bottom:0; width:5px; background:var(--red)}
+
+/* progress ring (80% stat) */
+.ring-wrap{display:flex; align-items:center; gap:40px; margin:auto 0}
+.ring{position:relative; width:230px; height:230px; flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring .pct{position:absolute; inset:0; display:grid; place-items:center; font-family:var(--fHead); font-weight:800; font-size:56px; color:var(--ink)}
+.ring-copy{max-width:46ch}
+.ring-copy h3{font-family:var(--fHead); font-weight:800; font-size:28px; color:var(--ink); letter-spacing:-.02em; line-height:1.1; margin-bottom:14px}
+.ring-copy p{font-size:16px; color:var(--muted); line-height:1.55}
+
+/* =========================================================================
+   Step strip (5 facets / workflow)
+   ========================================================================= */
+.flow{display:flex; align-items:stretch; gap:0; margin:auto 0; width:100%}
+.flow .step{flex:1; position:relative; display:flex; flex-direction:column; gap:8px; padding:0 6px}
+.flow .step .node{width:54px; height:54px; border-radius:14px; background:var(--ink); color:#fff; font-family:var(--fHead); font-weight:800; font-size:20px; display:grid; place-items:center; position:relative; z-index:2}
+.flow .step:nth-child(odd) .node{background:var(--red)}
+.flow .step h4{font-family:var(--fHead); font-weight:700; font-size:16.5px; color:var(--ink); margin-top:10px}
+.flow .step p{font-size:13.5px; color:var(--muted); line-height:1.45}
+.flow .arrow{position:absolute; top:27px; left:46px; right:-8px; height:2px; background:var(--line-strong); z-index:1}
+.flow .arrow::after{content:""; position:absolute; right:0; top:-4px; border-left:8px solid var(--line-strong); border-top:5px solid transparent; border-bottom:5px solid transparent}
+.flow .step:last-child .arrow{display:none}
+/* sequential build for flow */
+.flow .step{opacity:0; transform:translateY(14px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .flow .step{opacity:1; transform:none}
+.slide.active .flow .step:nth-child(1){transition-delay:.15s}.slide.active .flow .step:nth-child(2){transition-delay:.35s}
+.slide.active .flow .step:nth-child(3){transition-delay:.55s}.slide.active .flow .step:nth-child(4){transition-delay:.75s}
+.slide.active .flow .step:nth-child(5){transition-delay:.95s}.slide.active .flow .step:nth-child(6){transition-delay:1.15s}
+.flow.compact .node{width:46px;height:46px;border-radius:12px;font-size:17px}
+.flow-cap{font-size:14px; color:var(--muted); font-style:italic; text-align:center; margin-top:26px}
+
+/* journey / agenda */
+.journey{display:grid; grid-template-columns:repeat(4,1fr); gap:18px; flex:1; min-height:0; align-items:stretch}
+.jcard{border:1px solid var(--line); border-radius:16px; padding:24px 22px; display:flex; flex-direction:column; position:relative; background:var(--surface); overflow:hidden}
+.jcard .pn{font-family:var(--fHead); font-weight:800; font-size:46px; color:var(--card-2); line-height:1; letter-spacing:-.03em}
+.jcard .ph{font-family:var(--fHead); font-weight:700; font-size:18.5px; color:var(--ink); margin:14px 0 8px; letter-spacing:-.01em}
+.jcard p{font-size:13.5px; color:var(--muted); line-height:1.5; flex:1}
+.jcard .demo{margin-top:14px; font-family:var(--fMono); font-size:11px; font-weight:600; color:var(--red); background:var(--tint-red); padding:5px 10px; border-radius:6px; align-self:flex-start; display:inline-flex; gap:6px; align-items:center}
+.jcard::after{content:""; position:absolute; left:0; right:0; bottom:0; height:4px; background:var(--red); transform:scaleX(0); transform-origin:left; transition:transform .5s ease}
+.slide.active .jcard::after{transform:scaleX(1)}
+.slide.active .jcard:nth-child(1)::after{transition-delay:.3s}.slide.active .jcard:nth-child(2)::after{transition-delay:.45s}
+.slide.active .jcard:nth-child(3)::after{transition-delay:.6s}.slide.active .jcard:nth-child(4)::after{transition-delay:.75s}
+
+/* =========================================================================
+   Layered stack diagram (Python data stack)
+   ========================================================================= */
+.stack{display:flex; flex-direction:column; gap:12px; margin:auto 0; width:100%}
+.layer{display:grid; grid-template-columns:200px 1fr; align-items:center; gap:22px; border-radius:14px; padding:18px 24px; color:#fff; position:relative; overflow:hidden; opacity:0; transform:translateX(-18px); transition:opacity .55s ease, transform .55s cubic-bezier(.16,1,.3,1)}
+.slide.active .layer{opacity:1; transform:none}
+.slide.active .layer:nth-child(1){transition-delay:.5s}.slide.active .layer:nth-child(2){transition-delay:.38s}
+.slide.active .layer:nth-child(3){transition-delay:.26s}.slide.active .layer:nth-child(4){transition-delay:.14s}
+.layer .lname{font-family:var(--fHead); font-weight:800; font-size:21px; letter-spacing:-.01em; display:flex; align-items:baseline; gap:9px}
+.layer .lname code{font-family:var(--fMono); font-size:13px; opacity:.7; font-weight:500}
+.layer .ldesc{font-size:14.5px; line-height:1.4; opacity:.95}
+.layer.l1{background:linear-gradient(100deg,#2A2A2F,#1c1c20)}
+.layer.l2{background:linear-gradient(100deg,var(--red-dark),var(--red))}
+.layer.l3{background:linear-gradient(100deg,#1C6E9C,#2487bf)}
+.layer.l4{background:linear-gradient(100deg,#0E7C6B,#13a08a)}
+.stack .scaffold{font-size:12.5px; color:var(--muted); text-align:center; font-style:italic}
+
+/* container / building-block cards */
+.mini-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:14px}
+.mini{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:15px 18px}
+.mini .mh{font-family:var(--fMono); font-size:14px; font-weight:700; color:var(--red)}
+.mini .md{font-size:13.5px; color:var(--muted); margin-top:4px; line-height:1.4}
+.mini code{font-family:var(--fMono); font-size:12.5px; color:var(--ink); background:var(--card-2); padding:1px 5px; border-radius:4px}
+
+/* before / after code columns */
+.ba{display:grid; grid-template-columns:1fr 1fr; gap:22px; flex:1; min-height:0; align-items:stretch}
+.ba .col{display:flex; flex-direction:column}
+.ba .ba-h{font-family:var(--fHead); font-weight:700; font-size:14px; margin-bottom:10px; display:flex; align-items:center; gap:9px}
+.ba .ba-h .tagx{font-size:11px; padding:3px 9px; border-radius:99px; font-weight:700; letter-spacing:.04em}
+.ba .before .tagx{background:var(--card-2); color:var(--muted)}
+.ba .after .tagx{background:var(--tint-red); color:var(--red)}
+.ba .codewrap{flex:1}
+/* optimisation pushdown strip (eager vs lazy slide) */
+.pushdown{display:flex; gap:12px; margin-top:16px; justify-content:center; flex-wrap:wrap}
+.pushdown .pd{display:flex; align-items:center; gap:9px; background:var(--tint-red); border:1px solid var(--tint-red-2); border-radius:99px; padding:8px 16px; font-size:13px; color:var(--ink); opacity:0; transform:translateY(10px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .pushdown .pd{opacity:1; transform:none}
+.slide.active .pushdown .pd:nth-child(1){transition-delay:.5s}.slide.active .pushdown .pd:nth-child(2){transition-delay:.66s}.slide.active .pushdown .pd:nth-child(3){transition-delay:.82s}
+.pushdown .pd b{color:var(--red); font-weight:700}
+.pushdown .pd .ck{width:18px;height:18px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-size:11px;flex:none}
+
+/* =========================================================================
+   Notebook-playback demo component
+   ========================================================================= */
+.demo-stage{flex:1; min-height:0; display:grid; grid-template-columns:1.62fr 1fr; gap:26px; align-items:stretch}
+.nb{background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 24px 50px -30px rgba(0,0,0,.35); display:flex; flex-direction:column; overflow:hidden}
+.nb-top{display:flex; align-items:center; gap:8px; padding:11px 16px; border-bottom:1px solid var(--line); background:var(--card)}
+.nb-top .t-ic{width:9px;height:9px;border-radius:50%;background:#e0a800}
+.nb-top .t-ic.r{background:var(--red)} .nb-top .t-ic.g{background:#28a745}
+.nb-top .nb-name{font-family:var(--fMono); font-size:12.5px; color:var(--muted); margin-left:8px}
+.nb-top .nb-kernel{margin-left:auto; font-size:11.5px; color:var(--faint); display:flex; align-items:center; gap:6px}
+.nb-top .nb-kernel::after{content:"";width:8px;height:8px;border-radius:50%;background:#28a745}
+.nb-body{flex:1; overflow:hidden; padding:6px 0; scroll-behavior:smooth}
+.nb-cell{padding:5px 16px; opacity:0; transform:translateY(8px); transition:opacity .4s ease, transform .4s ease}
+.nb-cell.shown{opacity:1; transform:none}
+.nb-in{display:grid; grid-template-columns:54px 1fr; gap:10px; align-items:start}
+.nb-prompt{font-family:var(--fMono); font-size:12.5px; color:#3b6fb0; text-align:right; padding-top:9px; user-select:none}
+.nb-prompt.busy{color:var(--red)}
+.nb-code{position:relative; background:#f6f7f9; border:1px solid #eceef1; border-left:3px solid var(--red); border-radius:6px; padding:9px 12px; font-family:var(--fMono); font-size:13px; line-height:1.55; color:#1f2430; white-space:pre; overflow:hidden; transition:box-shadow .3s ease, border-left-color .3s ease}
+.nb-cell.running .nb-code{box-shadow:0 0 0 2px var(--tint-red-2), 0 8px 22px -12px rgba(236,27,35,.5); border-left-color:var(--red-dark)}
+.nb-cell.running .nb-code::after{content:"▋"; color:var(--red); animation:caret .7s steps(1) infinite; margin-left:1px}
+@keyframes caret{50%{opacity:0}}
+.nb-out{margin:6px 0 0 64px; font-family:var(--fMono); font-size:12px; line-height:1.5; color:#333; max-height:0; opacity:0; overflow:hidden; transition:max-height .5s ease, opacity .4s ease}
+.nb-out.shown{max-height:240px; opacity:1}
+.nb-out .otable{border-collapse:collapse; font-size:11px}
+.nb-out .otable th{background:var(--ink); color:#fff; font-weight:600; padding:2px 9px; text-align:right; font-family:var(--fMono)}
+.nb-out .otable td{padding:2px 9px; border-bottom:1px solid #eee; text-align:right; color:#444}
+.nb-out .otable tr:nth-child(even) td{background:#fafafa}
+.nb-out .muted{color:#8a9099}
+.nb-out .ok{color:#1E8E5A}
+.demo-side{display:flex; flex-direction:column; gap:16px; justify-content:center}
+.demo-card{border-radius:16px; padding:22px 24px; background:var(--ink); color:#fff}
+.demo-card .dk{font-family:var(--fHead); font-weight:700; font-size:12px; letter-spacing:.13em; text-transform:uppercase; color:#ff6a6f; margin-bottom:10px}
+.demo-card h3{font-family:var(--fHead); font-weight:800; font-size:22px; line-height:1.12; letter-spacing:-.01em; margin-bottom:10px}
+.demo-card p{font-size:14px; line-height:1.5; color:rgba(255,255,255,.82)}
+.demo-steps{list-style:none; display:flex; flex-direction:column; gap:11px}
+.demo-steps li{display:flex; gap:11px; align-items:flex-start; font-size:14px; color:var(--text); line-height:1.4}
+.demo-steps li .sn{flex:none; width:24px; height:24px; border-radius:7px; background:var(--tint-red); color:var(--red); font-family:var(--fHead); font-weight:800; font-size:12px; display:grid; place-items:center}
+.demo-steps li.on .sn{background:var(--red); color:#fff}
+.replay{align-self:flex-start; display:inline-flex; align-items:center; gap:8px; background:var(--tint-red); color:var(--red); border:1px solid var(--tint-red-2); font-family:var(--fHead); font-weight:700; font-size:13px; padding:9px 16px; border-radius:99px; cursor:pointer; transition:all .2s ease}
+.replay:hover{background:var(--red); color:#fff}
+.replay svg{width:14px;height:14px}
+.demo-take{background:var(--tint-red); border:1px solid var(--tint-red-2); border-radius:12px; padding:14px 18px; font-size:13.5px; color:var(--ink); line-height:1.45}
+.demo-take b{color:var(--red)}
+
+/* =========================================================================
+   VS compare panels (structured vs unstructured, good vs bad)
+   ========================================================================= */
+.vs{display:grid; grid-template-columns:1fr 1fr; gap:24px; flex:1; min-height:0}
+.vs .panel{border:1px solid var(--line); border-radius:16px; padding:24px 26px; display:flex; flex-direction:column; background:var(--surface); position:relative; overflow:hidden}
+.vs .panel.accent{background:linear-gradient(180deg,var(--tint-red),#fff); border-color:var(--tint-red-2)}
+.vs .panel .ph{font-family:var(--fHead); font-weight:800; font-size:21px; color:var(--ink); letter-spacing:-.01em; display:flex; align-items:center; gap:12px}
+.vs .panel .ph .glyph{width:42px; height:42px; border-radius:11px; display:grid; place-items:center; flex:none}
+.vs .panel.accent .ph .glyph{background:var(--red); color:#fff}
+.vs .panel:not(.accent) .ph .glyph{background:var(--ink); color:#fff}
+.vs .panel .ps{font-size:14px; color:var(--muted); margin:8px 0 16px; line-height:1.45}
+.vs .chips{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px}
+.vs .chip{font-family:var(--fMono); font-size:12px; padding:6px 11px; border-radius:8px; background:var(--card); border:1px solid var(--line); color:var(--text)}
+.vs .panel.accent .chip{background:#fff; border-color:var(--tint-red-2)}
+.vs .where{margin-top:auto; font-size:13.5px; color:var(--text); line-height:1.45; padding-top:14px; border-top:1px dashed var(--line-strong)}
+.vs .where b{color:var(--red)}
+
+/* annotated "shape of data" table */
+.shape-tbl{display:grid; grid-template-columns:auto 1fr; gap:0 18px; align-items:center; margin:auto 0}
+.dtable{border-collapse:separate; border-spacing:0; border-radius:12px; overflow:hidden; box-shadow:0 18px 40px -28px rgba(0,0,0,.3); width:100%}
+.dtable th{background:var(--ink); color:#fff; font-family:var(--fMono); font-size:13px; font-weight:600; padding:11px 16px; text-align:left}
+.dtable th.target{background:var(--red)}
+.dtable td{padding:10px 16px; font-family:var(--fMono); font-size:13.5px; color:var(--text); background:#fff; border-bottom:1px solid var(--line)}
+.dtable td.target{background:var(--tint-red); color:var(--red-dark); font-weight:600}
+.dtable tr:nth-child(even) td{background:#fafafb}
+.dtable tr:nth-child(even) td.target{background:var(--tint-red-2)}
+.annot{font-family:var(--fHead); font-weight:700; font-size:14px; color:var(--red); display:flex; align-items:center; gap:8px}
+.annot.muted{color:var(--muted)}
+.shape-legend{display:flex; gap:26px; justify-content:center; margin-top:22px; flex-wrap:wrap}
+.shape-legend .item{display:flex; align-items:center; gap:9px; font-size:14px; color:var(--text)}
+.shape-legend .sw{width:16px; height:16px; border-radius:5px}
+
+/* analytics staircase (ascending) */
+.stair{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; align-items:end; flex:1; min-height:0; padding-top:8px}
+.rung{display:flex; flex-direction:column; justify-content:flex-end}
+.rung .box{border-radius:14px 14px 0 0; padding:20px 20px 22px; color:#fff; position:relative; transform-origin:bottom; transform:scaleY(0); opacity:0; transition:transform .6s cubic-bezier(.16,1,.3,1), opacity .4s ease}
+.slide.active .rung .box{transform:scaleY(1); opacity:1}
+.slide.active .rung:nth-child(1) .box{transition-delay:.2s}.slide.active .rung:nth-child(2) .box{transition-delay:.42s}
+.slide.active .rung:nth-child(3) .box{transition-delay:.64s}.slide.active .rung:nth-child(4) .box{transition-delay:.86s}
+.rung:nth-child(1) .box{background:#3a3a40; min-height:150px}
+.rung:nth-child(2) .box{background:#8a1419; min-height:215px}
+.rung:nth-child(3) .box{background:var(--red-dark); min-height:280px}
+.rung:nth-child(4) .box{background:var(--red); min-height:345px}
+.rung .q{font-family:var(--fMono); font-size:12px; opacity:.85; margin-bottom:6px}
+.rung .box h4{font-family:var(--fHead); font-weight:800; font-size:21px; letter-spacing:-.01em}
+.rung .box p{font-size:13px; line-height:1.4; opacity:.92; margin-top:8px}
+.rung .box .step-i{position:absolute; top:14px; right:16px; font-family:var(--fHead); font-weight:800; font-size:14px; opacity:.35}
+.stair-axis{display:flex; justify-content:space-between; font-size:13px; color:var(--muted); margin-top:14px; font-style:italic}
+.stair-axis b{color:var(--red); font-style:normal; font-weight:700}
+
+/* animated SVG charts (scatter, dual-line) */
+.svg-card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px 22px; height:100%; display:flex; flex-direction:column}
+.svg-card .ct{font-family:var(--fHead); font-weight:700; font-size:15px; color:var(--ink); margin-bottom:6px}
+.chart-svg{width:100%; flex:1}
+.chart-svg .dot{opacity:0; transition:opacity .5s ease}
+.slide.active .chart-svg .dot{opacity:.78}
+.chart-svg .trend{stroke:var(--red); stroke-width:3; fill:none; stroke-dasharray:600; stroke-dashoffset:600; transition:stroke-dashoffset 1.3s ease .6s}
+.slide.active .chart-svg .trend{stroke-dashoffset:0}
+.chart-svg .ln{fill:none; stroke-width:3; stroke-dasharray:900; stroke-dashoffset:900; transition:stroke-dashoffset 1.5s ease}
+.slide.active .chart-svg .ln1{stroke-dashoffset:0; transition-delay:.3s}
+.slide.active .chart-svg .ln2{stroke-dashoffset:0; transition-delay:.7s}
+.chart-svg .axis{stroke:var(--line-strong); stroke-width:1.5}
+.chart-svg .glab{font-family:var(--fBody); font-size:11px; fill:var(--muted)}
+
+/* problem -> fix table */
+.pf-table{display:flex; flex-direction:column; border:1px solid var(--line); border-radius:14px; overflow:hidden; flex:1; min-height:0}
+.pf-row{display:grid; grid-template-columns:1.1fr 1fr 1.25fr; align-items:center; padding:0; border-bottom:1px solid var(--line); opacity:0; transform:translateX(-12px); transition:opacity .45s ease, transform .45s ease}
+.slide.active .pf-row{opacity:1; transform:none}
+.slide.active .pf-row:nth-child(1){transition-delay:.1s}.slide.active .pf-row:nth-child(2){transition-delay:.2s}
+.slide.active .pf-row:nth-child(3){transition-delay:.3s}.slide.active .pf-row:nth-child(4){transition-delay:.4s}
+.slide.active .pf-row:nth-child(5){transition-delay:.5s}.slide.active .pf-row:nth-child(6){transition-delay:.6s}
+.slide.active .pf-row:nth-child(7){transition-delay:.7s}
+.pf-row:last-child{border-bottom:none}
+.pf-row.head{background:var(--ink); color:#fff; opacity:1; transform:none}
+.pf-row.head>div{font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.04em; text-transform:uppercase; padding:12px 20px; color:rgba(255,255,255,.85)}
+.pf-row>div{padding:13px 20px; font-size:14.5px}
+.pf-row .prob{font-weight:600; color:var(--ink); display:flex; align-items:center; gap:10px}
+.pf-row .prob .d{width:8px;height:8px;border-radius:50%;background:var(--red);flex:none}
+.pf-row .fix code{font-family:var(--fMono); font-size:13px; background:var(--tint-red); color:var(--red-dark); padding:3px 9px; border-radius:6px; font-weight:500}
+.pf-row .desc{color:var(--muted); font-size:13.5px; line-height:1.4}
+.pf-row:nth-child(even):not(.head){background:#fafafb}
+
+/* tidy before/after tables */
+.tidy{display:grid; grid-template-columns:1fr auto 1fr; gap:20px; align-items:center; flex:1; min-height:0}
+.tidy .tcol{display:flex; flex-direction:column}
+.tidy .tlabel{font-family:var(--fHead); font-weight:800; font-size:14px; letter-spacing:.06em; text-transform:uppercase; margin-bottom:12px; display:flex; align-items:center; gap:9px}
+.tidy .messy .tlabel{color:var(--muted)} .tidy .clean .tlabel{color:var(--red)}
+.tidy .arrow-mid{font-size:34px; color:var(--red); font-weight:800}
+.tidy .note{font-size:12.5px; color:var(--muted); margin-top:10px; font-style:italic; line-height:1.4}
+
+/* histogram (EDA) */
+.hist{display:flex; align-items:flex-end; gap:7px; height:230px; padding:0 4px; border-bottom:2px solid var(--line-strong)}
+.hist .bar{flex:1; background:linear-gradient(180deg,var(--red),var(--red-dark)); border-radius:5px 5px 0 0; height:0; transition:height .8s cubic-bezier(.16,1,.3,1); position:relative}
+.hist .bar.med{background:linear-gradient(180deg,#3a3a40,#222)}
+.slide.active .hist .bar{height:var(--h)}
+.slide.active .hist .bar:nth-child(1){transition-delay:.1s}.slide.active .hist .bar:nth-child(2){transition-delay:.16s}
+.slide.active .hist .bar:nth-child(3){transition-delay:.22s}.slide.active .hist .bar:nth-child(4){transition-delay:.28s}
+.slide.active .hist .bar:nth-child(5){transition-delay:.34s}.slide.active .hist .bar:nth-child(6){transition-delay:.40s}
+.slide.active .hist .bar:nth-child(7){transition-delay:.46s}.slide.active .hist .bar:nth-child(8){transition-delay:.52s}
+.slide.active .hist .bar:nth-child(9){transition-delay:.58s}.slide.active .hist .bar:nth-child(10){transition-delay:.64s}
+.slide.active .hist .bar:nth-child(11){transition-delay:.70s}.slide.active .hist .bar:nth-child(12){transition-delay:.76s}
+.stat-chips{display:flex; flex-direction:column; gap:12px}
+.stat-chips .sc{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 18px; display:flex; justify-content:space-between; align-items:center}
+.stat-chips .sc .k{font-size:13.5px; color:var(--muted)}
+.stat-chips .sc .v{font-family:var(--fHead); font-weight:800; font-size:22px; color:var(--red)}
+
+/* chart-picker glyph grid */
+.picker{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; flex:1; min-height:0}
+.pick{border:1px solid var(--line); border-radius:14px; padding:18px 20px; display:flex; flex-direction:column; gap:10px; background:var(--surface); transition:transform .25s ease, box-shadow .25s ease, border-color .25s}
+.pick:hover{transform:translateY(-3px); box-shadow:0 18px 34px -22px rgba(0,0,0,.3); border-color:var(--tint-red-2)}
+.pick .pg-glyph{height:46px; display:flex; align-items:flex-end; gap:4px}
+.pick .q{font-family:var(--fMono); font-size:12px; color:var(--red); font-weight:500}
+.pick h4{font-family:var(--fHead); font-weight:700; font-size:16px; color:var(--ink)}
+.pick p{font-size:13px; color:var(--muted); line-height:1.4}
+.pick svg{width:100%; height:46px}
+
+/* insight callout */
+.insight{display:grid; grid-template-columns:1fr 1fr; gap:30px; flex:1; min-height:0; align-items:center}
+.insight .lead-card{background:var(--ink); color:#fff; border-radius:18px; padding:30px 32px; position:relative; overflow:hidden}
+.insight .lead-card::before{content:""; position:absolute; right:-40px; top:-40px; width:160px; height:160px; border-radius:50%; background:radial-gradient(circle,rgba(236,27,35,.4),transparent 70%)}
+.insight .lead-card .so{font-family:var(--fHead); font-weight:700; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#ff6a6f; margin-bottom:14px}
+.insight .lead-card .big-line{font-family:var(--fHead); font-weight:800; font-size:28px; line-height:1.15; letter-spacing:-.01em}
+.insight .lead-card .big-line em{color:#ff8e91; font-style:normal}
+.layer-list{list-style:none; display:flex; flex-direction:column; gap:16px}
+.layer-list li{display:flex; gap:14px; align-items:flex-start}
+.layer-list li .n{flex:none; width:30px; height:30px; border-radius:9px; background:var(--tint-red); color:var(--red); font-family:var(--fHead); font-weight:800; display:grid; place-items:center; font-size:14px}
+.layer-list li b{font-family:var(--fHead); color:var(--ink); font-size:16px}
+.layer-list li p{font-size:14px; color:var(--muted); line-height:1.4; margin-top:2px}
+
+/* closing recap */
+.recap-grid{display:grid; grid-template-columns:1fr 1fr; gap:30px; flex:1; min-height:0; align-items:center}
+.recap-col h4{font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.12em; text-transform:uppercase; margin-bottom:18px; display:flex; align-items:center; gap:10px}
+.recap-col.recap h4{color:#ff6a6f}.recap-col.next h4{color:#fff}
+.recap-col ul{list-style:none; display:flex; flex-direction:column; gap:14px}
+.recap-col li{font-size:16px; line-height:1.45; padding-left:26px; position:relative; color:rgba(255,255,255,.88)}
+.recap-col.recap li::before{content:"✓"; position:absolute; left:0; color:var(--red); font-weight:800}
+.recap-col.next li::before{content:"→"; position:absolute; left:0; color:#ff6a6f; font-weight:800}
+.recap-col.next{background:rgba(236,27,35,.1); border:1px solid rgba(236,27,35,.25); border-radius:18px; padding:26px 28px}
+
+/* big single stat (80%) */
+.megastat{display:flex; align-items:center; gap:60px; margin:auto 0}
+.megastat .num{font-family:var(--fHead); font-weight:800; font-size:200px; line-height:.85; color:var(--red); letter-spacing:-.05em}
+.megastat .num .u{font-size:90px}
+.megastat .copy{max-width:42ch}
+.megastat .copy h3{font-family:var(--fHead); font-weight:800; font-size:30px; color:var(--ink); line-height:1.1; letter-spacing:-.02em; margin-bottom:14px}
+.megastat .copy p{font-size:16px; color:var(--muted); line-height:1.55}
+.megastat .copy .src{font-size:12.5px; color:var(--faint); margin-top:14px}
+
+/* =========================================================================
+   Navigation chrome
+   ========================================================================= */
+.progress{position:fixed; top:0; left:0; height:3px; background:var(--red); z-index:50; transition:width .4s ease; box-shadow:0 0 12px rgba(236,27,35,.6)}
+.hud{position:fixed; bottom:18px; right:22px; z-index:50; display:flex; align-items:center; gap:14px; font-family:var(--fMono); font-size:12px; color:rgba(255,255,255,.55)}
+.hud .dots{display:flex; gap:6px}
+.hud .dot{width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.22); cursor:pointer; transition:all .25s ease}
+.hud .dot.on{background:var(--red); transform:scale(1.35)}
+.hud .dot.sec{background:rgba(255,255,255,.4)}
+.hud .count b{color:#fff}
+.hint{position:fixed; bottom:20px; left:22px; z-index:50; font-size:11.5px; color:rgba(255,255,255,.4); font-family:var(--fMono)}
+.hint kbd{background:rgba(255,255,255,.1); border-radius:4px; padding:1px 6px; color:rgba(255,255,255,.7)}
+/* auto-hide nav chrome when idle or when deck fills the viewport */
+.hud,.hint{transition:opacity .4s ease}
+body.idle .hud, body.idle .hint{opacity:0; pointer-events:none}
+body.static .hud, body.static .hint{display:none}
+
+/* speaker notes drawer */
+.notes{position:fixed; left:0; right:0; bottom:0; z-index:60; transform:translateY(100%); transition:transform .35s cubic-bezier(.16,1,.3,1); background:#16161a; color:#e7e7ea; border-top:3px solid var(--red); max-height:42vh; overflow:auto; padding:22px 30px; box-shadow:0 -20px 50px -20px rgba(0,0,0,.7)}
+.notes.show{transform:none}
+.notes h5{font-family:var(--fHead); font-weight:700; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#ff6a6f; margin-bottom:12px; display:flex; align-items:center; gap:10px}
+.notes ul{margin:0; padding-left:20px; display:flex; flex-direction:column; gap:9px}
+.notes li{font-size:14.5px; line-height:1.55; color:#cfd0d6}
+.notes .close{position:absolute; top:16px; right:22px; color:#888; cursor:pointer; font-size:18px; background:none; border:none}
+
+/* mobile: the deck is a fixed 16:9 stage — prompt rotation when held upright */
+.rotate-cue{position:fixed; inset:0; height:100dvh; z-index:120; display:none;
+  place-items:center; text-align:center; padding:42px;
+  background:radial-gradient(700px 460px at 50% 0%, rgba(236,27,35,.14), transparent 62%), #0a0a0c;
+  color:#e7e7ea; font-family:var(--fHead)}
+.rotate-cue .ic{width:58px; height:58px; margin:0 auto 24px; color:var(--red);
+  animation:rot-tilt 2.2s ease-in-out infinite}
+.rotate-cue h4{font-size:21px; font-weight:800; letter-spacing:-.01em; color:#fff; margin-bottom:10px}
+.rotate-cue p{font-size:14px; line-height:1.55; color:rgba(255,255,255,.6); max-width:34ch; margin:0 auto}
+@keyframes rot-tilt{0%,100%{transform:rotate(-12deg)} 50%{transform:rotate(78deg)}}
+/* show only on small screens held in portrait */
+@media (orientation:portrait) and (max-width:860px){
+  .rotate-cue{display:grid}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important; transition-duration:.2s !important}
+  [data-r]{opacity:1 !important; transform:none !important}
+  .rotate-cue .ic{animation:none; transform:rotate(78deg)}
+}
+/* static mode (QA captures / no-motion): snap everything to final */
+body.static [data-r]{opacity:1 !important; transform:none !important; transition:none !important}
+body.static .code-line{animation:none !important}
+body.static .flow .step,
+body.static .venn .circ,
+body.static .venn .center,
+body.static .venn .danger,
+body.static .jcard::after{opacity:1 !important; transform:none !important; transition:none !important}
+body.static .venn .c3{transform:translateX(-50%) !important}
+body.static .jcard::after{transform:scaleX(1) !important}
+body.static .nb-cell, body.static .nb-out{transition:none !important; transform:none !important; opacity:1 !important}
+body.static .nb-out.shown{max-height:320px !important}
+body.static .pushdown .pd{opacity:1 !important; transform:none !important; transition:none !important}
+/* ============================ Day 2 · Agents additions ============================ */
+.fillc{flex:1; min-height:0; display:flex; flex-direction:column; justify-content:center}
+.fillrow{flex:1; min-height:0; display:flex; align-items:center; gap:40px}
+
+/* augmented LLM */
+.aug{display:grid; grid-template-columns:1fr 1.3fr 1fr; grid-template-rows:auto auto; gap:16px; align-items:center; margin:auto 0; max-width:840px; width:100%; margin-left:auto; margin-right:auto}
+.aug .core{grid-column:2; grid-row:1; background:linear-gradient(155deg,#26262b,#161618); color:#fff; border-radius:18px; padding:24px; text-align:center; position:relative; overflow:hidden; box-shadow:0 22px 54px -26px rgba(0,0,0,.55)}
+.aug .core::after{content:""; position:absolute; right:-40px; top:-40px; width:150px; height:150px; border-radius:50%; background:radial-gradient(circle,rgba(236,27,35,.45),transparent 70%)}
+.aug .core .t{font-family:var(--fHead); font-weight:800; font-size:24px}
+.aug .core .s{font-size:12.5px; color:rgba(255,255,255,.72); margin-top:5px}
+.satc{border:1px solid var(--line); border-radius:14px; padding:15px 17px; background:#fff; opacity:0; transform:translateY(12px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .satc{opacity:1; transform:none}
+.aug .ret{grid-column:1; grid-row:1} .aug .tools{grid-column:3; grid-row:1} .aug .mem{grid-column:2; grid-row:2; max-width:300px; justify-self:center}
+.slide.active .aug .ret{transition-delay:.25s}.slide.active .aug .tools{transition-delay:.4s}.slide.active .aug .mem{transition-delay:.55s}
+.satc .ic{width:34px; height:34px; border-radius:10px; background:var(--tint-red); color:var(--red); display:grid; place-items:center; margin-bottom:8px}
+.satc .ic svg{width:18px; height:18px}
+.satc h4{font-family:var(--fHead); font-weight:800; font-size:15px; color:var(--ink)}
+.satc p{font-size:12px; color:var(--muted); line-height:1.35; margin-top:2px}
+
+/* agent loop (think/act/observe) */
+.aloop{position:relative; width:360px; height:300px; margin:auto}
+.aloop .ring{position:absolute; left:62px; right:62px; top:30px; bottom:30px; border:2px dashed var(--line-strong); border-radius:50%}
+.aloop .hub{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:108px; height:108px; border-radius:50%; background:var(--ink); color:#fff; display:grid; place-items:center; text-align:center; font-family:var(--fHead); font-weight:800; font-size:14px; box-shadow:0 16px 40px -16px rgba(0,0,0,.55); z-index:3}
+.aloop .hub small{display:block; color:#ff6a6f; font-size:10px; letter-spacing:.08em; margin-top:3px; font-weight:700}
+.aloop .ln{position:absolute; width:120px; transform:translate(-50%,-50%); text-align:center; opacity:0; transition:opacity .55s ease, transform .55s ease}
+.slide.active .aloop .ln{opacity:1}
+.aloop .ln .lic{width:50px; height:50px; border-radius:14px; background:var(--red); color:#fff; display:grid; place-items:center; margin:0 auto 7px; box-shadow:0 8px 20px -8px rgba(236,27,35,.6)}
+.aloop .ln.dk .lic{background:var(--ink); box-shadow:0 8px 20px -8px rgba(0,0,0,.5)}
+.aloop .ln .lic svg{width:24px; height:24px}
+.aloop .ln .lt{font-family:var(--fHead); font-weight:700; font-size:14px; color:var(--ink)}
+.aloop .ln.n1{transition-delay:.2s}.aloop .ln.n2{transition-delay:.4s}.aloop .ln.n3{transition-delay:.6s}
+
+/* five workflow patterns gallery */
+.wfpat{display:grid; grid-template-columns:repeat(5,1fr); gap:12px; flex:1; min-height:0; align-items:center}
+.wfp{border:1px solid var(--line); border-radius:14px; padding:13px 13px; display:flex; flex-direction:column; gap:8px; background:var(--surface); opacity:0; transform:translateY(14px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .wfp{opacity:1; transform:none}
+.slide.active .wfp:nth-child(1){transition-delay:.15s}.slide.active .wfp:nth-child(2){transition-delay:.3s}.slide.active .wfp:nth-child(3){transition-delay:.45s}.slide.active .wfp:nth-child(4){transition-delay:.6s}.slide.active .wfp:nth-child(5){transition-delay:.75s}
+.wfp h4{font-family:var(--fHead); font-weight:800; font-size:13.5px; color:var(--ink); letter-spacing:-.01em}
+.wfp .mini{height:58px; display:flex; align-items:center; justify-content:center; gap:4px}
+.wfp p{font-size:11px; color:var(--muted); line-height:1.35; margin-top:4px}
+.mb{width:18px; height:14px; border-radius:3px; background:var(--ink)}
+.mb.r{background:var(--red)} .mb.s{background:var(--card-2)} .mb.b{background:#1C6E9C}
+.ma{color:var(--line-strong); font-size:11px}
+.mcol{display:flex; flex-direction:column; gap:3px}
+
+/* function-call round-trip */
+.fcall{display:flex; align-items:stretch; justify-content:center; gap:0; margin:auto 0; width:100%}
+.fnode{flex:0 0 150px; text-align:center; padding:20px 14px; border-radius:14px; display:flex; flex-direction:column; align-items:center; gap:8px; opacity:0; transform:translateY(12px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .fnode{opacity:1; transform:none}
+.fnode.model{background:linear-gradient(155deg,#26262b,#161618); color:#fff}
+.fnode.fn{background:linear-gradient(180deg,var(--tint-red),#fff); border:1px solid var(--tint-red-2); color:var(--ink)}
+.fnode .fi{width:40px; height:40px; border-radius:11px; display:grid; place-items:center}
+.fnode.model .fi{background:rgba(255,122,126,.2); color:#ff7a7e} .fnode.fn .fi{background:var(--red); color:#fff}
+.fnode .fi svg{width:21px; height:21px}
+.fnode .ft{font-family:var(--fHead); font-weight:800; font-size:14.5px}
+.fnode .fs{font-size:11px; opacity:.8}
+.fconn{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; opacity:0; transition:opacity .5s ease}
+.slide.active .fconn{opacity:1}
+.slide.active .fconn:nth-of-type(2){transition-delay:.3s}.slide.active .fconn:nth-of-type(4){transition-delay:.6s}
+.fconn .chip{font-family:var(--fMono); font-size:10.5px; background:var(--code-bg); color:#a5d6ff; padding:4px 9px; border-radius:6px; white-space:nowrap}
+.fconn .chip.res{color:#7be0a6}
+.fconn svg{width:28px; height:18px; color:var(--red)}
+.fcall.rev{flex-direction:row}
+
+/* trajectory */
+.traj{display:flex; flex-direction:column; gap:9px; max-width:880px; margin:auto 0; width:100%}
+.trow{display:flex; gap:12px; align-items:flex-start; opacity:0; transform:translateX(-12px); transition:opacity .45s ease, transform .45s ease}
+.slide.active .trow{opacity:1; transform:none}
+.slide.active .trow:nth-child(1){transition-delay:.15s}.slide.active .trow:nth-child(2){transition-delay:.3s}.slide.active .trow:nth-child(3){transition-delay:.45s}.slide.active .trow:nth-child(4){transition-delay:.6s}.slide.active .trow:nth-child(5){transition-delay:.75s}.slide.active .trow:nth-child(6){transition-delay:.9s}
+.tbadge{flex:none; width:92px; font-family:var(--fHead); font-weight:800; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; padding:7px 0; text-align:center; border-radius:8px}
+.tbadge.think{background:var(--card-2); color:var(--ink)} .tbadge.act{background:var(--tint-red); color:var(--red)} .tbadge.obs{background:#E9F7EE; color:#1E8E5A}
+.trow .tx{font-size:14px; color:var(--text); line-height:1.4; padding-top:6px}
+.trow .tx code{font-family:var(--fMono); font-size:12.5px; background:var(--card); padding:1px 6px; border-radius:5px; color:var(--ink)}
+
+/* tool schema card */
+.schema{background:var(--code-bg); color:var(--code-ink); border-radius:14px; padding:24px 28px; font-family:var(--fMono); font-size:15px; line-height:1.8; max-width:720px; margin:auto 0; box-shadow:0 24px 50px -28px rgba(0,0,0,.5); border:1px solid #2a2d36}
+.schema .k{color:#79c0ff} .schema .s{color:#a5d6ff} .schema .c{color:#7d8590} .schema .fn{color:#d2a8ff}
+
+/* MCP plug */
+.mcp{display:grid; grid-template-columns:1fr 150px 1fr; align-items:center; gap:18px; margin:auto 0; max-width:840px; width:100%; margin-left:auto; margin-right:auto}
+.mcol2{display:flex; flex-direction:column; gap:10px}
+.mpill{border:1px solid var(--line); border-radius:11px; padding:11px 14px; background:#fff; font-family:var(--fHead); font-weight:700; font-size:13.5px; color:var(--ink); display:flex; align-items:center; gap:9px; opacity:0; transform:translateX(var(--dx,0)); transition:opacity .5s ease, transform .5s ease}
+.slide.active .mpill{opacity:1; transform:none}
+.mpill svg{width:18px; height:18px; flex:none; color:var(--red)}
+.mcol2.left .mpill{--dx:-12px} .mcol2.right .mpill{--dx:12px}
+.slide.active .mcol2 .mpill:nth-child(2){transition-delay:.15s}.slide.active .mcol2 .mpill:nth-child(3){transition-delay:.3s}
+.mhub{background:linear-gradient(155deg,var(--red),var(--red-dark)); color:#fff; border-radius:16px; padding:22px 10px; text-align:center; box-shadow:0 18px 44px -20px rgba(236,27,35,.6)}
+.mhub .t{font-family:var(--fHead); font-weight:800; font-size:18px}
+.mhub .s{font-size:10.5px; opacity:.85; margin-top:3px}
+
+/* spectrum bar */
+.spectrum{margin:auto 0; width:100%}
+.spbar{height:70px; border-radius:14px; background:linear-gradient(90deg,#2a2a2f,var(--red)); position:relative; display:flex; align-items:center; justify-content:space-between; padding:0 24px; color:#fff; overflow:hidden}
+.spbar .end{font-family:var(--fHead); font-weight:800; font-size:16px; z-index:2}
+.spbar .ends{display:block; font-size:11px; font-weight:500; opacity:.85}
+.sptick{display:flex; justify-content:space-between; margin-top:14px}
+.sptick .t{flex:1; text-align:center; font-size:12.5px; color:var(--muted)}
+.sptick .t b{display:block; font-family:var(--fHead); color:var(--ink); font-size:13.5px}
+
+/* complexity scale (start simple) */
+.scale{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; align-items:end; flex:1; min-height:0; padding-top:10px}
+.scc{display:flex; flex-direction:column; justify-content:flex-end}
+.scc .bar{border-radius:13px 13px 0 0; padding:16px 16px; color:#fff; transform-origin:bottom; transform:scaleY(0); opacity:0; transition:transform .6s cubic-bezier(.16,1,.3,1), opacity .4s}
+.slide.active .scc .bar{transform:scaleY(1); opacity:1}
+.slide.active .scc:nth-child(1) .bar{transition-delay:.15s}.slide.active .scc:nth-child(2) .bar{transition-delay:.32s}.slide.active .scc:nth-child(3) .bar{transition-delay:.49s}.slide.active .scc:nth-child(4) .bar{transition-delay:.66s}
+.scc:nth-child(1) .bar{background:#3a3a40; min-height:110px}.scc:nth-child(2) .bar{background:#8a1419; min-height:170px}.scc:nth-child(3) .bar{background:var(--red-dark); min-height:225px}.scc:nth-child(4) .bar{background:var(--red); min-height:280px}
+.scc .bar h4{font-family:var(--fHead); font-weight:800; font-size:16px}
+.scc .bar p{font-size:12px; opacity:.9; margin-top:6px; line-height:1.35}
+
+/* static snaps */
+body.static .satc, body.static .aloop .ln, body.static .wfp, body.static .fnode, body.static .fconn,
+body.static .trow, body.static .mpill, body.static .scc .bar{opacity:1 !important; transform:none !important; transition:none !important}
+body.static .aug .mem{transform:none !important}
+body.static .scc .bar{transform:none !important}
+
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="stage">
+  <main class="deck" id="deck">
+
+  <section class="slide dark cover active" data-notes='["Welcome to the second Day-2 session. You know LLMs, prompting and RAG. Today we give the model the ability to take actions — to become an agent.", "90 minutes, intuition-first: agent = LLM + tools + a loop. One demo. Banking examples throughout, and an open-source, self-hostable stance.", "Promise: by the end you can reason about an agent end to end, and explain why a bank wires a human into the loop."]'>
+    <div class="bg"></div><div class="scrim"></div>
+    <div class="inner">
+      <img class="logo" src="assets/ocbc-logo.png" alt="OCBC" />
+      <h1 data-r data-d="1">Agentic AI<span class="red">Paradigms</span></h1>
+      <div class="rule" data-r data-d="2"></div>
+      <div class="meta" data-r data-d="3"><strong>Day 2 &middot; Design, Tool Use &amp; Planning</strong><br/>From static large language models (LLMs) to autonomous, goal-oriented agents<br/>OCBC CRAYON 2026 · ADM Team · 90 minutes</div>
+      <div class="program" data-r data-d="4">OCBC CRAYON · Day 2</div>
+    </div>
+  </section>
+
+  <section class="slide dark" data-notes='["The whole deck in one line. An agent is a language model that can take actions — and, crucially, decide which ones to take.", "That decision-making is the leap from a chatbot that answers to a system that acts toward a goal.", "Three ingredients underneath: an LLM, some tools, and a loop. We will build up to all three."]'>
+    <div class="body-area">
+      <div class="kicker"><span class="badge"></span>The frame</div>
+      <div class="quote-wrap">
+        <div class="quote-mark" data-r data-d="2">&ldquo;</div>
+        <blockquote data-r data-d="3">An agent is just a language model that can take <em>actions</em> &mdash; and decide which ones to take.</blockquote>
+        <cite data-r data-d="4">A framing principle for agentic AI</cite>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">02</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Recap the journey. A plain LLM only predicts text — no memory of past steps, no live data, and it cannot do anything in the world.", "RAG, from Day 1, added knowledge — grounding answers in real documents. Agents add the missing piece: action.", "Today is about turning a knowledgeable text predictor into something that can act toward a goal."]'>
+    <div class="kicker"><span class="badge"></span>Day 1 &rarr; today</div>
+    <h2 class="slide-title" data-r data-d="1">From predicting text to taking action</h2>
+    <div class="flow" style="margin-top:6px">
+      <div class="step"><div class="node">1</div><h4>LLM</h4><p>predicts text</p><div class="arrow"></div></div>
+      <div class="step"><div class="node">2</div><h4>+ RAG</h4><p>adds knowledge</p><div class="arrow"></div></div>
+      <div class="step"><div class="node hot">3</div><h4>+ Agent</h4><p>adds action</p></div>
+    </div>
+    <div class="flow-cap">A plain LLM can&#39;t <em>do</em> anything. Retrieval-Augmented Generation (RAG) gave it knowledge; an agent gives it <b style="color:var(--red)">action</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">03</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The core distinction. A chatbot answers a question and stops. An agent acts: it can search, call APIs, run code, update systems — and loop until a goal is met.", "Banking contrast: what is this customer&#39;s risk is a question a chatbot answers. Investigate and flag this alert is a goal an agent pursues across many steps.", "Everything else today builds on this shift from answering to acting."]'>
+    <div class="kicker"><span class="badge"></span>The core distinction</div>
+    <h2 class="slide-title" data-r data-d="1">A chatbot answers; an agent acts</h2>
+    <div class="vs" style="margin-top:24px">
+      <div class="panel" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg></span>Chatbot</div>
+        <div class="ps">Answers a question, then stops.</div>
+        <div class="chips"><span class="chip">one response</span><span class="chip">no actions</span><span class="chip">no memory of steps</span></div>
+        <div class="where">&ldquo;What is this customer&#39;s risk?&rdquo; &rarr; <b>an answer</b>.</div>
+      </div>
+      <div class="panel accent" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 7V3M8 13h.01M16 13h.01"/></svg></span>Agent</div>
+        <div class="ps">Acts: searches, calls application programming interfaces (APIs), runs code, loops to a goal.</div>
+        <div class="chips"><span class="chip">multi-step</span><span class="chip">uses tools</span><span class="chip">until goal met</span></div>
+        <div class="where">&ldquo;Investigate and flag this alert&rdquo; &rarr; <b>it acts</b>.</div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">04</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Anthropic draws a useful line. Workflows are LLMs and tools wired on predefined code paths — predictable and easy to debug.", "Agents let the LLM dynamically direct its own steps and tool use — flexible, but less predictable.", "Both are agentic systems. The art is choosing how much autonomy a task actually needs."]'>
+    <div class="kicker"><span class="badge"></span>Workflows vs agents</div>
+    <h2 class="slide-title" data-r data-d="1">A spectrum of autonomy</h2>
+    <div class="spectrum" data-r data-d="2">
+      <div class="spbar">
+        <div class="end">Workflows<span class="ends">you define the path</span></div>
+        <div class="end" style="text-align:right">Agents<span class="ends">the LLM directs itself</span></div>
+      </div>
+      <div class="sptick">
+        <div class="t"><b>Predictable</b>predefined steps + tools</div>
+        <div class="t"><b>Flexible</b>dynamic steps + tool use</div>
+        <div class="t"><b>Open-ended</b>full autonomy</div>
+      </div>
+    </div>
+    <div class="flow-cap">Both are &ldquo;agentic systems&rdquo; &mdash; pick by the autonomy the task needs.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">05</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The number-one lesson from the labs: start simple. Use the simplest thing that works.", "Do not build an autonomous agent when a workflow, or even a single prompt, would do. Each step up adds latency, cost and unpredictability.", "Only pay for autonomy when the flexibility is genuinely justified."]'>
+    <div class="kicker"><span class="badge"></span>The golden rule</div>
+    <h2 class="slide-title" data-r data-d="1">Start simple &mdash; add autonomy only when justified</h2>
+    <div class="scale">
+      <div class="scc"><div class="bar"><h4>Single prompt</h4><p>one LLM call</p></div></div>
+      <div class="scc"><div class="bar"><h4>+ RAG / tools</h4><p>still one shot</p></div></div>
+      <div class="scc"><div class="bar"><h4>Workflow</h4><p>predefined steps</p></div></div>
+      <div class="scc"><div class="bar"><h4>Agent</h4><p>dynamic, looping</p></div></div>
+    </div>
+    <div class="flow-cap">Complexity, latency and cost rise left &rarr; right &mdash; <b style="color:var(--red)">use the simplest that works</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">06</span></div>
+  </section>
+
+  <section class="slide" data-notes='["What agents unlock for a bank: genuinely multi-step work that spans systems.", "Multi-step KYC onboarding, investigating a fraud alert, an RM researching across internal systems, and reconciliation that chases discrepancies.", "But flag the caution now: autonomy plus money needs guardrails. We dedicate the final section to that."]'>
+    <div class="kicker"><span class="badge"></span>Why agents matter for a bank</div>
+    <h2 class="slide-title" data-r data-d="1">Multi-step work, across systems</h2>
+    <div class="cards c2" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></div><h3>Know Your Customer (KYC)</h3><p>Onboarding: gather, verify and check documents across steps.</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div><h3>Fraud investigation</h3><p>Pull data, check patterns, cross-ref, draft a case.</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 7V3M8 13h.01M16 13h.01"/></svg></div><h3>Relationship Manager (RM)</h3><p>Research answers across internal systems and knowledge.</p></div>
+      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7a8 8 0 0 1 13-3l3 3M20 17a8 8 0 0 1-13 3l-3-3M20 4v4h-4M4 20v-4h4"/></svg></div><h3>Reconciliation</h3><p>Match records and chase discrepancies.</p></div>
+    </div>
+    <div class="flow-cap" style="color:var(--red)">&#9888; Autonomy + money = needs guardrails (Section 4).</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">07</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["Part 1, about 24 minutes. We define the augmented LLM, the think-act-observe loop, and the five workflow patterns.", "These are composable building blocks — most production systems are workflows, not fully autonomous agents.", "End on a pragmatic take on frameworks: helpful, not required."]'>
+    <div class="pillar-no">01</div>
+    <div class="eyebrow"><span class="dot"></span>Part 1</div>
+    <h2>What an Agent Is Made Of</h2>
+    <p class="lead">Augmented LLM, the loop, and the building blocks that compose into agents.</p>
+    <div class="prog-rail"><span class="on">Design</span><span>Tools</span><span>Planning</span><span>Production</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">08</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The building block. An agent starts as an LLM augmented with three capabilities.", "Retrieval — the RAG from Day 1, to pull in knowledge. Tools — functions it can call to act. Memory — state it keeps across steps.", "Everything else today composes from this augmented LLM. It is the atom of agent design."]'>
+    <div class="kicker"><span class="badge"></span>The building block</div>
+    <h2 class="slide-title" data-r data-d="1">The augmented LLM</h2>
+    <div class="aug">
+      <div class="satc ret"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div><h4>Retrieval</h4><p>pull knowledge (Day-1 RAG)</p></div>
+      <div class="core" data-r data-d="2"><div class="t">LLM</div><div class="s">the reasoning engine</div></div>
+      <div class="satc tools"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 7a4 4 0 0 1-5 5L4 17l3 3 5-5a4 4 0 0 1 5-5l-3-3z"/></svg></div><h4>Tools</h4><p>functions it can call to act</p></div>
+      <div class="satc mem"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></div><h4>Memory</h4><p>state kept across steps</p></div>
+    </div>
+    <div class="flow-cap">An agent = an <b style="color:var(--red)">LLM + retrieval + tools + memory</b> &mdash; everything composes from this.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">09</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The heartbeat of every agent: think, act, observe, repeat — until the goal is met or a stop condition fires.", "The model reasons about what to do, calls a tool, reads the result, then decides the next step.", "This loop is what separates an agent from a single LLM call. Watch it cycle."]'>
+    <div class="kicker"><span class="badge"></span>The agent loop</div>
+    <h2 class="slide-title" data-r data-d="1">Think &rarr; Act &rarr; Observe &rarr; repeat</h2>
+    <div class="fillc">
+      <div class="aloop">
+        <div class="ring"></div>
+        <div class="hub">Agent<small>UNTIL GOAL</small></div>
+        <div class="ln n1" style="left:50%;top:8%"><div class="lic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5 3 3 0 0 0 2 4 3 3 0 0 0 5 1V4.5A2.5 2.5 0 0 0 9 4zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5 3 3 0 0 1-2 4 3 3 0 0 1-5 1"/></svg></div><div class="lt">Think</div></div>
+        <div class="ln dk n2" style="left:86%;top:74%"><div class="lic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></div><div class="lt">Act</div></div>
+        <div class="ln n3" style="left:14%;top:74%"><div class="lic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></div><div class="lt">Observe</div></div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">10</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Why the loop works at all: grounding. Every action returns real feedback from the environment — a tool result, code output, an API response.", "The agent uses that feedback to course-correct, rather than guessing in a vacuum the way a single prompt must.", "This is the deep reason agents can tackle multi-step tasks: reality checks them at every step."]'>
+    <div class="kicker"><span class="badge"></span>Why the loop works</div>
+    <h2 class="slide-title" data-r data-d="1">Every step gets real feedback</h2>
+    <div class="two" style="margin-top:18px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">Each action returns <b>real feedback</b> from the environment.</li>
+          <li data-r data-d="3" class="strong">Tool result, code output, API response &mdash; ground truth.</li>
+          <li data-r data-d="4">The agent <b>course-corrects</b> instead of guessing in a vacuum.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="flow" style="flex-direction:column;align-items:stretch;gap:0">
+          <div class="fcall" data-r data-d="3">
+            <div class="fnode model"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 7V3M8 13h.01M16 13h.01"/></svg></div><div class="ft">Act</div></div>
+            <div class="fconn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 4v15M6 13l6 6 6-6"/></svg><span class="chip res">real result</span></div>
+            <div class="fnode fn"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></div><div class="ft">Observe</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">11</span></div>
+  </section>
+
+  <section class="slide" data-notes='["What every production agent needs, named. The reasoning engine is the LLM itself.", "Tools are the actions; memory is context and state; orchestration is the loop and control flow; guardrails are the safety limits.", "Keep this map in mind — the rest of the deck deepens tools, orchestration patterns, and guardrails."]'>
+    <div class="kicker"><span class="badge"></span>The five core components</div>
+    <h2 class="slide-title" data-r data-d="1">What every agent needs</h2>
+    <div class="cards" style="grid-template-columns:repeat(5,1fr);margin-top:24px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5 3 3 0 0 0 2 4 3 3 0 0 0 5 1V4.5A2.5 2.5 0 0 0 9 4zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5 3 3 0 0 1-2 4 3 3 0 0 1-5 1"/></svg></div><h3>Reasoning</h3><p>the LLM engine</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 7a4 4 0 0 1-5 5L4 17l3 3 5-5a4 4 0 0 1 5-5l-3-3z"/></svg></div><h3>Tools</h3><p>actions it can take</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></div><h3>Memory</h3><p>context &amp; state</p></div>
+      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></div><h3>Orchestration</h3><p>the loop &amp; control</p></div>
+      <div class="card" data-r data-d="6"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg></div><h3>Guardrails</h3><p>safety &amp; limits</p></div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">12</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Memory comes in two kinds. Short-term is the running context window — this task&#39;s steps so far.", "Long-term is persisted facts and past tasks, usually stored and pulled back via RAG or a store.", "Managing context — what to keep, summarise or drop — is the real constraint on how far an agent can go."]'>
+    <div class="kicker"><span class="badge"></span>Memory</div>
+    <h2 class="slide-title" data-r data-d="1">Short-term vs long-term</h2>
+    <div class="vs" style="margin-top:24px">
+      <div class="panel accent" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg></span>Short-term</div>
+        <div class="ps">The running context window &mdash; this task&#39;s steps.</div>
+        <div class="chips"><span class="chip">recent steps</span><span class="chip">in-context</span><span class="chip">volatile</span></div>
+        <div class="where">Limited &mdash; <b>context management</b> is the real constraint.</div>
+      </div>
+      <div class="panel" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></span>Long-term</div>
+        <div class="ps">Persisted facts and past tasks.</div>
+        <div class="chips"><span class="chip">a store / RAG</span><span class="chip">recall on demand</span><span class="chip">durable</span></div>
+        <div class="where">Pulled back in when relevant.</div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">13</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Resist the urge to go multi-agent first. Start with one agent that does one thing well.", "Add an orchestrator plus worker agents only when complexity genuinely demands it — for example a researcher plus a separate verifier.", "More agents means more coordination overhead and more ways to fail. Single first."]'>
+    <div class="kicker"><span class="badge"></span>How many agents</div>
+    <h2 class="slide-title" data-r data-d="1">One agent first; multi only when needed</h2>
+    <div class="vs" style="margin-top:24px">
+      <div class="panel accent" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 7V3M8 13h.01M16 13h.01"/></svg></span>Single agent</div>
+        <div class="ps">One agent, one job, done well.</div>
+        <div class="chips"><span class="chip">simple</span><span class="chip">debuggable</span><span class="chip">start here</span></div>
+        <div class="where">Covers most tasks.</div>
+      </div>
+      <div class="panel" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></span>Multi-agent</div>
+        <div class="ps">An orchestrator delegates to worker agents.</div>
+        <div class="chips"><span class="chip">researcher</span><span class="chip">+ verifier</span><span class="chip">coordination cost</span></div>
+        <div class="where">Only when complexity <b>demands</b> it.</div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">14</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The lab-proven playbook: five composable workflow patterns. Prompt chaining runs sequential steps, each feeding the next, sometimes with check gates.", "Routing classifies the input and sends it down the right specialised path. Parallelization runs independent subtasks at once, or votes for confidence.", "Orchestrator-workers has a lead LLM split a task and delegate dynamically; evaluator-optimizer has one LLM draft and another critique, looping to improve."]'>
+    <div class="kicker"><span class="badge"></span>The five workflow patterns</div>
+    <h2 class="slide-title" data-r data-d="1">Composable building blocks</h2>
+    <div class="wfpat" style="margin-top:22px">
+      <div class="wfp"><h4>Prompt chaining</h4><div class="mini"><div class="mb r"></div><span class="ma">&rarr;</span><div class="mb"></div><span class="ma">&rarr;</span><div class="mb r"></div></div><p>Sequential steps, each feeds the next (+ gates).</p></div>
+      <div class="wfp"><h4>Routing</h4><div class="mini"><div class="mb"></div><span class="ma">&rarr;</span><div class="mcol"><div class="mb r"></div><div class="mb s"></div><div class="mb b"></div></div></div><p>Classify input, send to the right path.</p></div>
+      <div class="wfp"><h4>Parallelization</h4><div class="mini"><div class="mcol"><div class="mb r"></div><div class="mb b"></div><div class="mb r"></div></div></div><p>Independent subtasks at once, or vote.</p></div>
+      <div class="wfp"><h4>Orchestrator&ndash;workers</h4><div class="mini"><div class="mcol" style="align-items:center"><div class="mb r"></div><span class="ma">&darr;</span><div style="display:flex;gap:4px"><div class="mb"></div><div class="mb"></div><div class="mb"></div></div></div></div><p>A lead LLM splits and delegates.</p></div>
+      <div class="wfp"><h4>Evaluator&ndash;optimizer</h4><div class="mini"><div class="mb r"></div><span class="ma">&#8646;</span><div class="mb"></div></div><p>One drafts, one critiques, loop.</p></div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">15</span></div>
+  </section>
+
+  <section class="slide" data-notes='["A decision aid for picking a pattern. Clear sequential steps point to chaining; distinct input types point to routing.", "Independent subtasks favour parallelization; unpredictable complexity favours orchestrator-workers; iterative refinement favours evaluator-optimizer.", "Only truly open-ended problems justify a fully autonomous agent. Match the pattern to the problem shape."]'>
+    <div class="kicker"><span class="badge"></span>Matching pattern to problem</div>
+    <h2 class="slide-title" data-r data-d="1">Pick by the shape of the problem</h2>
+    <div class="cards c3" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 8l-4 4 4 4M16 8l4 4-4 4"/></svg></div><h3>Sequential steps</h3><p>&rarr; prompt chaining</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 21V4h11l-1.5 4L16 12H5"/></svg></div><h3>Distinct input types</h3><p>&rarr; routing</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></div><h3>Independent subtasks</h3><p>&rarr; parallelization</p></div>
+      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 7V3M8 13h.01M16 13h.01"/></svg></div><h3>Unpredictable complexity</h3><p>&rarr; orchestrator&ndash;workers</p></div>
+      <div class="card" data-r data-d="6"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7a8 8 0 0 1 13-3l3 3M20 17a8 8 0 0 1-13 3l-3-3M20 4v4h-4M4 20v-4h4"/></svg></div><h3>Needs refinement</h3><p>&rarr; evaluator&ndash;optimizer</p></div>
+      <div class="card" data-r data-d="7"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5 3 3 0 0 0 2 4 3 3 0 0 0 5 1V4.5A2.5 2.5 0 0 0 9 4zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5 3 3 0 0 1-2 4 3 3 0 0 1-5 1"/></svg></div><h3>Truly open-ended</h3><p>&rarr; autonomous agent</p></div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">16</span></div>
+  </section>
+
+  <section class="slide" data-notes='["An honest take on frameworks. You can build a capable agent in a few lines directly against the LLM API — the loop is not complicated.", "Open-source frameworks like LangGraph, LlamaIndex, CrewAI and BeeAI help with state and orchestration, but they add abstraction that can hide your prompts and your bugs.", "Use them if they earn their keep, but understand what is under the hood. As of 2026 this space moves fast — verify current options."]'>
+    <div class="kicker"><span class="badge"></span>Frameworks: helpful, not required</div>
+    <h2 class="slide-title" data-r data-d="1">You can build agents against the API directly</h2>
+    <div class="vs" style="margin-top:24px">
+      <div class="panel accent" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 8l-4 4 4 4M16 8l4 4-4 4"/></svg></span>API-direct</div>
+        <div class="ps">A few lines: call, run tool, loop.</div>
+        <div class="chips"><span class="chip">full control</span><span class="chip">prompts visible</span><span class="chip">easy to debug</span></div>
+        <div class="where">Great for understanding what really happens.</div>
+      </div>
+      <div class="panel" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></span>Open-source frameworks</div>
+        <div class="ps">LangGraph, LlamaIndex, CrewAI, BeeAI.</div>
+        <div class="chips"><span class="chip">state + orchestration</span><span class="chip">abstraction</span><span class="chip">can hide bugs</span></div>
+        <div class="where">Helpful &mdash; but <b>know what&#39;s under the hood</b>.</div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">17</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["Part 2, about 22 minutes. The demystifying spine: a tool is a normal function the model can ask you to run.", "We cover how function-calling actually works, how to write good tools, error handling, and MCP, the open standard.", "All open-source and self-hostable — you write the functions."]'>
+    <div class="pillar-no">02</div>
+    <div class="eyebrow"><span class="dot"></span>Part 2</div>
+    <h2>Tools &mdash; Giving the Model Hands</h2>
+    <p class="lead">A tool is just a function. No proprietary magic.</p>
+    <div class="prog-rail"><span>Design</span><span class="on">Tools</span><span>Planning</span><span>Production</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">18</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The single most demystifying point of the day: a tool is just a normal function — search a database, call an API, run a calculation.", "Plus a description and an input schema the model can read, so it knows when and how to use it.", "There is no proprietary magic. You write the function; the description tells the model what it does."]'>
+    <div class="kicker"><span class="badge"></span>A tool is just a function</div>
+    <h2 class="slide-title" data-r data-d="1">No proprietary magic &mdash; you write the function</h2>
+    <div class="two" style="margin-top:18px">
+      <div class="viz">
+        <div class="schema" data-r data-d="2"><span class="c"># a tool is a normal function</span><br/><span class="k">def</span> <span class="fn">get_balance</span>(account_id):<br/>&nbsp;&nbsp;<span class="k">return</span> db.lookup(account_id)</div>
+      </div>
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="3">A tool = a <b>normal function</b> (DB query, API call, calc)...</li>
+          <li data-r data-d="4" class="strong">...plus a <b>description + input schema</b> the model can read.</li>
+          <li data-r data-d="5">The model decides <b>when</b> to call it; your code runs it.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">19</span></div>
+  </section>
+
+  <section class="slide" data-notes='["How function-calling actually works — the round-trip. You give the model the tool schemas. The model outputs structured JSON naming a tool and its arguments.", "Your code runs the real function and feeds the result back. The model reads it and continues.", "The crucial point: the model never executes anything itself. It only requests; your code acts. That is what keeps it controllable."]'>
+    <div class="kicker"><span class="badge"></span>How function-calling works</div>
+    <h2 class="slide-title" data-r data-d="1">The model requests; your code runs it</h2>
+    <div class="fcall">
+      <div class="fnode model" data-r data-d="2"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 7V3M8 13h.01M16 13h.01"/></svg></div><div class="ft">Model</div><div class="fs">emits a tool call</div></div>
+      <div class="fconn"><span class="chip">{"tool":"get_balance"}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="fnode fn" data-r data-d="3"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 7a4 4 0 0 1-5 5L4 17l3 3 5-5a4 4 0 0 1 5-5l-3-3z"/></svg></div><div class="ft">Your function</div><div class="fs">runs for real</div></div>
+      <div class="fconn"><span class="chip res">"$4,210.50"</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="fnode model" data-r data-d="4"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg></div><div class="ft">Model</div><div class="fs">uses the result</div></div>
+    </div>
+    <div class="flow-cap">The model <b style="color:var(--red)">never executes anything</b> &mdash; it requests, your code acts, the result returns.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">20</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Zoom in on the anatomy of a tool the model actually sees. Three parts: a clear name, a plain-English description of what it does and when to use it, and a typed input schema.", "The model reads only these — it never sees your code. So the description and schema are effectively the prompt for the tool.", "A vague description means the model calls the wrong tool at the wrong time. Treat this like UI copy for the model."]'>
+    <div class="kicker"><span class="badge"></span>Anatomy of a tool</div>
+    <h2 class="slide-title" data-r data-d="1">Name, description, input schema</h2>
+    <div class="two" style="margin-top:18px">
+      <div class="viz">
+        <div class="schema" data-r data-d="2"><span class="c"># what the model actually sees</span><br/>{<br/>&nbsp;&nbsp;<span class="s">"name"</span>: <span class="s">"get_account_balance"</span>,<br/>&nbsp;&nbsp;<span class="s">"description"</span>: <span class="s">"Balance for a</span><br/>&nbsp;&nbsp;&nbsp;<span class="s">customer's account, in SGD."</span>,<br/>&nbsp;&nbsp;<span class="s">"input_schema"</span>: {<br/>&nbsp;&nbsp;&nbsp;<span class="s">"account_id"</span>: <span class="k">string</span><br/>&nbsp;&nbsp;}<br/>}</div>
+      </div>
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="3"><b>Name</b> &mdash; what to call it.</li>
+          <li data-r data-d="4" class="strong"><b>Description</b> &mdash; what it does &amp; <b>when</b> to use it.</li>
+          <li data-r data-d="5"><b>Input schema</b> &mdash; typed arguments the model must supply.</li>
+          <li data-r data-d="6">The model never sees your code &mdash; <b style="color:var(--red)">this is the prompt for the tool</b>.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">21</span></div>
+  </section>
+
+  <section class="slide" data-notes='["How to write tools the model uses well. Make each tool do one clear thing, with an unambiguous description and a name that reads like its purpose.", "Avoid overlapping tools that do nearly the same job — the model will dither between them. Keep arguments few and well-typed.", "Rule of thumb from the labs: if a new hire couldn&#39;t tell from the description when to use the tool, neither can the model."]'>
+    <div class="kicker"><span class="badge"></span>Writing good tools</div>
+    <h2 class="slide-title" data-r data-d="1">Design tools like you'd brief a new hire</h2>
+    <div class="vs" style="margin-top:24px">
+      <div class="panel" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3zM12 10v4M12 17h.01"/></svg></span>Hard for the model</div>
+        <div class="ps">Vague, overlapping, do-everything tools.</div>
+        <div class="chips"><span class="chip">"process_data"</span><span class="chip">10 optional args</span><span class="chip">two similar tools</span></div>
+        <div class="where">The model picks the wrong one, or guesses arguments.</div>
+      </div>
+      <div class="panel accent" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg></span>Easy for the model</div>
+        <div class="ps">One job, clear name, few typed arguments.</div>
+        <div class="chips"><span class="chip">"get_account_balance"</span><span class="chip">1&ndash;2 args</span><span class="chip">distinct purpose</span></div>
+        <div class="where">If a new hire couldn't tell <b>when</b> to use it, neither can the model.</div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">22</span></div>
+  </section>
+
+  <section class="slide" data-notes='["What a tool returns matters as much as what it does. Return concise, structured results the model can read — not a 5,000-row dump that floods the context window.", "Handle errors as data: instead of crashing, return a clear message like account not found so the model can recover and try another path.", "Good error text turns a dead end into a course-correction. The agent is only as resilient as its tools&#39; outputs."]'>
+    <div class="kicker"><span class="badge"></span>Results &amp; errors</div>
+    <h2 class="slide-title" data-r data-d="1">Return results the model can act on</h2>
+    <div class="vs" style="margin-top:24px">
+      <div class="panel" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3zM12 10v4M12 17h.01"/></svg></span>Poor output</div>
+        <div class="ps">Raw dumps, silent crashes, cryptic codes.</div>
+        <div class="chips"><span class="chip">5,000-row dump</span><span class="chip">throws &amp; dies</span><span class="chip">"Error 500"</span></div>
+        <div class="where">Floods context or stops the loop dead.</div>
+      </div>
+      <div class="panel accent" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg></span>Good output</div>
+        <div class="ps">Concise, structured, errors as readable data.</div>
+        <div class="chips"><span class="chip">top 5 + total</span><span class="chip">"account not found"</span><span class="chip">recoverable</span></div>
+        <div class="where">The agent reads it and <b>course-corrects</b>.</div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">23</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The interoperability problem: every team re-writing the same tool integrations is wasteful. The Model Context Protocol, MCP, is an open standard that fixes this.", "Think of it as a universal plug: a tool or data source is wrapped once as an MCP server, and any MCP-aware agent can use it — like a USB port for tools.", "It is open and self-hostable, so a bank can run its own MCP servers in-house and share tools across teams without exposing data."]'>
+    <div class="kicker"><span class="badge"></span>Model Context Protocol (MCP)</div>
+    <h2 class="slide-title" data-r data-d="1">A universal plug for tools</h2>
+    <div class="mcp">
+      <div class="mcol2 left">
+        <div class="mpill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg> Database</div>
+        <div class="mpill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg> Documents</div>
+        <div class="mpill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 7a4 4 0 0 1-5 5L4 17l3 3 5-5a4 4 0 0 1 5-5l-3-3z"/></svg> Internal APIs</div>
+      </div>
+      <div class="mhub" data-r data-d="2"><div class="t">MCP</div><div class="s">open standard<br/>"USB for tools"</div></div>
+      <div class="mcol2 right">
+        <div class="mpill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 7V3M8 13h.01M16 13h.01"/></svg> Agent A</div>
+        <div class="mpill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 7V3M8 13h.01M16 13h.01"/></svg> Agent B</div>
+        <div class="mpill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg> Any client</div>
+      </div>
+    </div>
+    <div class="flow-cap">Wrap a tool <b>once</b> as an MCP server &mdash; any MCP-aware agent can use it. Open &amp; <b style="color:var(--red)">self-hostable</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">24</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The open-source agent stack a bank can actually run in-house. Open-weight models like Qwen and Llama as the reasoning engine.", "Frameworks such as LangGraph and LlamaIndex for orchestration; MCP for tools; and vector stores like FAISS or pgvector for memory and retrieval.", "Everything here is self-hostable — no customer data leaves the bank. As of 2026 the names move fast; the layers are what to remember."]'>
+    <div class="kicker"><span class="badge"></span>The open-source agent stack</div>
+    <h2 class="slide-title" data-r data-d="1">All self-hostable, in-house</h2>
+    <div class="cards" style="grid-template-columns:repeat(4,1fr);margin-top:24px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5 3 3 0 0 0 2 4 3 3 0 0 0 5 1V4.5A2.5 2.5 0 0 0 9 4zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5 3 3 0 0 1-2 4 3 3 0 0 1-5 1"/></svg></div><h3>Reasoning</h3><p>open-weight LLMs &mdash; Qwen, Llama</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></div><h3>Orchestration</h3><p>LangGraph, LlamaIndex, CrewAI</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 2v6M15 2v6M7 8h10v3a5 5 0 0 1-10 0zM12 16v6"/></svg></div><h3>Tools</h3><p>MCP servers you write</p></div>
+      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></div><h3>Memory</h3><p>FAISS, pgvector, Milvus</p></div>
+    </div>
+    <div class="flow-cap" style="font-style:italic">No customer data leaves the bank. Names move fast (as of 2026) &mdash; remember the <b>layers</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">25</span></div>
+  </section>
+
+  <section class="slide demo-slide" data-demo="1" data-notes='["Recorded demo, replayed live. The smallest possible agent loop in plain Python against the LLM API — no framework.", "Cell 1 defines one tool, get_account_balance. Cell 2 sends the user question plus the tool schema. Cell 3 shows the model emitting a tool call as structured JSON; our code runs the real function. Cell 4 feeds the result back and the model writes the final answer.", "Press R to replay. That is the entire pattern: define tools, let the model request, run it, return the result, repeat."]'>
+    <div class="kicker" data-r><span class="badge"></span>Recorded Demo · the smallest agent</div>
+    <h2 class="slide-title" data-r data-d="1">An agent loop in plain Python</h2>
+    <div class="body-area">
+      <div class="demo-stage">
+        <div class="nb" id="nb1">
+          <div class="nb-top"><span class="t-ic r"></span><span class="t-ic"></span><span class="t-ic g"></span><span class="nb-name">tiny_agent.ipynb</span><span class="nb-kernel">Python 3</span></div>
+          <div class="nb-body">
+            <div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[1]</div><div class="nb-code"><span class="tok-kw">def</span> get_account_balance(account_id):
+    <span class="tok-kw">return</span> db.lookup(account_id)  <span style="color:#7d8590"># real query</span>
+
+tools = [schema_of(get_account_balance)]</div></div><div class="nb-out"><span class="muted"># 1 tool registered</span></div></div>
+            <div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[2]</div><div class="nb-code">msg = <span style="color:#0a7">"What's the balance on account A-1029?"</span>
+resp = llm(messages=[user(msg)], tools=tools)</div></div><div class="nb-out"><span class="muted"># model decides what to do...</span></div></div>
+            <div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[3]</div><div class="nb-code">resp.tool_call</div></div><div class="nb-out"><span style="color:#79c0ff">{"tool"</span>: <span style="color:#a5d6ff">"get_account_balance"</span>, <span style="color:#79c0ff">"account_id"</span>: <span style="color:#a5d6ff">"A-1029"</span>}</div></div>
+            <div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[4]</div><div class="nb-code">result = get_account_balance(<span style="color:#a5d6ff">"A-1029"</span>)
+llm(messages=[..., tool_result(result)])</div></div><div class="nb-out"><span style="color:#7be0a6">"Account A-1029 has a balance of SGD 4,210.50."</span></div></div>
+          </div>
+        </div>
+        <div class="demo-side">
+          <div class="demo-card" data-r data-d="2"><div class="dk">&#9654; Demo · learning goal</div><h3>Define &middot; request &middot; run &middot; return</h3><p>No framework &mdash; just the LLM application programming interface (API). One tool, one loop. This is every agent in miniature.</p></div>
+          <ul class="demo-steps" id="demo1steps" data-r data-d="3">
+            <li data-step="0"><span class="sn">1</span>Define one tool + its schema</li>
+            <li data-step="1"><span class="sn">2</span>Send the question <em>and</em> the tools</li>
+            <li data-step="2"><span class="sn">3</span>Model emits a tool call &mdash; JavaScript Object Notation (JSON)</li>
+            <li data-step="3"><span class="sn">4</span>Run it, return result &rarr; final answer</li>
+          </ul>
+          <button class="replay" data-replay="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 109-9 9 9 0 00-7 3.3M3 3v4h4"/></svg>Replay demo</button>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">26</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["Part 3, about 24 minutes. Now the agent has hands; this is the brain — how it decides the next step.", "We cover three reasoning patterns: ReAct, plan-and-execute, and Reflexion-style self-critique.", "Then a worked banking trajectory, how to evaluate agents, and the failure modes that bite in production."]'>
+    <div class="pillar-no">03</div>
+    <div class="eyebrow"><span class="dot"></span>Part 3</div>
+    <h2>Planning &amp; Reasoning</h2>
+    <p class="lead">How an agent decides what to do next &mdash; ReAct, plan-and-execute, and reflection.</p>
+    <div class="prog-rail"><span>Design</span><span>Tools</span><span class="on">Planning</span><span>Production</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">27</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Why planning matters. For a one-step question the model can just answer. But real banking tasks have many steps with dependencies — you must do A before you can do B.", "Without a plan the agent wanders, repeats itself, or stops early. Planning is how it sequences steps toward a goal and knows when it&#39;s done.", "The patterns that follow are different answers to one question: how much to plan up front versus decide step by step."]'>
+    <div class="kicker"><span class="badge"></span>Why planning matters</div>
+    <h2 class="slide-title" data-r data-d="1">Real tasks have many dependent steps</h2>
+    <div class="two" style="margin-top:18px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">One-step questions need no plan &mdash; just answer.</li>
+          <li data-r data-d="3" class="strong">Real tasks have <b>dependencies</b>: do A before B before C.</li>
+          <li data-r data-d="4">Without a plan: the agent wanders, repeats, or stops early.</li>
+          <li data-r data-d="5">Planning = <b style="color:var(--red)">sequence steps + know when you're done</b>.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="flow" style="flex-direction:column;align-items:stretch;gap:0">
+          <div class="fcall" data-r data-d="3">
+            <div class="fnode fn"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 21V4h11l-1.5 4L16 12H5"/></svg></div><div class="ft">Goal</div><div class="fs">flag the alert</div></div>
+            <div class="fconn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 4v15M6 13l6 6 6-6"/></svg><span class="chip">decompose</span></div>
+            <div class="fnode model"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/></svg></div><div class="ft">Plan</div><div class="fs">ordered steps</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">28</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The workhorse pattern: ReAct — Reason and Act, interleaved. The agent thinks out loud, takes one action, observes the result, then thinks again.", "It plans one step at a time, using real feedback before committing to the next. That makes it robust and easy to follow — you can read its reasoning trace.", "ReAct is the sensible default for most agents. Plan one step, act, observe, repeat."]'>
+    <div class="kicker"><span class="badge"></span>Pattern 1 · ReAct</div>
+    <h2 class="slide-title" data-r data-d="1">Reason + Act, one step at a time</h2>
+    <div class="two" style="margin-top:10px">
+      <div class="viz">
+        <div class="aloop">
+          <div class="ring"></div>
+          <div class="hub">ReAct<small>STEP BY STEP</small></div>
+          <div class="ln n1" style="left:50%;top:8%"><div class="lic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5 3 3 0 0 0 2 4 3 3 0 0 0 5 1V4.5A2.5 2.5 0 0 0 9 4zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5 3 3 0 0 1-2 4 3 3 0 0 1-5 1"/></svg></div><div class="lt">Reason</div></div>
+          <div class="ln dk n2" style="left:86%;top:74%"><div class="lic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></div><div class="lt">Act</div></div>
+          <div class="ln n3" style="left:14%;top:74%"><div class="lic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></div><div class="lt">Observe</div></div>
+        </div>
+      </div>
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">Think out loud &rarr; one action &rarr; observe &rarr; repeat.</li>
+          <li data-r data-d="3" class="strong">Plans <b>one step at a time</b> on real feedback.</li>
+          <li data-r data-d="4">Readable reasoning trace &mdash; easy to debug.</li>
+          <li data-r data-d="5">The <b style="color:var(--red)">sensible default</b> for most agents.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">29</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Plan-and-execute flips the order: the agent writes a full plan up front, then carries out each step, optionally re-planning if something changes.", "Up-front planning is more efficient for long tasks — fewer expensive reasoning calls — and the plan is easy to review before anything runs.", "The trade-off: a plan made too early can be wrong. Good systems let the agent revise the plan when reality disagrees."]'>
+    <div class="kicker"><span class="badge"></span>Pattern 2 · Plan-and-Execute</div>
+    <h2 class="slide-title" data-r data-d="1">Plan all steps first, then execute</h2>
+    <div class="flow" style="margin-top:30px">
+      <div class="step"><div class="node">1</div><h4>Plan</h4><p>write all steps up front</p><div class="arrow"></div></div>
+      <div class="step"><div class="node hot">2</div><h4>Execute</h4><p>carry out each step</p><div class="arrow"></div></div>
+      <div class="step"><div class="node">3</div><h4>Re-plan</h4><p>revise if reality differs</p></div>
+    </div>
+    <div class="vs" style="margin-top:30px">
+      <div class="panel accent" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg></span>Strengths</div>
+        <div class="ps">Efficient on long tasks; the plan is reviewable before it runs.</div>
+        <div class="chips"><span class="chip">fewer reasoning calls</span><span class="chip">auditable plan</span><span class="chip">predictable</span></div>
+        <div class="where">Good for long, structured tasks.</div>
+      </div>
+      <div class="panel" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3zM12 10v4M12 17h.01"/></svg></span>Watch out</div>
+        <div class="ps">A plan made too early can be wrong as reality unfolds.</div>
+        <div class="chips"><span class="chip">stale plan</span><span class="chip">rigid</span><span class="chip">needs re-planning</span></div>
+        <div class="where">Let the agent <b>revise</b> when reality disagrees.</div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">30</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The third pattern adds self-critique. After an attempt the agent reflects: did that work? what went wrong? — and uses the critique to improve the next try.", "Reflexion-style loops noticeably raise quality on hard tasks, because the agent learns from its own mistakes within the run.", "The cost is more steps and more tokens, so reserve it for high-stakes tasks where getting it right outweighs the extra spend."]'>
+    <div class="kicker"><span class="badge"></span>Pattern 3 · Reflection</div>
+    <h2 class="slide-title" data-r data-d="1">The agent critiques its own work</h2>
+    <div class="fcall">
+      <div class="fnode model" data-r data-d="2"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></div><div class="ft">Attempt</div><div class="fs">do the task</div></div>
+      <div class="fconn"><span class="chip">result</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="fnode fn" data-r data-d="3"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></div><div class="ft">Reflect</div><div class="fs">what went wrong?</div></div>
+      <div class="fconn"><span class="chip res">lessons</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="fnode model" data-r data-d="4"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg></div><div class="ft">Retry</div><div class="fs">improved attempt</div></div>
+    </div>
+    <div class="flow-cap">Self-critique lifts quality on hard tasks &mdash; at the cost of <b style="color:var(--red)">more steps &amp; tokens</b>. Reserve for high-stakes work.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">31</span></div>
+  </section>
+
+  <section class="slide" data-notes='["These patterns are not rivals — you combine them. ReAct for the moment-to-moment loop, a plan to give it structure, reflection at checkpoints for quality.", "Match the pattern to the task: simple and reactive, use ReAct; long and structured, plan first; high-stakes, add reflection.", "Start with the simplest that works and layer on only what the task demands — the golden rule, again."]'>
+    <div class="kicker"><span class="badge"></span>Choosing &amp; combining</div>
+    <h2 class="slide-title" data-r data-d="1">Mix patterns to fit the task</h2>
+    <div class="cards c3" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/></svg></div><h3>Reactive &amp; simple</h3><p>&rarr; ReAct</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/></svg></div><h3>Long &amp; structured</h3><p>&rarr; plan-and-execute</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></div><h3>High-stakes quality</h3><p>&rarr; add reflection</p></div>
+    </div>
+    <div class="flow-cap">Real agents <b>combine</b> them: ReAct loop + a plan + reflection at checkpoints. <b style="color:var(--red)">Simplest that works</b>, then layer up.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">32</span></div>
+  </section>
+
+  <section class="slide" data-notes='["A concrete trajectory: an agent investigating a fraud alert, shown as think-act-observe steps. This is illustrative, not a real OCBC system.", "It reasons about what to check, calls a tool to pull recent transactions, observes an unusual overseas charge, checks the customer&#39;s travel notes, finds none, and drafts a case for a human.", "Notice the last step: it does not block the card itself. It prepares the decision and hands off to a human. That hand-off is the whole point of the next section."]'>
+    <div class="kicker"><span class="badge"></span>A banking trajectory</div>
+    <h2 class="slide-title" data-r data-d="1">Fraud alert, step by step</h2>
+    <div class="traj">
+      <div class="trow"><div class="tbadge think">Think</div><div class="tx">Alert on account A-1029. I should pull recent transactions first.</div></div>
+      <div class="trow"><div class="tbadge act">Act</div><div class="tx"><code>get_transactions("A-1029", days=7)</code></div></div>
+      <div class="trow"><div class="tbadge obs">Observe</div><div class="tx">3 normal charges + one SGD 9,650 charge overseas, 02:14.</div></div>
+      <div class="trow"><div class="tbadge think">Think</div><div class="tx">Overseas + odd hour is unusual. Did the customer flag travel?</div></div>
+      <div class="trow"><div class="tbadge act">Act</div><div class="tx"><code>check_travel_notice("A-1029")</code> &rarr; <b>none on file</b>.</div></div>
+      <div class="trow"><div class="tbadge obs">Observe</div><div class="tx">No travel notice. Draft a case &amp; <b style="color:var(--red)">escalate to a human</b> &mdash; do <em>not</em> block the card autonomously.</div></div>
+    </div>
+    <div class="flow-cap" style="font-style:italic">Illustrative. The agent <b>prepares the decision</b>; a human makes the call.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">33</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Evaluating agents is harder than evaluating a single answer, because the path matters, not just the final output.", "Track four things: task success — did it achieve the goal; trajectory quality — were the steps sensible; cost and latency — tokens, tool calls, time; and safety — did it stay within bounds.", "Build a test set of real tasks and score runs against it. As with any model, you cannot improve what you do not measure."]'>
+    <div class="kicker"><span class="badge"></span>Evaluating agents</div>
+    <h2 class="slide-title" data-r data-d="1">The path matters, not just the answer</h2>
+    <div class="cards" style="grid-template-columns:repeat(4,1fr);margin-top:24px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg></div><h3>Task success</h3><p>did it hit the goal?</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/></svg></div><h3>Trajectory</h3><p>were the steps sensible?</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 18a8 8 0 1 1 16 0M12 14l4-4"/></svg></div><h3>Cost &amp; latency</h3><p>tokens, calls, time</p></div>
+      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg></div><h3>Safety</h3><p>stayed in bounds?</p></div>
+    </div>
+    <div class="flow-cap">Build a test set of <b>real tasks</b> and score runs against it &mdash; <b style="color:var(--red)">you can't improve what you don't measure</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">34</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The failure modes that bite in production. Runaway loops: an agent stuck repeating actions can burn real money — one widely-cited case ran up about 47,000 US dollars in API costs from an unbounded loop.", "Prompt injection: malicious text inside a document or web page hijacks the agent&#39;s instructions — a serious risk when tools touch money. Hallucinated tool calls and compounding errors round it out.", "Each of these is why the next slide is guardrails. Autonomy without limits is a liability."]'>
+    <div class="kicker"><span class="badge"></span>Failure modes</div>
+    <h2 class="slide-title" data-r data-d="1">What goes wrong in production</h2>
+    <div class="cards c2" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/></svg></div><h3>Runaway loops</h3><p>Stuck repeating actions &mdash; a real case burned ~US$47K in API costs.</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3zM12 10v4M12 17h.01"/></svg></div><h3>Prompt injection</h3><p>Malicious text in a doc/page hijacks the agent&#39;s instructions.</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 7V3M8 13h.01M16 13h.01"/></svg></div><h3>Hallucinated calls</h3><p>Invents a tool or fakes arguments that don&#39;t exist.</p></div>
+      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7a8 8 0 0 1 13-3l3 3M20 17a8 8 0 0 1-13 3l-3-3M20 4v4h-4M4 20v-4h4"/></svg></div><h3>Compounding errors</h3><p>A wrong early step quietly corrupts every step after.</p></div>
+    </div>
+    <div class="flow-cap" style="color:var(--red)">&#9888; Autonomy without limits is a liability &mdash; hence guardrails, next.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">35</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["Part 4, the last stretch, about 12 minutes. Everything so far is capability; this is responsibility.", "Guardrails, human-in-the-loop, and an end-to-end picture of how a bank would deploy an agent.", "This is the section that matters most in a regulated environment — autonomy plus money demands control."]'>
+    <div class="pillar-no">04</div>
+    <div class="eyebrow"><span class="dot"></span>Part 4</div>
+    <h2>Production &amp; Safety</h2>
+    <p class="lead">Guardrails, human oversight, and wiring an agent into a bank responsibly.</p>
+    <div class="prog-rail"><span>Design</span><span>Tools</span><span>Planning</span><span class="on">Production</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">36</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The control layer. Permission scopes: the agent only gets tools it truly needs — least privilege. Limits: caps on steps, spend and time so a loop can&#39;t run away.", "Human-in-the-loop: a person approves any high-stakes or irreversible action — moving money, blocking a card. Validation: check tool inputs and outputs, and sandbox anything that runs code.", "For a bank these are not optional. The design rule: the agent proposes, a human disposes on anything that matters."]'>
+    <div class="kicker"><span class="badge"></span>Guardrails</div>
+    <h2 class="slide-title" data-r data-d="1">The agent proposes; a human disposes</h2>
+    <div class="cards c2" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg></div><h3>Least privilege</h3><p>Only the tools it truly needs &mdash; nothing more.</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 18a8 8 0 1 1 16 0M12 14l4-4"/></svg></div><h3>Hard limits</h3><p>Caps on steps, spend and time &mdash; no runaway loops.</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><h3>Human-in-the-loop</h3><p>A person approves money-moving or irreversible actions.</p></div>
+      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg></div><h3>Validation</h3><p>Check tool inputs/outputs; sandbox any code execution.</p></div>
+    </div>
+    <div class="flow-cap" style="color:var(--red)">In a regulated bank these are <b>not optional</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">37</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Putting it all together for a bank. A request comes in; the agent plans; it calls in-house tools over MCP, all on open-weight models hosted on-premise so data never leaves.", "Guardrails wrap every step — scopes, limits, validation — and any high-stakes action routes to a human for approval before it executes.", "This is illustrative unless we have real details, but the shape is right: open, self-hosted, guard-railed, with a human on the critical path."]'>
+    <div class="kicker"><span class="badge"></span>End-to-end at a bank</div>
+    <h2 class="slide-title" data-r data-d="1">An agent, wired responsibly</h2>
+    <div class="flow" style="margin-top:6px">
+      <div class="step"><div class="node">1</div><h4>Request</h4><p>a goal arrives</p><div class="arrow"></div></div>
+      <div class="step"><div class="node">2</div><h4>Plan + loop</h4><p>on-prem open model</p><div class="arrow"></div></div>
+      <div class="step"><div class="node">3</div><h4>Tools via MCP</h4><p>in-house, self-hosted</p><div class="arrow"></div></div>
+      <div class="step"><div class="node hot">4</div><h4>Human approves</h4><p>high-stakes actions</p></div>
+    </div>
+    <div class="flow-cap" style="font-style:italic">Open-weight &middot; on-premise &middot; guard-railed &middot; human on the critical path. Illustrative unless real details apply.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">38</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Recap the whole deck. An agent is an LLM plus tools plus a loop that runs until a goal is met.", "A tool is just a function with a description and schema; planning patterns — ReAct, plan-and-execute, reflection — decide the next step; and guardrails plus a human keep it safe.", "Above all: start simple, add autonomy only when justified, and keep a human on anything that moves money."]'>
+    <div class="kicker"><span class="badge"></span>Recap</div>
+    <h2 class="slide-title" data-r data-d="1">Five things to take away</h2>
+    <div class="two" style="margin-top:18px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">Agent = <b>LLM + tools + a loop</b> to a goal.</li>
+          <li data-r data-d="3">A tool is <b>just a function</b> + description + schema.</li>
+          <li data-r data-d="4">Planning patterns: <b>ReAct</b>, plan-and-execute, reflection.</li>
+          <li data-r data-d="5">Guardrails + a human keep autonomy <b>safe</b>.</li>
+          <li data-r data-d="6" class="strong"><b style="color:var(--red)">Start simple; add autonomy only when justified.</b></li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="aug" style="max-width:none">
+          <div class="satc ret"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 7a4 4 0 0 1-5 5L4 17l3 3 5-5a4 4 0 0 1 5-5l-3-3z"/></svg></div><h4>Tools</h4><p>functions it can call</p></div>
+          <div class="core"><div class="t">Agent</div><div class="s">LLM + loop</div></div>
+          <div class="satc tools"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/></svg></div><h4>Planning</h4><p>decide next step</p></div>
+          <div class="satc mem"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg></div><h4>Guardrails</h4><p>+ human oversight</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">39</span></div>
+  </section>
+
+  <section class="slide dark" data-notes='["Land the plane. We turned a knowledgeable text predictor into something that can act — an agent — and saw how to do it safely in a bank.", "Call back to the opener: an agent is just a language model that can take actions, and decide which ones to take. Now you can reason about one end to end.", "Thank them. This wraps the CRAYON series — open the floor for questions."]'>
+    <div class="body-area" style="justify-content:center">
+      <div class="kicker" data-r><span class="badge"></span>Wrap &amp; Q&amp;A</div>
+      <h2 class="slide-title" data-r data-d="1" style="font-size:44px;margin-bottom:6px">From text predictor to agent</h2>
+      <p class="slide-sub" data-r data-d="2" style="color:rgba(255,255,255,.65);margin-bottom:26px">You can now reason about an agent end to end &mdash; and explain why a bank keeps a human in the loop.</p>
+      <div class="recap-grid" style="flex:none">
+        <div class="recap-col recap" data-r data-d="3">
+          <h4><span style="width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block"></span>What we covered</h4>
+          <ul>
+            <li>Agent = LLM + tools + a loop</li>
+            <li>Tools, function-calling &amp; MCP</li>
+            <li>Planning: ReAct, plan-and-execute, reflection</li>
+            <li>Evaluation, failure modes &amp; guardrails</li>
+          </ul>
+        </div>
+        <div class="recap-col next" data-r data-d="4">
+          <h4><span style="width:8px;height:8px;border-radius:50%;background:#ff6a6f;display:inline-block"></span>Carry it forward</h4>
+          <ul>
+            <li><b style="color:#fff">Start simple &mdash; add autonomy only when justified</b></li>
+            <li>Open-weight, self-hosted, guard-railed</li>
+            <li>Keep a human on anything that moves money</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">40</span></div>
+  </section>
+
+  </main>
+</div>
+
+<div class="hud">
+  <div class="dots" id="dots"></div>
+  <div class="count">slide <b id="cur">1</b> / <span id="tot">34</span></div>
+</div>
+<div class="hint"><kbd>→</kbd> next &nbsp; <kbd>←</kbd> back &nbsp; <kbd>N</kbd> notes &nbsp; <kbd>F</kbd> full</div>
+
+<div class="rotate-cue" aria-hidden="true">
+  <div>
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="7" y="2" width="10" height="20" rx="2.2"/><path d="M11 18.5h2"/></svg>
+    <h4>Rotate your device</h4>
+    <p>This deck is built for a wide 16:9 stage — turn your phone to landscape for the full view.</p>
+  </div>
+</div>
+
+<div class="notes" id="notes">
+  <button class="close" id="notesClose">&times;</button>
+  <h5><span style="width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block"></span>Speaker notes</h5>
+  <ul id="notesBody"></ul>
+</div>
+
+<script>
+/* ---- fit fixed 1280x720 stage to viewport ---- */
+const STATIC = location.search.includes('static');
+if(STATIC) document.body.classList.add('static');
+const deck = document.getElementById('deck');
+function fit(){
+  const vv = window.visualViewport;
+  const w = (vv && vv.width)  || innerWidth  || document.documentElement.clientWidth  || 1280;
+  const h = (vv && vv.height) || innerHeight || document.documentElement.clientHeight || 720;
+  const s = Math.min(w/1280, h/720) || 1;
+  // anchor top-left and centre with an explicit pixel offset — robust even when
+  // the deck is larger than the viewport (small mobile-landscape screens)
+  const x = (w - 1280*s) / 2, y = (h - 720*s) / 2;
+  deck.style.transform = `translate(${x}px, ${y}px) scale(${s>0?s:1})`;
+}
+addEventListener('resize', fit);
+addEventListener('load', fit);
+// mobile: re-fit when rotating or when the browser chrome resizes the visible area
+addEventListener('orientationchange', ()=>{ fit(); setTimeout(fit,200); setTimeout(fit,500); });
+if(window.visualViewport){ visualViewport.addEventListener('resize', fit); }
+fit(); requestAnimationFrame(fit); setTimeout(fit,120);
+
+/* ---- presentation controller ---- */
+const slides = [...document.querySelectorAll('.slide')];
+const TOT = slides.length;
+let i = 0;
+document.getElementById('tot').textContent = TOT;
+
+const dotsEl = document.getElementById('dots');
+slides.forEach((sl,idx)=>{
+  const d = document.createElement('span');
+  d.className='dot'+(sl.classList.contains('dark')?' sec':'');
+  d.addEventListener('click',()=>go(idx));
+  dotsEl.appendChild(d);
+});
+const dots=[...dotsEl.children];
+// page numbers follow slide order (so slides can be inserted freely)
+slides.forEach((s,idx)=>{const pg=s.querySelector('.foot .pg'); if(pg)pg.textContent=String(idx+1).padStart(2,'0');});
+
+const notesEl=document.getElementById('notes');
+const notesBody=document.getElementById('notesBody');
+function renderNotes(){
+  let data=[]; try{data=JSON.parse(slides[i].dataset.notes||'[]')}catch(e){}
+  notesBody.innerHTML='';
+  if(!data.length){notesBody.innerHTML='<li style="color:#777">No notes for this slide.</li>';}
+  data.forEach(t=>{const li=document.createElement('li');li.textContent=t;notesBody.appendChild(li);});
+}
+function go(n){
+  n=Math.max(0,Math.min(TOT-1,n));
+  if(n===i) return;
+  slides[i].classList.remove('active'); slides[i].classList.add('prev');
+  slides[n].classList.remove('prev'); slides[n].classList.add('active');
+  i=n; sync();
+}
+function sync(){
+  document.getElementById('progress').style.width=((i+1)/TOT*100)+'%';
+  document.getElementById('cur').textContent=i+1;
+  dots.forEach((d,x)=>d.classList.toggle('on',x===i));
+  location.hash=i+1;
+  if(notesEl.classList.contains('show')) renderNotes();
+  // (re)trigger counters on the active slide
+  triggerCounters(slides[i]);
+  playDemo(slides[i]);
+}
+function next(){go(i+1)} function prev(){go(i-1)}
+
+/* keyboard */
+addEventListener('keydown',e=>{
+  if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();next();}
+  else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();prev();}
+  else if(e.key==='Home'){go(0)} else if(e.key==='End'){go(TOT-1)}
+  else if(e.key.toLowerCase()==='n'){notesEl.classList.toggle('show'); renderNotes();}
+  else if(e.key.toLowerCase()==='f'){if(!document.fullscreenElement)document.documentElement.requestFullscreen();else document.exitFullscreen();}
+});
+document.getElementById('notesClose').addEventListener('click',()=>notesEl.classList.remove('show'));
+
+/* wheel (debounced) */
+let wlock=false;
+addEventListener('wheel',e=>{
+  if(wlock) return; if(Math.abs(e.deltaY)<18) return;
+  wlock=true; e.deltaY>0?next():prev();
+  setTimeout(()=>wlock=false,650);
+},{passive:true});
+
+/* touch */
+let tx=0,ty=0;
+addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
+addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty;
+  if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)) dx<0?next():prev();
+},{passive:true});
+
+/* counters */
+function triggerCounters(slide){
+  slide.querySelectorAll('[data-count]').forEach(el=>{
+    if(el.dataset.done) return; el.dataset.done='1';
+    const end=+el.dataset.count, pre=el.dataset.prefix||'', suf=el.dataset.suffix||'';
+    if(STATIC){el.innerHTML=pre+end+(suf?'<span class="unit">'+suf+'</span>':'');return;}
+    const dur=1100, t0=performance.now();
+    function tick(t){
+      const p=Math.min(1,(t-t0)/dur), e=1-Math.pow(1-p,3);
+      const v=Math.round(end*e);
+      el.innerHTML=pre+v+(suf?'<span class="unit">'+suf+'</span>':'');
+      if(p<1)requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+  // progress rings
+  slide.querySelectorAll('[data-ring]').forEach(el=>{
+    if(el.dataset.done) return; el.dataset.done='1';
+    const circle=el.querySelector('.fg'); if(!circle)return;
+    const pct=+el.dataset.ring, len=circle.getTotalLength();
+    if(STATIC){circle.style.strokeDasharray=len;circle.style.strokeDashoffset=len*(1-pct/100);const o=el.querySelector('.pct');if(o)o.textContent=pct+'%';return;}
+    circle.style.strokeDasharray=len; circle.style.strokeDashoffset=len;
+    requestAnimationFrame(()=>{circle.style.transition='stroke-dashoffset 1.3s cubic-bezier(.16,1,.3,1)';circle.style.strokeDashoffset=len*(1-pct/100);});
+    const out=el.querySelector('.pct'); if(out){const t0=performance.now();(function tk(t){const p=Math.min(1,(t-t0)/1300);out.textContent=Math.round(pct*(1-Math.pow(1-p,3)))+'%';if(p<1)requestAnimationFrame(tk);})(performance.now());}
+  });
+}
+
+/* notebook demo player */
+const demoTimers=[];
+function clearDemo(){demoTimers.forEach(clearTimeout); demoTimers.length=0;}
+function playDemo(slide){
+  if(!slide.classList.contains('demo-slide')) return;
+  clearDemo();
+  const cells=[...slide.querySelectorAll('.nb-cell')];
+  const steps=[...slide.querySelectorAll('.demo-steps li')];
+  cells.forEach(c=>{c.classList.remove('shown','running'); const o=c.querySelector('.nb-out'); if(o)o.classList.remove('shown'); const p=c.querySelector('.nb-prompt'); if(p){p.classList.remove('busy'); p.textContent='['+(cells.indexOf(c)+1)+']';}});
+  steps.forEach(s=>s.classList.remove('on'));
+  if(STATIC){cells.forEach(c=>{c.classList.add('shown'); const o=c.querySelector('.nb-out'); if(o)o.classList.add('shown');}); steps.forEach(s=>s.classList.add('on')); const body=slide.querySelector('.nb-body'); if(body){body.style.scrollBehavior='auto'; const snap=()=>body.scrollTop=body.scrollHeight; snap(); requestAnimationFrame(snap); setTimeout(snap,80);} return;}
+  let t=420;
+  cells.forEach((cell,idx)=>{
+    const prompt=cell.querySelector('.nb-prompt');
+    const out=cell.querySelector('.nb-out');
+    demoTimers.push(setTimeout(()=>{cell.classList.add('shown','running'); if(prompt){prompt.classList.add('busy'); prompt.textContent='[*]';} const body=cell.parentElement; body.scrollTop=Math.max(0,cell.offsetTop-90);},t));
+    t+=720;
+    demoTimers.push(setTimeout(()=>{
+      cell.classList.remove('running');
+      if(prompt){prompt.classList.remove('busy'); prompt.textContent='['+(idx+1)+']';}
+      if(out)out.classList.add('shown');
+      if(steps[idx])steps[idx].classList.add('on');
+    },t));
+    t+=820;
+  });
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-replay]'); if(!b) return;
+  playDemo(b.closest('.slide'));
+});
+addEventListener('keydown',e=>{if(e.key.toLowerCase()==='r'){const s=slides[i]; if(s.classList.contains('demo-slide'))playDemo(s);}});
+
+/* auto-hide chrome when idle */
+let idleT; function poke(){document.body.classList.remove('idle'); clearTimeout(idleT); idleT=setTimeout(()=>document.body.classList.add('idle'),3200);}
+['mousemove','keydown','touchstart','wheel','click'].forEach(ev=>addEventListener(ev,poke,{passive:true})); poke();
+
+/* deep link */
+if(location.hash){const n=parseInt(location.hash.slice(1));if(n>=1&&n<=TOT){slides[0].classList.remove('active');i=n-1;slides[i].classList.add('active');}}
+sync();
+</script>
+</body>
+</html>

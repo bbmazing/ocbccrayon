@@ -1,0 +1,1331 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Conversational AI Design · OCBC CRAYON</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+/* =========================================================================
+   OCBC CRAYON · Python Data Foundations
+   Self-contained animated deck. Fixed 16:9 stage, one slide at a time.
+   ========================================================================= */
+:root{
+  /* OCBC brand */
+  --red:#EC1B23; --red-dark:#B3141A; --red-deep:#7A0E12;
+  --ink:#1A1A1A; --charcoal:#202024; --charcoal-2:#2A2A2F;
+  --text:#1F2937; --muted:#6B7280; --faint:#9AA1AC;
+  --surface:#FFFFFF; --card:#F5F5F6; --card-2:#EFEFF1;
+  --line:#E4E7EB; --line-strong:#D6D9DE;
+  --tint-red:#FCEEEF; --tint-red-2:#FBE2E3;
+  --code-bg:#1A1C22; --code-ink:#E7E9EE;
+  /* supporting diagram hues (used sparingly) */
+  --blue:#1C6E9C; --teal:#0E7C6B; --amber:#C9851A; --green:#1E8E5A; --violet:#6C4FB3;
+  /* stage geometry */
+  --stageW:1280px; --stageH:720px;
+  --fHead:'Manrope',system-ui,sans-serif;
+  --fBody:'Inter',system-ui,sans-serif;
+  --fMono:'JetBrains Mono',ui-monospace,monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:#0c0c0e;
+  font-family:var(--fBody);
+  color:var(--text);
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+/* ---- Stage: scale a fixed 1280x720 deck to fit the viewport ---- */
+.stage{
+  position:fixed; inset:0; height:100dvh; display:grid; place-items:center;
+  background:
+    radial-gradient(1200px 700px at 80% -10%, rgba(236,27,35,.10), transparent 60%),
+    #0a0a0c;
+}
+.deck{
+  position:absolute; left:0; top:0;
+  width:var(--stageW); height:var(--stageH);
+  transform-origin:top left;
+  box-shadow:0 40px 120px -30px rgba(0,0,0,.8);
+  border-radius:4px; overflow:hidden;
+  background:#fff;
+}
+
+/* ---- Slides ---- */
+.slide{
+  position:absolute; inset:0;
+  width:var(--stageW); height:var(--stageH);
+  opacity:0; visibility:hidden; pointer-events:none;
+  transition:opacity .5s ease;
+  display:flex; flex-direction:column;
+  padding:62px 76px 58px;
+  background:var(--surface);
+}
+.slide.active{opacity:1; visibility:visible; pointer-events:auto; z-index:2}
+.slide.prev{z-index:1}
+
+/* dark slides (cover, dividers, close) */
+.slide.dark{
+  color:#fff;
+  background:
+    radial-gradient(900px 600px at 78% -8%, rgba(236,27,35,.30), transparent 55%),
+    radial-gradient(700px 500px at -5% 110%, rgba(236,27,35,.12), transparent 60%),
+    linear-gradient(160deg,#202024 0%,#161618 60%,#121214 100%);
+}
+.slide.dark::after{ /* fine grain texture */
+  content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
+  background-image:radial-gradient(rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size:3px 3px; mix-blend-mode:screen;
+}
+
+/* =========================================================================
+   Shared chrome: kicker, badge, footer, titles
+   ========================================================================= */
+.kicker{
+  display:inline-flex; align-items:center; gap:11px;
+  font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--red); margin-bottom:16px;
+}
+.kicker .badge{
+  width:24px; height:24px; border-radius:50%;
+  background:var(--red); position:relative; flex:none;
+  box-shadow:0 0 0 4px var(--tint-red);
+  overflow:hidden;
+}
+.kicker .badge::before{ /* rising-sun rays motif */
+  content:""; position:absolute; left:50%; bottom:5px; width:0; height:0;
+  border-left:7px solid transparent; border-right:7px solid transparent;
+  border-bottom:9px solid #fff; transform:translateX(-50%); opacity:.95;
+}
+.kicker .badge::after{
+  content:""; position:absolute; left:0; right:0; bottom:6px; height:1.5px;
+  background:rgba(255,255,255,.85);
+}
+.dark .kicker{color:#ff6a6f}
+.dark .kicker .badge{box-shadow:0 0 0 4px rgba(236,27,35,.25)}
+
+.slide-title{
+  font-family:var(--fHead); font-weight:800; color:var(--ink);
+  font-size:38px; line-height:1.08; letter-spacing:-.02em; max-width:24ch;
+}
+.dark .slide-title{color:#fff}
+.slide-sub{font-size:17px; color:var(--muted); margin-top:12px; max-width:60ch; line-height:1.5}
+
+.foot{
+  position:absolute; left:76px; right:76px; bottom:26px;
+  display:flex; align-items:center; justify-content:space-between;
+  font-size:12px; color:var(--faint); letter-spacing:.02em;
+}
+.foot .mark{display:flex; align-items:center; gap:9px; font-weight:600; color:var(--muted)}
+.foot .mark img{height:18px; width:auto; display:block}
+.foot .pg{font-family:var(--fMono); font-weight:500}
+.dark .foot{color:rgba(255,255,255,.5)}
+.dark .foot .mark{color:rgba(255,255,255,.7)}
+
+.body-area{flex:1; min-height:0; display:flex; flex-direction:column; margin-top:8px}
+
+/* =========================================================================
+   Reveal system — children animate in when slide becomes active
+   ========================================================================= */
+[data-r]{opacity:0; transform:translateY(16px); transition:opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1);}
+.slide.active [data-r]{opacity:1; transform:none}
+[data-r][data-d="1"]{transition-delay:.08s}[data-r][data-d="2"]{transition-delay:.16s}
+[data-r][data-d="3"]{transition-delay:.24s}[data-r][data-d="4"]{transition-delay:.32s}
+[data-r][data-d="5"]{transition-delay:.40s}[data-r][data-d="6"]{transition-delay:.48s}
+[data-r][data-d="7"]{transition-delay:.56s}[data-r][data-d="8"]{transition-delay:.64s}
+[data-r][data-d="9"]{transition-delay:.72s}[data-r][data-d="10"]{transition-delay:.80s}
+[data-r][data-d="11"]{transition-delay:.88s}[data-r][data-d="12"]{transition-delay:.96s}
+
+/* =========================================================================
+   COVER (slide 1)
+   ========================================================================= */
+.cover{padding:0}
+.cover .bg{
+  position:absolute; inset:0;
+  background:url('assets/bg_title_skyline.png') center/cover no-repeat;
+}
+.cover .scrim{position:absolute; inset:0; background:linear-gradient(100deg, rgba(255,255,255,.96) 0%, rgba(255,255,255,.82) 34%, rgba(255,255,255,0) 56%);}
+.cover .inner{position:relative; height:100%; display:flex; flex-direction:column; justify-content:center; padding:0 76px;}
+.cover .logo{height:34px; width:auto; position:absolute; top:48px; left:76px}
+.cover h1{font-family:var(--fHead); font-weight:800; letter-spacing:-.025em; line-height:1.02; font-size:66px; color:var(--ink)}
+.cover h1 .red{color:var(--red); display:block}
+.cover .rule{width:64px; height:5px; background:var(--red); border-radius:3px; margin:26px 0 22px}
+.cover .meta{font-size:15px; color:var(--muted); line-height:1.7}
+.cover .meta strong{color:var(--text); font-weight:600}
+.cover .program{position:absolute; bottom:46px; left:76px; font-size:12.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--faint); font-weight:600}
+
+/* =========================================================================
+   QUOTE (slide 2)
+   ========================================================================= */
+.quote-wrap{flex:1; display:flex; flex-direction:column; justify-content:center; max-width:70ch}
+.quote-mark{font-family:var(--fHead); font-size:120px; line-height:.6; color:var(--red); font-weight:800; height:54px}
+.quote-wrap blockquote{font-family:var(--fHead); font-weight:600; font-size:46px; line-height:1.18; letter-spacing:-.02em; color:#fff; margin:18px 0 26px}
+.quote-wrap blockquote em{color:#ff6a6f; font-style:normal}
+.quote-wrap cite{font-style:normal; font-size:16px; color:rgba(255,255,255,.65); letter-spacing:.04em}
+.quote-wrap cite b{color:#fff; font-weight:600}
+
+/* =========================================================================
+   DIVIDER (section openers)
+   ========================================================================= */
+.divider{justify-content:center}
+.divider .pillar-no{font-family:var(--fHead); font-weight:800; font-size:200px; line-height:.8; color:rgba(255,255,255,.06); position:absolute; right:60px; top:50%; transform:translateY(-50%); letter-spacing:-.04em}
+.divider .eyebrow{font-family:var(--fHead); font-weight:700; letter-spacing:.18em; text-transform:uppercase; font-size:14px; color:#ff6a6f; display:flex; align-items:center; gap:12px}
+.divider .eyebrow .dot{width:26px;height:26px;border-radius:50%;background:var(--red);position:relative;overflow:hidden}
+.divider .eyebrow .dot::before{content:"";position:absolute;left:50%;bottom:5px;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:9px solid #fff;transform:translateX(-50%)}
+.divider h2{font-family:var(--fHead); font-weight:800; font-size:64px; letter-spacing:-.025em; color:#fff; margin:20px 0 18px; line-height:1.02; max-width:18ch}
+.divider .lead{font-size:18px; color:rgba(255,255,255,.7); max-width:54ch; line-height:1.55}
+.divider .prog-rail{display:flex; gap:10px; margin-top:34px}
+.divider .prog-rail span{font-size:12.5px; font-weight:600; letter-spacing:.04em; color:rgba(255,255,255,.4); padding:7px 14px; border:1px solid rgba(255,255,255,.14); border-radius:99px}
+.divider .prog-rail span.on{color:#fff; border-color:var(--red); background:rgba(236,27,35,.18)}
+
+/* =========================================================================
+   Generic building blocks
+   ========================================================================= */
+.cards{display:grid; gap:16px; flex:1; min-height:0}
+.cards.c3{grid-template-columns:repeat(3,1fr)}
+.cards.c2{grid-template-columns:repeat(2,1fr)}
+.card{
+  background:var(--card); border:1px solid var(--line); border-radius:14px;
+  padding:20px 22px; display:flex; flex-direction:column; gap:8px;
+  transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.card:hover{transform:translateY(-3px); box-shadow:0 18px 36px -22px rgba(0,0,0,.3); border-color:var(--line-strong)}
+.card .ic{width:40px; height:40px; border-radius:11px; background:var(--tint-red); color:var(--red); display:grid; place-items:center; flex:none}
+.card .ic svg{width:22px; height:22px}
+.card .num{font-family:var(--fHead); font-weight:800; font-size:15px; color:var(--red); width:30px; height:30px; border-radius:8px; background:var(--tint-red); display:grid; place-items:center}
+.card h3{font-family:var(--fHead); font-weight:700; font-size:18px; color:var(--ink); letter-spacing:-.01em}
+.card p{font-size:14px; color:var(--muted); line-height:1.5}
+.card .tag{font-family:var(--fMono); font-size:12px; color:var(--red); font-weight:500}
+
+/* two-column: text + visual */
+.two{display:grid; grid-template-columns:1fr 1fr; gap:40px; flex:1; min-height:0; align-items:center}
+.two.wide-r{grid-template-columns:0.86fr 1.14fr}
+.two .txt{display:flex; flex-direction:column; justify-content:center}
+.bullets{list-style:none; display:flex; flex-direction:column; gap:14px; margin-top:6px}
+.bullets li{position:relative; padding-left:28px; font-size:16.5px; line-height:1.5; color:var(--text)}
+.bullets li::before{content:""; position:absolute; left:0; top:9px; width:9px; height:9px; border-radius:3px; background:var(--red)}
+.bullets li.strong{font-weight:600; color:var(--ink)}
+.bullets li b{color:var(--ink); font-weight:600}
+.viz{position:relative; height:100%; display:flex; flex-direction:column; justify-content:center}
+
+/* rail (side panel) */
+.rail{background:var(--ink); color:#fff; border-radius:16px; padding:24px 26px; align-self:stretch; display:flex; flex-direction:column; justify-content:center}
+.rail h4{font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.12em; text-transform:uppercase; color:#ff6a6f; margin-bottom:16px}
+.rail ul{list-style:none; display:flex; flex-direction:column; gap:13px}
+.rail li{font-size:15px; color:rgba(255,255,255,.86); padding-left:22px; position:relative; line-height:1.4}
+.rail li::before{content:""; position:absolute; left:0; top:7px; width:7px; height:7px; border-radius:50%; background:var(--red)}
+
+.bullets-rail{display:grid; grid-template-columns:1.55fr 1fr; gap:32px; flex:1; min-height:0; align-items:stretch}
+.bullets-rail .txt{display:flex; flex-direction:column; justify-content:center}
+
+/* =========================================================================
+   Code block (typing reveal + syntax tint)
+   ========================================================================= */
+.codewrap{background:var(--code-bg); border-radius:14px; overflow:hidden; box-shadow:0 24px 50px -28px rgba(0,0,0,.5); border:1px solid #2a2d36; display:flex; flex-direction:column}
+.codewrap .bar{display:flex; align-items:center; gap:7px; padding:12px 16px; border-bottom:1px solid #272a33; background:#15171c}
+.codewrap .bar i{width:11px; height:11px; border-radius:50%; display:block}
+.codewrap .bar i:nth-child(1){background:#ff5f57}.codewrap .bar i:nth-child(2){background:#febc2e}.codewrap .bar i:nth-child(3){background:#28c840}
+.codewrap .bar .fn{margin-left:10px; font-family:var(--fMono); font-size:12.5px; color:#8b909c}
+.codewrap pre{margin:0; padding:20px 22px; overflow:hidden; flex:1}
+.codewrap code{font-family:var(--fMono); font-size:14.5px; line-height:1.65; color:var(--code-ink); white-space:pre; display:block}
+.tok-kw{color:#ff7b72}.tok-fn{color:#d2a8ff}.tok-str{color:#a5d6ff}.tok-num{color:#79c0ff}.tok-com{color:#7d8590; font-style:italic}.tok-op{color:#ff7b72}.tok-var{color:#ffa657}
+.code-line{display:block}
+.slide.active .code-line{animation:codeLine .42s both}
+.slide.active .code-line:nth-child(1){animation-delay:.15s}.slide.active .code-line:nth-child(2){animation-delay:.22s}
+.slide.active .code-line:nth-child(3){animation-delay:.29s}.slide.active .code-line:nth-child(4){animation-delay:.36s}
+.slide.active .code-line:nth-child(5){animation-delay:.43s}.slide.active .code-line:nth-child(6){animation-delay:.50s}
+.slide.active .code-line:nth-child(7){animation-delay:.57s}.slide.active .code-line:nth-child(8){animation-delay:.64s}
+.slide.active .code-line:nth-child(9){animation-delay:.71s}.slide.active .code-line:nth-child(10){animation-delay:.78s}
+.slide.active .code-line:nth-child(11){animation-delay:.85s}.slide.active .code-line:nth-child(12){animation-delay:.92s}
+.slide.active .code-line:nth-child(13){animation-delay:.99s}.slide.active .code-line:nth-child(14){animation-delay:1.06s}
+@keyframes codeLine{from{opacity:0; transform:translateX(-8px)}to{opacity:1; transform:none}}
+.code-note{font-size:14px; color:var(--muted); margin-top:14px; line-height:1.5; font-style:italic}
+.code-points{list-style:none; display:flex; flex-direction:column; gap:12px}
+.code-points li{position:relative; padding-left:24px; font-size:15.5px; line-height:1.45; color:var(--text)}
+.code-points li::before{content:"›"; position:absolute; left:0; top:-1px; color:var(--red); font-weight:800; font-size:18px}
+
+/* =========================================================================
+   Conway Venn (slide 4)
+   ========================================================================= */
+.venn{position:relative; width:430px; height:380px; margin:auto}
+.venn .circ{position:absolute; width:250px; height:250px; border-radius:50%; mix-blend-mode:multiply; display:grid; place-items:center; opacity:0; transform:scale(.6); transition:opacity .7s ease, transform .7s cubic-bezier(.34,1.56,.64,1)}
+.venn .c1{background:rgba(236,27,35,.40); left:0; top:0}
+.venn .c2{background:rgba(28,110,156,.40); right:0; top:0}
+.venn .c3{background:rgba(30,142,90,.42); left:50%; bottom:0; transform:translateX(-50%) scale(.6)}
+.slide.active .venn .c1{opacity:1; transform:scale(1); transition-delay:.2s}
+.slide.active .venn .c2{opacity:1; transform:scale(1); transition-delay:.45s}
+.slide.active .venn .c3{opacity:1; transform:translateX(-50%) scale(1); transition-delay:.7s}
+.venn .lbl{font-family:var(--fHead); font-weight:700; font-size:14px; color:var(--ink); text-align:center; line-height:1.2; pointer-events:none; padding:0 30px}
+.venn .center{position:absolute; left:50%; top:48%; transform:translate(-50%,-50%); z-index:5; background:var(--ink); color:#fff; font-family:var(--fHead); font-weight:800; font-size:13px; padding:8px 14px; border-radius:99px; white-space:nowrap; opacity:0; transition:opacity .5s ease .95s; box-shadow:0 8px 20px -8px rgba(0,0,0,.5)}
+.slide.active .venn .center{opacity:1}
+.venn .danger{position:absolute; left:14%; bottom:30%; z-index:6; font-family:var(--fHead); font-weight:800; font-size:11px; color:#fff; background:var(--red); padding:5px 10px; border-radius:6px; transform:rotate(-8deg); opacity:0; transition:opacity .5s ease 1.2s; box-shadow:0 6px 16px -6px rgba(236,27,35,.7)}
+.slide.active .venn .danger{opacity:1}
+
+/* =========================================================================
+   Stat counters (slide 5 + others)
+   ========================================================================= */
+.stat-row{display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin:auto 0}
+.stat{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:30px 26px; text-align:left; position:relative; overflow:hidden}
+.stat .big{font-family:var(--fHead); font-weight:800; font-size:62px; line-height:1; color:var(--red); letter-spacing:-.03em}
+.stat .big .unit{font-size:32px; vertical-align:super; margin-left:2px}
+.stat .lab{font-size:15px; color:var(--text); margin-top:12px; line-height:1.45; font-weight:500}
+.stat .sub{font-size:12.5px; color:var(--faint); margin-top:8px}
+.stat::before{content:""; position:absolute; left:0; top:0; bottom:0; width:5px; background:var(--red)}
+
+/* progress ring (80% stat) */
+.ring-wrap{display:flex; align-items:center; gap:40px; margin:auto 0}
+.ring{position:relative; width:230px; height:230px; flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring .pct{position:absolute; inset:0; display:grid; place-items:center; font-family:var(--fHead); font-weight:800; font-size:56px; color:var(--ink)}
+.ring-copy{max-width:46ch}
+.ring-copy h3{font-family:var(--fHead); font-weight:800; font-size:28px; color:var(--ink); letter-spacing:-.02em; line-height:1.1; margin-bottom:14px}
+.ring-copy p{font-size:16px; color:var(--muted); line-height:1.55}
+
+/* =========================================================================
+   Step strip (5 facets / workflow)
+   ========================================================================= */
+.flow{display:flex; align-items:stretch; gap:0; margin:auto 0; width:100%}
+.flow .step{flex:1; position:relative; display:flex; flex-direction:column; gap:8px; padding:0 6px}
+.flow .step .node{width:54px; height:54px; border-radius:14px; background:var(--ink); color:#fff; font-family:var(--fHead); font-weight:800; font-size:20px; display:grid; place-items:center; position:relative; z-index:2}
+.flow .step:nth-child(odd) .node{background:var(--red)}
+.flow .step h4{font-family:var(--fHead); font-weight:700; font-size:16.5px; color:var(--ink); margin-top:10px}
+.flow .step p{font-size:13.5px; color:var(--muted); line-height:1.45}
+.flow .arrow{position:absolute; top:27px; left:46px; right:-8px; height:2px; background:var(--line-strong); z-index:1}
+.flow .arrow::after{content:""; position:absolute; right:0; top:-4px; border-left:8px solid var(--line-strong); border-top:5px solid transparent; border-bottom:5px solid transparent}
+.flow .step:last-child .arrow{display:none}
+/* sequential build for flow */
+.flow .step{opacity:0; transform:translateY(14px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .flow .step{opacity:1; transform:none}
+.slide.active .flow .step:nth-child(1){transition-delay:.15s}.slide.active .flow .step:nth-child(2){transition-delay:.35s}
+.slide.active .flow .step:nth-child(3){transition-delay:.55s}.slide.active .flow .step:nth-child(4){transition-delay:.75s}
+.slide.active .flow .step:nth-child(5){transition-delay:.95s}.slide.active .flow .step:nth-child(6){transition-delay:1.15s}
+.flow.compact .node{width:46px;height:46px;border-radius:12px;font-size:17px}
+.flow-cap{font-size:14px; color:var(--muted); font-style:italic; text-align:center; margin-top:26px}
+
+/* journey / agenda */
+.journey{display:grid; grid-template-columns:repeat(4,1fr); gap:18px; flex:1; min-height:0; align-items:stretch}
+.jcard{border:1px solid var(--line); border-radius:16px; padding:24px 22px; display:flex; flex-direction:column; position:relative; background:var(--surface); overflow:hidden}
+.jcard .pn{font-family:var(--fHead); font-weight:800; font-size:46px; color:var(--card-2); line-height:1; letter-spacing:-.03em}
+.jcard .ph{font-family:var(--fHead); font-weight:700; font-size:18.5px; color:var(--ink); margin:14px 0 8px; letter-spacing:-.01em}
+.jcard p{font-size:13.5px; color:var(--muted); line-height:1.5; flex:1}
+.jcard .demo{margin-top:14px; font-family:var(--fMono); font-size:11px; font-weight:600; color:var(--red); background:var(--tint-red); padding:5px 10px; border-radius:6px; align-self:flex-start; display:inline-flex; gap:6px; align-items:center}
+.jcard::after{content:""; position:absolute; left:0; right:0; bottom:0; height:4px; background:var(--red); transform:scaleX(0); transform-origin:left; transition:transform .5s ease}
+.slide.active .jcard::after{transform:scaleX(1)}
+.slide.active .jcard:nth-child(1)::after{transition-delay:.3s}.slide.active .jcard:nth-child(2)::after{transition-delay:.45s}
+.slide.active .jcard:nth-child(3)::after{transition-delay:.6s}.slide.active .jcard:nth-child(4)::after{transition-delay:.75s}
+
+/* =========================================================================
+   Layered stack diagram (Python data stack)
+   ========================================================================= */
+.stack{display:flex; flex-direction:column; gap:12px; margin:auto 0; width:100%}
+.layer{display:grid; grid-template-columns:200px 1fr; align-items:center; gap:22px; border-radius:14px; padding:18px 24px; color:#fff; position:relative; overflow:hidden; opacity:0; transform:translateX(-18px); transition:opacity .55s ease, transform .55s cubic-bezier(.16,1,.3,1)}
+.slide.active .layer{opacity:1; transform:none}
+.slide.active .layer:nth-child(1){transition-delay:.5s}.slide.active .layer:nth-child(2){transition-delay:.38s}
+.slide.active .layer:nth-child(3){transition-delay:.26s}.slide.active .layer:nth-child(4){transition-delay:.14s}
+.layer .lname{font-family:var(--fHead); font-weight:800; font-size:21px; letter-spacing:-.01em; display:flex; align-items:baseline; gap:9px}
+.layer .lname code{font-family:var(--fMono); font-size:13px; opacity:.7; font-weight:500}
+.layer .ldesc{font-size:14.5px; line-height:1.4; opacity:.95}
+.layer.l1{background:linear-gradient(100deg,#2A2A2F,#1c1c20)}
+.layer.l2{background:linear-gradient(100deg,var(--red-dark),var(--red))}
+.layer.l3{background:linear-gradient(100deg,#1C6E9C,#2487bf)}
+.layer.l4{background:linear-gradient(100deg,#0E7C6B,#13a08a)}
+.stack .scaffold{font-size:12.5px; color:var(--muted); text-align:center; font-style:italic}
+
+/* container / building-block cards */
+.mini-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:14px}
+.mini{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:15px 18px}
+.mini .mh{font-family:var(--fMono); font-size:14px; font-weight:700; color:var(--red)}
+.mini .md{font-size:13.5px; color:var(--muted); margin-top:4px; line-height:1.4}
+.mini code{font-family:var(--fMono); font-size:12.5px; color:var(--ink); background:var(--card-2); padding:1px 5px; border-radius:4px}
+
+/* before / after code columns */
+.ba{display:grid; grid-template-columns:1fr 1fr; gap:22px; flex:1; min-height:0; align-items:stretch}
+.ba .col{display:flex; flex-direction:column}
+.ba .ba-h{font-family:var(--fHead); font-weight:700; font-size:14px; margin-bottom:10px; display:flex; align-items:center; gap:9px}
+.ba .ba-h .tagx{font-size:11px; padding:3px 9px; border-radius:99px; font-weight:700; letter-spacing:.04em}
+.ba .before .tagx{background:var(--card-2); color:var(--muted)}
+.ba .after .tagx{background:var(--tint-red); color:var(--red)}
+.ba .codewrap{flex:1}
+/* optimisation pushdown strip (eager vs lazy slide) */
+.pushdown{display:flex; gap:12px; margin-top:16px; justify-content:center; flex-wrap:wrap}
+.pushdown .pd{display:flex; align-items:center; gap:9px; background:var(--tint-red); border:1px solid var(--tint-red-2); border-radius:99px; padding:8px 16px; font-size:13px; color:var(--ink); opacity:0; transform:translateY(10px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .pushdown .pd{opacity:1; transform:none}
+.slide.active .pushdown .pd:nth-child(1){transition-delay:.5s}.slide.active .pushdown .pd:nth-child(2){transition-delay:.66s}.slide.active .pushdown .pd:nth-child(3){transition-delay:.82s}
+.pushdown .pd b{color:var(--red); font-weight:700}
+.pushdown .pd .ck{width:18px;height:18px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-size:11px;flex:none}
+
+/* =========================================================================
+   Notebook-playback demo component
+   ========================================================================= */
+.demo-stage{flex:1; min-height:0; display:grid; grid-template-columns:1.62fr 1fr; gap:26px; align-items:stretch}
+.nb{background:#fff; border:1px solid var(--line); border-radius:14px; box-shadow:0 24px 50px -30px rgba(0,0,0,.35); display:flex; flex-direction:column; overflow:hidden}
+.nb-top{display:flex; align-items:center; gap:8px; padding:11px 16px; border-bottom:1px solid var(--line); background:var(--card)}
+.nb-top .t-ic{width:9px;height:9px;border-radius:50%;background:#e0a800}
+.nb-top .t-ic.r{background:var(--red)} .nb-top .t-ic.g{background:#28a745}
+.nb-top .nb-name{font-family:var(--fMono); font-size:12.5px; color:var(--muted); margin-left:8px}
+.nb-top .nb-kernel{margin-left:auto; font-size:11.5px; color:var(--faint); display:flex; align-items:center; gap:6px}
+.nb-top .nb-kernel::after{content:"";width:8px;height:8px;border-radius:50%;background:#28a745}
+.nb-body{flex:1; overflow:hidden; padding:6px 0; scroll-behavior:smooth}
+.nb-cell{padding:5px 16px; opacity:0; transform:translateY(8px); transition:opacity .4s ease, transform .4s ease}
+.nb-cell.shown{opacity:1; transform:none}
+.nb-in{display:grid; grid-template-columns:54px 1fr; gap:10px; align-items:start}
+.nb-prompt{font-family:var(--fMono); font-size:12.5px; color:#3b6fb0; text-align:right; padding-top:9px; user-select:none}
+.nb-prompt.busy{color:var(--red)}
+.nb-code{position:relative; background:#f6f7f9; border:1px solid #eceef1; border-left:3px solid var(--red); border-radius:6px; padding:9px 12px; font-family:var(--fMono); font-size:13px; line-height:1.55; color:#1f2430; white-space:pre; overflow:hidden; transition:box-shadow .3s ease, border-left-color .3s ease}
+.nb-cell.running .nb-code{box-shadow:0 0 0 2px var(--tint-red-2), 0 8px 22px -12px rgba(236,27,35,.5); border-left-color:var(--red-dark)}
+.nb-cell.running .nb-code::after{content:"▋"; color:var(--red); animation:caret .7s steps(1) infinite; margin-left:1px}
+@keyframes caret{50%{opacity:0}}
+.nb-out{margin:6px 0 0 64px; font-family:var(--fMono); font-size:12px; line-height:1.5; color:#333; max-height:0; opacity:0; overflow:hidden; transition:max-height .5s ease, opacity .4s ease}
+.nb-out.shown{max-height:240px; opacity:1}
+.nb-out .otable{border-collapse:collapse; font-size:11px}
+.nb-out .otable th{background:var(--ink); color:#fff; font-weight:600; padding:2px 9px; text-align:right; font-family:var(--fMono)}
+.nb-out .otable td{padding:2px 9px; border-bottom:1px solid #eee; text-align:right; color:#444}
+.nb-out .otable tr:nth-child(even) td{background:#fafafa}
+.nb-out .muted{color:#8a9099}
+.nb-out .ok{color:#1E8E5A}
+.demo-side{display:flex; flex-direction:column; gap:16px; justify-content:center}
+.demo-card{border-radius:16px; padding:22px 24px; background:var(--ink); color:#fff}
+.demo-card .dk{font-family:var(--fHead); font-weight:700; font-size:12px; letter-spacing:.13em; text-transform:uppercase; color:#ff6a6f; margin-bottom:10px}
+.demo-card h3{font-family:var(--fHead); font-weight:800; font-size:22px; line-height:1.12; letter-spacing:-.01em; margin-bottom:10px}
+.demo-card p{font-size:14px; line-height:1.5; color:rgba(255,255,255,.82)}
+.demo-steps{list-style:none; display:flex; flex-direction:column; gap:11px}
+.demo-steps li{display:flex; gap:11px; align-items:flex-start; font-size:14px; color:var(--text); line-height:1.4}
+.demo-steps li .sn{flex:none; width:24px; height:24px; border-radius:7px; background:var(--tint-red); color:var(--red); font-family:var(--fHead); font-weight:800; font-size:12px; display:grid; place-items:center}
+.demo-steps li.on .sn{background:var(--red); color:#fff}
+.replay{align-self:flex-start; display:inline-flex; align-items:center; gap:8px; background:var(--tint-red); color:var(--red); border:1px solid var(--tint-red-2); font-family:var(--fHead); font-weight:700; font-size:13px; padding:9px 16px; border-radius:99px; cursor:pointer; transition:all .2s ease}
+.replay:hover{background:var(--red); color:#fff}
+.replay svg{width:14px;height:14px}
+.demo-take{background:var(--tint-red); border:1px solid var(--tint-red-2); border-radius:12px; padding:14px 18px; font-size:13.5px; color:var(--ink); line-height:1.45}
+.demo-take b{color:var(--red)}
+
+/* =========================================================================
+   VS compare panels (structured vs unstructured, good vs bad)
+   ========================================================================= */
+.vs{display:grid; grid-template-columns:1fr 1fr; gap:24px; flex:1; min-height:0}
+.vs .panel{border:1px solid var(--line); border-radius:16px; padding:24px 26px; display:flex; flex-direction:column; background:var(--surface); position:relative; overflow:hidden}
+.vs .panel.accent{background:linear-gradient(180deg,var(--tint-red),#fff); border-color:var(--tint-red-2)}
+.vs .panel .ph{font-family:var(--fHead); font-weight:800; font-size:21px; color:var(--ink); letter-spacing:-.01em; display:flex; align-items:center; gap:12px}
+.vs .panel .ph .glyph{width:42px; height:42px; border-radius:11px; display:grid; place-items:center; flex:none}
+.vs .panel.accent .ph .glyph{background:var(--red); color:#fff}
+.vs .panel:not(.accent) .ph .glyph{background:var(--ink); color:#fff}
+.vs .panel .ps{font-size:14px; color:var(--muted); margin:8px 0 16px; line-height:1.45}
+.vs .chips{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px}
+.vs .chip{font-family:var(--fMono); font-size:12px; padding:6px 11px; border-radius:8px; background:var(--card); border:1px solid var(--line); color:var(--text)}
+.vs .panel.accent .chip{background:#fff; border-color:var(--tint-red-2)}
+.vs .where{margin-top:auto; font-size:13.5px; color:var(--text); line-height:1.45; padding-top:14px; border-top:1px dashed var(--line-strong)}
+.vs .where b{color:var(--red)}
+
+/* annotated "shape of data" table */
+.shape-tbl{display:grid; grid-template-columns:auto 1fr; gap:0 18px; align-items:center; margin:auto 0}
+.dtable{border-collapse:separate; border-spacing:0; border-radius:12px; overflow:hidden; box-shadow:0 18px 40px -28px rgba(0,0,0,.3); width:100%}
+.dtable th{background:var(--ink); color:#fff; font-family:var(--fMono); font-size:13px; font-weight:600; padding:11px 16px; text-align:left}
+.dtable th.target{background:var(--red)}
+.dtable td{padding:10px 16px; font-family:var(--fMono); font-size:13.5px; color:var(--text); background:#fff; border-bottom:1px solid var(--line)}
+.dtable td.target{background:var(--tint-red); color:var(--red-dark); font-weight:600}
+.dtable tr:nth-child(even) td{background:#fafafb}
+.dtable tr:nth-child(even) td.target{background:var(--tint-red-2)}
+.annot{font-family:var(--fHead); font-weight:700; font-size:14px; color:var(--red); display:flex; align-items:center; gap:8px}
+.annot.muted{color:var(--muted)}
+.shape-legend{display:flex; gap:26px; justify-content:center; margin-top:22px; flex-wrap:wrap}
+.shape-legend .item{display:flex; align-items:center; gap:9px; font-size:14px; color:var(--text)}
+.shape-legend .sw{width:16px; height:16px; border-radius:5px}
+
+/* analytics staircase (ascending) */
+.stair{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; align-items:end; flex:1; min-height:0; padding-top:8px}
+.rung{display:flex; flex-direction:column; justify-content:flex-end}
+.rung .box{border-radius:14px 14px 0 0; padding:20px 20px 22px; color:#fff; position:relative; transform-origin:bottom; transform:scaleY(0); opacity:0; transition:transform .6s cubic-bezier(.16,1,.3,1), opacity .4s ease}
+.slide.active .rung .box{transform:scaleY(1); opacity:1}
+.slide.active .rung:nth-child(1) .box{transition-delay:.2s}.slide.active .rung:nth-child(2) .box{transition-delay:.42s}
+.slide.active .rung:nth-child(3) .box{transition-delay:.64s}.slide.active .rung:nth-child(4) .box{transition-delay:.86s}
+.rung:nth-child(1) .box{background:#3a3a40; min-height:150px}
+.rung:nth-child(2) .box{background:#8a1419; min-height:215px}
+.rung:nth-child(3) .box{background:var(--red-dark); min-height:280px}
+.rung:nth-child(4) .box{background:var(--red); min-height:345px}
+.rung .q{font-family:var(--fMono); font-size:12px; opacity:.85; margin-bottom:6px}
+.rung .box h4{font-family:var(--fHead); font-weight:800; font-size:21px; letter-spacing:-.01em}
+.rung .box p{font-size:13px; line-height:1.4; opacity:.92; margin-top:8px}
+.rung .box .step-i{position:absolute; top:14px; right:16px; font-family:var(--fHead); font-weight:800; font-size:14px; opacity:.35}
+.stair-axis{display:flex; justify-content:space-between; font-size:13px; color:var(--muted); margin-top:14px; font-style:italic}
+.stair-axis b{color:var(--red); font-style:normal; font-weight:700}
+
+/* animated SVG charts (scatter, dual-line) */
+.svg-card{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:18px 22px; height:100%; display:flex; flex-direction:column}
+.svg-card .ct{font-family:var(--fHead); font-weight:700; font-size:15px; color:var(--ink); margin-bottom:6px}
+.chart-svg{width:100%; flex:1}
+.chart-svg .dot{opacity:0; transition:opacity .5s ease}
+.slide.active .chart-svg .dot{opacity:.78}
+.chart-svg .trend{stroke:var(--red); stroke-width:3; fill:none; stroke-dasharray:600; stroke-dashoffset:600; transition:stroke-dashoffset 1.3s ease .6s}
+.slide.active .chart-svg .trend{stroke-dashoffset:0}
+.chart-svg .ln{fill:none; stroke-width:3; stroke-dasharray:900; stroke-dashoffset:900; transition:stroke-dashoffset 1.5s ease}
+.slide.active .chart-svg .ln1{stroke-dashoffset:0; transition-delay:.3s}
+.slide.active .chart-svg .ln2{stroke-dashoffset:0; transition-delay:.7s}
+.chart-svg .axis{stroke:var(--line-strong); stroke-width:1.5}
+.chart-svg .glab{font-family:var(--fBody); font-size:11px; fill:var(--muted)}
+
+/* problem -> fix table */
+.pf-table{display:flex; flex-direction:column; border:1px solid var(--line); border-radius:14px; overflow:hidden; flex:1; min-height:0}
+.pf-row{display:grid; grid-template-columns:1.1fr 1fr 1.25fr; align-items:center; padding:0; border-bottom:1px solid var(--line); opacity:0; transform:translateX(-12px); transition:opacity .45s ease, transform .45s ease}
+.slide.active .pf-row{opacity:1; transform:none}
+.slide.active .pf-row:nth-child(1){transition-delay:.1s}.slide.active .pf-row:nth-child(2){transition-delay:.2s}
+.slide.active .pf-row:nth-child(3){transition-delay:.3s}.slide.active .pf-row:nth-child(4){transition-delay:.4s}
+.slide.active .pf-row:nth-child(5){transition-delay:.5s}.slide.active .pf-row:nth-child(6){transition-delay:.6s}
+.slide.active .pf-row:nth-child(7){transition-delay:.7s}
+.pf-row:last-child{border-bottom:none}
+.pf-row.head{background:var(--ink); color:#fff; opacity:1; transform:none}
+.pf-row.head>div{font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.04em; text-transform:uppercase; padding:12px 20px; color:rgba(255,255,255,.85)}
+.pf-row>div{padding:13px 20px; font-size:14.5px}
+.pf-row .prob{font-weight:600; color:var(--ink); display:flex; align-items:center; gap:10px}
+.pf-row .prob .d{width:8px;height:8px;border-radius:50%;background:var(--red);flex:none}
+.pf-row .fix code{font-family:var(--fMono); font-size:13px; background:var(--tint-red); color:var(--red-dark); padding:3px 9px; border-radius:6px; font-weight:500}
+.pf-row .desc{color:var(--muted); font-size:13.5px; line-height:1.4}
+.pf-row:nth-child(even):not(.head){background:#fafafb}
+
+/* tidy before/after tables */
+.tidy{display:grid; grid-template-columns:1fr auto 1fr; gap:20px; align-items:center; flex:1; min-height:0}
+.tidy .tcol{display:flex; flex-direction:column}
+.tidy .tlabel{font-family:var(--fHead); font-weight:800; font-size:14px; letter-spacing:.06em; text-transform:uppercase; margin-bottom:12px; display:flex; align-items:center; gap:9px}
+.tidy .messy .tlabel{color:var(--muted)} .tidy .clean .tlabel{color:var(--red)}
+.tidy .arrow-mid{font-size:34px; color:var(--red); font-weight:800}
+.tidy .note{font-size:12.5px; color:var(--muted); margin-top:10px; font-style:italic; line-height:1.4}
+
+/* histogram (EDA) */
+.hist{display:flex; align-items:flex-end; gap:7px; height:230px; padding:0 4px; border-bottom:2px solid var(--line-strong)}
+.hist .bar{flex:1; background:linear-gradient(180deg,var(--red),var(--red-dark)); border-radius:5px 5px 0 0; height:0; transition:height .8s cubic-bezier(.16,1,.3,1); position:relative}
+.hist .bar.med{background:linear-gradient(180deg,#3a3a40,#222)}
+.slide.active .hist .bar{height:var(--h)}
+.slide.active .hist .bar:nth-child(1){transition-delay:.1s}.slide.active .hist .bar:nth-child(2){transition-delay:.16s}
+.slide.active .hist .bar:nth-child(3){transition-delay:.22s}.slide.active .hist .bar:nth-child(4){transition-delay:.28s}
+.slide.active .hist .bar:nth-child(5){transition-delay:.34s}.slide.active .hist .bar:nth-child(6){transition-delay:.40s}
+.slide.active .hist .bar:nth-child(7){transition-delay:.46s}.slide.active .hist .bar:nth-child(8){transition-delay:.52s}
+.slide.active .hist .bar:nth-child(9){transition-delay:.58s}.slide.active .hist .bar:nth-child(10){transition-delay:.64s}
+.slide.active .hist .bar:nth-child(11){transition-delay:.70s}.slide.active .hist .bar:nth-child(12){transition-delay:.76s}
+.stat-chips{display:flex; flex-direction:column; gap:12px}
+.stat-chips .sc{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 18px; display:flex; justify-content:space-between; align-items:center}
+.stat-chips .sc .k{font-size:13.5px; color:var(--muted)}
+.stat-chips .sc .v{font-family:var(--fHead); font-weight:800; font-size:22px; color:var(--red)}
+
+/* chart-picker glyph grid */
+.picker{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; flex:1; min-height:0}
+.pick{border:1px solid var(--line); border-radius:14px; padding:18px 20px; display:flex; flex-direction:column; gap:10px; background:var(--surface); transition:transform .25s ease, box-shadow .25s ease, border-color .25s}
+.pick:hover{transform:translateY(-3px); box-shadow:0 18px 34px -22px rgba(0,0,0,.3); border-color:var(--tint-red-2)}
+.pick .pg-glyph{height:46px; display:flex; align-items:flex-end; gap:4px}
+.pick .q{font-family:var(--fMono); font-size:12px; color:var(--red); font-weight:500}
+.pick h4{font-family:var(--fHead); font-weight:700; font-size:16px; color:var(--ink)}
+.pick p{font-size:13px; color:var(--muted); line-height:1.4}
+.pick svg{width:100%; height:46px}
+
+/* insight callout */
+.insight{display:grid; grid-template-columns:1fr 1fr; gap:30px; flex:1; min-height:0; align-items:center}
+.insight .lead-card{background:var(--ink); color:#fff; border-radius:18px; padding:30px 32px; position:relative; overflow:hidden}
+.insight .lead-card::before{content:""; position:absolute; right:-40px; top:-40px; width:160px; height:160px; border-radius:50%; background:radial-gradient(circle,rgba(236,27,35,.4),transparent 70%)}
+.insight .lead-card .so{font-family:var(--fHead); font-weight:700; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#ff6a6f; margin-bottom:14px}
+.insight .lead-card .big-line{font-family:var(--fHead); font-weight:800; font-size:28px; line-height:1.15; letter-spacing:-.01em}
+.insight .lead-card .big-line em{color:#ff8e91; font-style:normal}
+.layer-list{list-style:none; display:flex; flex-direction:column; gap:16px}
+.layer-list li{display:flex; gap:14px; align-items:flex-start}
+.layer-list li .n{flex:none; width:30px; height:30px; border-radius:9px; background:var(--tint-red); color:var(--red); font-family:var(--fHead); font-weight:800; display:grid; place-items:center; font-size:14px}
+.layer-list li b{font-family:var(--fHead); color:var(--ink); font-size:16px}
+.layer-list li p{font-size:14px; color:var(--muted); line-height:1.4; margin-top:2px}
+
+/* closing recap */
+.recap-grid{display:grid; grid-template-columns:1fr 1fr; gap:30px; flex:1; min-height:0; align-items:center}
+.recap-col h4{font-family:var(--fHead); font-weight:700; font-size:13px; letter-spacing:.12em; text-transform:uppercase; margin-bottom:18px; display:flex; align-items:center; gap:10px}
+.recap-col.recap h4{color:#ff6a6f}.recap-col.next h4{color:#fff}
+.recap-col ul{list-style:none; display:flex; flex-direction:column; gap:14px}
+.recap-col li{font-size:16px; line-height:1.45; padding-left:26px; position:relative; color:rgba(255,255,255,.88)}
+.recap-col.recap li::before{content:"✓"; position:absolute; left:0; color:var(--red); font-weight:800}
+.recap-col.next li::before{content:"→"; position:absolute; left:0; color:#ff6a6f; font-weight:800}
+.recap-col.next{background:rgba(236,27,35,.1); border:1px solid rgba(236,27,35,.25); border-radius:18px; padding:26px 28px}
+
+/* big single stat (80%) */
+.megastat{display:flex; align-items:center; gap:60px; margin:auto 0}
+.megastat .num{font-family:var(--fHead); font-weight:800; font-size:200px; line-height:.85; color:var(--red); letter-spacing:-.05em}
+.megastat .num .u{font-size:90px}
+.megastat .copy{max-width:42ch}
+.megastat .copy h3{font-family:var(--fHead); font-weight:800; font-size:30px; color:var(--ink); line-height:1.1; letter-spacing:-.02em; margin-bottom:14px}
+.megastat .copy p{font-size:16px; color:var(--muted); line-height:1.55}
+.megastat .copy .src{font-size:12.5px; color:var(--faint); margin-top:14px}
+
+/* =========================================================================
+   Navigation chrome
+   ========================================================================= */
+.progress{position:fixed; top:0; left:0; height:3px; background:var(--red); z-index:50; transition:width .4s ease; box-shadow:0 0 12px rgba(236,27,35,.6)}
+.hud{position:fixed; bottom:18px; right:22px; z-index:50; display:flex; align-items:center; gap:14px; font-family:var(--fMono); font-size:12px; color:rgba(255,255,255,.55)}
+.hud .dots{display:flex; gap:6px}
+.hud .dot{width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.22); cursor:pointer; transition:all .25s ease}
+.hud .dot.on{background:var(--red); transform:scale(1.35)}
+.hud .dot.sec{background:rgba(255,255,255,.4)}
+.hud .count b{color:#fff}
+.hint{position:fixed; bottom:20px; left:22px; z-index:50; font-size:11.5px; color:rgba(255,255,255,.4); font-family:var(--fMono)}
+.hint kbd{background:rgba(255,255,255,.1); border-radius:4px; padding:1px 6px; color:rgba(255,255,255,.7)}
+/* auto-hide nav chrome when idle or when deck fills the viewport */
+.hud,.hint{transition:opacity .4s ease}
+body.idle .hud, body.idle .hint{opacity:0; pointer-events:none}
+body.static .hud, body.static .hint{display:none}
+
+/* speaker notes drawer */
+.notes{position:fixed; left:0; right:0; bottom:0; z-index:60; transform:translateY(100%); transition:transform .35s cubic-bezier(.16,1,.3,1); background:#16161a; color:#e7e7ea; border-top:3px solid var(--red); max-height:42vh; overflow:auto; padding:22px 30px; box-shadow:0 -20px 50px -20px rgba(0,0,0,.7)}
+.notes.show{transform:none}
+.notes h5{font-family:var(--fHead); font-weight:700; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:#ff6a6f; margin-bottom:12px; display:flex; align-items:center; gap:10px}
+.notes ul{margin:0; padding-left:20px; display:flex; flex-direction:column; gap:9px}
+.notes li{font-size:14.5px; line-height:1.55; color:#cfd0d6}
+.notes .close{position:absolute; top:16px; right:22px; color:#888; cursor:pointer; font-size:18px; background:none; border:none}
+
+/* mobile: the deck is a fixed 16:9 stage — prompt rotation when held upright */
+.rotate-cue{position:fixed; inset:0; height:100dvh; z-index:120; display:none;
+  place-items:center; text-align:center; padding:42px;
+  background:radial-gradient(700px 460px at 50% 0%, rgba(236,27,35,.14), transparent 62%), #0a0a0c;
+  color:#e7e7ea; font-family:var(--fHead)}
+.rotate-cue .ic{width:58px; height:58px; margin:0 auto 24px; color:var(--red);
+  animation:rot-tilt 2.2s ease-in-out infinite}
+.rotate-cue h4{font-size:21px; font-weight:800; letter-spacing:-.01em; color:#fff; margin-bottom:10px}
+.rotate-cue p{font-size:14px; line-height:1.55; color:rgba(255,255,255,.6); max-width:34ch; margin:0 auto}
+@keyframes rot-tilt{0%,100%{transform:rotate(-12deg)} 50%{transform:rotate(78deg)}}
+/* show only on small screens held in portrait */
+@media (orientation:portrait) and (max-width:860px){
+  .rotate-cue{display:grid}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important; transition-duration:.2s !important}
+  [data-r]{opacity:1 !important; transform:none !important}
+  .rotate-cue .ic{animation:none; transform:rotate(78deg)}
+}
+/* static mode (QA captures / no-motion): snap everything to final */
+body.static [data-r]{opacity:1 !important; transform:none !important; transition:none !important}
+body.static .code-line{animation:none !important}
+body.static .flow .step,
+body.static .venn .circ,
+body.static .venn .center,
+body.static .venn .danger,
+body.static .jcard::after{opacity:1 !important; transform:none !important; transition:none !important}
+body.static .venn .c3{transform:translateX(-50%) !important}
+body.static .jcard::after{transform:scaleX(1) !important}
+body.static .nb-cell, body.static .nb-out{transition:none !important; transform:none !important; opacity:1 !important}
+body.static .nb-out.shown{max-height:320px !important}
+body.static .pushdown .pd{opacity:1 !important; transform:none !important; transition:none !important}
+/* ============================ Day 2 · Conversational AI Design additions ============================ */
+.fillc{flex:1; min-height:0; display:flex; flex-direction:column; justify-content:center}
+
+/* chat replay */
+.chat{display:flex; flex-direction:column; gap:12px; max-width:640px; width:100%; margin:auto auto}
+.cb{max-width:80%; padding:12px 16px; border-radius:16px; font-size:14.5px; line-height:1.45; opacity:0; transform:translateY(12px); transition:opacity .45s ease, transform .45s ease}
+.slide.active .cb{opacity:1; transform:none}
+.cb .who{font-family:var(--fHead); font-weight:800; font-size:9.5px; text-transform:uppercase; letter-spacing:.07em; opacity:.7; margin-bottom:3px}
+.cb.b{align-self:flex-start; background:var(--card); color:var(--text); border-bottom-left-radius:5px}
+.cb.u{align-self:flex-end; background:var(--red); color:#fff; border-bottom-right-radius:5px}
+.cb.bad{background:#F1EBEC; color:#6B7280}
+.cb .ref{background:rgba(255,255,255,.28); border-radius:5px; padding:0 5px; font-weight:700; font-style:normal}
+.cb.b .ref{background:var(--tint-red); color:var(--red-dark)}
+.slide.active .chat .cb:nth-child(1){transition-delay:.1s}.slide.active .chat .cb:nth-child(2){transition-delay:.5s}.slide.active .chat .cb:nth-child(3){transition-delay:.9s}.slide.active .chat .cb:nth-child(4){transition-delay:1.3s}.slide.active .chat .cb:nth-child(5){transition-delay:1.7s}.slide.active .chat .cb:nth-child(6){transition-delay:2.1s}
+.chat.mini{gap:8px; max-width:none; margin:0}
+.chat.mini .cb{max-width:90%; font-size:12.5px; padding:9px 13px}
+.panel .chat.mini .cb:nth-child(1){transition-delay:.2s}.panel .chat.mini .cb:nth-child(2){transition-delay:.45s}.panel .chat.mini .cb:nth-child(3){transition-delay:.7s}
+
+/* slot filling */
+.slotfill{display:flex; flex-direction:column; gap:18px; max-width:760px; width:100%; margin:auto auto}
+.sfrow{display:flex; align-items:center; gap:14px; justify-content:center; flex-wrap:wrap}
+.uttr{background:var(--card); border-radius:14px; padding:12px 18px; font-size:15px; color:var(--ink); opacity:0; transform:translateY(10px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .uttr{opacity:1; transform:none}
+.ibadge{background:linear-gradient(155deg,#26262b,#161618); color:#fff; border-radius:99px; padding:10px 20px; font-family:var(--fHead); font-weight:800; font-size:14px; opacity:0; transform:scale(.9); transition:opacity .5s ease .3s, transform .5s ease .3s}
+.slide.active .ibadge{opacity:1; transform:none}
+.sfarrow{color:var(--red); font-weight:800; font-size:20px}
+.slots{display:flex; gap:12px; justify-content:center; flex-wrap:wrap}
+.slot{border:1.5px dashed var(--line-strong); border-radius:12px; padding:10px 18px; font-size:13px; color:var(--muted); background:#fff; text-align:center; opacity:0; transform:translateY(10px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .slot{opacity:1; transform:none}
+.slot .sl{font-family:var(--fMono); font-size:9.5px; letter-spacing:.06em; display:block; margin-bottom:3px}
+.slot.filled{border-style:solid; border-color:var(--red); background:var(--tint-red); color:var(--red-dark); font-weight:700}
+.slide.active .slots .slot:nth-child(1){transition-delay:.6s}.slide.active .slots .slot:nth-child(2){transition-delay:.85s}.slide.active .slots .slot:nth-child(3){transition-delay:1.1s}
+
+/* persona card */
+.persona{display:flex; gap:26px; align-items:center; max-width:760px; width:100%; margin:auto auto; background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:28px 32px; box-shadow:0 22px 54px -30px rgba(0,0,0,.4)}
+.persona .pav{flex:none; width:96px; height:96px; border-radius:50%; background:linear-gradient(155deg,var(--red),var(--red-dark)); color:#fff; display:grid; place-items:center; box-shadow:0 16px 40px -16px rgba(236,27,35,.6)}
+.persona .pav svg{width:46px; height:46px}
+.persona .pinfo{flex:1}
+.persona .pinfo h4{font-family:var(--fHead); font-weight:800; font-size:20px; color:var(--ink)}
+.persona .ptone{display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 12px}
+.persona .ptone span{background:var(--tint-red); color:var(--red-dark); border-radius:99px; padding:5px 13px; font-family:var(--fHead); font-weight:700; font-size:12px}
+.persona .pquote{font-size:14.5px; color:var(--text); font-style:italic; border-left:3px solid var(--red); padding-left:14px; line-height:1.5}
+
+/* engine vs experience layers */
+.lyr{display:flex; flex-direction:column; gap:14px; max-width:560px; width:100%; margin:auto auto}
+.lyrb{border-radius:16px; padding:20px 24px; opacity:0; transform:translateY(14px); transition:opacity .55s ease, transform .55s ease}
+.slide.active .lyrb{opacity:1; transform:none}
+.lyrb .lt{font-family:var(--fHead); font-weight:800; font-size:17px}
+.lyrb .ls{font-size:12.5px; opacity:.9; margin-top:3px}
+.lyrb.exp{background:linear-gradient(120deg,var(--red),var(--red-dark)); color:#fff}
+.lyrb.eng{background:var(--card); color:var(--ink); border:1px solid var(--line)}
+.slide.active .lyrb.exp{transition-delay:.15s}.slide.active .lyrb.eng{transition-delay:.35s}
+.lyr .lyrlab{text-align:center; font-family:var(--fMono); font-size:10.5px; color:var(--muted)}
+
+/* error-recovery ladder (escalating steps) */
+.erl{display:flex; flex-direction:column; gap:10px; max-width:720px; width:100%; margin:auto auto}
+.erstep{display:flex; align-items:center; gap:14px; padding:13px 18px; border-radius:13px; background:var(--surface); border:1px solid var(--line); opacity:0; transform:translateX(-14px); transition:opacity .45s ease, transform .45s ease}
+.slide.active .erstep{opacity:1; transform:none}
+.slide.active .erstep:nth-child(1){transition-delay:.15s}.slide.active .erstep:nth-child(2){transition-delay:.35s}.slide.active .erstep:nth-child(3){transition-delay:.55s}.slide.active .erstep:nth-child(4){transition-delay:.75s}
+.erstep .ern{flex:none; width:34px; height:34px; border-radius:10px; background:var(--tint-red); color:var(--red); font-family:var(--fHead); font-weight:800; display:grid; place-items:center; font-size:15px}
+.erstep:last-child .ern{background:var(--red); color:#fff}
+.erstep .ert{font-family:var(--fHead); font-weight:800; font-size:15px; color:var(--ink)}
+.erstep .erd{font-size:12.5px; color:var(--muted)}
+.erstep .ertx{flex:1}
+
+/* shared: function-call round-trip + chips */
+.fcall{display:flex; align-items:stretch; justify-content:center; gap:0; margin:auto 0; width:100%}
+.fnode{flex:0 0 150px; text-align:center; padding:20px 14px; border-radius:14px; display:flex; flex-direction:column; align-items:center; gap:8px; opacity:0; transform:translateY(12px); transition:opacity .5s ease, transform .5s ease}
+.slide.active .fnode{opacity:1; transform:none}
+.fnode.model{background:linear-gradient(155deg,#26262b,#161618); color:#fff}
+.fnode.fn{background:linear-gradient(180deg,var(--tint-red),#fff); border:1px solid var(--tint-red-2); color:var(--ink)}
+.fnode .fi{width:40px; height:40px; border-radius:11px; display:grid; place-items:center}
+.fnode.model .fi{background:rgba(255,122,126,.2); color:#ff7a7e} .fnode.fn .fi{background:var(--red); color:#fff}
+.fnode .fi svg{width:21px; height:21px}
+.fnode .ft{font-family:var(--fHead); font-weight:800; font-size:14.5px}
+.fnode .fs{font-size:11px; opacity:.8}
+.fconn{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; opacity:0; transition:opacity .5s ease}
+.slide.active .fconn{opacity:1}
+.slide.active .fconn:nth-of-type(2){transition-delay:.3s}.slide.active .fconn:nth-of-type(4){transition-delay:.6s}
+.fconn .chip{font-family:var(--fMono); font-size:10.5px; background:var(--code-bg); color:#a5d6ff; padding:4px 9px; border-radius:6px; white-space:nowrap}
+.fconn .chip.res{color:#7be0a6}
+.fconn svg{width:28px; height:18px; color:var(--red)}
+
+/* static snaps */
+body.static .cb, body.static .uttr, body.static .ibadge, body.static .slot, body.static .lyrb,
+body.static .erstep, body.static .fnode, body.static .fconn{
+  opacity:1 !important; transform:none !important; transition:none !important}
+
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+
+<div class="stage">
+  <main class="deck" id="deck">
+
+  <section class="slide dark cover active" data-notes='["Welcome to the final Day-2 session. You know how the model understands, retrieves, acts, and now listens and speaks. This session is about the conversation itself.", "60 minutes, design-first: principles, sample dialogs and human factors over architecture. Lots of good-versus-bad examples. Banking voice and chat throughout.", "Promise: by the end you can critique and shape a conversation &mdash; natural interaction, context, and voice UX."]'>
+    <div class="bg"></div><div class="scrim"></div>
+    <div class="inner">
+      <img class="logo" src="assets/ocbc-logo.png" alt="OCBC" />
+      <h1 data-r data-d="1">Conversational<span class="red">AI Design</span></h1>
+      <div class="rule" data-r data-d="2"></div>
+      <div class="meta" data-r data-d="3"><strong>Natural Interaction, Context &amp; Voice UX &mdash; Principles &amp; Practice</strong><br/>Designing dialog people actually want to have<br/>OCBC CRAYON 2026 · ADM Team · 60 minutes</div>
+      <div class="program" data-r data-d="4">OCBC CRAYON · Day 2</div>
+    </div>
+  </section>
+
+  <section class="slide dark" data-notes='["The whole session in one line. Design the conversation you would actually want to have &mdash; then teach the machine to hold up its end.", "Good conversation design models the cooperative rules of human conversation we already know by instinct.", "Hold this framing; we will call it back at the close."]'>
+    <div class="body-area">
+      <div class="kicker"><span class="badge"></span>The frame</div>
+      <div class="quote-wrap">
+        <div class="quote-mark" data-r data-d="2">&ldquo;</div>
+        <blockquote data-r data-d="3">Design the conversation you&#39;d want to have &mdash; then teach the machine to <em>hold up its end</em>.</blockquote>
+        <cite data-r data-d="4">A framing principle for conversation design</cite>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">02</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The shift this session marks. Earlier sessions made the model capable &mdash; it can understand, retrieve and act.", "This session makes it usable. A capable model wrapped in a bad conversation still fails the customer.", "Design is the difference between a clever engine and a product people trust."]'>
+    <div class="kicker"><span class="badge"></span>The shift</div>
+    <h2 class="slide-title" data-r data-d="1">Capable is not the same as usable</h2>
+    <div class="fcall">
+      <div class="fnode model" data-r data-d="2"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5 3 3 0 0 0 2 4 3 3 0 0 0 5 1V4.5A2.5 2.5 0 0 0 9 4zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5 3 3 0 0 1-2 4 3 3 0 0 1-5 1"/></svg></div><div class="ft">Capable model</div><div class="fs">understands · retrieves · acts</div></div>
+      <div class="fconn"><span class="chip">+ good conversation</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="fnode fn" data-r data-d="3"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg></div><div class="ft">Designed dialog</div><div class="fs">the experience on top</div></div>
+      <div class="fconn"><span class="chip res">trusted</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="fnode model" data-r data-d="4"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg></div><div class="ft">Usable product</div><div class="fs">the customer succeeds</div></div>
+    </div>
+    <div class="flow-cap">A great model with a <b style="color:var(--red)">bad conversation</b> still fails the customer. Design is the difference.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">03</span></div>
+  </section>
+
+  <section class="slide" data-notes='["What conversation design is: a discipline blending user experience, writing, linguistics and AI to make human-machine dialogue feel natural.", "Crucially, the engine &mdash; the large language model (LLM) &mdash; is separate from the designed experience layered on top of it.", "One line to remember: a model isn&#39;t a product; a conversation is."]'>
+    <div class="kicker"><span class="badge"></span>What conversation design is</div>
+    <h2 class="slide-title" data-r data-d="1">The experience on top of the engine</h2>
+    <div class="two" style="margin-top:10px">
+      <div class="viz">
+        <div class="lyr">
+          <div class="lyrb exp"><div class="lt">Designed experience</div><div class="ls">UX + writing + linguistics &mdash; what the customer feels</div></div>
+          <div class="lyrlab">sits on top of</div>
+          <div class="lyrb eng"><div class="lt">Engine (LLM)</div><div class="ls">understands, retrieves, acts</div></div>
+        </div>
+      </div>
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">A discipline blending <b>UX + writing + linguistics + AI</b>.</li>
+          <li data-r data-d="3">The <b>engine</b> is separate from the <b>designed experience</b>.</li>
+          <li data-r data-d="4" class="strong">A model isn&#39;t a product &mdash; <b style="color:var(--red)">a conversation is</b>.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">04</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Why a bank should care. Good conversation design lifts task completion, cuts dropped calls, lowers human-agent load, and builds trust.", "Bad design does the opposite &mdash; frustration on sensitive money tasks, where the stakes are highest.", "It applies across every channel: customer chat, the interactive voice response (IVR) or voice-bot, and the in-app assistant."]'>
+    <div class="kicker"><span class="badge"></span>Why a bank should care</div>
+    <h2 class="slide-title" data-r data-d="1">Design moves the numbers that matter</h2>
+    <div class="cards c2" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg></div><h3>Higher task completion</h3><p>customers finish what they came to do</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h4l2 5-3 2a11 11 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></div><h3>Fewer dropped calls</h3><p>less abandonment, less rework</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><h3>Lower agent load</h3><p>self-serve deflects routine work</p></div>
+      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21C5 14 3 11 3 7.5A4.5 4.5 0 0 1 12 6a4.5 4.5 0 0 1 9 1.5C21 11 19 14 12 21z"/></svg></div><h3>More trust</h3><p>calm, clear dialog on money tasks</p></div>
+    </div>
+    <div class="flow-cap">Across every channel: <b>customer chat</b> · <b>IVR / voice-bot</b> · <b>in-app assistant</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">05</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["Part 1, about 18 minutes &mdash; the principles. The foundation is modelling real human conversation, not inventing a robot dialect.", "We cover the cooperative principle, the intent / slot / prompt vocabulary, multi-turn slot filling, the one-question rule, and persona.", "Lots of good-versus-bad dialog &mdash; comparisons teach faster than prose."]'>
+    <div class="pillar-no">01</div>
+    <div class="eyebrow"><span class="dot"></span>Part 1</div>
+    <h2>Principles of Natural Interaction</h2>
+    <p class="lead">Model real conversation: turn-taking, the cooperative principle, intent &amp; slots, persona.</p>
+    <div class="prog-rail"><span class="on">Principles</span><span>Context</span><span>Voice UX</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">06</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The foundational idea, from Google&#39;s conversation-design team: don&#39;t invent a robot dialect &mdash; mirror the cooperative rules of human conversation people already know.", "Turn-taking, brevity, relevance, not repeating yourself. Watch this exchange play out: each turn is short, relevant, and moves the task forward.", "When dialog follows the rules we use by instinct, it feels natural &mdash; and customers don&#39;t have to learn anything."]'>
+    <div class="kicker"><span class="badge"></span>Model real conversation</div>
+    <h2 class="slide-title" data-r data-d="1">Mirror the rules we already know</h2>
+    <div class="fillc">
+      <div class="chat">
+        <div class="cb u"><div class="who">Customer</div>Hi, what&#39;s my account balance?</div>
+        <div class="cb b"><div class="who">OCBC assistant</div>Your savings balance is SGD 4,210.50. Anything else?</div>
+        <div class="cb u"><div class="who">Customer</div>Yes &mdash; move $500 to my mum.</div>
+        <div class="cb b"><div class="who">OCBC assistant</div>Sure. Transfer SGD 500 to Mdm Tan, savings &mdash; shall I proceed?</div>
+      </div>
+    </div>
+    <div class="flow-cap">Turn-taking · brevity · relevance · no repetition &mdash; the <b style="color:var(--red)">cooperative rules</b> people use by instinct.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">07</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The cooperative principle in practice: say enough but not too much, stay relevant, be clear, be truthful.", "On the left, a bloated robotic reply that buries the answer. On the right, a crisp cooperative one that gives the answer and a next step.", "Same information, very different experience. Brevity and relevance are design choices."]'>
+    <div class="kicker"><span class="badge"></span>The cooperative principle</div>
+    <h2 class="slide-title" data-r data-d="1">Say enough &mdash; but not too much</h2>
+    <div class="vs" style="margin-top:22px">
+      <div class="panel" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3zM12 10v4M12 17h.01"/></svg></span>Bloated &amp; robotic</div>
+        <div class="chat mini">
+          <div class="cb bad"><div class="who">Assistant</div>Thank you for contacting OCBC. I am an automated virtual assistant. Your request has been received and is being processed. Your current available account balance as of today is four thousand two hundred ten dollars and fifty cents.</div>
+        </div>
+      </div>
+      <div class="panel accent" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg></span>Crisp &amp; cooperative</div>
+        <div class="chat mini">
+          <div class="cb b"><div class="who">Assistant</div>Your balance is SGD 4,210.50.</div>
+          <div class="cb b"><div class="who">Assistant</div>Want to move money or see recent transactions?</div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">08</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The core vocabulary, from Alexa and Lex. The utterance is what the user says. The intent is what they want. Slots are the details needed. The prompt is the system&#39;s move to advance.", "Here: the utterance &lsquo;transfer money&rsquo; maps to a transfer intent, which needs three slots &mdash; amount, payee and date.", "Every task-based assistant is built on this shape: detect intent, fill slots, then act."]'>
+    <div class="kicker"><span class="badge"></span>Intent · utterance · slot · prompt</div>
+    <h2 class="slide-title" data-r data-d="1">The vocabulary of task-based dialog</h2>
+    <div class="fillc">
+      <div class="slotfill">
+        <div class="sfrow">
+          <div class="uttr">&ldquo;I want to <b>transfer money</b>&rdquo; <span style="color:var(--muted);font-size:12px">&mdash; the utterance</span></div>
+          <span class="sfarrow">&rarr;</span>
+          <div class="ibadge">Intent: Transfer</div>
+        </div>
+        <div class="slots">
+          <div class="slot filled"><span class="sl">SLOT</span>Amount<br/><b>SGD 500</b></div>
+          <div class="slot filled"><span class="sl">SLOT</span>Payee<br/><b>Mdm Tan</b></div>
+          <div class="slot"><span class="sl">SLOT</span>Date<br/>&mdash; needed</div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-cap">Utterance &rarr; <b>intent</b> &rarr; <b>slots</b> &rarr; the <b style="color:var(--red)">prompt</b> asks for what&#39;s still missing.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">09</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Real tasks need several turns. Gather missing slots one at a time, confirm, allow updates, then act.", "Notice the assistant asks only for what it still needs &mdash; the date &mdash; rather than demanding everything at once.", "Filling slots conversationally, one at a time, is what makes a task feel like a chat rather than a form."]'>
+    <div class="kicker"><span class="badge"></span>Multi-turn slot filling</div>
+    <h2 class="slide-title" data-r data-d="1">Gather what&#39;s missing, one turn at a time</h2>
+    <div class="fillc">
+      <div class="chat">
+        <div class="cb u"><div class="who">Customer</div>Transfer $500 to my mum.</div>
+        <div class="cb b"><div class="who">OCBC assistant</div>Got it &mdash; SGD 500 to Mdm Tan. When should I send it?</div>
+        <div class="cb u"><div class="who">Customer</div>Tomorrow.</div>
+        <div class="cb b"><div class="who">OCBC assistant</div>Transfer SGD 500 to Mdm Tan tomorrow &mdash; shall I proceed?</div>
+      </div>
+    </div>
+    <div class="flow-cap">Ask for the <b>missing</b> slot, confirm, allow updates, then act &mdash; don&#39;t demand five things in one breath.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">10</span></div>
+  </section>
+
+  <section class="slide" data-notes='["A top practitioner rule: a conversation isn&#39;t a form read aloud.", "On the left, the bot dumps every field at once &mdash; overwhelming and unnatural. On the right, it asks one relevant question and uses the answer immediately.", "One question at a time keeps cognitive load low and the dialog moving."]'>
+    <div class="kicker"><span class="badge"></span>One question at a time</div>
+    <h2 class="slide-title" data-r data-d="1">A conversation isn&#39;t a form read aloud</h2>
+    <div class="vs" style="margin-top:22px">
+      <div class="panel" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3zM12 10v4M12 17h.01"/></svg></span>Form dumped at once</div>
+        <div class="chat mini">
+          <div class="cb bad"><div class="who">Assistant</div>Please provide the amount, payee name, payee account number, transfer date, and your reason for transfer.</div>
+        </div>
+      </div>
+      <div class="panel accent" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg></span>One relevant question</div>
+        <div class="chat mini">
+          <div class="cb b"><div class="who">Assistant</div>How much would you like to transfer?</div>
+          <div class="cb u"><div class="who">Customer</div>$500.</div>
+          <div class="cb b"><div class="who">Assistant</div>And who&#39;s it going to?</div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">11</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The assistant&#39;s voice sets expectations. A bank assistant should sound trustworthy, clear and professional &mdash; not jokey.", "Tone is brand, translated into word choice, and it must stay consistent across every turn and channel.", "Decide the persona deliberately and write to it &mdash; it is as much a design artefact as the flow."]'>
+    <div class="kicker"><span class="badge"></span>Persona &amp; tone</div>
+    <h2 class="slide-title" data-r data-d="1">Tone is brand, in word choice</h2>
+    <div class="fillc">
+      <div class="persona">
+        <div class="pav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg></div>
+        <div class="pinfo">
+          <h4>The OCBC assistant</h4>
+          <div class="ptone"><span>Trustworthy</span><span>Clear</span><span>Professional</span><span>Calm</span></div>
+          <div class="pquote">&ldquo;Your transfer of SGD 500 to Mdm Tan is scheduled for tomorrow. I&#39;ll confirm once it&#39;s done.&rdquo;</div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-cap">Not jokey on money tasks &mdash; and <b style="color:var(--red)">consistent</b> across every turn and channel.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">12</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Tell users what the assistant can do. A brief onboarding line and a few conversation starters beat an open-ended &lsquo;How can I help?&rsquo; void.", "Open-ended prompts make users guess; guided options show the happy paths and reduce dead ends.", "Set expectations early and offer choices &mdash; people are faster when they aren&#39;t guessing."]'>
+    <div class="kicker"><span class="badge"></span>Set expectations &amp; guide</div>
+    <h2 class="slide-title" data-r data-d="1">Offer paths, don&#39;t leave a void</h2>
+    <div class="two" style="margin-top:14px">
+      <div class="viz">
+        <div class="chat">
+          <div class="cb b"><div class="who">OCBC assistant</div>Hi! I can help you with three things:</div>
+          <div class="cb b"><div class="who">OCBC assistant</div>&bull; Check a balance &nbsp; &bull; Transfer money &nbsp; &bull; Block a card</div>
+        </div>
+      </div>
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">Briefly say <b>what the assistant can do</b>.</li>
+          <li data-r data-d="3">Offer <b>conversation starters</b> / guided options.</li>
+          <li data-r data-d="4" class="strong">Avoid the open-ended &ldquo;<b>How can I help?</b>&rdquo; void.</li>
+          <li data-r data-d="5">Users are faster when they aren&#39;t <b style="color:var(--red)">guessing</b>.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">13</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["Part 2, about 13 minutes. The single biggest lever on perceived intelligence is context.", "We cover carrying context across turns, resolving references like &lsquo;it&rsquo;, handling topic changes, and short- versus long-term memory.", "Plus the privacy line a bank must hold around remembered data."]'>
+    <div class="pillar-no">02</div>
+    <div class="eyebrow"><span class="dot"></span>Part 2</div>
+    <h2>Context — Making It Feel Intelligent</h2>
+    <p class="lead">Memory is perceived intelligence: carry the thread, resolve references, follow topic changes.</p>
+    <div class="prog-rail"><span>Principles</span><span class="on">Context</span><span>Voice UX</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">14</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Google&#39;s point: an assistant that tracks the dialog and the user&#39;s situation feels smart; one that forgets feels broken.", "The infamous anti-pattern is the phone tree that says &lsquo;please listen carefully, our menu options have changed&rsquo; &mdash; oblivious to you and your history.", "Memory is the cheapest way to feel intelligent. Track the thread."]'>
+    <div class="kicker"><span class="badge"></span>Memory = perceived intelligence</div>
+    <h2 class="slide-title" data-r data-d="1">Tracking context feels smart; forgetting feels broken</h2>
+    <div class="vs" style="margin-top:22px">
+      <div class="panel" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3zM12 10v4M12 17h.01"/></svg></span>Oblivious</div>
+        <div class="chat mini">
+          <div class="cb bad"><div class="who">IVR</div>Please listen carefully, our menu options have changed. For balance, say one&hellip;</div>
+          <div class="cb u"><div class="who">Customer</div>I just told you my account number&hellip;</div>
+        </div>
+      </div>
+      <div class="panel accent" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg></span>Context-aware</div>
+        <div class="chat mini">
+          <div class="cb b"><div class="who">Assistant</div>Welcome back. Still about the card ending 0291?</div>
+          <div class="cb u"><div class="who">Customer</div>Yes.</div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">15</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Carrying context across turns means resolving references &mdash; &lsquo;cancel it&rsquo;, &lsquo;the second one&rsquo; &mdash; and not re-asking for information already given.", "Watch the assistant resolve &lsquo;it&rsquo; to the scheduled transfer from earlier in the dialog, without making the customer repeat the details.", "Keeping the thread is what separates a conversation from a series of disconnected questions."]'>
+    <div class="kicker"><span class="badge"></span>Carrying context across turns</div>
+    <h2 class="slide-title" data-r data-d="1">Resolve &ldquo;it&rdquo; without re-asking</h2>
+    <div class="fillc">
+      <div class="chat">
+        <div class="cb b"><div class="who">OCBC assistant</div>Your SGD 500 transfer to Mdm Tan is scheduled for tomorrow.</div>
+        <div class="cb u"><div class="who">Customer</div>Actually, cancel <span class="ref">it</span>.</div>
+        <div class="cb b"><div class="who">OCBC assistant</div>Cancelled the <span class="ref">SGD 500 transfer to Mdm Tan</span>. Nothing was sent.</div>
+      </div>
+    </div>
+    <div class="flow-cap">&ldquo;it&rdquo; &rarr; <b style="color:var(--red)">the scheduled transfer</b> &mdash; resolved from context, no repetition needed.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">16</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Users jump: from tracking a transfer, to cancelling, to a brand-new question. Good design follows the switch without dumping the prior context.", "Here the customer pivots from a transfer to a lost card; the assistant follows cleanly and can still return to the transfer.", "Support correction and digression gracefully &mdash; real conversations are not linear."]'>
+    <div class="kicker"><span class="badge"></span>Handling topic changes</div>
+    <h2 class="slide-title" data-r data-d="1">Follow the switch, keep the thread</h2>
+    <div class="fillc">
+      <div class="chat">
+        <div class="cb u"><div class="who">Customer</div>Is my $500 transfer done?</div>
+        <div class="cb b"><div class="who">OCBC assistant</div>It&#39;s scheduled for tomorrow. Want to change it?</div>
+        <div class="cb u"><div class="who">Customer</div>Wait &mdash; I lost my card!</div>
+        <div class="cb b"><div class="who">OCBC assistant</div>Let&#39;s block it now. I&#39;ll keep your transfer as-is &mdash; back to it after.</div>
+      </div>
+    </div>
+    <div class="flow-cap">Follow the digression, then <b style="color:var(--red)">return</b> &mdash; conversations aren&#39;t linear.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">17</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Two kinds of context. Short-term is this conversation&#39;s state. Long-term is remembered preferences and history &mdash; tie this back to RAG and memory from earlier sessions.", "Use long-term context to personalize, but flag privacy: sensitive data, clear retention, and user control over what is remembered.", "Personalization is powerful; in a bank it must be consented and governed."]'>
+    <div class="kicker"><span class="badge"></span>Short- vs long-term context</div>
+    <h2 class="slide-title" data-r data-d="1">Personalize &mdash; within clear privacy limits</h2>
+    <div class="vs" style="margin-top:24px">
+      <div class="panel accent" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg></span>Short-term</div>
+        <div class="ps">This conversation&#39;s state &mdash; the current thread.</div>
+        <div class="chips"><span class="chip">slots so far</span><span class="chip">last reference</span><span class="chip">volatile</span></div>
+      </div>
+      <div class="panel" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5 3 3 0 0 0 2 4 3 3 0 0 0 5 1V4.5A2.5 2.5 0 0 0 9 4zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5 3 3 0 0 1-2 4 3 3 0 0 1-5 1"/></svg></span>Long-term</div>
+        <div class="ps">Remembered preferences &amp; history (RAG / memory).</div>
+        <div class="chips"><span class="chip">preferences</span><span class="chip">past tasks</span><span class="chip" style="background:var(--tint-red);color:var(--red-dark)">needs consent</span></div>
+      </div>
+    </div>
+    <div class="flow-cap" style="color:var(--red)">&#9888; Sensitive data, clear retention, user control &mdash; privacy is a design requirement.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">18</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["Part 3, about 16 minutes. Voice changes the rules &mdash; no screen, no scrollback, linear and ephemeral.", "We cover the design process, confirmations, error recovery, handoff to humans, and multimodal plus accessibility.", "Error recovery is the make-or-break; we spend the most time there."]'>
+    <div class="pillar-no">03</div>
+    <div class="eyebrow"><span class="dot"></span>Part 3</div>
+    <h2>UX in Voice Interfaces</h2>
+    <p class="lead">No screen, linear and ephemeral: confirm, recover, hand off, and go multimodal.</p>
+    <div class="prog-rail"><span>Principles</span><span>Context</span><span class="on">Voice UX</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">19</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Voice is different from chat. There&#39;s no screen, no scrollback; it&#39;s linear and ephemeral, often hands-free, with interruptions and noise.", "So responses must be shorter, with confirmations and interruption handling. You can&#39;t show a list of twenty options &mdash; you must speak a few.", "Design for the ear, not the eye."]'>
+    <div class="kicker"><span class="badge"></span>Voice is different from chat</div>
+    <h2 class="slide-title" data-r data-d="1">Design for the ear, not the eye</h2>
+    <div class="vs" style="margin-top:24px">
+      <div class="panel" data-r data-d="2">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span>Chat</div>
+        <div class="ps">Screen, scrollback, can show lists.</div>
+        <div class="chips"><span class="chip">visual</span><span class="chip">re-readable</span><span class="chip">20 options ok</span></div>
+      </div>
+      <div class="panel accent" data-r data-d="3">
+        <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></span>Voice</div>
+        <div class="ps">No screen, linear, ephemeral, noisy.</div>
+        <div class="chips"><span class="chip">shorter replies</span><span class="chip">confirmations</span><span class="chip">handle interruptions</span></div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">20</span></div>
+  </section>
+
+  <section class="slide" data-notes='["How professionals actually do it. First write sample dialogs &mdash; script the happy path, the shortest route to completion.", "Then turn those scripts into a conversation-flow diagram. Only after that do you build complexity: errors, first-time versus returning users.", "Script first, diagram second, edge-cases last &mdash; in that order."]'>
+    <div class="kicker"><span class="badge"></span>The design process</div>
+    <h2 class="slide-title" data-r data-d="1">Sample dialogs &rarr; flow diagram &rarr; edge cases</h2>
+    <div class="flow" style="margin-top:8px">
+      <div class="step"><div class="node">1</div><h4>Sample dialogs</h4><p>script the happy path</p><div class="arrow"></div></div>
+      <div class="step"><div class="node">2</div><h4>Flow diagram</h4><p>map the branches</p><div class="arrow"></div></div>
+      <div class="step"><div class="node hot">3</div><h4>Add complexity</h4><p>errors, first-time vs returning</p></div>
+    </div>
+    <div class="flow-cap">Start with the <b style="color:var(--red)">shortest route to completion</b> &mdash; build the edge cases after.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">21</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Voice has no visual receipt, so confirm critical actions out loud &mdash; especially anything that moves money.", "Read back what was understood, and use audio cues, or earcons, to signal state. &lsquo;Transfer 500 dollars to Budi &mdash; shall I proceed?&rsquo;", "Explicit confirmation is non-negotiable on irreversible money tasks."]'>
+    <div class="kicker"><span class="badge"></span>Confirmations &amp; feedback</div>
+    <h2 class="slide-title" data-r data-d="1">No screen means confirm out loud</h2>
+    <div class="two" style="margin-top:14px">
+      <div class="viz">
+        <div class="chat">
+          <div class="cb u"><div class="who">Customer</div>Send $500 to Budi.</div>
+          <div class="cb b"><div class="who">Voice assistant</div>Transfer SGD 500 to Budi &mdash; shall I proceed?</div>
+          <div class="cb u"><div class="who">Customer</div>Yes.</div>
+          <div class="cb b"><div class="who">Voice assistant</div>Done. SGD 500 sent to Budi. &#9835;</div>
+        </div>
+      </div>
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2"><b>Confirm</b> critical / irreversible actions.</li>
+          <li data-r data-d="3"><b>Read back</b> what was understood.</li>
+          <li data-r data-d="4">Use <b>earcons</b> / audio cues for state.</li>
+          <li data-r data-d="5" class="strong">Essential for <b style="color:var(--red)">money tasks</b>.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">22</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Error recovery is the make-or-break. Design for misunderstanding, because it will happen.", "Detect low confidence, ask a clarifying question rather than guessing, allow an easy rephrase, and escalate to a human after repeated failure.", "Graceful fallback is what separates a good assistant from a frustrating one."]'>
+    <div class="kicker"><span class="badge"></span>Error recovery &mdash; the make-or-break</div>
+    <h2 class="slide-title" data-r data-d="1">Design for being misunderstood</h2>
+    <div class="fillc">
+      <div class="erl">
+        <div class="erstep"><div class="ern">1</div><div class="ertx"><div class="ert">Detect low confidence</div><div class="erd">notice the model isn&#39;t sure &mdash; don&#39;t plough ahead</div></div></div>
+        <div class="erstep"><div class="ern">2</div><div class="ertx"><div class="ert">Ask a clarifying question</div><div class="erd">&ldquo;Did you mean transfer, or balance?&rdquo;</div></div></div>
+        <div class="erstep"><div class="ern">3</div><div class="ertx"><div class="ert">Allow easy rephrase</div><div class="erd">let the user say it again, differently</div></div></div>
+        <div class="erstep"><div class="ern">4</div><div class="ertx"><div class="ert">Escalate to a human</div><div class="erd">after repeated failure &mdash; with context</div></div></div>
+      </div>
+    </div>
+    <div class="flow-cap">Graceful fallback separates good assistants from <b style="color:var(--red)">frustrating</b> ones.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">23</span></div>
+  </section>
+
+  <section class="slide" data-notes='["A short banking dialog playing out end to end, including a recovery branch. The customer asks to transfer; the assistant doesn&#39;t catch the amount and recovers with a clarifying question.", "Then it gathers the rest one slot at a time, confirms the critical detail, and acts.", "Good design in one screen: gather one slot at a time, confirm the important things, recover gracefully."]'>
+    <div class="kicker"><span class="badge"></span>Example &mdash; a transfer, end to end</div>
+    <h2 class="slide-title" data-r data-d="1">Gather · recover · confirm · act</h2>
+    <div class="fillc">
+      <div class="chat">
+        <div class="cb u"><div class="who">Customer</div>I&#39;d like to transfer some money.</div>
+        <div class="cb b"><div class="who">Voice assistant</div>I didn&#39;t catch the amount &mdash; how much would you like to transfer?</div>
+        <div class="cb u"><div class="who">Customer</div>Five hundred dollars to Budi.</div>
+        <div class="cb b"><div class="who">Voice assistant</div>Transfer SGD 500 to Budi &mdash; shall I proceed?</div>
+        <div class="cb u"><div class="who">Customer</div>Yes please.</div>
+        <div class="cb b"><div class="who">Voice assistant</div>Done &mdash; SGD 500 sent to Budi. &#9835;</div>
+      </div>
+    </div>
+    <div class="flow-cap" style="font-style:italic">One slot at a time · confirm the important things · <b style="color:var(--red)">recover gracefully</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">24</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Know when to stop. For complex, sensitive or repeatedly-failed cases, route to a human &mdash; and crucially, pass the context along.", "The customer should never have to repeat everything they just told the bot.", "A clean exit to a human is good UX, not a failure of the assistant."]'>
+    <div class="kicker"><span class="badge"></span>Handoff to humans</div>
+    <h2 class="slide-title" data-r data-d="1">Hand off &mdash; with the context</h2>
+    <div class="fcall">
+      <div class="fnode fn" data-r data-d="2"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 7V3M8 13h.01M16 13h.01"/></svg></div><div class="ft">Assistant</div><div class="fs">complex / sensitive / stuck</div></div>
+      <div class="fconn"><span class="chip">+ full transcript &amp; slots</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="fnode model" data-r data-d="3"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><div class="ft">Human agent</div><div class="fs">picks up mid-thread</div></div>
+    </div>
+    <div class="flow-cap">The customer <b style="color:var(--red)">never repeats themselves</b> &mdash; a clean exit is good UX, not failure.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">25</span></div>
+  </section>
+
+  <section class="slide" data-notes='["A 2026 trend: voice as an entry point, paired with a screen for browsing and confirming &mdash; multimodal.", "Design for accessibility: voice helps users who can&#39;t type or see; screens help those who can&#39;t hear.", "And plan multilingual and Indonesian-English code-switching from the start &mdash; that&#39;s our audience&#39;s reality."]'>
+    <div class="kicker"><span class="badge"></span>Multimodal &amp; accessibility</div>
+    <h2 class="slide-title" data-r data-d="1">Voice as an entry point, not the whole story</h2>
+    <div class="cards" style="grid-template-columns:repeat(4,1fr);margin-top:24px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></div><h3>Voice + screen</h3><p>speak to start, tap to browse / confirm</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="4" r="1.6"/><path d="M5 8h14M12 8v7M9 21l3-6 3 6"/></svg></div><h3>Accessibility</h3><p>voice for those who can&#39;t type / see</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div><h3>Multilingual</h3><p>ID + EN &mdash; plan code-switching early</p></div>
+      <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><h3>Right modality</h3><p>use the channel that fits the task</p></div>
+    </div>
+    <div class="flow-cap">Design across modalities &mdash; and for our <b style="color:var(--red)">Indonesian-English</b> reality.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">26</span></div>
+  </section>
+
+  <section class="slide dark" data-notes='["Land the plane. Three pillars: natural interaction &mdash; model real conversation, intent/slot/prompt, one question at a time; context &mdash; memory is perceived intelligence, carry the thread; and voice UX &mdash; confirm, recover, hand off, go multimodal.", "One overarching rule: test with real users early &mdash; Wizard-of-Oz, conversation logs, fallout analysis. People always say what you didn&#39;t script.", "Pointers: Google Conversation Design and the Amazon Alexa Design Guide. Call back the opener &mdash; design the conversation you&#39;d want to have. Questions."]'>
+    <div class="body-area" style="justify-content:center">
+      <div class="kicker" data-r><span class="badge"></span>Wrap &amp; Q&amp;A</div>
+      <h2 class="slide-title" data-r data-d="1" style="font-size:44px;margin-bottom:6px">Design the conversation first</h2>
+      <p class="slide-sub" data-r data-d="2" style="color:rgba(255,255,255,.65);margin-bottom:26px">A model isn&#39;t a product &mdash; a conversation is. And the only way to know it works is to test it.</p>
+      <div class="recap-grid" style="flex:none">
+        <div class="recap-col recap" data-r data-d="3">
+          <h4><span style="width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block"></span>Three pillars</h4>
+          <ul>
+            <li>Natural interaction: model real conversation</li>
+            <li>Context: memory = perceived intelligence</li>
+            <li>Voice UX: confirm, recover, hand off, multimodal</li>
+          </ul>
+        </div>
+        <div class="recap-col next" data-r data-d="4">
+          <h4><span style="width:8px;height:8px;border-radius:50%;background:#ff6a6f;display:inline-block"></span>The overarching rule</h4>
+          <ul>
+            <li><b style="color:#fff">Test with real users early</b></li>
+            <li>Wizard-of-Oz · conversation logs · fallout analysis</li>
+            <li>People always say what you didn&#39;t script</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Conversational AI Design</div><span class="pg">27</span></div>
+  </section>
+
+  </main>
+</div>
+
+<div class="hud">
+  <div class="dots" id="dots"></div>
+  <div class="count">slide <b id="cur">1</b> / <span id="tot">34</span></div>
+</div>
+<div class="hint"><kbd>→</kbd> next &nbsp; <kbd>←</kbd> back &nbsp; <kbd>N</kbd> notes &nbsp; <kbd>F</kbd> full</div>
+
+<div class="rotate-cue" aria-hidden="true">
+  <div>
+    <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="7" y="2" width="10" height="20" rx="2.2"/><path d="M11 18.5h2"/></svg>
+    <h4>Rotate your device</h4>
+    <p>This deck is built for a wide 16:9 stage — turn your phone to landscape for the full view.</p>
+  </div>
+</div>
+
+<div class="notes" id="notes">
+  <button class="close" id="notesClose">&times;</button>
+  <h5><span style="width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block"></span>Speaker notes</h5>
+  <ul id="notesBody"></ul>
+</div>
+
+<script>
+/* ---- fit fixed 1280x720 stage to viewport ---- */
+const STATIC = location.search.includes('static');
+if(STATIC) document.body.classList.add('static');
+const deck = document.getElementById('deck');
+function fit(){
+  const vv = window.visualViewport;
+  const w = (vv && vv.width)  || innerWidth  || document.documentElement.clientWidth  || 1280;
+  const h = (vv && vv.height) || innerHeight || document.documentElement.clientHeight || 720;
+  const s = Math.min(w/1280, h/720) || 1;
+  // anchor top-left and centre with an explicit pixel offset — robust even when
+  // the deck is larger than the viewport (small mobile-landscape screens)
+  const x = (w - 1280*s) / 2, y = (h - 720*s) / 2;
+  deck.style.transform = `translate(${x}px, ${y}px) scale(${s>0?s:1})`;
+}
+addEventListener('resize', fit);
+addEventListener('load', fit);
+// mobile: re-fit when rotating or when the browser chrome resizes the visible area
+addEventListener('orientationchange', ()=>{ fit(); setTimeout(fit,200); setTimeout(fit,500); });
+if(window.visualViewport){ visualViewport.addEventListener('resize', fit); }
+fit(); requestAnimationFrame(fit); setTimeout(fit,120);
+
+/* ---- presentation controller ---- */
+const slides = [...document.querySelectorAll('.slide')];
+const TOT = slides.length;
+let i = 0;
+document.getElementById('tot').textContent = TOT;
+
+const dotsEl = document.getElementById('dots');
+slides.forEach((sl,idx)=>{
+  const d = document.createElement('span');
+  d.className='dot'+(sl.classList.contains('dark')?' sec':'');
+  d.addEventListener('click',()=>go(idx));
+  dotsEl.appendChild(d);
+});
+const dots=[...dotsEl.children];
+// page numbers follow slide order (so slides can be inserted freely)
+slides.forEach((s,idx)=>{const pg=s.querySelector('.foot .pg'); if(pg)pg.textContent=String(idx+1).padStart(2,'0');});
+
+const notesEl=document.getElementById('notes');
+const notesBody=document.getElementById('notesBody');
+function renderNotes(){
+  let data=[]; try{data=JSON.parse(slides[i].dataset.notes||'[]')}catch(e){}
+  notesBody.innerHTML='';
+  if(!data.length){notesBody.innerHTML='<li style="color:#777">No notes for this slide.</li>';}
+  data.forEach(t=>{const li=document.createElement('li');li.textContent=t;notesBody.appendChild(li);});
+}
+function go(n){
+  n=Math.max(0,Math.min(TOT-1,n));
+  if(n===i) return;
+  slides[i].classList.remove('active'); slides[i].classList.add('prev');
+  slides[n].classList.remove('prev'); slides[n].classList.add('active');
+  i=n; sync();
+}
+function sync(){
+  document.getElementById('progress').style.width=((i+1)/TOT*100)+'%';
+  document.getElementById('cur').textContent=i+1;
+  dots.forEach((d,x)=>d.classList.toggle('on',x===i));
+  location.hash=i+1;
+  if(notesEl.classList.contains('show')) renderNotes();
+  // (re)trigger counters on the active slide
+  triggerCounters(slides[i]);
+  playDemo(slides[i]);
+}
+function next(){go(i+1)} function prev(){go(i-1)}
+
+/* keyboard */
+addEventListener('keydown',e=>{
+  if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();next();}
+  else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();prev();}
+  else if(e.key==='Home'){go(0)} else if(e.key==='End'){go(TOT-1)}
+  else if(e.key.toLowerCase()==='n'){notesEl.classList.toggle('show'); renderNotes();}
+  else if(e.key.toLowerCase()==='f'){if(!document.fullscreenElement)document.documentElement.requestFullscreen();else document.exitFullscreen();}
+});
+document.getElementById('notesClose').addEventListener('click',()=>notesEl.classList.remove('show'));
+
+/* wheel (debounced) */
+let wlock=false;
+addEventListener('wheel',e=>{
+  if(wlock) return; if(Math.abs(e.deltaY)<18) return;
+  wlock=true; e.deltaY>0?next():prev();
+  setTimeout(()=>wlock=false,650);
+},{passive:true});
+
+/* touch */
+let tx=0,ty=0;
+addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
+addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty;
+  if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)) dx<0?next():prev();
+},{passive:true});
+
+/* counters */
+function triggerCounters(slide){
+  slide.querySelectorAll('[data-count]').forEach(el=>{
+    if(el.dataset.done) return; el.dataset.done='1';
+    const end=+el.dataset.count, pre=el.dataset.prefix||'', suf=el.dataset.suffix||'';
+    if(STATIC){el.innerHTML=pre+end+(suf?'<span class="unit">'+suf+'</span>':'');return;}
+    const dur=1100, t0=performance.now();
+    function tick(t){
+      const p=Math.min(1,(t-t0)/dur), e=1-Math.pow(1-p,3);
+      const v=Math.round(end*e);
+      el.innerHTML=pre+v+(suf?'<span class="unit">'+suf+'</span>':'');
+      if(p<1)requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+  // progress rings
+  slide.querySelectorAll('[data-ring]').forEach(el=>{
+    if(el.dataset.done) return; el.dataset.done='1';
+    const circle=el.querySelector('.fg'); if(!circle)return;
+    const pct=+el.dataset.ring, len=circle.getTotalLength();
+    if(STATIC){circle.style.strokeDasharray=len;circle.style.strokeDashoffset=len*(1-pct/100);const o=el.querySelector('.pct');if(o)o.textContent=pct+'%';return;}
+    circle.style.strokeDasharray=len; circle.style.strokeDashoffset=len;
+    requestAnimationFrame(()=>{circle.style.transition='stroke-dashoffset 1.3s cubic-bezier(.16,1,.3,1)';circle.style.strokeDashoffset=len*(1-pct/100);});
+    const out=el.querySelector('.pct'); if(out){const t0=performance.now();(function tk(t){const p=Math.min(1,(t-t0)/1300);out.textContent=Math.round(pct*(1-Math.pow(1-p,3)))+'%';if(p<1)requestAnimationFrame(tk);})(performance.now());}
+  });
+}
+
+/* notebook demo player */
+const demoTimers=[];
+function clearDemo(){demoTimers.forEach(clearTimeout); demoTimers.length=0;}
+function playDemo(slide){
+  if(!slide.classList.contains('demo-slide')) return;
+  clearDemo();
+  const cells=[...slide.querySelectorAll('.nb-cell')];
+  const steps=[...slide.querySelectorAll('.demo-steps li')];
+  cells.forEach(c=>{c.classList.remove('shown','running'); const o=c.querySelector('.nb-out'); if(o)o.classList.remove('shown'); const p=c.querySelector('.nb-prompt'); if(p){p.classList.remove('busy'); p.textContent='['+(cells.indexOf(c)+1)+']';}});
+  steps.forEach(s=>s.classList.remove('on'));
+  if(STATIC){cells.forEach(c=>{c.classList.add('shown'); const o=c.querySelector('.nb-out'); if(o)o.classList.add('shown');}); steps.forEach(s=>s.classList.add('on')); const body=slide.querySelector('.nb-body'); if(body){body.style.scrollBehavior='auto'; const snap=()=>body.scrollTop=body.scrollHeight; snap(); requestAnimationFrame(snap); setTimeout(snap,80);} return;}
+  let t=420;
+  cells.forEach((cell,idx)=>{
+    const prompt=cell.querySelector('.nb-prompt');
+    const out=cell.querySelector('.nb-out');
+    demoTimers.push(setTimeout(()=>{cell.classList.add('shown','running'); if(prompt){prompt.classList.add('busy'); prompt.textContent='[*]';} const body=cell.parentElement; body.scrollTop=Math.max(0,cell.offsetTop-90);},t));
+    t+=720;
+    demoTimers.push(setTimeout(()=>{
+      cell.classList.remove('running');
+      if(prompt){prompt.classList.remove('busy'); prompt.textContent='['+(idx+1)+']';}
+      if(out)out.classList.add('shown');
+      if(steps[idx])steps[idx].classList.add('on');
+    },t));
+    t+=820;
+  });
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-replay]'); if(!b) return;
+  playDemo(b.closest('.slide'));
+});
+addEventListener('keydown',e=>{if(e.key.toLowerCase()==='r'){const s=slides[i]; if(s.classList.contains('demo-slide'))playDemo(s);}});
+
+/* auto-hide chrome when idle */
+let idleT; function poke(){document.body.classList.remove('idle'); clearTimeout(idleT); idleT=setTimeout(()=>document.body.classList.add('idle'),3200);}
+['mousemove','keydown','touchstart','wheel','click'].forEach(ev=>addEventListener(ev,poke,{passive:true})); poke();
+
+/* deep link */
+if(location.hash){const n=parseInt(location.hash.slice(1));if(n>=1&&n<=TOT){slides[0].classList.remove('active');i=n-1;slides[i].classList.add('active');}}
+sync();
+</script>
+</body>
+</html>

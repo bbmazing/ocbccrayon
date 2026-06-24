@@ -65,7 +65,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
 <header class="bar">
   <div>
     <div class="ttl">Speaker notes</div>
-    <div class="sub">Machine Learning &amp; MLOps · 36 slides</div>
+    <div class="sub">Machine Learning &amp; MLOps · 40 slides</div>
   </div>
   <div class="right">
     <a class="btn ghost" href="index.html">&larr; Back</a>
@@ -83,7 +83,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
 <div class="banner" id="banner">✎&nbsp; Editing — your changes are saved in this browser. Use <b>Download .txt</b> to keep a copy.</div>
 <main>
   <h1 class="lead">Talk track <span class="red">&middot; every slide</span></h1>
-  <p class="intro">Speaker notes for the OCBC CRAYON 2026 &mdash; Machine Learning 101 &amp; MLOps Basics deck. 36 slides, in order. Press <b>Edit</b> to tweak the wording inline (saved to this browser), or <b>Download .txt</b> for a copy.</p>
+  <p class="intro">Speaker notes for the OCBC CRAYON 2026 &mdash; Machine Learning 101 &amp; MLOps Basics deck. 40 slides, in order. Press <b>Edit</b> to tweak the wording inline (saved to this browser), or <b>Download .txt</b> for a copy.</p>
   <div id="notes">
     <article class="s">
       <div class="n">Slide 1</div>
@@ -249,6 +249,15 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
     </article>
     <article class="s">
       <div class="n">Slide 19</div>
+      <h2>Three splits: learn, tune, then judge</h2>
+      <ul>
+        <li>Extend train/test to three sets: train fits the model, validation tunes it, and test is the final honest exam — touched once, at the very end.</li>
+        <li>The cardinal sin is tuning against the test set; that leaks it and inflates the score. Keep it locked until you are completely done.</li>
+        <li>Cross-validation rotates the validation fold so one unlucky split cannot fool you — the robust default whenever you tune.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 20</div>
       <h2>The confusion matrix: four outcomes</h2>
       <ul>
         <li>The 2x2 that everything derives from. In banking terms: caught fraud (TP), false alarm (FP), missed fraud (FN), correct clear (TN).</li>
@@ -257,7 +266,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 20</div>
+      <div class="n">Slide 21</div>
       <h2>Precision vs recall — two questions</h2>
       <ul>
         <li>Plain words first. Precision is about the alerts you raised — what fraction were right. Recall is about all the real fraud — what fraction you caught.</li>
@@ -266,7 +275,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 21</div>
+      <div class="n">Slide 22</div>
       <h2>Move the threshold, trade precision for recall</h2>
       <ul>
         <li>This is interactive — drag the slider. As the cutoff rises, precision climbs and recall falls, and vice versa.</li>
@@ -275,7 +284,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 22</div>
+      <div class="n">Slide 23</div>
       <h2>ROC curve and AUC</h2>
       <ul>
         <li>ROC sweeps every threshold and plots true-positive rate against false-positive rate. Animate the curve drawing in.</li>
@@ -284,7 +293,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 23</div>
+      <div class="n">Slide 24</div>
       <h2>Metrics for predicting a number</h2>
       <ul>
         <li>For regression you measure error size, not right-or-wrong. MAE is the average miss in real units — most intuitive.</li>
@@ -293,7 +302,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 24</div>
+      <div class="n">Slide 25</div>
       <h2>Overfitting and the bias-variance trade-off</h2>
       <ul>
         <li>The core failure mode. Underfitting is too simple. Overfitting memorises noise — perfect on training, bad on new data.</li>
@@ -302,7 +311,34 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 25</div>
+      <div class="n">Slide 26</div>
+      <h2>Fewer, stronger features beat more features</h2>
+      <ul>
+        <li>More columns is not more signal — irrelevant features add noise, cost, overfitting risk, and hurt explainability.</li>
+        <li>Three families: filter (correlation), wrapper (recursive feature elimination), embedded (tree importance, L1/Lasso).</li>
+        <li>Banking reality: start with hundreds of engineered signals, ship the handful that actually move fraud risk.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 27</div>
+      <h2>Hyperparameters: search for the best settings</h2>
+      <ul>
+        <li>Parameters are learned during training; hyperparameters — tree depth, number of trees, learning rate, regularisation — are chosen before it.</li>
+        <li>They control over- versus under-fitting; recall the depth-12 run that overfit. Explore the space with grid, random, or Bayesian search.</li>
+        <li>Score every candidate on the validation set or via cross-validation, never the test set — the same leakage rule as the three-way split.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 28</div>
+      <h2>SHAP: explain a single prediction</h2>
+      <ul>
+        <li>A strong score is not enough in a regulated bank — you must explain why a given decision came out the way it did.</li>
+        <li>SHapley Additive exPlanations attribute one prediction to its features: which signals pushed this case toward fraud, and which pulled it back.</li>
+        <li>The same mechanism answers &ldquo;why was this loan declined?&rdquo; — a black-box score becomes an auditable, customer-ready reason, linking to the Part&nbsp;3 governance checkpoints.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 29</div>
       <h2>Same model, different metric, different story</h2>
       <ul>
         <li>Demo 2 evaluates the Demo-1 model. Same model — watch the story change with the metric.</li>
@@ -311,7 +347,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 26</div>
+      <div class="n">Slide 30</div>
       <h2>Part 3 — MLOps Fundamentals</h2>
       <ul>
         <li>Part 3, about 20 minutes. The half that beginners skip and production teams obsess over.</li>
@@ -320,7 +356,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 27</div>
+      <div class="n">Slide 31</div>
       <h2>The notebook is not the finish line</h2>
       <ul>
         <li>Blunt truth: a notebook model delivers zero value. Value starts when it runs reliably against real transactions.</li>
@@ -329,7 +365,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 28</div>
+      <div class="n">Slide 32</div>
       <h2>Why ML is harder than normal software</h2>
       <ul>
         <li>Traditional software is deterministic — you test it once and it behaves. ML breaks that assumption.</li>
@@ -338,7 +374,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 29</div>
+      <div class="n">Slide 33</div>
       <h2>The MLOps lifecycle is a loop</h2>
       <ul>
         <li>The canonical loop: Design, Data, Train, Evaluate, Deploy, Monitor — and Monitor feeds back to retraining.</li>
@@ -347,7 +383,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 30</div>
+      <div class="n">Slide 34</div>
       <h2>Track experiments, version everything</h2>
       <ul>
         <li>ML has too many runs to track in your head. Log parameters and metrics for every run automatically.</li>
@@ -356,7 +392,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 31</div>
+      <div class="n">Slide 35</div>
       <h2>How a model reaches users</h2>
       <ul>
         <li>Two main serving modes. Real-time API scores each event — fraud at the moment of payment, recommendations in the app.</li>
@@ -365,7 +401,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 32</div>
+      <div class="n">Slide 36</div>
       <h2>Models decay — monitor and retrain</h2>
       <ul>
         <li>The part beginners miss: models decay. Two kinds of drift — data drift (inputs move) and concept drift (the relationship moves).</li>
@@ -374,7 +410,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 33</div>
+      <div class="n">Slide 37</div>
       <h2>In a regulated bank, the loop has checkpoints</h2>
       <ul>
         <li>A bank-relevant note, not a compliance lecture. In a regulated environment the lifecycle carries checkpoints.</li>
@@ -383,7 +419,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 34</div>
+      <div class="n">Slide 38</div>
       <h2>Three things to remember</h2>
       <ul>
         <li>Replay the two spines: the workflow Frame-to-Monitor, and the metric ladder from confusion matrix up to ROC-AUC.</li>
@@ -392,7 +428,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 35</div>
+      <div class="n">Slide 39</div>
       <h2>The takeaway</h2>
       <ul>
         <li>Closing callback to how we framed the session: a model is a simplification, judged by usefulness, not truth.</li>
@@ -401,7 +437,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 36</div>
+      <div class="n">Slide 40</div>
       <h2>Wrap — You can now read an ML project end to end.</h2>
       <ul>
         <li>Close the loop: they can now read an ML project end to end and talk to data scientists in their language.</li>

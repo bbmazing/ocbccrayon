@@ -906,7 +906,7 @@ body.static .lstep .bar{transform:none !important}
       <div class="panel accent" data-r data-d="3">
         <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/></svg></span>Generative</div>
         <div class="ps">Writes new content in the style of its training data.</div>
-        <div class="chips"><span class="chip">write the SAR summary</span><span class="chip">draft the email</span><span class="chip">explain the decline</span></div>
+        <div class="chips"><span class="chip">SAR (suspicious activity report)</span><span class="chip">draft the email</span><span class="chip">explain the decline</span></div>
         <div class="where"><b>Today</b> — generate language, grounded in bank text.</div>
       </div>
     </div>
@@ -934,7 +934,7 @@ body.static .lstep .bar{transform:none !important}
     <div class="kicker"><span class="badge"></span>Why this matters now</div>
     <h2 class="slide-title" data-r data-d="1">The theory you will see in our own tools</h2>
     <div class="cards c3" style="margin-top:24px">
-      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></div><h3>Document extraction</h3><p>Pull fields from KYC docs, forms and statements.</p><div class="ctag">tokens · embeddings</div></div>
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></div><h3>Document extraction</h3><p>Pull fields from KYC (know-your-customer) docs, forms and statements.</p><div class="ctag">tokens · embeddings</div></div>
       <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg></div><h3>RM-support chatbot</h3><p>Help relationship managers find policy answers.</p><div class="ctag">RAG · prompting</div></div>
       <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 7V3M8 13h.01M16 13h.01"/></svg></div><h3>Customer assistant</h3><p>In-app answers and investment guidance.</p><div class="ctag">decoder LLM · guardrails</div></div>
     </div>
@@ -1106,7 +1106,7 @@ msg = client.messages.create(model="claude-...",
         "content": f"&lt;context&gt;{ctx}&lt;/context&gt;\n\n{question}"}])</div></div><div class="nb-out"><span class="ok">&ldquo;Per Policy 7.2, raise a chargeback within 60 days...&rdquo;</span></div></div></div>
       </div>
       <div class="demo-side">
-        <div class="demo-card"><div class="dk">Live Demo</div><h3>Prompt in, answer out</h3><p>One call — then the same call, grounded with a retrieved snippet.</p></div>
+        <div class="demo-card"><div class="dk">Live Demo</div><h3>Prompt in, answer out</h3><p>One API (application programming interface) call — then grounded with a retrieved snippet.</p></div>
         <ul class="demo-steps"><li><span class="sn">1</span>Create the client</li><li><span class="sn">2</span>A bare completion</li><li><span class="sn">3</span>Add retrieved context (RAG)</li></ul>
         <button class="replay" data-replay><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v4h4"/></svg>Replay</button>
         <div class="demo-take"><b>Takeaway:</b> the model is one API call &mdash; the skill is the <b>context and prompt</b> around it.</div>
@@ -1230,13 +1230,13 @@ msg = client.messages.create(model="claude-...",
     <div class="vs" style="margin-top:24px">
       <div class="panel" data-r data-d="2">
         <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 12l9 4 9-4M3 17l9 4 9-4"/></svg></span>Encoder &mdash; BERT</div>
-        <div class="ps">Reads the whole text to understand it.</div>
+        <div class="ps">BERT = Bidirectional Encoder Representations from Transformers &mdash; reads the whole text.</div>
         <div class="chips"><span class="chip">classification</span><span class="chip">search</span><span class="chip">extraction</span></div>
         <div class="where">Good for: is this complaint about fraud?</div>
       </div>
       <div class="panel accent" data-r data-d="3">
         <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/></svg></span>Decoder &mdash; GPT / Claude / Gemini</div>
-        <div class="ps">Generates text, one token at a time.</div>
+        <div class="ps">GPT = Generative Pre-trained Transformer &mdash; generates text, one token at a time.</div>
         <div class="chips"><span class="chip">writing</span><span class="chip">chat</span><span class="chip">summaries</span></div>
         <div class="where"><b>Most chat LLMs today are decoder-only.</b></div>
       </div>
@@ -1437,7 +1437,7 @@ Use plain English; flag if unclear.</code></pre></div>
           <ul>
             <li><b>Open-weights:</b> the parameters are public &mdash; we run them ourselves, no external API</li>
             <li><b>Mixture-of-experts (A3B):</b> only ~3B of 35B params active per token &mdash; strong, yet cheap to run</li>
-            <li><b>H200:</b> 141 GB of GPU memory, built to serve large models fast</li>
+            <li><b>H200:</b> 141 GB of GPU (graphics processing unit) memory, built to serve large models fast</li>
           </ul>
         </div>
       </div>

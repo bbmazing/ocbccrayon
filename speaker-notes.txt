@@ -37,148 +37,143 @@ Slide 7 — The five facets of data science
   • The point for interns: this is not a syntax tour. The hard parts are asking the right question and communicating the answer — the bookends, not the modelling in the middle.
   • Our 90 minutes follows exactly this arc.
 
-Slide 8 — The data science workflow
-  • This is the map we return to all session. Ask → Acquire → Wrangle → Explore → Model → Communicate. Note the loop — findings at any stage send you back upstream.
-  • Frame is the most skipped, most important step. A vague question wastes weeks. Communicate is where value is realised — analysis nobody acts on is wasted.
-  • Watch it build step by step; each pillar today lives on a different part of this arc.
-
-Slide 9 — Pillar 1 — Basic Python
+Slide 8 — Pillar 1 — Basic Python
   • Pillar 1. Audience is Python-literate, so this is a fast, confident pass — we sell the ecosystem and the data stack, not the syntax.
   • The one habit to instil: think in tables and vectorised operations, not row-by-row loops.
   • End of this pillar = Demo 1, where a CSV becomes a programmable table.
 
-Slide 10 — Readable, batteries-included, everywhere
+Slide 9 — Readable, batteries-included, everywhere
   • Sell the ecosystem, not the syntax. Python is readable, has a mature library for every step, and is the lingua franca of data and AI research — new tools ship here first.
   • Key insight: Python is slow as a language but fast as a platform — the heavy lifting runs in compiled C/Rust under the hood (NumPy, Apache Arrow, Polars).
   • The hello-data snippet: three lines load a banking CSV and answer a real question — that economy of expression is the point.
 
-Slide 11 — Variables, types & the four containers
+Slide 10 — Variables, types & the four containers
   • A fast refresher on the primitives. Variables, the four scalar types, and the four containers. Keep it brisk — they know this.
   • The teaching emphasis: pick the right container. Lists for ordered collections, dicts to model records (a customer), tuples for fixed records, sets for membership and de-duplication.
   • Dicts modelling records is the bridge to DataFrame rows on the next slides.
 
-Slide 12 — From loops to comprehensions
+Slide 11 — From loops to comprehensions
   • if/else and for are universal. The Python-specific habit to instil is the comprehension: a declarative one-liner that replaces the build-an-empty-list-and-append loop.
   • Comprehensions read closer to the intent ("the active premier customers") and are usually faster. This same declarative style carries straight into Polars expressions.
   • Show both side by side: identical result, far less ceremony on the right.
 
-Slide 13 — Define once, call many
+Slide 12 — Define once, call many
   • Functions are the unit of reuse. Define once, call many. Small, pure functions (output depends only on input, no side effects) are easy to test, share and reason about.
   • The banking example: a reusable risk-band function. Write it once, apply it to a whole column later. This is exactly how feature engineering works.
   • Tie forward: pure functions map cleanly onto DataFrame transformations and, later, ML features.
 
-Slide 14 — Four layers turn Python into a data platform
+Slide 13 — Four layers turn Python into a data platform
   • The four-layer stack is how Python becomes a data platform. Each layer builds on the one below and speaks the same shapes.
   • NumPy / Apache Arrow = the columnar + n-dimensional memory engine. Polars = labelled DataFrames on Arrow, written in Rust (where most wrangling happens). matplotlib/seaborn = charts. scikit-learn = classic ML.
   • Why Polars over the older pandas: pandas wraps NumPy and runs single-threaded through Python objects; Polars is built in Rust on Apache Arrow's columnar format, runs multi-threaded by default, and has a lazy query optimiser — typically 5–30x faster on real data, with a cleaner expression API. The DataFrame concepts transfer directly if you already know pandas.
 
-Slide 15 — A DataFrame is a spreadsheet you can program
+Slide 14 — A DataFrame is a spreadsheet you can program
   • Recorded demo 1, replayed live in-deck. The whole point in one line: a DataFrame is a spreadsheet you can program.
   • Walk the four cells: pl.read_csv loads 50k transactions; .head() shows the first rows; .shape confirms size; .describe() gives instant summary stats — count, null_count, mean, min/max.
   • Press R (or the replay button) to run it again. In a real Polars notebook this is exactly what the first five minutes with any dataset looks like.
 
-Slide 16 — Pillar 2 — Data Science Concepts
+Slide 15 — Pillar 2 — Data Science Concepts
   • Pillar 2: the concepts that frame everything before we touch a model. Light and fast — 13 minutes.
   • Three ideas: what kind of data we have (structured vs unstructured), the universal shape of a dataset, and the ladder of analytics from describing to prescribing.
   • These are the vocabulary the rest of the program assumes.
 
-Slide 17 — Structured vs unstructured data
+Slide 16 — Structured vs unstructured data
   • Two broad families. Structured data fits neatly in rows and columns — the transaction table. Unstructured data does not — text, images, audio, logs.
   • In a bank, roughly 80–90% of data is unstructured: call recordings, chat transcripts, scanned documents, complaint emails. The structured slice is where most classic analytics happens; the unstructured pile is where NLP and GenAI unlock new value.
   • Most of this session lives in the structured world; keep the unstructured pile in mind — it is the frontier.
 
-Slide 18 — Rows, columns, and a target
+Slide 17 — Rows, columns, and a target
   • Every structured dataset has the same shape. Rows are observations — one per thing you measured (here, one customer). Columns are features — the attributes.
   • One column is often special: the target (or label) — the thing you want to predict. Here it is churned. Features are the inputs; the target is the output.
   • This sets up machine learning next session without diving in: ML learns the mapping from features to target. No deep dive today — just plant the vocabulary.
 
-Slide 19 — Four types of analytics — value rises with difficulty
+Slide 18 — Four types of analytics — value rises with difficulty
   • The analytic value escalator (Gartner's framing). Four rungs, rising in both value and difficulty from left to right.
   • Descriptive: what happened (dashboards). Diagnostic: why (drill-down, correlation). Predictive: what will happen (ML forecasts). Prescriptive: what to do (optimisation, recommendations).
   • Two messages: you cannot skip rungs — good prediction needs solid description and clean data first; and most organisations are strong on the left, weak on the right. That gap is the opportunity.
 
-Slide 20 — Find the signal in the noise
+Slide 19 — Find the signal in the noise
   • The core job of the analyst: separate signal (the real pattern) from noise (random scatter). Real data is never a clean line — it is a cloud.
   • Here, transaction count vs fraud risk: noisy, but a real upward trend hides in the scatter. The skill is seeing the trend without over-fitting to the wiggles.
   • Two failure modes: missing a real signal (too cautious), and seeing patterns in pure noise (too eager). Both are expensive. Statistics is how we tell them apart — back to the danger zone.
 
-Slide 21 — Pillar 3 — Data Wrangling
+Slide 20 — Pillar 3 — Data Wrangling
   • Pillar 3, the heart of the session: data wrangling. This is where real data scientists spend most of their time, and where Demo 2 lands.
   • Reset expectations: the glamorous modelling is a thin slice. The bulk is finding and fixing problems in messy data.
   • We map every common mess to a one-line Polars expression, then do it live.
 
-Slide 22 — Wrangling is most of the job
+Slide 21 — Wrangling is most of the job
   • The expectation-reset slide. Surveys (e.g. CrowdFlower/Anaconda) consistently put data preparation at roughly 60% of effort for cleaning alone, ~80% including collection.
   • State it as indicative, not gospel — the exact number varies. The point is directional: most of the work is before the modelling.
   • Why? Real data is generated by messy real-world processes — systems change, fields get renamed, humans typo. Clean data is made, not found.
 
-Slide 23 — What messy data looks like
+Slide 22 — What messy data looks like
   • The six usual suspects you hunt for during inspection. Two deserve emphasis.
   • Missing values are a decision, not an accident — dropping vs filling changes your results, so be deliberate. Outliers can be real signal (a genuine large transfer) or a data error — investigate before deleting.
   • Inconsistent categories (ID / Indonesia / idn) and wrong types ("1,000" as text) are the silent time-sinks. Duplicates quietly inflate every total.
 
-Slide 24 — Every mess maps to a Polars expression
+Slide 23 — Every mess maps to a Polars expression
   • Every mess maps to a small set of Polars expressions. This is the cheat sheet.
   • drop_nulls/fill_null for missingness; unique for duplicates; cast and str methods for types and text; group_by().agg() to aggregate; join to combine tables.
   • The point: you do not memorise a thousand functions. You learn this handful, compose them as expressions in a pipeline, and (in Polars) let the lazy optimiser do the rest — more on that just before the demo.
 
-Slide 25 — Tidy data: the analysis-ready shape
+Slide 24 — Tidy data: the analysis-ready shape
   • Tidy data (Hadley Wickham): one variable per column, one observation per row, one table per unit. A simple, powerful contract.
   • Spreadsheets push people toward the messy wide form — values spread across columns (Q1, Q2, Q3). The tidy long form looks more verbose but is exactly what group_by, plotting and ML expect.
   • Much of wrangling is just reshaping wide into long. In Polars: df.unpivot(). Tidy in, everything downstream gets easier.
 
-Slide 26 — Eager vs lazy: plan, then run
+Slide 25 — Eager vs lazy: plan, then run
   • Polars' signature feature, and the one mental model to take away. Two execution modes for the SAME pipeline.
   • Eager (read_csv): every step runs the moment you write it — simple, immediate, great for exploring. This is how pandas always works.
   • Lazy (scan_csv … .collect()): you describe the whole query first; Polars builds a plan, OPTIMISES it, then runs once. Predicate pushdown moves your filter down to the file read; projection pushdown reads only the columns you actually use; and it runs multi-threaded. On a large file that can be the difference between reading 10 GB and reading 1 GB. Rule of thumb: explore eager, run pipelines lazy. You'll see .lazy()…collect() in the demo next.
 
-Slide 27 — From messy CSV to one clean table
+Slide 26 — From messy CSV to one clean table
   • Recorded demo 2 — the payoff of the whole pillar. A deliberately messy banking CSV becomes one clean summary table, in Polars.
   • Walk the pipeline: inspect missingness with null_count(); fill amounts and drop rows missing a product with expressions; cast the dtype and de-duplicate with unique(); then the finale — a lazy query (.lazy() … .collect()) that Polars optimises into one pass.
   • Press R to replay. This four-step shape — inspect, fix, reshape, summarise — is 80% of real data work in miniature. The lazy pipeline is Polars' headline feature: it plans and optimises the whole query before touching data.
 
-Slide 28 — Pillar 4 — Analytics Principles
+Slide 27 — Pillar 4 — Analytics Principles
   • Pillar 4: turning clean data into honest insight. EDA, choosing charts, designing them truthfully, dodging the classic traps, and communicating the so-what.
   • This is where top courses deliberately end — on judgement and interpretation, not technique.
   • 17 minutes, then we wrap.
 
-Slide 29 — Always look at your data first
+Slide 28 — Always look at your data first
   • EDA = exploratory data analysis: interrogating data with summaries and visuals before any modelling. Always look at your data first.
   • Distributions (histograms, box plots) reveal shape, spread and outliers. Summary stats give center and spread. Relationships (scatter, correlation) show how variables move together.
   • A single histogram can expose a broken feed, a default value masquerading as real, or two populations mixed together. Anscombe's quartet proves it: near-identical summary stats, completely different pictures — you must visualise, not just summarise.
 
-Slide 30 — Start from the question, then pick the chart
+Slide 29 — Start from the question, then pick the chart
   • The intellectual core of the viz block: start from the QUESTION, then pick the chart — not the other way around.
   • Six purposes, six defaults: comparison→bar, trend→line, relationship→scatter, distribution→histogram, composition→stacked bar (over pie), correlation→heatmap.
   • The beginner mistake is starting from a chart they like. Ask: am I showing comparison, trend, relationship, distribution, composition or correlation? Each has a default.
 
-Slide 31 — Good charts clarify — bad charts mislead
+Slide 30 — Good charts clarify — bad charts mislead
   • Visualization is persuasion, so it carries ethical weight. Clarity over decoration.
   • The truncated-axis example is the classic deception: identical data, but the left chart starts the y-axis high, making a 1–2% wiggle look like a dramatic surge. The right chart starts at zero and tells the truth.
   • Rules of thumb: start bars at zero, label your axes, strip chart-junk, one message per chart, colour with meaning. Design honestly — and read others' charts sceptically.
 
-Slide 32 — Correlation ≠ causation
+Slide 31 — Correlation ≠ causation
   • The most expensive analyst mistake. Two series can move together without one causing the other — they may share a hidden third cause.
   • The classic: ice-cream sales and drownings rise together. Ice cream does not cause drowning — summer drives both. In banking: marketing spend and revenue both rise in Q4 because of the holidays, not because the ads worked.
   • Tie back to Conway's danger zone: this is exactly the trap of coding + domain without statistics. Always ask: could a third factor explain this? Would it hold on new data?
 
-Slide 33 — Lead with the “so what”
+Slide 32 — Lead with the “so what”
   • The final facet (Harvard CS109's last word): communicate. Analysis nobody acts on is wasted.
   • Storytelling with data: lead with the so-what, not the method. Your stakeholder does not care about your pipeline — they care about the decision.
   • Three habits: lead with the conclusion; one chart, one message; end with a recommendation, not a data dump. This is what turns information into insight — back to Fiorina.
 
-Slide 34 — One question, all the way through
+Slide 33 — One question, all the way through
   • Replay the whole arc on one concrete banking example: reducing churn in young customers.
   • Ask: which customers will churn next quarter? Acquire: pull transactions + tenure. Wrangle: clean and build features. Explore: EDA shows low-engagement under-30s churn most. Model: a churn score (next session). Communicate: target the at-risk segment with one offer.
   • Recap the four pillars, then point to practice: get hands-on in a notebook with a real CSV. The only way to learn this is to do it.
 
-Slide 35 — Six habits that outlast any tool
+Slide 34 — Six habits that outlast any tool
   • These six habits are what the literature and practice converge on — they outlast any single tool or language.
   • Frame first (CRISP-DM business understanding): a precise question + success metric prevents weeks of wasted effort. Look before you model: EDA first, always visualise. Tidy + validated: one variable per column, plus explicit data-quality checks.
   • Reproducibility by default: version-control code AND data with Git; a notebook should re-run top-to-bottom with the same result. Efficient pipelines: in Polars, prefer lazy scans and expressions so the optimiser prunes columns and pushes filters down. Iterate & document: the workflow is a loop heading toward deployment — record decisions (this is where MLOps begins).
   • Sources: CRISP-DM (2025 refresh, datascience-pm.com); 'Ten simple rules for a responsible data science workflow' (PMC, 2024); Polars docs (pola.rs).
 
-Slide 36 — Data → information → insight
+Slide 35 — Data → information → insight
   • Land the plane. Recap in one breath, then bridge to next session: Machine Learning & MLOps — moving from describing data to learning from it.
   • Call back to Fiorina: we have turned data into information and information into insight. Everything in ML next session assumes the clean, well-understood data we just learned to produce.
   • Thank them, open the floor for Q&A.

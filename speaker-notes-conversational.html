@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Speaker notes · Conversational AI Design · OCBC CRAYON</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root{--red:#EC1B23;--ink:#1A1A1A;--text:#1F2937;--muted:#5b626d;--faint:#9AA1AC;
+  --line:#E7E8EB;--tint:#FCEEEF;--tint2:#FBE2E3;
+  --fHead:'Manrope',system-ui,sans-serif;--fBody:'Inter',system-ui,sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--fBody);color:var(--text);background:
+    radial-gradient(900px 500px at 100% -10%, rgba(236,27,35,.10), transparent 60%), #fbfbfc;
+  -webkit-font-smoothing:antialiased;padding-bottom:60px}
+.bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;
+  gap:14px;padding:14px 22px;background:rgba(251,251,252,.86);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line)}
+.bar .ttl{font-family:var(--fHead);font-weight:800;font-size:16px;letter-spacing:-.01em;color:var(--ink)}
+.bar .sub{font-size:12px;color:var(--faint);margin-top:2px}
+.bar .right{display:flex;align-items:center;gap:8px;flex:none;flex-wrap:wrap;justify-content:flex-end}
+.btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--fHead);font-weight:700;
+  font-size:12.5px;text-decoration:none;border-radius:99px;padding:8px 14px;white-space:nowrap;
+  cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease}
+.btn svg{width:14px;height:14px}
+.btn.ghost{color:var(--muted);border:1px solid var(--line);background:#fff}
+.btn.ghost:hover{border-color:var(--tint2);color:var(--ink)}
+.btn.red{color:var(--red);background:var(--tint);border:1px solid var(--tint2)}
+.btn.red:hover{background:var(--red);color:#fff;border-color:var(--red)}
+.btn.on{background:var(--red);color:#fff;border-color:var(--red)}
+.banner{display:none;align-items:center;gap:8px;font-size:13px;color:#8a1015;
+  background:var(--tint);border-bottom:1px solid var(--tint2);padding:10px 22px}
+.banner b{color:var(--red)}
+body.editing .banner{display:flex}
+main{max-width:820px;margin:0 auto;padding:8px 22px}
+.lead{font-family:var(--fHead);font-weight:800;letter-spacing:-.02em;font-size:clamp(1.7rem,5vw,2.4rem);
+  color:var(--ink);margin:26px 0 6px}
+.lead .red{color:var(--red)}
+.intro{color:var(--muted);font-size:14.5px;line-height:1.6;margin-bottom:14px;max-width:60ch}
+.s{padding:20px 0;border-bottom:1px solid var(--line)}
+.s:last-child{border-bottom:none}
+.s .n{font-family:var(--fHead);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--red)}
+.s h2{font-family:var(--fHead);font-weight:700;font-size:18px;letter-spacing:-.015em;color:var(--ink);margin:4px 0 11px}
+.s ul{margin:0;padding-left:19px;display:flex;flex-direction:column;gap:9px}
+.s li{font-size:14.5px;line-height:1.6;color:var(--text)}
+/* edit affordances */
+body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:1px dashed var(--tint2);
+  outline-offset:4px;border-radius:4px}
+.s h2[contenteditable]:focus,.s li[contenteditable]:focus{outline:2px solid var(--red);
+  outline-offset:4px;background:#fff}
+@media(max-width:560px){
+  .bar{padding:11px 14px}
+  .bar .sub{display:none}
+  .btn{padding:7px 10px;font-size:11.5px}
+  .btn .lbl-long{display:none}
+  .banner{padding:9px 14px;font-size:12px}
+  main{padding:6px 16px}
+  .s li{font-size:14px}
+}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div>
+    <div class="ttl">Speaker notes</div>
+    <div class="sub">Conversational AI Design · 27 slides</div>
+  </div>
+  <div class="right">
+    <a class="btn ghost" href="index.html">&larr; Back</a>
+    <button class="btn ghost" id="edit" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+      <span id="editLbl">Edit</span>
+    </button>
+    <button class="btn ghost" id="reset" type="button" style="display:none">Reset</button>
+    <a class="btn red" id="dl" href="speaker-notes-conversational.txt" download="OCBC-CRAYON-Conversational-AI-Design-speaker-notes.txt">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3v12M7 11l5 5 5-5M5 21h14"/></svg>
+      <span class="lbl-long">Download&nbsp;</span>.txt
+    </a>
+  </div>
+</header>
+<div class="banner" id="banner">&#9998;&nbsp; Editing — your changes are saved in this browser. Use <b>Download .txt</b> to keep a copy.</div>
+<main>
+  <h1 class="lead">Talk track <span class="red">&middot; every slide</span></h1>
+  <p class="intro">Speaker notes for the OCBC CRAYON 2026 &mdash; Conversational AI Design deck. 27 slides, in order. Press <b>Edit</b> to tweak the wording inline (saved to this browser), or <b>Download .txt</b> for a copy.</p>
+  <div id="notes">
+    <article class="s">
+      <div class="n">Slide 1</div>
+      <h2>Conversational AI Design</h2>
+      <ul>
+        <li>Welcome to the final Day-2 session. You know how the model understands, retrieves, acts, and now listens and speaks. This session is about the conversation itself.</li>
+        <li>60 minutes, design-first: principles, sample dialogs and human factors over architecture. Lots of good-versus-bad examples. Banking voice and chat throughout.</li>
+        <li>Promise: by the end you can critique and shape a conversation — natural interaction, context, and voice UX.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 2</div>
+      <h2>The frame</h2>
+      <ul>
+        <li>The whole session in one line. Design the conversation you would actually want to have — then teach the machine to hold up its end.</li>
+        <li>Good conversation design models the cooperative rules of human conversation we already know by instinct.</li>
+        <li>Hold this framing; we will call it back at the close.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 3</div>
+      <h2>Capable is not the same as usable</h2>
+      <ul>
+        <li>The shift this session marks. Earlier sessions made the model capable — it can understand, retrieve and act.</li>
+        <li>This session makes it usable. A capable model wrapped in a bad conversation still fails the customer.</li>
+        <li>Design is the difference between a clever engine and a product people trust.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 4</div>
+      <h2>The experience on top of the engine</h2>
+      <ul>
+        <li>What conversation design is: a discipline blending user experience, writing, linguistics and AI to make human-machine dialogue feel natural.</li>
+        <li>Crucially, the engine — the large language model (LLM) — is separate from the designed experience layered on top of it.</li>
+        <li>One line to remember: a model isn't a product; a conversation is.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 5</div>
+      <h2>Design moves the numbers that matter</h2>
+      <ul>
+        <li>Why a bank should care. Good conversation design lifts task completion, cuts dropped calls, lowers human-agent load, and builds trust.</li>
+        <li>Bad design does the opposite — frustration on sensitive money tasks, where the stakes are highest.</li>
+        <li>It applies across every channel: customer chat, the interactive voice response (IVR) or voice-bot, and the in-app assistant.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 6</div>
+      <h2>Principles of Natural Interaction</h2>
+      <ul>
+        <li>Part 1, about 18 minutes — the principles. The foundation is modelling real human conversation, not inventing a robot dialect.</li>
+        <li>We cover the cooperative principle, the intent / slot / prompt vocabulary, multi-turn slot filling, the one-question rule, and persona.</li>
+        <li>Lots of good-versus-bad dialog — comparisons teach faster than prose.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 7</div>
+      <h2>Mirror the rules we already know</h2>
+      <ul>
+        <li>The foundational idea, from Google's conversation-design team: don't invent a robot dialect — mirror the cooperative rules of human conversation people already know.</li>
+        <li>Turn-taking, brevity, relevance, not repeating yourself. Watch this exchange play out: each turn is short, relevant, and moves the task forward.</li>
+        <li>When dialog follows the rules we use by instinct, it feels natural — and customers don't have to learn anything.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 8</div>
+      <h2>Say enough — but not too much</h2>
+      <ul>
+        <li>The cooperative principle in practice: say enough but not too much, stay relevant, be clear, be truthful.</li>
+        <li>On the left, a bloated robotic reply that buries the answer. On the right, a crisp cooperative one that gives the answer and a next step.</li>
+        <li>Same information, very different experience. Brevity and relevance are design choices.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 9</div>
+      <h2>The vocabulary of task-based dialog</h2>
+      <ul>
+        <li>The core vocabulary, from Alexa and Lex. The utterance is what the user says. The intent is what they want. Slots are the details needed. The prompt is the system's move to advance.</li>
+        <li>Here: the utterance ‘transfer money’ maps to a transfer intent, which needs three slots — amount, payee and date.</li>
+        <li>Every task-based assistant is built on this shape: detect intent, fill slots, then act.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 10</div>
+      <h2>Gather what's missing, one turn at a time</h2>
+      <ul>
+        <li>Real tasks need several turns. Gather missing slots one at a time, confirm, allow updates, then act.</li>
+        <li>Notice the assistant asks only for what it still needs — the date — rather than demanding everything at once.</li>
+        <li>Filling slots conversationally, one at a time, is what makes a task feel like a chat rather than a form.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 11</div>
+      <h2>A conversation isn't a form read aloud</h2>
+      <ul>
+        <li>A top practitioner rule: a conversation isn't a form read aloud.</li>
+        <li>On the left, the bot dumps every field at once — overwhelming and unnatural. On the right, it asks one relevant question and uses the answer immediately.</li>
+        <li>One question at a time keeps cognitive load low and the dialog moving.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 12</div>
+      <h2>Tone is brand, in word choice</h2>
+      <ul>
+        <li>The assistant's voice sets expectations. A bank assistant should sound trustworthy, clear and professional — not jokey.</li>
+        <li>Tone is brand, translated into word choice, and it must stay consistent across every turn and channel.</li>
+        <li>Decide the persona deliberately and write to it — it is as much a design artefact as the flow.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 13</div>
+      <h2>Offer paths, don't leave a void</h2>
+      <ul>
+        <li>Tell users what the assistant can do. A brief onboarding line and a few conversation starters beat an open-ended ‘How can I help?’ void.</li>
+        <li>Open-ended prompts make users guess; guided options show the happy paths and reduce dead ends.</li>
+        <li>Set expectations early and offer choices — people are faster when they aren't guessing.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 14</div>
+      <h2>Context — Making It Feel Intelligent</h2>
+      <ul>
+        <li>Part 2, about 13 minutes. The single biggest lever on perceived intelligence is context.</li>
+        <li>We cover carrying context across turns, resolving references like ‘it’, handling topic changes, and short- versus long-term memory.</li>
+        <li>Plus the privacy line a bank must hold around remembered data.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 15</div>
+      <h2>Tracking context feels smart; forgetting feels broken</h2>
+      <ul>
+        <li>Google's point: an assistant that tracks the dialog and the user's situation feels smart; one that forgets feels broken.</li>
+        <li>The infamous anti-pattern is the phone tree that says ‘please listen carefully, our menu options have changed’ — oblivious to you and your history.</li>
+        <li>Memory is the cheapest way to feel intelligent. Track the thread.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 16</div>
+      <h2>Resolve “it” without re-asking</h2>
+      <ul>
+        <li>Carrying context across turns means resolving references — ‘cancel it’, ‘the second one’ — and not re-asking for information already given.</li>
+        <li>Watch the assistant resolve ‘it’ to the scheduled transfer from earlier in the dialog, without making the customer repeat the details.</li>
+        <li>Keeping the thread is what separates a conversation from a series of disconnected questions.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 17</div>
+      <h2>Follow the switch, keep the thread</h2>
+      <ul>
+        <li>Users jump: from tracking a transfer, to cancelling, to a brand-new question. Good design follows the switch without dumping the prior context.</li>
+        <li>Here the customer pivots from a transfer to a lost card; the assistant follows cleanly and can still return to the transfer.</li>
+        <li>Support correction and digression gracefully — real conversations are not linear.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 18</div>
+      <h2>Personalize — within clear privacy limits</h2>
+      <ul>
+        <li>Two kinds of context. Short-term is this conversation's state. Long-term is remembered preferences and history — tie this back to RAG and memory from earlier sessions.</li>
+        <li>Use long-term context to personalize, but flag privacy: sensitive data, clear retention, and user control over what is remembered.</li>
+        <li>Personalization is powerful; in a bank it must be consented and governed.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 19</div>
+      <h2>UX in Voice Interfaces</h2>
+      <ul>
+        <li>Part 3, about 16 minutes. Voice changes the rules — no screen, no scrollback, linear and ephemeral.</li>
+        <li>We cover the design process, confirmations, error recovery, handoff to humans, and multimodal plus accessibility.</li>
+        <li>Error recovery is the make-or-break; we spend the most time there.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 20</div>
+      <h2>Design for the ear, not the eye</h2>
+      <ul>
+        <li>Voice is different from chat. There's no screen, no scrollback; it's linear and ephemeral, often hands-free, with interruptions and noise.</li>
+        <li>So responses must be shorter, with confirmations and interruption handling. You can't show a list of twenty options — you must speak a few.</li>
+        <li>Design for the ear, not the eye.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 21</div>
+      <h2>Sample dialogs → flow diagram → edge cases</h2>
+      <ul>
+        <li>How professionals actually do it. First write sample dialogs — script the happy path, the shortest route to completion.</li>
+        <li>Then turn those scripts into a conversation-flow diagram. Only after that do you build complexity: errors, first-time versus returning users.</li>
+        <li>Script first, diagram second, edge-cases last — in that order.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 22</div>
+      <h2>No screen means confirm out loud</h2>
+      <ul>
+        <li>Voice has no visual receipt, so confirm critical actions out loud — especially anything that moves money.</li>
+        <li>Read back what was understood, and use audio cues, or earcons, to signal state. ‘Transfer 500 dollars to Budi — shall I proceed?’</li>
+        <li>Explicit confirmation is non-negotiable on irreversible money tasks.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 23</div>
+      <h2>Design for being misunderstood</h2>
+      <ul>
+        <li>Error recovery is the make-or-break. Design for misunderstanding, because it will happen.</li>
+        <li>Detect low confidence, ask a clarifying question rather than guessing, allow an easy rephrase, and escalate to a human after repeated failure.</li>
+        <li>Graceful fallback is what separates a good assistant from a frustrating one.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 24</div>
+      <h2>Gather · recover · confirm · act</h2>
+      <ul>
+        <li>A short banking dialog playing out end to end, including a recovery branch. The customer asks to transfer; the assistant doesn't catch the amount and recovers with a clarifying question.</li>
+        <li>Then it gathers the rest one slot at a time, confirms the critical detail, and acts.</li>
+        <li>Good design in one screen: gather one slot at a time, confirm the important things, recover gracefully.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 25</div>
+      <h2>Hand off — with the context</h2>
+      <ul>
+        <li>Know when to stop. For complex, sensitive or repeatedly-failed cases, route to a human — and crucially, pass the context along.</li>
+        <li>The customer should never have to repeat everything they just told the bot.</li>
+        <li>A clean exit to a human is good UX, not a failure of the assistant.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 26</div>
+      <h2>Voice as an entry point, not the whole story</h2>
+      <ul>
+        <li>A 2026 trend: voice as an entry point, paired with a screen for browsing and confirming — multimodal.</li>
+        <li>Design for accessibility: voice helps users who can't type or see; screens help those who can't hear.</li>
+        <li>And plan multilingual and Indonesian-English code-switching from the start — that's our audience's reality.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 27</div>
+      <h2>Design the conversation first</h2>
+      <ul>
+        <li>Land the plane. Three pillars: natural interaction — model real conversation, intent/slot/prompt, one question at a time; context — memory is perceived intelligence, carry the thread; and voice UX — confirm, recover, hand off, go multimodal.</li>
+        <li>One overarching rule: test with real users early — Wizard-of-Oz, conversation logs, fallout analysis. People always say what you didn't script.</li>
+        <li>Pointers: Google Conversation Design and the Amazon Alexa Design Guide. Call back the opener — design the conversation you'd want to have. Questions.</li>
+      </ul>
+    </article>
+  </div>
+</main>
+<script>
+(function(){
+  var KEY = 'ocbc-crayon-conversational-notes-v1';
+  var arts = [].slice.call(document.querySelectorAll('#notes .s'));
+  var fields = [].slice.call(document.querySelectorAll('#notes h2, #notes li'));
+  var resetBtn = document.getElementById('reset');
+
+  function collect(){
+    return arts.map(function(s){
+      return { t: (s.querySelector('h2')||{}).textContent || '',
+               n: [].slice.call(s.querySelectorAll('li')).map(function(li){ return li.textContent; }) };
+    });
+  }
+  function showReset(on){ resetBtn.style.display = on ? '' : 'none'; }
+
+  // apply any saved edits
+  try{
+    var raw = localStorage.getItem(KEY);
+    if(raw){
+      var data = JSON.parse(raw);
+      arts.forEach(function(s,i){
+        var rec = data[i]; if(!rec) return;
+        var h = s.querySelector('h2'); if(h && rec.t != null) h.textContent = rec.t;
+        var lis = [].slice.call(s.querySelectorAll('li'));
+        (rec.n||[]).forEach(function(t,k){ if(lis[k]) lis[k].textContent = t; });
+      });
+      showReset(true);
+    }
+  }catch(e){}
+
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(collect())); showReset(true); }catch(e){} }
+
+  // edit toggle
+  var editing = false, editBtn = document.getElementById('edit'), editLbl = document.getElementById('editLbl');
+  editBtn.addEventListener('click', function(){
+    editing = !editing;
+    document.body.classList.toggle('editing', editing);
+    editBtn.classList.toggle('on', editing);
+    editLbl.textContent = editing ? 'Done' : 'Edit';
+    fields.forEach(function(el){ el.contentEditable = editing ? 'true' : 'false'; });
+    if(editing){ if(fields[0]) fields[0].focus(); } else { save(); }
+  });
+  document.addEventListener('input', function(){ if(editing) save(); });
+
+  // download current (edited) content as .txt
+  function buildTxt(){
+    var L = ['OCBC CRAYON 2026 — Conversational AI Design', 'Speaker notes · ' + arts.length + ' slides',
+             '================================================', ''];
+    collect().forEach(function(r,i){
+      L.push('Slide ' + (i+1) + ' — ' + r.t);
+      r.n.forEach(function(n){ L.push('  \u2022 ' + n); });
+      L.push('');
+    });
+    return L.join('\n').replace(/\s+$/, '') + '\n';
+  }
+  document.getElementById('dl').addEventListener('click', function(ev){
+    ev.preventDefault();
+    var blob = new Blob([buildTxt()], { type: 'text/plain;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'OCBC-CRAYON-Conversational-AI-Design-speaker-notes.txt';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+  });
+
+  resetBtn.addEventListener('click', function(){
+    if(!confirm('Discard your edits and restore the original notes?')) return;
+    try{ localStorage.removeItem(KEY); }catch(e){}
+    location.reload();
+  });
+})();
+</script>
+</body>
+</html>

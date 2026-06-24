@@ -462,6 +462,9 @@ body{
 .slide.active .chart-svg .dot{opacity:.78}
 .chart-svg .trend{stroke:var(--red); stroke-width:3; fill:none; stroke-dasharray:600; stroke-dashoffset:600; transition:stroke-dashoffset 1.3s ease .6s}
 .slide.active .chart-svg .trend{stroke-dashoffset:0}
+.chart-svg .band{opacity:0; transition:opacity .9s ease .5s}
+.slide.active .chart-svg .band{opacity:1}
+.chart-svg .tlab{fill:var(--red); font-weight:700}
 .chart-svg .ln{fill:none; stroke-width:3; stroke-dasharray:900; stroke-dashoffset:900; transition:stroke-dashoffset 1.5s ease}
 .slide.active .chart-svg .ln1{stroke-dashoffset:0; transition-delay:.3s}
 .slide.active .chart-svg .ln2{stroke-dashoffset:0; transition-delay:.7s}
@@ -717,7 +720,7 @@ body.static .pushdown .pd{opacity:1 !important; transform:none !important; trans
         <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="3"/><path d="M5 21v-2a5 5 0 015-5h4a5 5 0 015 5v2"/></svg></div><h3>Product recommendations</h3><p>Suggest the next best product for each customer segment.</p></div>
         <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div><h3>Fraud &amp; anomaly detection</h3><p>Flag transactions that don't fit the normal pattern, in real time.</p></div>
         <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/><path d="M9 5H4v14h5"/></svg></div><h3>Churn prediction</h3><p>Spot customers likely to leave — early enough to act.</p></div>
-        <div class="card" data-r data-d="6"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H7l-3 3z"/><path d="M8 9h8M8 12h5"/></svg></div><h3>Document &amp; text (NLP)</h3><p>Read contracts, complaints and chats at scale.</p></div>
+        <div class="card" data-r data-d="6"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H7l-3 3z"/><path d="M8 9h8M8 12h5"/></svg></div><h3>Document &amp; text (NLP)</h3><p>Natural Language Processing (NLP) &mdash; read contracts, complaints and chats at scale.</p></div>
       </div>
     </div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">06</span></div>
@@ -741,36 +744,17 @@ body.static .pushdown .pd{opacity:1 !important; transform:none !important; trans
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">07</span></div>
   </section>
 
-  <!-- ============================== SLIDE 8 · THE WORKFLOW ============================== -->
-  <section class="slide" data-notes='["This is the map we return to all session. Ask → Acquire → Wrangle → Explore → Model → Communicate. Note the loop — findings at any stage send you back upstream.","Frame is the most skipped, most important step. A vague question wastes weeks. Communicate is where value is realised — analysis nobody acts on is wasted.","Watch it build step by step; each pillar today lives on a different part of this arc."]'>
-    <div class="kicker" data-r><span class="badge"></span>The map</div>
-    <h2 class="slide-title" data-r data-d="1">The data science workflow</h2>
-    <p class="slide-sub" data-r data-d="2">A loop, not a line — we'll return to this map throughout the session.</p>
-    <div class="body-area">
-      <div class="flow">
-        <div class="step"><div class="node">A</div><h4>Ask</h4><p>Define the question &amp; success metric.</p><div class="arrow"></div></div>
-        <div class="step"><div class="node">A</div><h4>Acquire</h4><p>Gather &amp; store the data.</p><div class="arrow"></div></div>
-        <div class="step"><div class="node">W</div><h4>Wrangle</h4><p>Clean, transform, reshape.</p><div class="arrow"></div></div>
-        <div class="step"><div class="node">E</div><h4>Explore</h4><p>Summaries &amp; visuals (EDA).</p><div class="arrow"></div></div>
-        <div class="step"><div class="node">M</div><h4>Model</h4><p>Quantify &amp; predict.</p><div class="arrow"></div></div>
-        <div class="step"><div class="node">C</div><h4>Communicate</h4><p>Insight &amp; decision.</p><div class="arrow"></div></div>
-      </div>
-      <p class="flow-cap" data-r data-d="6">↻ Findings loop you back upstream — a data gap sends you back to acquire; a weak model back to wrangle.</p>
-    </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">08</span></div>
-  </section>
-
-  <!-- ============================== SLIDE 9 · DIVIDER P1 ============================== -->
+  <!-- ============================== SLIDE 8 · DIVIDER P1 ============================== -->
   <section class="slide dark divider" data-notes='["Pillar 1. Audience is Python-literate, so this is a fast, confident pass — we sell the ecosystem and the data stack, not the syntax.","The one habit to instil: think in tables and vectorised operations, not row-by-row loops.","End of this pillar = Demo 1, where a CSV becomes a programmable table."]'>
     <div class="pillar-no">01</div>
     <div class="eyebrow"><span class="dot"></span>Pillar 1</div>
     <h2>Basic Python</h2>
     <p class="lead">The language of data work — and the four-layer stack that turns it into a data platform.</p>
     <div class="prog-rail"><span class="on">01 · Python</span><span>02 · DS Concepts</span><span>03 · Wrangling</span><span>04 · Analytics</span></div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON</div><span class="pg">09</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON</div><span class="pg">08</span></div>
   </section>
 
-  <!-- ============================== SLIDE 10 · WHY PYTHON ============================== -->
+  <!-- ============================== SLIDE 9 · WHY PYTHON ============================== -->
   <section class="slide" data-notes='["Sell the ecosystem, not the syntax. Python is readable, has a mature library for every step, and is the lingua franca of data and AI research — new tools ship here first.","Key insight: Python is slow as a language but fast as a platform — the heavy lifting runs in compiled C/Rust under the hood (NumPy, Apache Arrow, Polars).","The hello-data snippet: three lines load a banking CSV and answer a real question — that economy of expression is the point."]'>
     <div class="kicker" data-r><span class="badge"></span>Pillar 1 · Why Python</div>
     <h2 class="slide-title" data-r data-d="1">Readable, batteries-included, everywhere</h2>
@@ -801,10 +785,10 @@ body.static .pushdown .pd{opacity:1 !important; transform:none !important; trans
         </div>
       </div>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">10</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">09</span></div>
   </section>
 
-  <!-- ============================== SLIDE 11 · BUILDING BLOCKS ============================== -->
+  <!-- ============================== SLIDE 10 · BUILDING BLOCKS ============================== -->
   <section class="slide" data-notes='["A fast refresher on the primitives. Variables, the four scalar types, and the four containers. Keep it brisk — they know this.","The teaching emphasis: pick the right container. Lists for ordered collections, dicts to model records (a customer), tuples for fixed records, sets for membership and de-duplication.","Dicts modelling records is the bridge to DataFrame rows on the next slides."]'>
     <div class="kicker" data-r><span class="badge"></span>Pillar 1 · Building blocks</div>
     <h2 class="slide-title" data-r data-d="1">Variables, types &amp; the four containers</h2>
@@ -831,10 +815,10 @@ body.static .pushdown .pd{opacity:1 !important; transform:none !important; trans
         </div>
       </div>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">11</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">10</span></div>
   </section>
 
-  <!-- ============================== SLIDE 12 · LOGIC & FLOW ============================== -->
+  <!-- ============================== SLIDE 11 · LOGIC & FLOW ============================== -->
   <section class="slide" data-notes='["if/else and for are universal. The Python-specific habit to instil is the comprehension: a declarative one-liner that replaces the build-an-empty-list-and-append loop.","Comprehensions read closer to the intent (\"the active premier customers\") and are usually faster. This same declarative style carries straight into Polars expressions.","Show both side by side: identical result, far less ceremony on the right."]'>
     <div class="kicker" data-r><span class="badge"></span>Pillar 1 · Logic &amp; flow</div>
     <h2 class="slide-title" data-r data-d="1">From loops to comprehensions</h2>
@@ -866,10 +850,10 @@ body.static .pushdown .pd{opacity:1 !important; transform:none !important; trans
         </div>
       </div>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">12</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">11</span></div>
   </section>
 
-  <!-- ============================== SLIDE 13 · FUNCTIONS ============================== -->
+  <!-- ============================== SLIDE 12 · FUNCTIONS ============================== -->
   <section class="slide" data-notes='["Functions are the unit of reuse. Define once, call many. Small, pure functions (output depends only on input, no side effects) are easy to test, share and reason about.","The banking example: a reusable risk-band function. Write it once, apply it to a whole column later. This is exactly how feature engineering works.","Tie forward: pure functions map cleanly onto DataFrame transformations and, later, ML features."]'>
     <div class="kicker" data-r><span class="badge"></span>Pillar 1 · Functions &amp; reuse</div>
     <h2 class="slide-title" data-r data-d="1">Define once, call many</h2>
@@ -899,10 +883,10 @@ body.static .pushdown .pd{opacity:1 !important; transform:none !important; trans
         </div>
       </div>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">13</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">12</span></div>
   </section>
 
-  <!-- ============================== SLIDE 14 · DATA STACK ============================== -->
+  <!-- ============================== SLIDE 13 · DATA STACK ============================== -->
   <section class="slide" data-notes='["The four-layer stack is how Python becomes a data platform. Each layer builds on the one below and speaks the same shapes.","NumPy / Apache Arrow = the columnar + n-dimensional memory engine. Polars = labelled DataFrames on Arrow, written in Rust (where most wrangling happens). matplotlib/seaborn = charts. scikit-learn = classic ML.","Why Polars over the older pandas: pandas wraps NumPy and runs single-threaded through Python objects; Polars is built in Rust on Apache Arrow''s columnar format, runs multi-threaded by default, and has a lazy query optimiser — typically 5–30x faster on real data, with a cleaner expression API. The DataFrame concepts transfer directly if you already know pandas."]'>
     <div class="kicker" data-r><span class="badge"></span>Pillar 1 · The data stack</div>
     <h2 class="slide-title" data-r data-d="1">Four layers turn Python into a data platform</h2>
@@ -915,10 +899,10 @@ body.static .pushdown .pd{opacity:1 !important; transform:none !important; trans
       </div>
       <p class="flow-cap" data-r data-d="6">Each layer speaks the same columnar shapes — learn the DataFrame once, reuse it everywhere.</p>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">14</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">13</span></div>
   </section>
 
-  <!-- ============================== SLIDE 15 · DEMO 1 (notebook playback) ============================== -->
+  <!-- ============================== SLIDE 14 · DEMO 1 (notebook playback) ============================== -->
   <section class="slide demo-slide" data-demo="1" data-notes='["Recorded demo 1, replayed live in-deck. The whole point in one line: a DataFrame is a spreadsheet you can program.","Walk the four cells: pl.read_csv loads 50k transactions; .head() shows the first rows; .shape confirms size; .describe() gives instant summary stats — count, null_count, mean, min/max.","Press R (or the replay button) to run it again. In a real Polars notebook this is exactly what the first five minutes with any dataset looks like."]'>
     <div class="kicker" data-r><span class="badge"></span>Pillar 1 · Recorded Demo 1</div>
     <h2 class="slide-title" data-r data-d="1">A DataFrame is a spreadsheet you can program</h2>
@@ -935,7 +919,7 @@ df = pl.read_csv(<span style="color:#0a7">"transactions.csv"</span>)</div></div>
           </div>
         </div>
         <div class="demo-side">
-          <div class="demo-card" data-r data-d="2"><div class="dk">▶ Demo 1 · learning goal</div><h3>Load a CSV, see it instantly</h3><p>Polars reads a banking CSV into a DataFrame — then <code style="color:#ff9da0">.head()</code>, <code style="color:#ff9da0">.shape</code> and <code style="color:#ff9da0">.describe()</code> answer "what's in here?" in seconds.</p></div>
+          <div class="demo-card" data-r data-d="2"><div class="dk">▶ Demo 1 · learning goal</div><h3>Load a CSV, see it instantly</h3><p>Polars reads a banking CSV (comma-separated values) into a DataFrame — then <code style="color:#ff9da0">.head()</code>, <code style="color:#ff9da0">.shape</code> and <code style="color:#ff9da0">.describe()</code> answer "what's in here?" in seconds.</p></div>
           <ul class="demo-steps" id="demo1steps" data-r data-d="3">
             <li data-step="0"><span class="sn">1</span>Read 50k transactions into a DataFrame</li>
             <li data-step="1"><span class="sn">2</span><code>.head()</code> — peek at the first rows</li>
@@ -946,20 +930,20 @@ df = pl.read_csv(<span style="color:#0a7">"transactions.csv"</span>)</div></div>
         </div>
       </div>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">15</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">14</span></div>
   </section>
 
-  <!-- ============================== SLIDE 16 · DIVIDER P2 ============================== -->
+  <!-- ============================== SLIDE 15 · DIVIDER P2 ============================== -->
   <section class="slide dark divider" data-notes='["Pillar 2: the concepts that frame everything before we touch a model. Light and fast — 13 minutes.","Three ideas: what kind of data we have (structured vs unstructured), the universal shape of a dataset, and the ladder of analytics from describing to prescribing.","These are the vocabulary the rest of the program assumes."]'>
     <div class="pillar-no">02</div>
     <div class="eyebrow"><span class="dot"></span>Pillar 2</div>
     <h2>Data Science Concepts</h2>
     <p class="lead">The vocabulary of the field — data types, the shape of a dataset, and the ladder of analytics.</p>
     <div class="prog-rail"><span>01 · Python</span><span class="on">02 · DS Concepts</span><span>03 · Wrangling</span><span>04 · Analytics</span></div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON</div><span class="pg">16</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON</div><span class="pg">15</span></div>
   </section>
 
-  <!-- ============================== SLIDE 17 · STRUCTURED VS UNSTRUCTURED ============================== -->
+  <!-- ============================== SLIDE 16 · STRUCTURED VS UNSTRUCTURED ============================== -->
   <section class="slide" data-notes='["Two broad families. Structured data fits neatly in rows and columns — the transaction table. Unstructured data does not — text, images, audio, logs.","In a bank, roughly 80–90% of data is unstructured: call recordings, chat transcripts, scanned documents, complaint emails. The structured slice is where most classic analytics happens; the unstructured pile is where NLP and GenAI unlock new value.","Most of this session lives in the structured world; keep the unstructured pile in mind — it is the frontier."]'>
     <div class="kicker" data-r><span class="badge"></span>Pillar 2 · Data types</div>
     <h2 class="slide-title" data-r data-d="1">Structured vs unstructured data</h2>
@@ -979,10 +963,10 @@ df = pl.read_csv(<span style="color:#0a7">"transactions.csv"</span>)</div></div>
         </div>
       </div>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">17</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">16</span></div>
   </section>
 
-  <!-- ============================== SLIDE 18 · SHAPE OF DATA ============================== -->
+  <!-- ============================== SLIDE 17 · SHAPE OF DATA ============================== -->
   <section class="slide" data-notes='["Every structured dataset has the same shape. Rows are observations — one per thing you measured (here, one customer). Columns are features — the attributes.","One column is often special: the target (or label) — the thing you want to predict. Here it is churned. Features are the inputs; the target is the output.","This sets up machine learning next session without diving in: ML learns the mapping from features to target. No deep dive today — just plant the vocabulary."]'>
     <div class="kicker" data-r><span class="badge"></span>Pillar 2 · The shape of data</div>
     <h2 class="slide-title" data-r data-d="1">Rows, columns, and a target</h2>
@@ -1011,10 +995,10 @@ df = pl.read_csv(<span style="color:#0a7">"transactions.csv"</span>)</div></div>
         </div>
       </div>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">18</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">17</span></div>
   </section>
 
-  <!-- ============================== SLIDE 19 · FOUR TYPES OF ANALYTICS ============================== -->
+  <!-- ============================== SLIDE 18 · FOUR TYPES OF ANALYTICS ============================== -->
   <section class="slide" data-notes='["The analytic value escalator (Gartner''s framing). Four rungs, rising in both value and difficulty from left to right.","Descriptive: what happened (dashboards). Diagnostic: why (drill-down, correlation). Predictive: what will happen (ML forecasts). Prescriptive: what to do (optimisation, recommendations).","Two messages: you cannot skip rungs — good prediction needs solid description and clean data first; and most organisations are strong on the left, weak on the right. That gap is the opportunity."]'>
     <div class="kicker" data-r><span class="badge"></span>Pillar 2 · The four types</div>
     <h2 class="slide-title" data-r data-d="1">Four types of analytics — value rises with difficulty</h2>
@@ -1027,10 +1011,10 @@ df = pl.read_csv(<span style="color:#0a7">"transactions.csv"</span>)</div></div>
       </div>
       <div class="stair-axis"><span>Hindsight &nbsp;→&nbsp; insight &nbsp;→&nbsp; foresight</span><span><b>Value &amp; difficulty rise →</b></span></div>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">19</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">18</span></div>
   </section>
 
-  <!-- ============================== SLIDE 20 · SIGNAL VS NOISE ============================== -->
+  <!-- ============================== SLIDE 19 · SIGNAL VS NOISE ============================== -->
   <section class="slide" data-notes='["The core job of the analyst: separate signal (the real pattern) from noise (random scatter). Real data is never a clean line — it is a cloud.","Here, transaction count vs fraud risk: noisy, but a real upward trend hides in the scatter. The skill is seeing the trend without over-fitting to the wiggles.","Two failure modes: missing a real signal (too cautious), and seeing patterns in pure noise (too eager). Both are expensive. Statistics is how we tell them apart — back to the danger zone."]'>
     <div class="kicker" data-r><span class="badge"></span>Pillar 2 · Signal vs noise</div>
     <h2 class="slide-title" data-r data-d="1">Find the signal in the noise</h2>
@@ -1049,39 +1033,48 @@ df = pl.read_csv(<span style="color:#0a7">"transactions.csv"</span>)</div></div>
           <div class="svg-card">
             <div class="ct">Transactions per day vs fraud risk</div>
             <svg class="chart-svg" viewBox="0 0 360 250" preserveAspectRatio="xMidYMid meet">
+              <!-- noise band: the scatter envelope around the hidden trend -->
+              <polygon class="band" points="45,175 340,50 340,92 45,217" fill="#EC1B23" fill-opacity=".07"/>
               <line class="axis" x1="30" y1="220" x2="350" y2="220"/><line class="axis" x1="30" y1="20" x2="30" y2="220"/>
-              <text class="glab" x="180" y="244" text-anchor="middle">daily transactions →</text>
+              <text class="glab" x="190" y="244" text-anchor="middle">daily transactions →</text>
+              <text class="glab" transform="translate(15,120) rotate(-90)" text-anchor="middle">fraud risk →</text>
+              <!-- noisy daily observations: a real upward trend hides in the random scatter -->
               <g>
-                <circle class="dot" cx="50" cy="195" r="5" fill="#1C6E9C"/><circle class="dot" cx="66" cy="202" r="5" fill="#1C6E9C"/>
-                <circle class="dot" cx="78" cy="178" r="5" fill="#1C6E9C"/><circle class="dot" cx="96" cy="186" r="5" fill="#1C6E9C"/>
-                <circle class="dot" cx="112" cy="168" r="5" fill="#1C6E9C"/><circle class="dot" cx="126" cy="181" r="5" fill="#1C6E9C"/>
-                <circle class="dot" cx="146" cy="152" r="5" fill="#1C6E9C"/><circle class="dot" cx="160" cy="164" r="5" fill="#1C6E9C"/>
-                <circle class="dot" cx="176" cy="144" r="5" fill="#1C6E9C"/><circle class="dot" cx="190" cy="156" r="5" fill="#1C6E9C"/>
-                <circle class="dot" cx="208" cy="130" r="5" fill="#1C6E9C"/><circle class="dot" cx="222" cy="142" r="5" fill="#1C6E9C"/>
-                <circle class="dot" cx="240" cy="122" r="5" fill="#1C6E9C"/><circle class="dot" cx="256" cy="134" r="5" fill="#1C6E9C"/>
-                <circle class="dot" cx="274" cy="106" r="5" fill="#1C6E9C"/><circle class="dot" cx="290" cy="120" r="5" fill="#1C6E9C"/>
-                <circle class="dot" cx="306" cy="96" r="5" fill="#1C6E9C"/><circle class="dot" cx="324" cy="108" r="5" fill="#1C6E9C"/><circle class="dot" cx="338" cy="88" r="5" fill="#1C6E9C"/>
+                <circle class="dot" cx="50" cy="205" r="4.5" fill="#1C6E9C"/><circle class="dot" cx="60" cy="175" r="4.5" fill="#1C6E9C"/>
+                <circle class="dot" cx="72" cy="193" r="4.5" fill="#1C6E9C"/><circle class="dot" cx="84" cy="162" r="4.5" fill="#1C6E9C"/>
+                <circle class="dot" cx="95" cy="180" r="4.5" fill="#1C6E9C"/><circle class="dot" cx="107" cy="157" r="4.5" fill="#1C6E9C"/>
+                <circle class="dot" cx="118" cy="179" r="4.5" fill="#1C6E9C"/><circle class="dot" cx="130" cy="151" r="4.5" fill="#1C6E9C"/>
+                <circle class="dot" cx="141" cy="172" r="4.5" fill="#1C6E9C"/><circle class="dot" cx="153" cy="138" r="4.5" fill="#1C6E9C"/>
+                <circle class="dot" cx="164" cy="152" r="4.5" fill="#1C6E9C"/><circle class="dot" cx="176" cy="122" r="4.5" fill="#1C6E9C"/>
+                <circle class="dot" cx="188" cy="147" r="4.5" fill="#1C6E9C"/><circle class="dot" cx="199" cy="124" r="4.5" fill="#1C6E9C"/>
+                <circle class="dot" cx="210" cy="145" r="4.5" fill="#1C6E9C"/><circle class="dot" cx="222" cy="111" r="4.5" fill="#1C6E9C"/>
+                <circle class="dot" cx="233" cy="119" r="4.5" fill="#1C6E9C"/><circle class="dot" cx="245" cy="91" r="4.5" fill="#1C6E9C"/>
+                <circle class="dot" cx="256" cy="120" r="4.5" fill="#1C6E9C"/><circle class="dot" cx="268" cy="93" r="4.5" fill="#1C6E9C"/>
+                <circle class="dot" cx="279" cy="118" r="4.5" fill="#1C6E9C"/><circle class="dot" cx="291" cy="79" r="4.5" fill="#1C6E9C"/>
+                <circle class="dot" cx="302" cy="94" r="4.5" fill="#1C6E9C"/><circle class="dot" cx="314" cy="65" r="4.5" fill="#1C6E9C"/>
+                <circle class="dot" cx="325" cy="87" r="4.5" fill="#1C6E9C"/><circle class="dot" cx="336" cy="67" r="4.5" fill="#1C6E9C"/>
               </g>
-              <path class="trend" d="M40 200 L344 96"/>
+              <path class="trend" d="M45 195 L340 70"/>
+              <text class="glab tlab" x="236" y="60" text-anchor="middle">underlying trend ↗</text>
             </svg>
           </div>
         </div>
       </div>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">20</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">19</span></div>
   </section>
 
-  <!-- ============================== SLIDE 21 · DIVIDER P3 ============================== -->
+  <!-- ============================== SLIDE 20 · DIVIDER P3 ============================== -->
   <section class="slide dark divider" data-notes='["Pillar 3, the heart of the session: data wrangling. This is where real data scientists spend most of their time, and where Demo 2 lands.","Reset expectations: the glamorous modelling is a thin slice. The bulk is finding and fixing problems in messy data.","We map every common mess to a one-line Polars expression, then do it live."]'>
     <div class="pillar-no">03</div>
     <div class="eyebrow"><span class="dot"></span>Pillar 3</div>
     <h2>Data Wrangling</h2>
     <p class="lead">The unglamorous 80% — finding the mess in real data and turning it into something you can trust.</p>
     <div class="prog-rail"><span>01 · Python</span><span>02 · DS Concepts</span><span class="on">03 · Wrangling</span><span>04 · Analytics</span></div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON</div><span class="pg">21</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON</div><span class="pg">20</span></div>
   </section>
 
-  <!-- ============================== SLIDE 22 · 80% OF THE JOB ============================== -->
+  <!-- ============================== SLIDE 21 · 80% OF THE JOB ============================== -->
   <section class="slide" data-notes='["The expectation-reset slide. Surveys (e.g. CrowdFlower/Anaconda) consistently put data preparation at roughly 60% of effort for cleaning alone, ~80% including collection.","State it as indicative, not gospel — the exact number varies. The point is directional: most of the work is before the modelling.","Why? Real data is generated by messy real-world processes — systems change, fields get renamed, humans typo. Clean data is made, not found."]'>
     <div class="kicker" data-r><span class="badge"></span>Pillar 3 · Reality check</div>
     <h2 class="slide-title" data-r data-d="1">Wrangling is most of the job</h2>
@@ -1095,10 +1088,10 @@ df = pl.read_csv(<span style="color:#0a7">"transactions.csv"</span>)</div></div>
         </div>
       </div>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">22</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">21</span></div>
   </section>
 
-  <!-- ============================== SLIDE 23 · MESSY DATA ============================== -->
+  <!-- ============================== SLIDE 22 · MESSY DATA ============================== -->
   <section class="slide" data-notes='["The six usual suspects you hunt for during inspection. Two deserve emphasis.","Missing values are a decision, not an accident — dropping vs filling changes your results, so be deliberate. Outliers can be real signal (a genuine large transfer) or a data error — investigate before deleting.","Inconsistent categories (ID / Indonesia / idn) and wrong types (\"1,000\" as text) are the silent time-sinks. Duplicates quietly inflate every total."]'>
     <div class="kicker" data-r><span class="badge"></span>Pillar 3 · The usual suspects</div>
     <h2 class="slide-title" data-r data-d="1">What messy data looks like</h2>
@@ -1112,10 +1105,10 @@ df = pl.read_csv(<span style="color:#0a7">"transactions.csv"</span>)</div></div>
         <div class="card" data-r data-d="6"><span class="num">6</span><h3>Inconsistent formats</h3><p>Dates, currencies, casing — the same value, many shapes.</p></div>
       </div>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">23</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">22</span></div>
   </section>
 
-  <!-- ============================== SLIDE 24 · PANDAS TOOLKIT ============================== -->
+  <!-- ============================== SLIDE 23 · PANDAS TOOLKIT ============================== -->
   <section class="slide" data-notes='["Every mess maps to a small set of Polars expressions. This is the cheat sheet.","drop_nulls/fill_null for missingness; unique for duplicates; cast and str methods for types and text; group_by().agg() to aggregate; join to combine tables.","The point: you do not memorise a thousand functions. You learn this handful, compose them as expressions in a pipeline, and (in Polars) let the lazy optimiser do the rest — more on that just before the demo."]'>
     <div class="kicker" data-r><span class="badge"></span>Pillar 3 · The toolkit</div>
     <h2 class="slide-title" data-r data-d="1">Every mess maps to a Polars expression</h2>
@@ -1130,10 +1123,10 @@ df = pl.read_csv(<span style="color:#0a7">"transactions.csv"</span>)</div></div>
         <div class="pf-row"><div class="prob"><span class="d"></span>Two tables</div><div class="fix"><code>.join()</code></div><div class="desc">Join on a key — like a SQL JOIN.</div></div>
       </div>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">24</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">23</span></div>
   </section>
 
-  <!-- ============================== SLIDE 25 · TIDY DATA ============================== -->
+  <!-- ============================== SLIDE 24 · TIDY DATA ============================== -->
   <section class="slide" data-notes='["Tidy data (Hadley Wickham): one variable per column, one observation per row, one table per unit. A simple, powerful contract.","Spreadsheets push people toward the messy wide form — values spread across columns (Q1, Q2, Q3). The tidy long form looks more verbose but is exactly what group_by, plotting and ML expect.","Much of wrangling is just reshaping wide into long. In Polars: df.unpivot(). Tidy in, everything downstream gets easier."]'>
     <div class="kicker" data-r><span class="badge"></span>Pillar 3 · Tidy data</div>
     <h2 class="slide-title" data-r data-d="1">Tidy data: the analysis-ready shape</h2>
@@ -1157,10 +1150,10 @@ df = pl.read_csv(<span style="color:#0a7">"transactions.csv"</span>)</div></div>
         </div>
       </div>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">25</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">24</span></div>
   </section>
 
-  <!-- ============================== SLIDE 26 · EAGER VS LAZY ============================== -->
+  <!-- ============================== SLIDE 25 · EAGER VS LAZY ============================== -->
   <section class="slide" data-notes='["Polars'' signature feature, and the one mental model to take away. Two execution modes for the SAME pipeline.","Eager (read_csv): every step runs the moment you write it — simple, immediate, great for exploring. This is how pandas always works.","Lazy (scan_csv … .collect()): you describe the whole query first; Polars builds a plan, OPTIMISES it, then runs once. Predicate pushdown moves your filter down to the file read; projection pushdown reads only the columns you actually use; and it runs multi-threaded. On a large file that can be the difference between reading 10 GB and reading 1 GB. Rule of thumb: explore eager, run pipelines lazy. You''ll see .lazy()…collect() in the demo next."]'>
     <div class="kicker" data-r><span class="badge"></span>Pillar 3 · How Polars runs</div>
     <h2 class="slide-title" data-r data-d="1">Eager vs lazy: plan, then run</h2>
@@ -1197,10 +1190,10 @@ df = pl.read_csv(<span style="color:#0a7">"transactions.csv"</span>)</div></div>
         <div class="pd"><span class="ck">✓</span><b>Multi-threaded</b> — all cores, one pass</div>
       </div>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">26</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">25</span></div>
   </section>
 
-  <!-- ============================== SLIDE 27 · DEMO 2 (notebook playback) ============================== -->
+  <!-- ============================== SLIDE 26 · DEMO 2 (notebook playback) ============================== -->
   <section class="slide demo-slide" data-demo="2" data-notes='["Recorded demo 2 — the payoff of the whole pillar. A deliberately messy banking CSV becomes one clean summary table, in Polars.","Walk the pipeline: inspect missingness with null_count(); fill amounts and drop rows missing a product with expressions; cast the dtype and de-duplicate with unique(); then the finale — a lazy query (.lazy() … .collect()) that Polars optimises into one pass.","Press R to replay. This four-step shape — inspect, fix, reshape, summarise — is 80% of real data work in miniature. The lazy pipeline is Polars'' headline feature: it plans and optimises the whole query before touching data."]'>
     <div class="kicker" data-r><span class="badge"></span>Pillar 3 · Recorded Demo 2</div>
     <h2 class="slide-title" data-r data-d="1">From messy CSV to one clean table</h2>
@@ -1236,20 +1229,20 @@ df = df.unique()</div></div><div class="nb-out"><span class="ok">✓ dtype fixed
         </div>
       </div>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">26</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">25</span></div>
   </section>
 
-  <!-- ============================== SLIDE 27 · DIVIDER P4 ============================== -->
+  <!-- ============================== SLIDE 26 · DIVIDER P4 ============================== -->
   <section class="slide dark divider" data-notes='["Pillar 4: turning clean data into honest insight. EDA, choosing charts, designing them truthfully, dodging the classic traps, and communicating the so-what.","This is where top courses deliberately end — on judgement and interpretation, not technique.","17 minutes, then we wrap."]'>
     <div class="pillar-no">04</div>
     <div class="eyebrow"><span class="dot"></span>Pillar 4</div>
     <h2>Analytics Principles</h2>
     <p class="lead">From clean data to honest insight — explore it, chart it truthfully, and tell the story that drives a decision.</p>
     <div class="prog-rail"><span>01 · Python</span><span>02 · DS Concepts</span><span>03 · Wrangling</span><span class="on">04 · Analytics</span></div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON</div><span class="pg">27</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON</div><span class="pg">26</span></div>
   </section>
 
-  <!-- ============================== SLIDE 28 · EDA ============================== -->
+  <!-- ============================== SLIDE 27 · EDA ============================== -->
   <section class="slide" data-notes='["EDA = exploratory data analysis: interrogating data with summaries and visuals before any modelling. Always look at your data first.","Distributions (histograms, box plots) reveal shape, spread and outliers. Summary stats give center and spread. Relationships (scatter, correlation) show how variables move together.","A single histogram can expose a broken feed, a default value masquerading as real, or two populations mixed together. Anscombe''s quartet proves it: near-identical summary stats, completely different pictures — you must visualise, not just summarise."]'>
     <div class="kicker" data-r><span class="badge"></span>Pillar 4 · EDA</div>
     <h2 class="slide-title" data-r data-d="1">Always look at your data first</h2>
@@ -1278,10 +1271,10 @@ df = df.unique()</div></div><div class="nb-out"><span class="ok">✓ dtype fixed
         </div>
       </div>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">28</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">27</span></div>
   </section>
 
-  <!-- ============================== SLIDE 29 · CHOOSING THE CHART ============================== -->
+  <!-- ============================== SLIDE 28 · CHOOSING THE CHART ============================== -->
   <section class="slide" data-notes='["The intellectual core of the viz block: start from the QUESTION, then pick the chart — not the other way around.","Six purposes, six defaults: comparison→bar, trend→line, relationship→scatter, distribution→histogram, composition→stacked bar (over pie), correlation→heatmap.","The beginner mistake is starting from a chart they like. Ask: am I showing comparison, trend, relationship, distribution, composition or correlation? Each has a default."]'>
     <div class="kicker" data-r><span class="badge"></span>Pillar 4 · Choosing the chart</div>
     <h2 class="slide-title" data-r data-d="1">Start from the question, then pick the chart</h2>
@@ -1295,10 +1288,10 @@ df = df.unique()</div></div><div class="nb-out"><span class="ok">✓ dtype fixed
         <div class="pick" data-r data-d="6"><div class="pg-glyph"><svg viewBox="0 0 90 46"><g><rect x="20" y="6" width="12" height="12" fill="#EC1B23"/><rect x="33" y="6" width="12" height="12" fill="#f3b0b3"/><rect x="46" y="6" width="12" height="12" fill="#B3141A"/><rect x="20" y="19" width="12" height="12" fill="#f3b0b3"/><rect x="33" y="19" width="12" height="12" fill="#EC1B23"/><rect x="46" y="19" width="12" height="12" fill="#f7d2d4"/><rect x="20" y="32" width="12" height="12" fill="#B3141A"/><rect x="33" y="32" width="12" height="12" fill="#f7d2d4"/><rect x="46" y="32" width="12" height="12" fill="#EC1B23"/></g></svg></div><div class="q">Many relationships</div><h4>Heatmap</h4><p>Pairwise correlations at once. Spot clusters fast.</p></div>
       </div>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">29</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">28</span></div>
   </section>
 
-  <!-- ============================== SLIDE 30 · VIZ PRINCIPLES (good vs bad) ============================== -->
+  <!-- ============================== SLIDE 29 · VIZ PRINCIPLES (good vs bad) ============================== -->
   <section class="slide" data-notes='["Visualization is persuasion, so it carries ethical weight. Clarity over decoration.","The truncated-axis example is the classic deception: identical data, but the left chart starts the y-axis high, making a 1–2% wiggle look like a dramatic surge. The right chart starts at zero and tells the truth.","Rules of thumb: start bars at zero, label your axes, strip chart-junk, one message per chart, colour with meaning. Design honestly — and read others'' charts sceptically."]'>
     <div class="kicker" data-r><span class="badge"></span>Pillar 4 · Honest charts</div>
     <h2 class="slide-title" data-r data-d="1">Good charts clarify — bad charts mislead</h2>
@@ -1315,10 +1308,10 @@ df = df.unique()</div></div><div class="nb-out"><span class="ok">✓ dtype fixed
         </div>
       </div>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">30</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">29</span></div>
   </section>
 
-  <!-- ============================== SLIDE 31 · CORRELATION VS CAUSATION ============================== -->
+  <!-- ============================== SLIDE 30 · CORRELATION VS CAUSATION ============================== -->
   <section class="slide" data-notes='["The most expensive analyst mistake. Two series can move together without one causing the other — they may share a hidden third cause.","The classic: ice-cream sales and drownings rise together. Ice cream does not cause drowning — summer drives both. In banking: marketing spend and revenue both rise in Q4 because of the holidays, not because the ads worked.","Tie back to Conway''s danger zone: this is exactly the trap of coding + domain without statistics. Always ask: could a third factor explain this? Would it hold on new data?"]'>
     <div class="kicker" data-r><span class="badge"></span>Pillar 4 · The big trap</div>
     <h2 class="slide-title" data-r data-d="1">Correlation ≠ causation</h2>
@@ -1348,10 +1341,10 @@ df = df.unique()</div></div><div class="nb-out"><span class="ok">✓ dtype fixed
         </div>
       </div>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">31</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">30</span></div>
   </section>
 
-  <!-- ============================== SLIDE 32 · COMMUNICATING INSIGHT ============================== -->
+  <!-- ============================== SLIDE 31 · COMMUNICATING INSIGHT ============================== -->
   <section class="slide" data-notes='["The final facet (Harvard CS109''s last word): communicate. Analysis nobody acts on is wasted.","Storytelling with data: lead with the so-what, not the method. Your stakeholder does not care about your pipeline — they care about the decision.","Three habits: lead with the conclusion; one chart, one message; end with a recommendation, not a data dump. This is what turns information into insight — back to Fiorina."]'>
     <div class="kicker" data-r><span class="badge"></span>Pillar 4 · Communicate</div>
     <h2 class="slide-title" data-r data-d="1">Lead with the &ldquo;so what&rdquo;</h2>
@@ -1369,10 +1362,10 @@ df = df.unique()</div></div><div class="nb-out"><span class="ok">✓ dtype fixed
         </ul>
       </div>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">32</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">31</span></div>
   </section>
 
-  <!-- ============================== SLIDE 33 · PUTTING IT TOGETHER ============================== -->
+  <!-- ============================== SLIDE 32 · PUTTING IT TOGETHER ============================== -->
   <section class="slide" data-notes='["Replay the whole arc on one concrete banking example: reducing churn in young customers.","Ask: which customers will churn next quarter? Acquire: pull transactions + tenure. Wrangle: clean and build features. Explore: EDA shows low-engagement under-30s churn most. Model: a churn score (next session). Communicate: target the at-risk segment with one offer.","Recap the four pillars, then point to practice: get hands-on in a notebook with a real CSV. The only way to learn this is to do it."]'>
     <div class="kicker" data-r><span class="badge"></span>Wrap · End to end</div>
     <h2 class="slide-title" data-r data-d="1">One question, all the way through</h2>
@@ -1391,10 +1384,10 @@ df = df.unique()</div></div><div class="nb-out"><span class="ok">✓ dtype fixed
         <div class="card" data-r data-d="4"><h3 style="font-size:16px">Practice next</h3><p>Open a notebook, load a real CSV, and run the four-step clean. The only way to learn this is to do it.</p></div>
       </div>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">33</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">32</span></div>
   </section>
 
-  <!-- ============================== SLIDE 34 · BEST PRACTICES ============================== -->
+  <!-- ============================== SLIDE 33 · BEST PRACTICES ============================== -->
   <section class="slide" data-notes='["These six habits are what the literature and practice converge on — they outlast any single tool or language.","Frame first (CRISP-DM business understanding): a precise question + success metric prevents weeks of wasted effort. Look before you model: EDA first, always visualise. Tidy + validated: one variable per column, plus explicit data-quality checks.","Reproducibility by default: version-control code AND data with Git; a notebook should re-run top-to-bottom with the same result. Efficient pipelines: in Polars, prefer lazy scans and expressions so the optimiser prunes columns and pushes filters down. Iterate & document: the workflow is a loop heading toward deployment — record decisions (this is where MLOps begins).","Sources: CRISP-DM (2025 refresh, datascience-pm.com); ''Ten simple rules for a responsible data science workflow'' (PMC, 2024); Polars docs (pola.rs)."]'>
     <div class="kicker" data-r><span class="badge"></span>Wrap · Best practices</div>
     <h2 class="slide-title" data-r data-d="1">Six habits that outlast any tool</h2>
@@ -1408,10 +1401,10 @@ df = df.unique()</div></div><div class="nb-out"><span class="ok">✓ dtype fixed
         <div class="card" data-r data-d="6"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1015-6.7L21 8"/><path d="M21 3v5h-5"/></svg></div><h3>Iterate &amp; document</h3><p>The workflow is a loop toward deployment — record decisions. This is where MLOps begins.</p></div>
       </div>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">34</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON</div><span class="pg">33</span></div>
   </section>
 
-  <!-- ============================== SLIDE 35 · CLOSING ============================== -->
+  <!-- ============================== SLIDE 34 · CLOSING ============================== -->
   <section class="slide dark" data-notes='["Land the plane. Recap in one breath, then bridge to next session: Machine Learning & MLOps — moving from describing data to learning from it.","Call back to Fiorina: we have turned data into information and information into insight. Everything in ML next session assumes the clean, well-understood data we just learned to produce.","Thank them, open the floor for Q&A."]'>
     <div class="body-area" style="justify-content:center">
       <div class="kicker" data-r><span class="badge"></span>Wrap &amp; Q&amp;A</div>
@@ -1437,7 +1430,7 @@ df = df.unique()</div></div><div class="nb-out"><span class="ok">✓ dtype fixed
         </div>
       </div>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Python Data Foundations</div><span class="pg">34</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Python Data Foundations</div><span class="pg">33</span></div>
   </section>
 
   <!-- SLIDE-INSERT -->
