@@ -83,7 +83,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
 <div class="banner" id="banner">✎&nbsp; Editing — your changes are saved in this browser. Use <b>Download .txt</b> to keep a copy.</div>
 <main>
   <h1 class="lead">Talk track <span class="red">&middot; every slide</span></h1>
-  <p class="intro">Speaker notes for the OCBC CRAYON 2026 &mdash; Generative AI &amp; LLMs: Theory deck. 36 slides, in order. Press <b>Edit</b> to tweak the wording inline (saved to this browser), or <b>Download .txt</b> for a copy.</p>
+  <p class="intro">Speaker notes for the OCBC CRAYON 2026 &mdash; Generative AI &amp; LLMs: Theory deck. 39 slides, in order. Press <b>Edit</b> to tweak the wording inline (saved to this browser), or <b>Download .txt</b> for a copy.</p>
   <div id="notes">
     <article class="s">
       <div class="n">Slide 1</div>
@@ -108,17 +108,17 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       <h2>From predicting data to generating language</h2>
       <ul>
         <li>Bridge from Topic 2. There we made data predict a label or a number. GenAI goes one step further: it generates new content.</li>
-        <li>Predictive ML answers is this fraud? Generative AI writes the suspicious-activity summary. Same data foundation, a new capability.</li>
+        <li>Predictive ML answers a yes/no question like “is this fraud?” Generative AI writes the suspicious-activity summary. Same data foundation, a brand-new capability.</li>
         <li>Frame today as adding generation on top of the prediction skills they already have.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 4</div>
-      <h2>Discriminative labels · generative produces</h2>
+      <h2>Discriminative sorts · generative creates</h2>
       <ul>
-        <li>The core distinction. Discriminative models draw boundaries and label — that was Topic 2.</li>
-        <li>Generative models produce new content that resembles their training data — text, here.</li>
-        <li>Banking pair: a discriminative model flags a suspicious transaction; a generative model drafts the SAR narrative for the analyst to review.</li>
+        <li>The core distinction, in plain terms. A discriminative model sorts an input into a category — it draws a line between classes and tells you which side you are on. That was all of Topic 2.</li>
+        <li>A generative model instead produces brand-new content in the style of its training data — here, text. It does not choose from a fixed list of answers; it writes one.</li>
+        <li>Banking pair to make it stick: a discriminative model flags a transaction as suspicious; a generative model then drafts the suspicious-activity report (SAR) narrative for an analyst to review.</li>
       </ul>
     </article>
     <article class="s">
@@ -152,36 +152,36 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       <div class="n">Slide 8</div>
       <h2>Autocomplete on steroids</h2>
       <ul>
-        <li>Plainest possible definition: a model that assigns probabilities to sequences and predicts the next token.</li>
-        <li>The one-liner that sticks: autocomplete on steroids. Your phone keyboard does a tiny version of this.</li>
-        <li>All the apparent intelligence is doing this one thing extremely well, over and over.</li>
+        <li>Plainest possible definition: a language model assigns probabilities to sequences of words, and its whole job is to predict the next token — roughly, the next word.</li>
+        <li>The one-liner that sticks: autocomplete on steroids. Your phone keyboard does a tiny version of this every time it suggests your next word.</li>
+        <li>Everything that looks like intelligence is this one move — predict, append, repeat — done extremely well, over and over.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 9</div>
       <h2>It predicts a distribution, then picks</h2>
       <ul>
-        <li>Make it concrete. Given the prompt, the model produces a probability for every possible next token.</li>
-        <li>Here the top candidate is balance, then frozen, overdrawn. It samples from this distribution to pick a word.</li>
-        <li>Repeat token by token and you get fluent text. The whole magic is doing this distribution well.</li>
+        <li>Make it concrete. Given the prompt, the model produces a probability for every possible next token — that whole set of probabilities is the “distribution”. (We show whole words here for readability; strictly, each candidate is a token, a word-piece — unpacked on the next slide.)</li>
+        <li>Here the top candidate is “balance”, then “frozen”, then “overdrawn”. It then samples from the distribution — usually a likely word, not always the very top one, which is what keeps the output varied rather than robotic.</li>
+        <li>Repeat token by token, feeding each pick back in, and you get fluent text. The whole craft is shaping this distribution well.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 10</div>
       <h2>Words become numbers the model can do math on</h2>
       <ul>
-        <li>Two ideas. First, text is broken into tokens — roughly word-pieces — because models work in fixed units.</li>
-        <li>Second, each token maps to a vector, an embedding, where similar meanings sit near each other.</li>
-        <li>Why numbers: models do arithmetic, not words. debit and credit land close; king and queen close — geometry captures meaning.</li>
+        <li>Two ideas here. First, text is broken into tokens — short word-pieces — because the model works in fixed units, not free-form letters. A common word like “banking” may be one token; a rare word is split into several.</li>
+        <li>Second, each token is turned into a vector: a long list of numbers called an embedding. The picture here is the classic word-embedding intuition — similar meanings get similar numbers and land close together. Inside the transformer this starting vector is then adjusted by context, which is exactly what attention (coming up) does.</li>
+        <li>Why numbers and not words? A model can only do arithmetic, so meaning has to become geometry. “Debit” sits near “credit”; “king” is far away. Topic 4 reuses this same idea at a larger grain — embedding whole sentences or passages so we can find the ones closest in meaning to a question.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 11</div>
       <h2>Scale unlocked learning from the prompt</h2>
       <ul>
-        <li>Large is three things multiplied: parameters, training data, and compute. GPT-3 was 175 billion parameters.</li>
-        <li>Scale did something surprising — it unlocked in-context learning: the model learns from examples in the prompt, with no retraining.</li>
-        <li>A few abilities appear only past a size threshold — emergent abilities. We exploit in-context learning in the prompting section.</li>
+        <li>“Large” is three things multiplied: parameters (the model's learned weights), training data, and compute. GPT-3 had 175 billion parameters.</li>
+        <li>Scale did something surprising — it unlocked in-context learning: show the model two labelled examples in the prompt and it copies the pattern on the third, with no retraining at all.</li>
+        <li>Some abilities seem to appear only past a certain size — so-called “emergent” abilities, though researchers debate how sharp that jump really is. We lean on in-context learning directly in the prompting section.</li>
       </ul>
     </article>
     <article class="s">
@@ -197,9 +197,9 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       <div class="n">Slide 13</div>
       <h2>Three stages: pretrain, fine-tune, align</h2>
       <ul>
-        <li>How a modern LLM is actually made — three stages. Pretraining: predict the next token on massive text. It learns language and world knowledge, but not how to behave.</li>
-        <li>Fine-tuning / instruction-tuning: train on examples of following instructions, so it answers rather than just continues text.</li>
-        <li>RLHF: align to human preferences using feedback — helpful, honest, harmless. This is what makes a raw model into an assistant.</li>
+        <li>How a modern LLM is actually made, in three stages. Stage 1, pretraining: predict the next token across a huge slice of the internet. This is “self-supervised” — the text is its own answer key, so no human labelling is needed. It learns language and world knowledge, but not yet how to behave.</li>
+        <li>Stage 2, instruction tuning: fine-tune on examples of instructions paired with good answers, so the model learns to answer a request rather than just continue the text.</li>
+        <li>Stage 3, RLHF (reinforcement learning from human feedback): people rank competing answers and the model is nudged toward the preferred ones — helpful, honest, harmless. Stages 2 and 3 are what turn a raw next-word predictor into an assistant.</li>
       </ul>
     </article>
     <article class="s">
@@ -207,7 +207,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       <h2>A brilliant drafter, an unreliable oracle</h2>
       <ul>
         <li>Honest framing for a risk-aware audience. Strengths: drafting, summarising, extraction, translation, code.</li>
-        <li>Limits: hallucination — confidently wrong; no live knowledge without retrieval; weak at exact math; can inherit bias.</li>
+        <li>Limits: hallucination — confidently wrong; no live knowledge without retrieval; a fixed context window — it can only read so much text at once, and your prompt, any pasted or retrieved text, and the answer all share that one budget; weak at exact arithmetic; and it can inherit bias from its training data.</li>
         <li>The point: treat output as a capable draft to verify, never as ground truth. This sets up RAG and guardrails.</li>
       </ul>
     </article>
@@ -225,8 +225,8 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       <h2>The model is one API call</h2>
       <ul>
         <li>Demo 1, replayed in-deck — press R or Replay. The model itself is a single API call.</li>
-        <li>Cell 2 is a bare call: prompt in, completion out. Cell 3 prepends a retrieved policy snippet — the RAG pattern — and the answer becomes grounded and specific.</li>
-        <li>The lesson: the model is one API call; the engineering is the context and prompt you wrap around it.</li>
+        <li>Cell 2 is a bare call: prompt in, completion out. Cell 3 adds a retrieved policy snippet inside a tagged &lt;context&gt; block, with a system instruction to answer only from it — the RAG pattern — and the answer becomes grounded and specific.</li>
+        <li>The lesson: the model is one API call; the real engineering is the context and prompt you wrap around it — keep retrieved text clearly separated from the user's question, never blindly concatenated.</li>
       </ul>
     </article>
     <article class="s">
@@ -242,9 +242,9 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       <div class="n">Slide 18</div>
       <h2>Reading word-by-word hits a wall</h2>
       <ul>
-        <li>Set up the problem the transformer solved. Older models — RNNs — read one word at a time, in order.</li>
-        <li>That is slow, and they forget long-range context: by the end of a long paragraph the start has faded.</li>
-        <li>The transformer's move: read the whole sequence at once, in parallel, and let every word see every other.</li>
+        <li>Set up the problem the transformer solved. Older models — RNNs, or recurrent neural networks — read a sentence one word at a time, carrying a running summary forward, like reading with a single finger.</li>
+        <li>Two costs: it is slow, because each step waits for the one before it; and it forgets long-range context — by the end of a long paragraph the beginning has faded.</li>
+        <li>The transformer's move: read the whole sequence at once, in parallel, and let every word look directly at every other word, near or far.</li>
       </ul>
     </article>
     <article class="s">
@@ -260,27 +260,28 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       <div class="n">Slide 20</div>
       <h2>Every word weighs every other word</h2>
       <ul>
-        <li>The heart of the transformer, shown. Every word looks at every other word and weighs how relevant each is.</li>
-        <li>Here the focus word is charge. Attention links it most strongly to disputed, also to customer and card — it builds context.</li>
-        <li>No matrix math today — just the picture: thicker link means more attention. This is how the model resolves what a word means in context.</li>
+        <li>This is the heart of the transformer. To understand a word, the model lets it look at every other word and weigh how relevant each one is — that weighing is what “attention” means.</li>
+        <li>Why it matters: “charge” could be a fee or an accusation. By attending strongly to “disputed”, the model works out which sense is meant here — it resolves meaning from context.</li>
+        <li>No matrix math today — just read the picture: a thicker line means more attention. The focus word “charge” links most to “disputed”, and also to “customer” and “card”.</li>
+        <li>One honest caveat for later: a BERT-style encoder really does let every word see every other word. A decoder LLM — the kind that generates text — lets each word see only the words before it, and that left-to-right limit is exactly what lets it predict the next one.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 21</div>
-      <h2>Many readers, each tracking one thing</h2>
+      <h2>Many readers, each catching different patterns</h2>
       <ul>
-        <li>One attention pass catches one kind of relationship. Real transformers run many in parallel — heads.</li>
-        <li>Each head learns to track something different: grammar, meaning, or reference. Then their reads are combined.</li>
-        <li>Analogy: a panel of readers, each following one thread, pooling notes for a richer understanding.</li>
+        <li>One attention pattern catches one kind of relationship; a real transformer runs many in parallel — these are the “heads”.</li>
+        <li>Different heads end up sensitive to different things — some to grammar, some to meaning, some to reference — but those roles are learned, not assigned, and most heads do not map cleanly to a single human label. The honest takeaway: many heads in parallel capture more kinds of relationship than one could alone.</li>
+        <li>Analogy: a panel of readers, each catching different threads and pooling their notes for a richer read — just do not picture neat, labelled job titles.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 22</div>
       <h2>What else is in a transformer block</h2>
       <ul>
-        <li>Round out the block in plain terms. Positional encoding tags each token with its order, since attention alone is order-blind.</li>
-        <li>Feed-forward layers process each token a bit more on their own. Residual connections and layer norm keep training stable as you stack.</li>
-        <li>Attention plus these pieces is the transformer block — the unit you repeat.</li>
+        <li>Round out the block in plain terms. Positional encoding tags each token with its position, because attention on its own is order-blind — without it, “bank charged a fee” and “fee charged a bank” would look identical.</li>
+        <li>Feed-forward: each token gets a little more processing on its own. Residual connections are shortcuts that let a layer's input skip ahead and be added back, so very deep stacks do not lose the original signal; layer norm just keeps the numbers in a stable range. Together they make deep models trainable.</li>
+        <li>Attention plus these supporting pieces is one transformer block — the unit you stack over and over.</li>
       </ul>
     </article>
     <article class="s">
@@ -325,7 +326,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       <ul>
         <li>Define it. Prompt engineering is steering a fixed model with the words you give it — no weight changes.</li>
         <li>It is far faster and cheaper than fine-tuning, preserves the model's general knowledge, and keeps working across model updates.</li>
-        <li>Reach for prompting first; fine-tuning is a later, heavier tool.</li>
+        <li>Reach for prompting first; fine-tuning is a later, heavier tool — and note that fine-tuning changes the model's behaviour and style, not the facts it knows. For facts that change, the answer is retrieval (Topic 4).</li>
       </ul>
     </article>
     <article class="s">
@@ -350,18 +351,18 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       <div class="n">Slide 30</div>
       <h2>Show, don't just tell</h2>
       <ul>
-        <li>Rung 2. Do not just tell — show. Three to five diverse, canonical examples teach the format and tone better than any description.</li>
-        <li>Banking example: a couple of labelled transaction-to-category pairs, then the new one to classify.</li>
-        <li>The model copies the pattern. Keep examples varied so it generalises rather than memorising.</li>
+        <li>Rung 2, few-shot prompting — “few-shot” just means giving the model a few worked examples before the real input. Do not only tell it; show it.</li>
+        <li>Three to five diverse examples teach format and tone better than any description. Banking example: a couple of labelled transaction-to-category pairs, then the new transaction to classify.</li>
+        <li>The model copies the pattern. Keep the examples varied so it generalises rather than memorising one shape.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 31</div>
       <h2>Ask it to think step by step</h2>
       <ul>
-        <li>Rung 3. For multi-step problems, ask the model to reason step by step before answering — accuracy jumps.</li>
-        <li>Also give it permission to say I don't know, which reduces confident guessing.</li>
-        <li>Trade-off: it is slower and uses more tokens, so reserve it for genuinely complex tasks.</li>
+        <li>Rung 3, chain-of-thought. For multi-step problems, ask the model to reason step by step before giving its answer — accuracy jumps, because it works through the problem instead of blurting a guess.</li>
+        <li>Also give it explicit permission to say “I don't know”, which cuts down confident guessing.</li>
+        <li>Trade-off: it is slower and uses more tokens, so save it for tasks that genuinely need working-out, not simple lookups.</li>
       </ul>
     </article>
     <article class="s">

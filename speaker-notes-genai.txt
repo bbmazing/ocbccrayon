@@ -14,13 +14,13 @@ Slide 2 — The idea that started it
 
 Slide 3 — From predicting data to generating language
   • Bridge from Topic 2. There we made data predict a label or a number. GenAI goes one step further: it generates new content.
-  • Predictive ML answers is this fraud? Generative AI writes the suspicious-activity summary. Same data foundation, a new capability.
+  • Predictive ML answers a yes/no question like “is this fraud?” Generative AI writes the suspicious-activity summary. Same data foundation, a brand-new capability.
   • Frame today as adding generation on top of the prediction skills they already have.
 
-Slide 4 — Discriminative labels · generative produces
-  • The core distinction. Discriminative models draw boundaries and label — that was Topic 2.
-  • Generative models produce new content that resembles their training data — text, here.
-  • Banking pair: a discriminative model flags a suspicious transaction; a generative model drafts the SAR narrative for the analyst to review.
+Slide 4 — Discriminative sorts · generative creates
+  • The core distinction, in plain terms. A discriminative model sorts an input into a category — it draws a line between classes and tells you which side you are on. That was all of Topic 2.
+  • A generative model instead produces brand-new content in the style of its training data — here, text. It does not choose from a fixed list of answers; it writes one.
+  • Banking pair to make it stick: a discriminative model flags a transaction as suspicious; a generative model then drafts the suspicious-activity report (SAR) narrative for an analyst to review.
 
 Slide 5 — LLMs are the language engine of GenAI
   • Place LLMs in the landscape. Generative AI is the umbrella — it spans text, images, audio and code.
@@ -38,24 +38,24 @@ Slide 7 — Part 1 — Large Language Models
   • Ends with a live demo of a single API call, then grounding with RAG.
 
 Slide 8 — Autocomplete on steroids
-  • Plainest possible definition: a model that assigns probabilities to sequences and predicts the next token.
-  • The one-liner that sticks: autocomplete on steroids. Your phone keyboard does a tiny version of this.
-  • All the apparent intelligence is doing this one thing extremely well, over and over.
+  • Plainest possible definition: a language model assigns probabilities to sequences of words, and its whole job is to predict the next token — roughly, the next word.
+  • The one-liner that sticks: autocomplete on steroids. Your phone keyboard does a tiny version of this every time it suggests your next word.
+  • Everything that looks like intelligence is this one move — predict, append, repeat — done extremely well, over and over.
 
 Slide 9 — It predicts a distribution, then picks
-  • Make it concrete. Given the prompt, the model produces a probability for every possible next token.
-  • Here the top candidate is balance, then frozen, overdrawn. It samples from this distribution to pick a word.
-  • Repeat token by token and you get fluent text. The whole magic is doing this distribution well.
+  • Make it concrete. Given the prompt, the model produces a probability for every possible next token — that whole set of probabilities is the “distribution”. (We show whole words here for readability; strictly, each candidate is a token, a word-piece — unpacked on the next slide.)
+  • Here the top candidate is “balance”, then “frozen”, then “overdrawn”. It then samples from the distribution — usually a likely word, not always the very top one, which is what keeps the output varied rather than robotic.
+  • Repeat token by token, feeding each pick back in, and you get fluent text. The whole craft is shaping this distribution well.
 
 Slide 10 — Words become numbers the model can do math on
-  • Two ideas. First, text is broken into tokens — roughly word-pieces — because models work in fixed units.
-  • Second, each token maps to a vector, an embedding, where similar meanings sit near each other.
-  • Why numbers: models do arithmetic, not words. debit and credit land close; king and queen close — geometry captures meaning.
+  • Two ideas here. First, text is broken into tokens — short word-pieces — because the model works in fixed units, not free-form letters. A common word like “banking” may be one token; a rare word is split into several.
+  • Second, each token is turned into a vector: a long list of numbers called an embedding. The picture here is the classic word-embedding intuition — similar meanings get similar numbers and land close together. Inside the transformer this starting vector is then adjusted by context, which is exactly what attention (coming up) does.
+  • Why numbers and not words? A model can only do arithmetic, so meaning has to become geometry. “Debit” sits near “credit”; “king” is far away. Topic 4 reuses this same idea at a larger grain — embedding whole sentences or passages so we can find the ones closest in meaning to a question.
 
 Slide 11 — Scale unlocked learning from the prompt
-  • Large is three things multiplied: parameters, training data, and compute. GPT-3 was 175 billion parameters.
-  • Scale did something surprising — it unlocked in-context learning: the model learns from examples in the prompt, with no retraining.
-  • A few abilities appear only past a size threshold — emergent abilities. We exploit in-context learning in the prompting section.
+  • “Large” is three things multiplied: parameters (the model's learned weights), training data, and compute. GPT-3 had 175 billion parameters.
+  • Scale did something surprising — it unlocked in-context learning: show the model two labelled examples in the prompt and it copies the pattern on the third, with no retraining at all.
+  • Some abilities seem to appear only past a certain size — so-called “emergent” abilities, though researchers debate how sharp that jump really is. We lean on in-context learning directly in the prompting section.
 
 Slide 12 — Sixty years to an overnight success
   • Sixty years in one minute. ELIZA faked conversation with rules; statistical NLP counted word frequencies.
@@ -63,13 +63,13 @@ Slide 12 — Sixty years to an overnight success
   • GPT-3 (2020) showed in-context learning at 175B; ChatGPT (2022) brought it to everyone. Today: GPT, Claude, Gemini, Llama — multimodal and reasoning.
 
 Slide 13 — Three stages: pretrain, fine-tune, align
-  • How a modern LLM is actually made — three stages. Pretraining: predict the next token on massive text. It learns language and world knowledge, but not how to behave.
-  • Fine-tuning / instruction-tuning: train on examples of following instructions, so it answers rather than just continues text.
-  • RLHF: align to human preferences using feedback — helpful, honest, harmless. This is what makes a raw model into an assistant.
+  • How a modern LLM is actually made, in three stages. Stage 1, pretraining: predict the next token across a huge slice of the internet. This is “self-supervised” — the text is its own answer key, so no human labelling is needed. It learns language and world knowledge, but not yet how to behave.
+  • Stage 2, instruction tuning: fine-tune on examples of instructions paired with good answers, so the model learns to answer a request rather than just continue the text.
+  • Stage 3, RLHF (reinforcement learning from human feedback): people rank competing answers and the model is nudged toward the preferred ones — helpful, honest, harmless. Stages 2 and 3 are what turn a raw next-word predictor into an assistant.
 
 Slide 14 — A brilliant drafter, an unreliable oracle
   • Honest framing for a risk-aware audience. Strengths: drafting, summarising, extraction, translation, code.
-  • Limits: hallucination — confidently wrong; no live knowledge without retrieval; weak at exact math; can inherit bias.
+  • Limits: hallucination — confidently wrong; no live knowledge without retrieval; a fixed context window — it can only read so much text at once, and your prompt, any pasted or retrieved text, and the answer all share that one budget; weak at exact arithmetic; and it can inherit bias from its training data.
   • The point: treat output as a capable draft to verify, never as ground truth. This sets up RAG and guardrails.
 
 Slide 15 — RAG: retrieve, augment, generate
@@ -79,8 +79,8 @@ Slide 15 — RAG: retrieve, augment, generate
 
 Slide 16 — The model is one API call
   • Demo 1, replayed in-deck — press R or Replay. The model itself is a single API call.
-  • Cell 2 is a bare call: prompt in, completion out. Cell 3 prepends a retrieved policy snippet — the RAG pattern — and the answer becomes grounded and specific.
-  • The lesson: the model is one API call; the engineering is the context and prompt you wrap around it.
+  • Cell 2 is a bare call: prompt in, completion out. Cell 3 adds a retrieved policy snippet inside a tagged <context> block, with a system instruction to answer only from it — the RAG pattern — and the answer becomes grounded and specific.
+  • The lesson: the model is one API call; the real engineering is the context and prompt you wrap around it — keep retrieved text clearly separated from the user's question, never blindly concatenated.
 
 Slide 17 — Part 2 — The Transformer
   • Part 2, about 25 minutes. Pure intuition — attention links, parallel heads, stacked blocks. No matrix math.
@@ -88,9 +88,9 @@ Slide 17 — Part 2 — The Transformer
   • End by connecting the architecture back to reading and drafting bank text.
 
 Slide 18 — Reading word-by-word hits a wall
-  • Set up the problem the transformer solved. Older models — RNNs — read one word at a time, in order.
-  • That is slow, and they forget long-range context: by the end of a long paragraph the start has faded.
-  • The transformer's move: read the whole sequence at once, in parallel, and let every word see every other.
+  • Set up the problem the transformer solved. Older models — RNNs, or recurrent neural networks — read a sentence one word at a time, carrying a running summary forward, like reading with a single finger.
+  • Two costs: it is slow, because each step waits for the one before it; and it forgets long-range context — by the end of a long paragraph the beginning has faded.
+  • The transformer's move: read the whole sequence at once, in parallel, and let every word look directly at every other word, near or far.
 
 Slide 19 — Attention Is All You Need
   • The landmark. Vaswani and colleagues at Google, 2017. The radical claim in the title: you can drop recurrence entirely.
@@ -98,19 +98,20 @@ Slide 19 — Attention Is All You Need
   • This single architecture underlies GPT, BERT, Claude, Gemini and Llama. The rest of Part 2 is what is inside it.
 
 Slide 20 — Every word weighs every other word
-  • The heart of the transformer, shown. Every word looks at every other word and weighs how relevant each is.
-  • Here the focus word is charge. Attention links it most strongly to disputed, also to customer and card — it builds context.
-  • No matrix math today — just the picture: thicker link means more attention. This is how the model resolves what a word means in context.
+  • This is the heart of the transformer. To understand a word, the model lets it look at every other word and weigh how relevant each one is — that weighing is what “attention” means.
+  • Why it matters: “charge” could be a fee or an accusation. By attending strongly to “disputed”, the model works out which sense is meant here — it resolves meaning from context.
+  • No matrix math today — just read the picture: a thicker line means more attention. The focus word “charge” links most to “disputed”, and also to “customer” and “card”.
+  • One honest caveat for later: a BERT-style encoder really does let every word see every other word. A decoder LLM — the kind that generates text — lets each word see only the words before it, and that left-to-right limit is exactly what lets it predict the next one.
 
-Slide 21 — Many readers, each tracking one thing
-  • One attention pass catches one kind of relationship. Real transformers run many in parallel — heads.
-  • Each head learns to track something different: grammar, meaning, or reference. Then their reads are combined.
-  • Analogy: a panel of readers, each following one thread, pooling notes for a richer understanding.
+Slide 21 — Many readers, each catching different patterns
+  • One attention pattern catches one kind of relationship; a real transformer runs many in parallel — these are the “heads”.
+  • Different heads end up sensitive to different things — some to grammar, some to meaning, some to reference — but those roles are learned, not assigned, and most heads do not map cleanly to a single human label. The honest takeaway: many heads in parallel capture more kinds of relationship than one could alone.
+  • Analogy: a panel of readers, each catching different threads and pooling their notes for a richer read — just do not picture neat, labelled job titles.
 
 Slide 22 — What else is in a transformer block
-  • Round out the block in plain terms. Positional encoding tags each token with its order, since attention alone is order-blind.
-  • Feed-forward layers process each token a bit more on their own. Residual connections and layer norm keep training stable as you stack.
-  • Attention plus these pieces is the transformer block — the unit you repeat.
+  • Round out the block in plain terms. Positional encoding tags each token with its position, because attention on its own is order-blind — without it, “bank charged a fee” and “fee charged a bank” would look identical.
+  • Feed-forward: each token gets a little more processing on its own. Residual connections are shortcuts that let a layer's input skip ahead and be added back, so very deep stacks do not lose the original signal; layer norm just keeps the numbers in a stable range. Together they make deep models trainable.
+  • Attention plus these supporting pieces is one transformer block — the unit you stack over and over.
 
 Slide 23 — Stack the block, deepen the model
   • Now repeat. Stack many identical blocks and you get a deep network — each layer refines the representation.
@@ -135,7 +136,7 @@ Slide 26 — Part 3 — Prompt Engineering
 Slide 27 — Steer the model with words, not retraining
   • Define it. Prompt engineering is steering a fixed model with the words you give it — no weight changes.
   • It is far faster and cheaper than fine-tuning, preserves the model's general knowledge, and keeps working across model updates.
-  • Reach for prompting first; fine-tuning is a later, heavier tool.
+  • Reach for prompting first; fine-tuning is a later, heavier tool — and note that fine-tuning changes the model's behaviour and style, not the facts it knows. For facts that change, the answer is retrieval (Topic 4).
 
 Slide 28 — Climb only as high as you need
   • The spine of the section — the lab-recommended ladder, in impact order. Start simple, add only what you need.
@@ -148,14 +149,14 @@ Slide 29 — Specific beats clever
   • Here, the specific version names the role, the format, and the goal — and gets a usable answer first time.
 
 Slide 30 — Show, don't just tell
-  • Rung 2. Do not just tell — show. Three to five diverse, canonical examples teach the format and tone better than any description.
-  • Banking example: a couple of labelled transaction-to-category pairs, then the new one to classify.
-  • The model copies the pattern. Keep examples varied so it generalises rather than memorising.
+  • Rung 2, few-shot prompting — “few-shot” just means giving the model a few worked examples before the real input. Do not only tell it; show it.
+  • Three to five diverse examples teach format and tone better than any description. Banking example: a couple of labelled transaction-to-category pairs, then the new transaction to classify.
+  • The model copies the pattern. Keep the examples varied so it generalises rather than memorising one shape.
 
 Slide 31 — Ask it to think step by step
-  • Rung 3. For multi-step problems, ask the model to reason step by step before answering — accuracy jumps.
-  • Also give it permission to say I don't know, which reduces confident guessing.
-  • Trade-off: it is slower and uses more tokens, so reserve it for genuinely complex tasks.
+  • Rung 3, chain-of-thought. For multi-step problems, ask the model to reason step by step before giving its answer — accuracy jumps, because it works through the problem instead of blurting a guess.
+  • Also give it explicit permission to say “I don't know”, which cuts down confident guessing.
+  • Trade-off: it is slower and uses more tokens, so save it for tasks that genuinely need working-out, not simple lookups.
 
 Slide 32 — Separate the parts, set the persona
   • Rungs 4 and 5 together. Structure your prompt with clear sections or tags so the model never mixes instructions with data.

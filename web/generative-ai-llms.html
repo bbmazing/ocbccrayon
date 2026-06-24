@@ -782,32 +782,32 @@ body.static .lstep .bar{transform:none !important}
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">02</span></div>
   </section>
 
-  <section class="slide" data-notes='["Bridge from Topic 2. There we made data predict a label or a number. GenAI goes one step further: it generates new content.", "Predictive ML answers is this fraud? Generative AI writes the suspicious-activity summary. Same data foundation, a new capability.", "Frame today as adding generation on top of the prediction skills they already have."]'>
+  <section class="slide" data-notes='["Bridge from Topic 2. There we made data predict a label or a number. GenAI goes one step further: it generates new content.", "Predictive ML answers a yes/no question like &ldquo;is this fraud?&rdquo; Generative AI writes the suspicious-activity summary. Same data foundation, a brand-new capability.", "Frame today as adding generation on top of the prediction skills they already have."]'>
     <div class="kicker"><span class="badge"></span>Topic 2 &rarr; Topic 3</div>
     <h2 class="slide-title" data-r data-d="1">From predicting data to generating language</h2>
     <p class="slide-sub" data-r data-d="2">Topic 2 made data <b style="color:var(--ink)">predict</b>. Generative AI makes machines <b style="color:var(--ink)">produce</b> — text, summaries, code.</p>
     <div class="flow" style="margin-top:6px">
-      <div class="step"><div class="node">1</div><h4>Predict</h4><p>fraud / not-fraud</p><div class="arrow"></div>
-      <div class="step"><div class="node">2</div><h4>Score</h4><p>a risk number</p><div class="arrow"></div>
-      <div class="step"><div class="node hot">3</div><h4>Generate</h4><p>write the summary</p>
+      <div class="step"><div class="node">1</div><h4>Predict</h4><p>fraud / not-fraud</p><div class="arrow"></div></div>
+      <div class="step"><div class="node">2</div><h4>Score</h4><p>a risk number</p><div class="arrow"></div></div>
+      <div class="step"><div class="node hot">3</div><h4>Generate</h4><p>write the summary</p></div>
     </div>
     <div class="flow-cap">Same data foundation &mdash; a new capability: <b style="color:var(--red)">generation</b>.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">03</span></div>
   </section>
 
-  <section class="slide" data-notes='["The core distinction. Discriminative models draw boundaries and label — that was Topic 2.", "Generative models produce new content that resembles their training data — text, here.", "Banking pair: a discriminative model flags a suspicious transaction; a generative model drafts the SAR narrative for the analyst to review."]'>
+  <section class="slide" data-notes='["The core distinction, in plain terms. A discriminative model sorts an input into a category — it draws a line between classes and tells you which side you are on. That was all of Topic 2.", "A generative model instead produces brand-new content in the style of its training data — here, text. It does not choose from a fixed list of answers; it writes one.", "Banking pair to make it stick: a discriminative model flags a transaction as suspicious; a generative model then drafts the suspicious-activity report (SAR) narrative for an analyst to review."]'>
     <div class="kicker"><span class="badge"></span>The core distinction</div>
-    <h2 class="slide-title" data-r data-d="1">Discriminative labels &middot; generative produces</h2>
+    <h2 class="slide-title" data-r data-d="1">Discriminative sorts &middot; generative creates</h2>
     <div class="vs" style="margin-top:24px">
       <div class="panel" data-r data-d="2">
         <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 12l9 4 9-4M3 17l9 4 9-4"/></svg></span>Discriminative</div>
-        <div class="ps">Learns a boundary &mdash; assigns a label.</div>
+        <div class="ps">Sorts an input into a category &mdash; it picks a label.</div>
         <div class="chips"><span class="chip">is this fraud?</span><span class="chip">approve / decline</span><span class="chip">spam / not</span></div>
         <div class="where">This was <b>Topic 2</b> — predict a class or a number.</div>
       </div>
       <div class="panel accent" data-r data-d="3">
         <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/></svg></span>Generative</div>
-        <div class="ps">Produces new content that fits the data.</div>
+        <div class="ps">Writes new content in the style of its training data.</div>
         <div class="chips"><span class="chip">SAR (suspicious activity report)</span><span class="chip">draft the email</span><span class="chip">explain the decline</span></div>
         <div class="where"><b>Today</b> — generate language, grounded in bank text.</div>
       </div>
@@ -853,14 +853,14 @@ body.static .lstep .bar{transform:none !important}
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">07</span></div>
   </section>
 
-  <section class="slide" data-notes='["Plainest possible definition: a model that assigns probabilities to sequences and predicts the next token.", "The one-liner that sticks: autocomplete on steroids. Your phone keyboard does a tiny version of this.", "All the apparent intelligence is doing this one thing extremely well, over and over."]'>
+  <section class="slide" data-notes='["Plainest possible definition: a language model assigns probabilities to sequences of words, and its whole job is to predict the next token — roughly, the next word.", "The one-liner that sticks: autocomplete on steroids. Your phone keyboard does a tiny version of this every time it suggests your next word.", "Everything that looks like intelligence is this one move — predict, append, repeat — done extremely well, over and over."]'>
     <div class="kicker"><span class="badge"></span>What is a language model</div>
     <h2 class="slide-title" data-r data-d="1">Autocomplete on steroids</h2>
     <div class="two" style="margin-top:18px">
       <div class="txt">
         <ul class="bullets">
           <li data-r data-d="2">A language model assigns <b>probabilities to sequences of words</b>.</li>
-          <li data-r data-d="3" class="strong">Its one job: <b>predict the next token</b>, given everything so far.</li>
+          <li data-r data-d="3" class="strong">Its one job: <b>predict the next token</b> (roughly, the next word) given the text so far.</li>
           <li data-r data-d="4">Generate text by doing that repeatedly, feeding each pick back in.</li>
           <li data-r data-d="5">Everything else is this, done very well, at scale.</li>
         </ul>
@@ -872,7 +872,7 @@ body.static .lstep .bar{transform:none !important}
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">08</span></div>
   </section>
 
-  <section class="slide" data-notes='["Make it concrete. Given the prompt, the model produces a probability for every possible next token.", "Here the top candidate is balance, then frozen, overdrawn. It samples from this distribution to pick a word.", "Repeat token by token and you get fluent text. The whole magic is doing this distribution well."]'>
+  <section class="slide" data-notes='["Make it concrete. Given the prompt, the model produces a probability for every possible next token — that whole set of probabilities is the &ldquo;distribution&rdquo;. (We show whole words here for readability; strictly, each candidate is a token, a word-piece — unpacked on the next slide.)", "Here the top candidate is &ldquo;balance&rdquo;, then &ldquo;frozen&rdquo;, then &ldquo;overdrawn&rdquo;. It then samples from the distribution — usually a likely word, not always the very top one, which is what keeps the output varied rather than robotic.", "Repeat token by token, feeding each pick back in, and you get fluent text. The whole craft is shaping this distribution well."]'>
     <div class="kicker"><span class="badge"></span>Next-token prediction, shown</div>
     <h2 class="slide-title" data-r data-d="1">It predicts a distribution, then picks</h2>
     <div class="ntp">
@@ -888,7 +888,7 @@ body.static .lstep .bar{transform:none !important}
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">09</span></div>
   </section>
 
-  <section class="slide" data-notes='["Two ideas. First, text is broken into tokens — roughly word-pieces — because models work in fixed units.", "Second, each token maps to a vector, an embedding, where similar meanings sit near each other.", "Why numbers: models do arithmetic, not words. debit and credit land close; king and queen close — geometry captures meaning."]'>
+  <section class="slide" data-notes='["Two ideas here. First, text is broken into tokens — short word-pieces — because the model works in fixed units, not free-form letters. A common word like &ldquo;banking&rdquo; may be one token; a rare word is split into several.", "Second, each token is turned into a vector: a long list of numbers called an embedding. The picture here is the classic word-embedding intuition — similar meanings get similar numbers and land close together. Inside the transformer this starting vector is then adjusted by context, which is exactly what attention (coming up) does.", "Why numbers and not words? A model can only do arithmetic, so meaning has to become geometry. &ldquo;Debit&rdquo; sits near &ldquo;credit&rdquo;; &ldquo;king&rdquo; is far away. Topic 4 reuses this same idea at a larger grain — embedding whole sentences or passages so we can find the ones closest in meaning to a question."]'>
     <div class="kicker"><span class="badge"></span>Tokens and embeddings</div>
     <h2 class="slide-title" data-r data-d="1">Words become numbers the model can do math on</h2>
     <div class="two" style="margin-top:18px">
@@ -897,7 +897,7 @@ body.static .lstep .bar{transform:none !important}
           <li data-r data-d="2">Text is split into <b>tokens</b> — word-pieces, not whole words.</li>
           <li data-r data-d="3" class="strong">Each token maps to a vector — an <b>embedding</b>.</li>
           <li data-r data-d="4">Similar meanings sit <b>nearby</b> in that space.</li>
-          <li data-r data-d="5">Geometry captures meaning: debit~credit, king~queen.</li>
+          <li data-r data-d="5"><b>Distance is meaning</b> &mdash; &ldquo;debit&rdquo; lands near &ldquo;credit&rdquo;, far from &ldquo;king&rdquo;.</li>
         </ul>
       </div>
       <div class="viz">
@@ -918,7 +918,7 @@ body.static .lstep .bar{transform:none !important}
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">10</span></div>
   </section>
 
-  <section class="slide" data-notes='["Large is three things multiplied: parameters, training data, and compute. GPT-3 was 175 billion parameters.", "Scale did something surprising — it unlocked in-context learning: the model learns from examples in the prompt, with no retraining.", "A few abilities appear only past a size threshold — emergent abilities. We exploit in-context learning in the prompting section."]'>
+  <section class="slide" data-notes='["&ldquo;Large&rdquo; is three things multiplied: parameters (the model&#39;s learned weights), training data, and compute. GPT-3 had 175 billion parameters.", "Scale did something surprising — it unlocked in-context learning: show the model two labelled examples in the prompt and it copies the pattern on the third, with no retraining at all.", "Some abilities seem to appear only past a certain size — so-called &ldquo;emergent&rdquo; abilities, though researchers debate how sharp that jump really is. We lean on in-context learning directly in the prompting section."]'>
     <div class="kicker"><span class="badge"></span>What &ldquo;large&rdquo; means</div>
     <h2 class="slide-title" data-r data-d="1">Scale unlocked learning from the prompt</h2>
     <div class="cards c3" style="margin-top:22px">
@@ -946,7 +946,7 @@ body.static .lstep .bar{transform:none !important}
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">12</span></div>
   </section>
 
-  <section class="slide" data-notes='["How a modern LLM is actually made — three stages. Pretraining: predict the next token on massive text. It learns language and world knowledge, but not how to behave.", "Fine-tuning / instruction-tuning: train on examples of following instructions, so it answers rather than just continues text.", "RLHF: align to human preferences using feedback — helpful, honest, harmless. This is what makes a raw model into an assistant."]'>
+  <section class="slide" data-notes='["How a modern LLM is actually made, in three stages. Stage 1, pretraining: predict the next token across a huge slice of the internet. This is &ldquo;self-supervised&rdquo; — the text is its own answer key, so no human labelling is needed. It learns language and world knowledge, but not yet how to behave.", "Stage 2, instruction tuning: fine-tune on examples of instructions paired with good answers, so the model learns to answer a request rather than just continue the text.", "Stage 3, RLHF (reinforcement learning from human feedback): people rank competing answers and the model is nudged toward the preferred ones — helpful, honest, harmless. Stages 2 and 3 are what turn a raw next-word predictor into an assistant."]'>
     <div class="kicker"><span class="badge"></span>How an LLM is made</div>
     <h2 class="slide-title" data-r data-d="1">Three stages: pretrain, fine-tune, align</h2>
     <div class="pipe">
@@ -954,12 +954,12 @@ body.static .lstep .bar{transform:none !important}
       <div class="parrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
       <div class="pstage"><div class="pn">Stage 2</div><h3>Instruction tuning</h3><p>Fine-tune on examples of following instructions — so it answers, not just continues.</p><span class="tagx">supervised</span></div>
       <div class="parrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
-      <div class="pstage"><div class="pn">Stage 3</div><h3>RLHF</h3><p>Reinforcement learning from human feedback — align to helpful, honest, harmless.</p><span class="tagx">human feedback</span></div>
+      <div class="pstage"><div class="pn">Stage 3</div><h3>RLHF</h3><p>Reinforcement learning from human feedback (or newer preference methods) — nudge it toward what people prefer: helpful, honest, harmless.</p><span class="tagx">human feedback</span></div>
     </div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">13</span></div>
   </section>
 
-  <section class="slide" data-notes='["Honest framing for a risk-aware audience. Strengths: drafting, summarising, extraction, translation, code.", "Limits: hallucination — confidently wrong; no live knowledge without retrieval; weak at exact math; can inherit bias.", "The point: treat output as a capable draft to verify, never as ground truth. This sets up RAG and guardrails."]'>
+  <section class="slide" data-notes='["Honest framing for a risk-aware audience. Strengths: drafting, summarising, extraction, translation, code.", "Limits: hallucination — confidently wrong; no live knowledge without retrieval; a fixed context window — it can only read so much text at once, and your prompt, any pasted or retrieved text, and the answer all share that one budget; weak at exact arithmetic; and it can inherit bias from its training data.", "The point: treat output as a capable draft to verify, never as ground truth. This sets up RAG and guardrails."]'>
     <div class="kicker"><span class="badge"></span>Strengths and limits</div>
     <h2 class="slide-title" data-r data-d="1">A brilliant drafter, an unreliable oracle</h2>
     <div class="vs" style="margin-top:24px">
@@ -970,7 +970,7 @@ body.static .lstep .bar{transform:none !important}
       </div>
       <div class="panel" data-r data-d="3">
         <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 12l9 4 9-4M3 17l9 4 9-4"/></svg></span>Watch out for</div>
-        <div class="chips"><span class="chip">hallucination</span><span class="chip">no live facts</span><span class="chip">exact math</span><span class="chip">bias</span></div>
+        <div class="chips"><span class="chip">hallucination</span><span class="chip">no live facts</span><span class="chip">fixed context window</span><span class="chip">exact math</span><span class="chip">bias</span></div>
         <div class="where"><b>Verify facts</b> — it is a confident drafter, not an oracle.</div>
       </div>
     </div>
@@ -981,30 +981,31 @@ body.static .lstep .bar{transform:none !important}
     <div class="kicker"><span class="badge"></span>Grounding LLMs</div>
     <h2 class="slide-title" data-r data-d="1">RAG: retrieve, augment, generate</h2>
     <div class="flow" style="margin-top:6px">
-      <div class="step"><div class="node">1</div><h4>Retrieve</h4><p>find relevant policy passages</p><div class="arrow"></div>
-      <div class="step"><div class="node">2</div><h4>Augment</h4><p>add them to the prompt</p><div class="arrow"></div>
-      <div class="step"><div class="node hot">3</div><h4>Generate</h4><p>answer from that context</p>
+      <div class="step"><div class="node">1</div><h4>Retrieve</h4><p>find relevant policy passages</p><div class="arrow"></div></div>
+      <div class="step"><div class="node">2</div><h4>Augment</h4><p>add them to the prompt</p><div class="arrow"></div></div>
+      <div class="step"><div class="node hot">3</div><h4>Generate</h4><p>answer from that context</p></div>
     </div>
     <div class="flow-cap">Answer from <b style="color:var(--red)">our</b> knowledge base — current and citable — not the model&#39;s memory.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">15</span></div>
   </section>
 
-  <section class="slide demo-slide" data-demo="1" data-notes='["Demo 1, replayed in-deck — press R or Replay. The model itself is a single API call.", "Cell 2 is a bare call: prompt in, completion out. Cell 3 prepends a retrieved policy snippet — the RAG pattern — and the answer becomes grounded and specific.", "The lesson: the model is one API call; the engineering is the context and prompt you wrap around it."]'>
+  <section class="slide demo-slide" data-demo="1" data-notes='["Demo 1, replayed in-deck — press R or Replay. The model itself is a single API call.", "Cell 2 is a bare call: prompt in, completion out. Cell 3 adds a retrieved policy snippet inside a tagged &lt;context&gt; block, with a system instruction to answer only from it — the RAG pattern — and the answer becomes grounded and specific.", "The lesson: the model is one API call; the real engineering is the context and prompt you wrap around it — keep retrieved text clearly separated from the user&#39;s question, never blindly concatenated."]'>
     <div class="kicker"><span class="badge"></span>Part 1 &middot; Live Demo</div>
     <h2 class="slide-title" data-r data-d="1">The model is one API call</h2>
     <div class="demo-stage">
       <div class="nb">
         <div class="nb-top"><span class="t-ic r"></span><span class="t-ic"></span><span class="t-ic g"></span><span class="nb-name">llm_call.ipynb</span><span class="nb-kernel">Python 3</span></div>
         <div class="nb-body"><div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[1]</div><div class="nb-code">from anthropic import Anthropic
-client = Anthropic(api_key="sk-...")  # placeholder</div></div><div class="nb-out"><span class="ok">&#10003; client ready</span></div></div><div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[2]</div><div class="nb-code">msg = client.messages.create(
+client = Anthropic(api_key="sk-ant-...")  # placeholder</div></div><div class="nb-out"><span class="ok">&#10003; client ready</span></div></div><div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[2]</div><div class="nb-code">msg = client.messages.create(
     model="claude-...",
     messages=[{"role":"user",
         "content":"Summarise this transaction note."}])
-print(msg.content)</div></div><div class="nb-out">&ldquo;Customer disputed a $420 card charge as unauthorised.&rdquo;</div></div><div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[3]</div><div class="nb-code"># RAG: prepend a retrieved policy snippet
+print(msg.content)</div></div><div class="nb-out">&ldquo;Customer disputed a $420 card charge as unauthorised.&rdquo;</div></div><div class="nb-cell"><div class="nb-in"><div class="nb-prompt">[3]</div><div class="nb-code"># RAG: ground the answer in a retrieved snippet
 ctx = retrieve("dispute policy")
 msg = client.messages.create(model="claude-...",
+    system="Answer only from the context.",
     messages=[{"role":"user",
-        "content": ctx + question}])</div></div><div class="nb-out"><span class="ok">&ldquo;Per Policy 7.2, raise a chargeback within 60 days...&rdquo;</span></div></div></div>
+        "content": f"&lt;context&gt;{ctx}&lt;/context&gt;\n\n{question}"}])</div></div><div class="nb-out"><span class="ok">&ldquo;Per Policy 7.2, raise a chargeback within 60 days...&rdquo;</span></div></div></div>
       </div>
       <div class="demo-side">
         <div class="demo-card"><div class="dk">Live Demo</div><h3>Prompt in, answer out</h3><p>One API (application programming interface) call — then grounded with a retrieved snippet.</p></div>
@@ -1025,7 +1026,7 @@ msg = client.messages.create(model="claude-...",
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">17</span></div>
   </section>
 
-  <section class="slide" data-notes='["Set up the problem the transformer solved. Older models — RNNs — read one word at a time, in order.", "That is slow, and they forget long-range context: by the end of a long paragraph the start has faded.", "The transformer&#39;s move: read the whole sequence at once, in parallel, and let every word see every other."]'>
+  <section class="slide" data-notes='["Set up the problem the transformer solved. Older models — RNNs, or recurrent neural networks — read a sentence one word at a time, carrying a running summary forward, like reading with a single finger.", "Two costs: it is slow, because each step waits for the one before it; and it forgets long-range context — by the end of a long paragraph the beginning has faded.", "The transformer&#39;s move: read the whole sequence at once, in parallel, and let every word look directly at every other word, near or far."]'>
     <div class="kicker"><span class="badge"></span>Before transformers</div>
     <h2 class="slide-title" data-r data-d="1">Reading word-by-word hits a wall</h2>
     <div class="vs" style="margin-top:24px">
@@ -1063,32 +1064,32 @@ msg = client.messages.create(model="claude-...",
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">19</span></div>
   </section>
 
-  <section class="slide" data-notes='["The heart of the transformer, shown. Every word looks at every other word and weighs how relevant each is.", "Here the focus word is charge. Attention links it most strongly to disputed, also to customer and card — it builds context.", "No matrix math today — just the picture: thicker link means more attention. This is how the model resolves what a word means in context."]'>
+  <section class="slide" data-notes='["This is the heart of the transformer. To understand a word, the model lets it look at every other word and weigh how relevant each one is — that weighing is what &ldquo;attention&rdquo; means.", "Why it matters: &ldquo;charge&rdquo; could be a fee or an accusation. By attending strongly to &ldquo;disputed&rdquo;, the model works out which sense is meant here — it resolves meaning from context.", "No matrix math today — just read the picture: a thicker line means more attention. The focus word &ldquo;charge&rdquo; links most to &ldquo;disputed&rdquo;, and also to &ldquo;customer&rdquo; and &ldquo;card&rdquo;.", "One honest caveat for later: a BERT-style encoder really does let every word see every other word. A decoder LLM — the kind that generates text — lets each word see only the words before it, and that left-to-right limit is exactly what lets it predict the next one."]'>
     <div class="kicker"><span class="badge"></span>Self-attention, intuitively</div>
     <h2 class="slide-title" data-r data-d="1">Every word weighs every other word</h2>
     <div class="fillc">
       <div class="att" data-r data-d="2">
         <svg viewBox="0 0 940 280" preserveAspectRatio="xMidYMid meet"><path class="lk" stroke-width="6" d="M 595 130 Q 470 240 350 130"/><path class="lk" stroke-width="4" d="M 595 130 Q 390 256 195 130"/><path class="lk" stroke-width="4" d="M 595 130 Q 730 236 865 130"/><path class="lk" stroke-width="2.5" d="M 595 132 Q 535 196 475 130"/></svg>
         <div class="word" style="left:70px;top:108px">the</div><div class="word" style="left:195px;top:108px">customer</div><div class="word" style="left:350px;top:108px">disputed</div><div class="word" style="left:475px;top:108px">the</div><div class="word focus" style="left:595px;top:108px">charge</div><div class="word" style="left:695px;top:108px">on</div><div class="word" style="left:775px;top:108px">her</div><div class="word" style="left:865px;top:108px">card</div>
-        <div class="cap">&ldquo;the customer disputed the <b style="color:var(--ink)">charge</b> on her card&rdquo; &mdash; <b style="color:var(--red)">charge</b> attends most to <b>disputed</b></div>
+        <div class="cap">&ldquo;the customer disputed the <b style="color:var(--ink)">charge</b> on her card&rdquo; &mdash; <b style="color:var(--red)">charge</b> attends most to <b>disputed</b> &middot; <span style="font-style:normal;color:var(--faint)">decoders attend only leftward</span></div>
       </div>
     </div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">20</span></div>
   </section>
 
-  <section class="slide" data-notes='["One attention pass catches one kind of relationship. Real transformers run many in parallel — heads.", "Each head learns to track something different: grammar, meaning, or reference. Then their reads are combined.", "Analogy: a panel of readers, each following one thread, pooling notes for a richer understanding."]'>
+  <section class="slide" data-notes='["One attention pattern catches one kind of relationship; a real transformer runs many in parallel — these are the &ldquo;heads&rdquo;.", "Different heads end up sensitive to different things — some to grammar, some to meaning, some to reference — but those roles are learned, not assigned, and most heads do not map cleanly to a single human label. The honest takeaway: many heads in parallel capture more kinds of relationship than one could alone.", "Analogy: a panel of readers, each catching different threads and pooling their notes for a richer read — just do not picture neat, labelled job titles."]'>
     <div class="kicker"><span class="badge"></span>Multi-head attention</div>
-    <h2 class="slide-title" data-r data-d="1">Many readers, each tracking one thing</h2>
+    <h2 class="slide-title" data-r data-d="1">Many readers, each catching different patterns</h2>
     <div class="cards c3" style="margin-top:24px">
       <div class="card" data-r data-d="2"><div class="num">H1</div><h3>Grammar</h3><p>Links subjects to verbs, plurals to articles — sentence structure.</p></div>
       <div class="card" data-r data-d="3"><div class="num">H2</div><h3>Meaning</h3><p>Connects words by topic — &ldquo;charge&rdquo; near &ldquo;dispute&rdquo;, &ldquo;refund&rdquo;.</p></div>
       <div class="card" data-r data-d="4"><div class="num">H3</div><h3>Reference</h3><p>Resolves &ldquo;her&rdquo;, &ldquo;it&rdquo;, &ldquo;the account&rdquo; back to who or what.</p></div>
     </div>
-    <div class="flow-cap">Run many heads <b>in parallel</b>, then combine &mdash; a richer read than any single one.</div>
+    <div class="flow-cap">Run many heads <b>in parallel</b>, then combine. These roles are <b>illustrative</b> &mdash; heads aren&#39;t given jobs; the specialisations are learned, and most don&#39;t map to one tidy label.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">21</span></div>
   </section>
 
-  <section class="slide" data-notes='["Round out the block in plain terms. Positional encoding tags each token with its order, since attention alone is order-blind.", "Feed-forward layers process each token a bit more on their own. Residual connections and layer norm keep training stable as you stack.", "Attention plus these pieces is the transformer block — the unit you repeat."]'>
+  <section class="slide" data-notes='["Round out the block in plain terms. Positional encoding tags each token with its position, because attention on its own is order-blind — without it, &ldquo;bank charged a fee&rdquo; and &ldquo;fee charged a bank&rdquo; would look identical.", "Feed-forward: each token gets a little more processing on its own. Residual connections are shortcuts that let a layer&#39;s input skip ahead and be added back, so very deep stacks do not lose the original signal; layer norm just keeps the numbers in a stable range. Together they make deep models trainable.", "Attention plus these supporting pieces is one transformer block — the unit you stack over and over."]'>
     <div class="kicker"><span class="badge"></span>The rest of the block</div>
     <h2 class="slide-title" data-r data-d="1">What else is in a transformer block</h2>
     <div class="stack" style="margin-top:8px">
@@ -1118,7 +1119,7 @@ msg = client.messages.create(model="claude-...",
           <div class="layer l1"><div class="lname">Transformer block</div><div class="ldesc">attention + feed-forward</div></div>
           <div class="layer l2"><div class="lname">Transformer block</div><div class="ldesc">attention + feed-forward</div></div>
           <div class="layer l3"><div class="lname">Transformer block</div><div class="ldesc">attention + feed-forward</div></div>
-          <div class="layer l4"><div class="lname">&times; 96 layers</div><div class="ldesc">depth is where capability comes from</div></div>
+          <div class="layer l4"><div class="lname">&times; 96 layers</div><div class="ldesc">scale — depth, width &amp; data — drives capability</div></div>
         </div>
       </div>
     </div>
@@ -1171,7 +1172,7 @@ msg = client.messages.create(model="claude-...",
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">26</span></div>
   </section>
 
-  <section class="slide" data-notes='["Define it. Prompt engineering is steering a fixed model with the words you give it — no weight changes.", "It is far faster and cheaper than fine-tuning, preserves the model&#39;s general knowledge, and keeps working across model updates.", "Reach for prompting first; fine-tuning is a later, heavier tool."]'>
+  <section class="slide" data-notes='["Define it. Prompt engineering is steering a fixed model with the words you give it — no weight changes.", "It is far faster and cheaper than fine-tuning, preserves the model&#39;s general knowledge, and keeps working across model updates.", "Reach for prompting first; fine-tuning is a later, heavier tool — and note that fine-tuning changes the model&#39;s behaviour and style, not the facts it knows. For facts that change, the answer is retrieval (Topic 4)."]'>
     <div class="kicker"><span class="badge"></span>What it is</div>
     <h2 class="slide-title" data-r data-d="1">Steer the model with words, not retraining</h2>
     <div class="two" style="margin-top:18px">
@@ -1224,7 +1225,7 @@ Use plain English; flag if unclear.</code></pre></div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">29</span></div>
   </section>
 
-  <section class="slide" data-notes='["Rung 2. Do not just tell — show. Three to five diverse, canonical examples teach the format and tone better than any description.", "Banking example: a couple of labelled transaction-to-category pairs, then the new one to classify.", "The model copies the pattern. Keep examples varied so it generalises rather than memorising."]'>
+  <section class="slide" data-notes='["Rung 2, few-shot prompting — &ldquo;few-shot&rdquo; just means giving the model a few worked examples before the real input. Do not only tell it; show it.", "Three to five diverse examples teach format and tone better than any description. Banking example: a couple of labelled transaction-to-category pairs, then the new transaction to classify.", "The model copies the pattern. Keep the examples varied so it generalises rather than memorising one shape."]'>
     <div class="kicker"><span class="badge"></span>2 &middot; Few-shot examples</div>
     <h2 class="slide-title" data-r data-d="1">Show, don&#39;t just tell</h2>
     <div class="two" style="margin-top:18px">
@@ -1242,7 +1243,7 @@ Use plain English; flag if unclear.</code></pre></div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Generative AI &amp; LLMs</div><span class="pg">30</span></div>
   </section>
 
-  <section class="slide" data-notes='["Rung 3. For multi-step problems, ask the model to reason step by step before answering — accuracy jumps.", "Also give it permission to say I don&#39;t know, which reduces confident guessing.", "Trade-off: it is slower and uses more tokens, so reserve it for genuinely complex tasks."]'>
+  <section class="slide" data-notes='["Rung 3, chain-of-thought. For multi-step problems, ask the model to reason step by step before giving its answer — accuracy jumps, because it works through the problem instead of blurting a guess.", "Also give it explicit permission to say &ldquo;I don&#39;t know&rdquo;, which cuts down confident guessing.", "Trade-off: it is slower and uses more tokens, so save it for tasks that genuinely need working-out, not simple lookups."]'>
     <div class="kicker"><span class="badge"></span>3 &middot; Chain-of-thought</div>
     <h2 class="slide-title" data-r data-d="1">Ask it to think step by step</h2>
     <div class="two" style="margin-top:18px">

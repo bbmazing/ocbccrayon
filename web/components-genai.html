@@ -356,11 +356,12 @@ body{font-family:var(--fBody); color:var(--text); background:#fafafb; line-heigh
     <div class="stage"><div class="nb">
       <div class="nb-top"><i class="r"></i><i></i><i class="g"></i><span class="nm">llm_call.ipynb</span></div>
       <div class="nb-body">
-        <div class="nb-cell"><div class="nb-in"><div class="nb-p">[1]</div><div class="nb-code">client = Anthropic(api_key="sk-...")</div></div><div class="nb-out"><span class="ok">&#10003; client ready</span></div></div>
+        <div class="nb-cell"><div class="nb-in"><div class="nb-p">[1]</div><div class="nb-code">client = Anthropic(api_key="sk-ant-...")</div></div><div class="nb-out"><span class="ok">&#10003; client ready</span></div></div>
         <div class="nb-cell"><div class="nb-in"><div class="nb-p">[2]</div><div class="nb-code">client.messages.create(model="claude-...",
     messages=[{"role":"user","content":"Summarise this note."}])</div></div><div class="nb-out">"Customer disputed a $420 card charge."</div></div>
         <div class="nb-cell"><div class="nb-in"><div class="nb-p">[3]</div><div class="nb-code">ctx = retrieve("dispute policy")  # RAG
-client.messages.create(... content = ctx + question ...)</div></div><div class="nb-out"><span class="ok">"Per Policy 7.2, raise a chargeback within 60 days..."</span></div></div>
+create(system="Answer from the context only",
+    content=f"&lt;context&gt;{ctx}&lt;/context&gt; {question}")</div></div><div class="nb-out"><span class="ok">"Per Policy 7.2, raise a chargeback within 60 days..."</span></div></div>
       </div>
     </div></div>
     <span class="replay-hint">click to replay</span>
