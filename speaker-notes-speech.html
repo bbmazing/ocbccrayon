@@ -65,7 +65,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
 <header class="bar">
   <div>
     <div class="ttl">Speaker notes</div>
-    <div class="sub">Speech Technologies · 42 slides</div>
+    <div class="sub">Speech Technologies · 35 slides</div>
   </div>
   <div class="right">
     <a class="btn ghost" href="index.html">&larr; Back</a>
@@ -83,384 +83,321 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
 <div class="banner" id="banner">&#9998;&nbsp; Editing — your changes are saved in this browser. Use <b>Download .txt</b> to keep a copy.</div>
 <main>
   <h1 class="lead">Talk track <span class="red">&middot; every slide</span></h1>
-  <p class="intro">Speaker notes for the OCBC CRAYON 2026 &mdash; Speech Technologies deck. 42 slides, in order. Press <b>Edit</b> to tweak the wording inline (saved to this browser), or <b>Download .txt</b> for a copy.</p>
+  <p class="intro">Speaker notes for the OCBC CRAYON 2026 &mdash; Speech Technologies deck. 35 slides, in order. Press <b>Edit</b> to tweak the wording inline (saved to this browser), or <b>Download .txt</b> for a copy.</p>
   <div id="notes">
     <article class="s">
       <div class="n">Slide 1</div>
-      <h2>Speech Technologies STT &amp; TTS</h2>
+      <h2>Speech Technologies machines that listen &amp; speak</h2>
       <ul>
-        <li>Welcome to Day 2, Session 2. Session 1 turned sound into spectrograms and features and used Whisper to transcribe. Today we open the box: how speech-to-text really works, and the reverse direction, text-to-speech.</li>
-        <li>90 minutes, intuition-first: no signal-processing maths. One animated demo. Banking voice examples throughout, and an open-source, self-hostable stance — sensitive customer audio cannot leave the bank.</li>
-        <li>Promise: by the end you can reason about an STT and a TTS system end to end, and explain how to adapt them to our languages and accents.</li>
+        <li>Welcome. Today is about machines that can listen and machines that can talk. This is the tech behind every voice assistant you already use.</li>
+        <li>We will keep it simple: no maths, many everyday stories, and one live demo. The thread all day is a friendly bank voice assistant.</li>
+        <li>By the end you will know the two halves of any voice system: turning speech into text, and text back into speech.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 2</div>
-      <h2>The frame</h2>
+      <h2>The big idea</h2>
       <ul>
-        <li>The whole session in one line. Reading aloud and listening back are mirror images of the same problem.</li>
-        <li>Text-to-speech goes text to sound; speech-to-text goes sound to text. Same pipeline, two directions.</li>
-        <li>Hold this image — we will literally build it as a mirror on the next slides, and call it back at the close.</li>
+        <li>One simple idea holds the whole session together: listening and speaking are two sides of the same coin.</li>
+        <li>Listening turns sound into words; speaking turns words into sound. Same idea, opposite directions.</li>
+        <li>Hold this picture — everything today fits onto one side or the other.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 3</div>
-      <h2>From spectrograms to speech systems</h2>
+      <h2>Listening and speaking, one round-trip</h2>
       <ul>
-        <li>Recap Session 1 in one breath. We learned that a waveform becomes a spectrogram, then Mel and MFCC features, and that Whisper can transcribe a call.</li>
-        <li>Today we go deeper: how that transcription actually happens inside the model, and the reverse — turning text back into natural speech.</li>
-        <li>We build directly on Session 1 — log-Mel spectrograms reappear as the input to STT and the output of the TTS acoustic model.</li>
+        <li>The main picture: a voice assistant is a round-trip. The listening half turns your speech into text. The speaking half turns its answer back into sound.</li>
+        <li>Think of the listening half as a fast waiter writing down your order. Think of the speaking half as an actor reading a script out loud.</li>
+        <li>Any voice assistant needs both halves. It must hear you, then answer out loud.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 4</div>
-      <h2>Two halves of one voice system</h2>
+      <h2>Siri, Alexa &amp; Google all do the same thing</h2>
       <ul>
-        <li>The core mental model: a voice system is a round-trip. Speech-to-text listens — audio becomes text. Text-to-speech speaks — text becomes audio.</li>
-        <li>An interactive voice response (IVR) line or a voice-bot needs both halves: it has to hear the caller and answer out loud.</li>
-        <li>Everything today slots into one side of this mirror or the other. Keep the round-trip in your head.</li>
+        <li>You already use this every day. Siri, Alexa and Google all do the same thing. They listen, work out an answer, then speak it back.</li>
+        <li>It is always the same loop: hear you, decide, reply out loud. They mostly differ in where the work happens.</li>
+        <li>A bank voice assistant is the same loop. The one difference: it runs inside the bank, so the audio never leaves.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 5</div>
-      <h2>Siri, Alexa &amp; Google Assistant are STT + TTS</h2>
+      <h2>Part 1 — Listening — Turning Speech into Text</h2>
       <ul>
-        <li>You already use this every day. Siri, Alexa and Google Assistant are all the same STT-plus-TTS loop we just drew: a wake word, speech-to-text to understand you, a brain that decides the answer, then text-to-speech to reply out loud.</li>
-        <li>Apple Siri keeps a lot of the work on the iPhone itself; Amazon Alexa does most of it in the cloud and powers millions of Echo speakers; Google Assistant is strong across many languages.</li>
-        <li>The point for students: a bank voice-bot is the exact same loop. The only big difference is OCBC self-hosts every piece, so customer audio never leaves the bank.</li>
+        <li>Part 1: the listening half. This turns speech into text. Think of a fast waiter who writes down every word a caller says.</li>
+        <li>We will see why this is hard, how modern AI now does it in one step, and which models to pick.</li>
+        <li>Keep the picture simple: sound goes in, words come out.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 6</div>
-      <h2>Listening and speaking, mapped to the bank</h2>
+      <h2>A fast waiter who writes down every word</h2>
       <ul>
-        <li>Map the use cases. On the listening side: transcribe and analyse calls, voice commands, and compliance quality assurance over recorded conversations.</li>
-        <li>On the speaking side: voice-bot and IVR replies, accessibility for visually-impaired customers, and proactive voice alerts.</li>
-        <li>Almost every voice product a bank ships uses one or both directions. This is why both halves matter.</li>
+        <li>Picture the listening half as a fast waiter in a busy cafe. He writes down every word you say, right away, and never gets tired.</li>
+        <li>A great waiter does three things at once. He keeps up with fast talkers. He ignores the noise. And he still spells strange names right.</li>
+        <li>That is the job we ask the machine to do. Hold this picture as we look at why it is hard.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 7</div>
-      <h2>Sensitive voice never leaves the bank</h2>
+      <h2>First, sound becomes a picture</h2>
       <ul>
-        <li>The constraint that shapes every recommendation today. Sensitive customer voice cannot be sent to closed cloud speech APIs — that is audio leaving the bank.</li>
-        <li>We will explain how the big closed services work, but only for understanding. Everything we recommend is open-source and self-hostable.</li>
-        <li>Voice is biometric and deeply personal data. The rule is simple: audio stays inside OCBC infrastructure.</li>
+        <li>Why listening is hard. First the machine turns the sound into a picture. We call it a spectrogram. It is like a heat-map of a song. It shows which tones are loud over time.</li>
+        <li>But people run words together. They talk over noise. They switch languages in one sentence. And they use names the machine has never heard. That is why this used to be so hard.</li>
+        <li>How well did it do? We mark it like a dictation test. We count how many words it got wrong.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 8</div>
-      <h2>Part 1 — Speech-to-Text — Teaching Machines to Listen</h2>
+      <h2>“Recognise speech” or “wreck a nice beach”?</h2>
       <ul>
-        <li>Part 1, about 27 minutes. We define the task and its metric, then the heart of the session: the three architecture families for decoding speech.</li>
-        <li>Intuition over maths — no connectionist-temporal-classification equations, just pictures of how each family works.</li>
-        <li>End on the open-source landscape and a decision aid for choosing a model.</li>
+        <li>A worked example of why this is hard. Say “recognise speech” out loud, fast. It sounds almost the same as “wreck a nice beach”.</li>
+        <li>The sound alone is not clear. What saves us is context. A good listener uses the words around it to pick the version that makes sense.</li>
+        <li>Modern models use the same trick. They do not hear words one at a time. They use the whole sentence to choose what you really meant.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 9</div>
-      <h2>Word Error Rate (WER) is the yardstick</h2>
+      <h2>“Fifteen” or “fifty”? Numbers are tricky</h2>
       <ul>
-        <li>The task: audio in, text out. We score quality with Word Error Rate, WER: substitutions plus insertions plus deletions, divided by the number of reference words. Lower is better.</li>
-        <li>Worked example: the reference is six words; the model substituted one, inserted one, and deleted one — three errors over six words is fifty percent WER.</li>
-        <li>WER governs every model choice in this section. When we say one model is more accurate, we mean lower WER on the audio we care about.</li>
+        <li>A second example, this time from the bank. Numbers are easy to mishear. “Fifteen” and “fifty” sound almost the same on a phone line.</li>
+        <li>Get one digit wrong and a transfer goes to the wrong amount. So for a bank, listening must be very careful with numbers and names.</li>
+        <li>A strong listening model uses the whole sentence to catch these. It hears “fifty dollars”, not “fifteen”, because the rest of the sentence fits.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 10</div>
-      <h2>Old automatic speech recognition (ASR): three glued parts</h2>
+      <h2>A waiter taking your order in a loud cafe</h2>
       <ul>
-        <li>For context, the classic pipeline. Old automatic-speech-recognition systems stitched together three separate parts: an acoustic model, a pronunciation lexicon, and a language model — Kaldi is the classic toolkit.</li>
-        <li>Each part was trained and tuned separately, then glued. Powerful in expert hands, but complex and brittle.</li>
-        <li>This complexity is exactly why the field moved to end-to-end neural models, next.</li>
+        <li>Here is the whole listening job, told as one story. Picture a waiter taking your order in a loud, busy cafe. The top row is what the machine really does. The bottom row is the waiter story, step by step.</li>
+        <li>The waiter hears the messy sound, jots quick shorthand, uses the menu and your earlier words to guess what you meant, then writes the final order. That order is the text.</li>
+        <li>Modern AI does all of this in one trained model. But the waiter story makes every step easy to see.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 11</div>
-      <h2>One neural network, audio straight to text</h2>
+      <h2>Two listening models worth knowing</h2>
       <ul>
-        <li>The modern shift: one neural network learns audio-to-text directly, replacing the three glued parts. Simpler to train, and far more accurate given data.</li>
-        <li>The input is the log-Mel spectrogram from Session 1 — the picture of the sound. The network maps that picture straight to text.</li>
-        <li>Everything in the rest of this section is a different way of doing this one end-to-end mapping.</li>
+        <li>The models that do the listening. Qwen3-ASR is a strong, modern speech-to-text model. It works in many languages and is a good first choice today. Whisper is the well-known name many people already know.</li>
+        <li>All of these are free to run on the bank's own computers. So nothing has to be sent away.</li>
+        <li>Model names change fast. Treat these as good options as of 2026, not a fixed list.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 12</div>
-      <h2>CTC vs. attention vs. transducer</h2>
+      <h2>Same sentence, two listeners</h2>
       <ul>
-        <li>The key teaching slide. Three architecture families decode speech, and the differences matter for the bank.</li>
-        <li>Connectionist temporal classification, CTC, emits a token per audio frame with a blank trick; it is fast and non-autoregressive but has no built-in language modelling. Attention encoder-decoder generates text token by token while attending to the audio — this is Whisper — accurate with built-in language modelling.</li>
-        <li>The transducer, such as recurrent-neural-network transducer (RNN-T), emits text as audio arrives — streaming-friendly, the choice for real-time voice-bots. We unpack each next.</li>
+        <li>What does good listening look like? Compare a poor listener with a great one on the same sentence.</li>
+        <li>The weak one drops words, gets the product name wrong, and skips the full stops. So the assistant acts on the wrong thing. The strong one gets it clean.</li>
+        <li>This is the bar we want. Not perfect, but good enough that the next step gets the right words.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 13</div>
-      <h2>Vote per frame, then collapse</h2>
+      <h2>Part 2 — Speaking — Turning Text into Voice</h2>
       <ul>
-        <li>CTC, intuitively. Picture each slice of audio voting on a letter. The same sound spans several frames, so you get repeats, and silence votes blank.</li>
-        <li>The trick: collapse repeated letters, then drop the blanks. H, H, blank, E, L, L, blank, L, O collapses to hello.</li>
-        <li>This is why CTC is fast — every frame is decoded at once, in parallel — but it has no sense of language, so it can misread words that sound alike.</li>
+        <li>Part 2: the other half — speaking. Now the machine is an actor reading a script out loud.</li>
+        <li>The hard part is not just saying the words. It is saying them in a natural way, with the right rhythm and tone.</li>
+        <li>Same idea as before, but the other way round: text in, voice out.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 14</div>
-      <h2>Write text while looking back at the audio</h2>
+      <h2>Words in, natural voice out</h2>
       <ul>
-        <li>Attention encoder-decoder, intuitively — a callback to the Day 1 transformer. The encoder reads the whole clip into a representation.</li>
-        <li>The decoder then writes the transcript one token at a time, and for each token it looks back at, or cross-attends to, the relevant part of the audio — the bright cells in this attention map.</li>
-        <li>Because it writes left to right using its own previous words, it has a built-in sense of language and is very accurate — but it is autoregressive, so slower, and it can occasionally hallucinate words that were never said.</li>
+        <li>The speaking task: turn written words into a voice that sounds natural, not like a robot.</li>
+        <li>Here is why it is hard. The same sentence can be read in many ways. Where you pause, which word you stress, whether your voice rises — all change the feel.</li>
+        <li>So a good actor does not just read the words. He decides how to say them. The model must do the same.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 15</div>
-      <h2>Emit words as you speak</h2>
+      <h2>Same words, very different meaning</h2>
       <ul>
-        <li>The transducer, intuitively. Instead of waiting for the whole clip, it emits words as you speak.</li>
-        <li>As each chunk of audio arrives, the model decides whether it has heard enough to output the next word — so text streams out in near real-time.</li>
-        <li>That low latency is exactly what a live voice-bot needs: the caller should not wait for silence before the system reacts.</li>
+        <li>A worked example of why delivery matters. Take one short sentence — “You spent it all.” — and notice how the meaning flips depending on which word you stress.</li>
+        <li>Stress “you” and it is an accusation; stress “all” and it is surprise; flat and even, it is just a neutral fact.</li>
+        <li>Same words, three different messages. A good voice actor — and a good speaking model — has to choose the right one.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 16</div>
-      <h2>Open-source STT models you can use</h2>
+      <h2>One model: text straight to voice</h2>
       <ul>
-        <li>The open-source speech-to-text models you can use, mapped to the three families. Whisper, including large-v3-turbo, is the attention encoder-decoder — multilingual with a huge ecosystem, and the most popular open option.</li>
-        <li>wav2vec2 and XLS-R are CTC, self-supervised, and excellent bases for fine-tuning low-resource languages. NVIDIA Parakeet and Canary are transducer or encoder-decoder, optimised for speed or accuracy. Kaldi remains the classic modular toolkit.</li>
-        <li>All open-source and free to run on your own machine. Model names move fast — present these as of 2026 and verify the current best before committing.</li>
+        <li>Like listening, speaking used to take many separate steps. Modern AI now does it in one step. Written words go straight to a natural voice.</li>
+        <li>So picture it simply: text in, voice out, from one model.</li>
+        <li>Both halves now match. Each one is a single AI model that does the whole job.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 17</div>
-      <h2>Model + toolchain = production STT</h2>
+      <h2>“Your balance is $1,250” — said two ways</h2>
       <ul>
-        <li>Production STT is a model plus a toolchain. Around Whisper sits a practical open-source ecosystem.</li>
-        <li>faster-whisper speeds inference; WhisperX adds word-level timestamps, alignment and voice-activity detection; whisper.cpp runs on central-processing-unit or on-device; Silero VAD finds where speech actually is.</li>
-        <li>The point: do not ship the raw model alone. Real systems combine the model with these tools.</li>
+        <li>What makes a robot voice different from a natural one? Same words, two very different ways of saying them.</li>
+        <li>The robot voice reads every word at the same flat pace, says numbers wrong, and pauses in odd places. It sounds like a machine. The natural voice groups the number, says the money clearly, and breathes between phrases.</li>
+        <li>For a bank, this is not just a nice extra. A clear, natural voice is easier to trust and easier to hear on a phone line.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 18</div>
-      <h2>What real call analytics adds on top</h2>
+      <h2>A few seconds can copy a voice</h2>
       <ul>
-        <li>Call analytics needs more than the words. Diarization labels who spoke when — agent versus customer. Voice-activity detection separates speech from silence and hold music.</li>
-        <li>Punctuation and casing make a transcript readable; timestamps let you jump to the exact moment a phrase was said, which compliance needs.</li>
-        <li>Open-source options exist for each of these. Transcription is the start, not the whole job.</li>
+        <li>A powerful new skill: from just a few seconds of someone's voice, models can make that voice say anything. This is useful for one steady brand voice.</li>
+        <li>But it is also how voice deepfakes are made. This is a real worry for a bank, where a voice can be a password.</li>
+        <li>So the rule is simple: only copy a voice with clear permission, and stop bad use.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 19</div>
-      <h2>Match the model to the job</h2>
+      <h2>Two speaking models worth knowing</h2>
       <ul>
-        <li>A decision aid for choosing an STT model. Weigh accuracy, latency, languages and hardware.</li>
-        <li>Overnight compliance batch? Accuracy first — Whisper large. Live voice-bot? Streaming transducer for low latency. Mixed Indonesian-English calls? Whisper, for its multilingual strength.</li>
-        <li>There is no single best model — match the model to the job.</li>
+        <li>The models that do the speaking. Qwen3-TTS is a strong, modern model. It turns text into a natural voice in many languages. Piper is a well-known, light option. It is great when speed and small size matter.</li>
+        <li>Both run on the bank's own machines. So the assistant's voice is made inside the bank.</li>
+        <li>Like the listening models, names change fast. These are good picks as of 2026.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 20</div>
-      <h2>Part 2 — Text-to-Speech — Teaching Machines to Speak</h2>
+      <h2>An actor given a script to perform</h2>
       <ul>
-        <li>Part 2, about 25 minutes. Now the mirror image — turning text into natural-sounding audio.</li>
-        <li>We assemble the three-stage pipeline, then trace how acoustic models evolved from sequential to parallel to end-to-end.</li>
-        <li>Same open-source, self-hostable stance throughout.</li>
+        <li>Here is the whole speaking job, told as one story. Picture an actor who is handed a script. The top row is what the machine really does. The bottom row is the actor story, step by step.</li>
+        <li>The actor reads and tidies the script, so ‘$1,250’ becomes ‘twelve-fifty’. Then he decides how to perform it — where to pause, what to stress. Then he speaks it aloud in a natural voice.</li>
+        <li>One model now does all three. But the actor story shows why a good voice sounds like a person, not a robot.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 21</div>
-      <h2>Text in, natural speech out</h2>
+      <h2>Listening and speaking are mirror images</h2>
       <ul>
-        <li>The TTS task: text to natural-sounding audio. We judge it on naturalness — often a one-to-five human rating called Mean Opinion Score, MOS — plus intelligibility and speed.</li>
-        <li>It is harder than it looks. The same sentence has infinitely many valid readings: where you pause, stress, and raise pitch all change with intent.</li>
-        <li>So TTS is not a lookup — the model must decide a plausible prosody every time.</li>
+        <li>We have now seen both halves. Let us put them side by side, so the shape is clear. They are mirror images of each other.</li>
+        <li>Listening goes sound to text, like a waiter taking your order. Speaking goes text to sound, like an actor reading a script. Same idea, opposite direction.</li>
+        <li>Hold this picture. Every voice system is just these two halves joined together.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 22</div>
-      <h2>Text → frontend → acoustic model → vocoder</h2>
+      <h2>Part 3 — Making It Work for Our Voices</h2>
       <ul>
-        <li>The TTS spine, three stages. First the text frontend normalises the input — dollar-1,250 becomes one thousand two hundred fifty — and grapheme-to-phoneme, G2P, turns letters into sound units.</li>
-        <li>Second, the acoustic model turns those phonemes into a Mel spectrogram — the picture of the sound from Session 1, now with decided rhythm and pitch.</li>
-        <li>Third, the vocoder turns that spectrogram into an actual waveform you can hear. Text, to phonemes, to spectrogram, to wave.</li>
+        <li>Part 3: the base models are good in general. But they trip on our accents, our mix of languages, and our product names.</li>
+        <li>So we teach them about us. We start with the cheapest, simplest fixes. We only go further if we need to.</li>
+        <li>Our example is a customer switching between Indonesian and English in one sentence.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 23</div>
-      <h2>Normalize the text, then map letters to sounds</h2>
+      <h2>A general model trips on our world</h2>
       <ul>
-        <li>Stage one: the unglamorous but critical text frontend. Normalization expands numbers, dates, currency and abbreviations into spoken words.</li>
-        <li>Then grapheme-to-phoneme maps letters to sound units — how c-a-t becomes the phonemes K AE T. This is deeply language-dependent.</li>
-        <li>Flag it now: this stage is where language adaptation begins, because every language pronounces letters differently.</li>
+        <li>Why we need to adapt. A general model is good. But it trips on the things that make us us: local accents, switching between Indonesian and English in one sentence, and our own product names.</li>
+        <li>Phone lines are noisy too, which makes it harder.</li>
+        <li>None of this is a fault. The model just has not met our world yet. That is what we fix next.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 24</div>
-      <h2>Phonemes become the spectrogram picture</h2>
+      <h2>Just give it our list of names</h2>
       <ul>
-        <li>Stage two: the acoustic model predicts the Mel spectrogram from the phonemes — the same picture we met in Session 1, but now generated rather than measured.</li>
-        <li>This is where prosody lives: rhythm, stress and pitch are all decided here, frame by frame.</li>
-        <li>Get this stage wrong and speech sounds robotic or mis-stressed, even if every word is correct.</li>
+        <li>Here is the cheapest fix in action. A customer says one of our product names — say “FRANK account”. The plain model has never heard it. So it guesses something close: “frank a count”.</li>
+        <li>We do not retrain anything. We just give the model a short list of words we expect to hear — our product and branch names. So it leans towards them.</li>
+        <li>Same audio, but now it spells the name right. A tiny, almost-free change that fixes many mistakes.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 25</div>
-      <h2>Turn the picture into sound</h2>
+      <h2>Cheapest fix first — climb only as needed</h2>
       <ul>
-        <li>Stage three: the vocoder turns the spectrogram into an audible waveform. This is the final mile, and its quality makes or breaks naturalness.</li>
-        <li>A modern open-source vocoder like HiFi-GAN produces clean, natural audio fast.</li>
-        <li>A great acoustic model with a poor vocoder still sounds buzzy — naturalness lives in both stages two and three.</li>
+        <li>How we teach the model about us — cheapest first, like a ladder. The lowest step is just giving it a list of our product names. Then it expects to hear them.</li>
+        <li>Next, fix a few tricky words so it says them right. Then give it a little extra practice on our own recordings. This light fix does not make it forget everything else.</li>
+        <li>Only the top step — a big retraining on lots of our audio — is heavy. Climb only as high as you need.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 26</div>
-      <h2>Sequential → parallel → end-to-end</h2>
+      <h2>Common problems have simple fixes</h2>
       <ul>
-        <li>How acoustic models matured. Tacotron 2 is an attention sequence-to-sequence model that generates frames one after another — natural, but slow, and it can skip or repeat words.</li>
-        <li>FastSpeech 2 predicts durations up front and generates the whole spectrogram in parallel — fast and stable.</li>
-        <li>VITS and other end-to-end models fuse the acoustic model and vocoder into one network: text straight to wave. The trend is sequential, to parallel, to one unified model.</li>
+        <li>Things still go wrong on real calls. The good news: each common problem has a simple, cheap fix. Read each row left to right — the problem, then the fix.</li>
+        <li>A wrong product name? Give it our word list. A noisy line? Clean the sound first. A long silence? Start speaking sooner. None of these need a big retraining.</li>
+        <li>The lesson: most mistakes have an easy answer. We try the cheap fix first, and only do more if we must.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 27</div>
-      <h2>Mimic a voice from seconds of audio</h2>
+      <h2>Part 4 — Putting It Together at OCBC</h2>
       <ul>
-        <li>Newer open models can clone a voice from seconds of audio — zero-shot TTS, including LLM-style speech models like XTTS v2.</li>
-        <li>That is powerful for a consistent branded voice across every IVR prompt. But for a bank it carries real risk.</li>
-        <li>Cloning is a deepfake and voice-biometrics threat. Flag consent and misuse explicitly — capability here outruns comfort, and governance must keep up.</li>
+        <li>The last stretch: putting both halves together into one bank voice assistant.</li>
+        <li>Everything runs inside the bank, so customer audio never leaves — then we recap.</li>
+        <li>This is where the whole story lands.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 28</div>
-      <h2>Open-source TTS models you can use</h2>
+      <h2>A voice is personal — so it never leaves</h2>
       <ul>
-        <li>Self-hostable TTS options. Piper is fast and lightweight, runs on-device, and is ideal for IVR prompts. Coqui TTS and XTTS are multilingual with voice cloning.</li>
-        <li>ESPnet and PaddleSpeech are research toolkits with many recipes; VITS is the end-to-end option.</li>
-        <li>All open-source. As with STT, names move fast — present as of 2026 and verify.</li>
+        <li>Why do we run all of this inside the bank? A caller's voice is very personal data. It can show who they are. In some systems a voice is even used as a password.</li>
+        <li>If we sent the audio to an outside service, that recording would leave our walls. Instead, the listening and speaking models run on our own machines. So the sound never goes anywhere.</li>
+        <li>This is the one real difference from Siri or Alexa: same loop, but the audio stays put. It is why we use free, self-hosted models.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 29</div>
-      <h2>Match the voice to the use case</h2>
+      <h2>Listen → decide → speak — all inside the bank</h2>
       <ul>
-        <li>Choosing a TTS model: weigh naturalness, latency, footprint, and languages or voices.</li>
-        <li>On-device IVR prompts that must be instant and tiny? Piper. An expressive, multilingual voice-bot? XTTS or VITS.</li>
-        <li>Again, no single winner — pick by the constraint that dominates the use case.</li>
+        <li>The whole story in one line: the assistant listens, works out an answer, then speaks. The listening model turns the caller's words into text.</li>
+        <li>That text goes to the assistant's brain to pick an answer, and the speaking model reads the answer back out loud.</li>
+        <li>The key point: every step runs inside the bank, so customer audio never leaves OCBC.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 30</div>
-      <h2>Data residency decides it</h2>
+      <h2>A customer asks for their balance</h2>
       <ul>
-        <li>An honest comparison. Closed cloud TTS and STT can be a touch more turnkey and occasionally a notch more natural.</li>
-        <li>But they send audio off-premise — disqualifying for sensitive banking voice. That single fact, data residency, decides it.</li>
-        <li>Open models have closed the gap and keep every byte of audio inside OCBC. Frame it as a deliberate, well-understood trade-off, not a compromise.</li>
+        <li>Let us walk one real call, step by step. A customer calls and says, in a mix of Indonesian and English, “Tolong cek balance saya.”</li>
+        <li>The listening model turns that into clean text. The assistant's brain reads the text, looks up the balance, and writes a short reply. The speaking model reads the reply back in a warm voice.</li>
+        <li>Follow the four boxes left to right. This is the whole round-trip on one real OCBC call — and every box runs inside the bank.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 31</div>
-      <h2>Part 3 — Making It Work for Our Languages &amp; Voices</h2>
+      <h2>A real conversation can't wait</h2>
       <ul>
-        <li>Part 3, about 18 minutes. Base models stumble on our accents, our code-switching, and our product names.</li>
-        <li>We climb the adaptation ladder from cheap prompting to full fine-tuning, with LoRA as the practical default.</li>
-        <li>The concrete case throughout: Indonesian-English code-switched banking calls.</li>
+        <li>One thing the round-trip diagram hides: speed. A real talk has a rhythm, and a voice assistant must keep up with it.</li>
+        <li>If the reply comes in about a second, it feels like a natural chat. Wait several seconds in silence and the caller thinks the line dropped. They start talking over it, or hang up.</li>
+        <li>So we do not wait for the whole sentence to finish. We start listening as the caller speaks, and start speaking as soon as the first words are ready. The trick is to feel instant.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 32</div>
-      <h2>Base models stumble on our audio</h2>
+      <h2>Listen, then speak — in a few lines</h2>
       <ul>
-        <li>Why adaptation is needed. Base models drop accuracy on accents, on code-switching between Indonesian and English mid-sentence, on local terms, on product names, and on noisy phone audio.</li>
-        <li>Banking piles on jargon and proper nouns the model never saw in training.</li>
-        <li>This is the Indonesian and Bahasa reality for our audience — the gap is real and measurable in WER.</li>
+        <li>A short recorded demo, replayed live: the full round-trip in a few lines of code — first listen, then speak, both running in-house.</li>
+        <li>It takes a recording, turns it into text (here with mixed Indonesian and English), then turns a reply back into a spoken audio file — shown as a little waveform.</li>
+        <li>Press R to replay. This is the whole story in code: sound to words, then words back to sound, never leaving the bank.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 33</div>
-      <h2>Cheap → expensive: climb only as needed</h2>
+      <h2>A simple cheat-sheet for choosing</h2>
       <ul>
-        <li>The adaptation ladder, cheapest to most expensive. Rung one: prompting, biasing and a custom vocabulary — bias the model toward product names and jargon. Almost free.</li>
-        <li>Rung two: a better frontend or lexicon — fix G2P pronunciations and add domain terms, mainly for TTS. Rung three: parameter-efficient fine-tuning with LoRA or adapters — small added weights, little data, avoids forgetting.</li>
-        <li>Rung four: full fine-tuning — retrain on labelled domain and accent audio. Most powerful, most data and compute. Climb only as high as the gap demands.</li>
+        <li>A quick, simple guide for picking a model. For the listening half, start with Qwen3-ASR. It is strong and handles our mix of languages. Use Whisper when you want the most well-known option.</li>
+        <li>For the speaking half, start with Qwen3-TTS for the most natural voice. Use Piper when speed and small size matter more — for example on a small server.</li>
+        <li>The simple rule: start with the Qwen3 models. Keep Whisper and Piper as trusted, lighter backups. Names move fast, so check again each year.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 34</div>
-      <h2>Nudge a base model toward our audio</h2>
+      <h2>The whole session in three plain words</h2>
       <ul>
-        <li>Fine-tuning, intuitively. Start from a multilingual base such as Whisper or XLS-R, then continue training on your own audio.</li>
-        <li>You do not start from scratch — you nudge a model that already knows speech toward your accent and vocabulary.</li>
-        <li>Even ten minutes to twenty hours of in-domain data can sharply cut WER on a specific accent. A little targeted data goes a long way.</li>
+        <li>Before we close, three plain words to take home. These are the big ideas, with no jargon.</li>
+        <li>Listen means turning speech into text, like a waiter. Speak means turning text into a voice, like an actor. Adapt means teaching the model our accents and names.</li>
+        <li>If you remember only these three words, you remember the whole session.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 35</div>
-      <h2>Freeze the base, train a tiny adapter</h2>
-      <ul>
-        <li>LoRA and adapters — the practical default, and a callback to Day 1 fine-tuning. Freeze the big base model and train only tiny inserted matrices.</li>
-        <li>That is cheap, fast, and swappable: you can keep a separate small adapter per accent and load the right one on demand.</li>
-        <li>Because the base stays frozen, you avoid catastrophic forgetting — the model keeps its general ability while gaining your specialism.</li>
-      </ul>
-    </article>
-    <article class="s">
-      <div class="n">Slide 36</div>
-      <h2>Adaptation needs labelled audio</h2>
-      <ul>
-        <li>Data is the real bottleneck. Adaptation needs labelled audio — transcribed calls — and that is the hard part to get.</li>
-        <li>Tactics: transcribe a sample of in-house calls, use public Indonesian corpora like Common Voice, and use TTS data augmentation — synthesise accented audio to bootstrap STT training.</li>
-        <li>Flag privacy and consent before using any real customer calls. Data sourcing is a governance question as much as a technical one.</li>
-      </ul>
-    </article>
-    <article class="s">
-      <div class="n">Slide 37</div>
-      <h2>Measure on our data, not a leaderboard</h2>
-      <ul>
-        <li>Evaluate adaptation properly. Measure WER on a held-out set of our own calls and accents — not a generic leaderboard.</li>
-        <li>Track error per accent and per term, so you know whether product names specifically improved. For TTS, run MOS listening tests with real listeners.</li>
-        <li>Do not trust leaderboard numbers for your audio. The only score that matters is on data that looks like production.</li>
-      </ul>
-    </article>
-    <article class="s">
-      <div class="n">Slide 38</div>
-      <h2>Capability is not permission</h2>
-      <ul>
-        <li>Governance for voice — bank-specific guardrails. Get explicit consent for voice biometrics, and treat cloning as a deepfake risk to control.</li>
-        <li>Transcripts contain personally identifiable information, so apply retention limits and access controls. Keep a human in the loop for any compliance decision.</li>
-        <li>Capability is not permission. Responsible-use framing is non-negotiable for customer voice.</li>
-      </ul>
-    </article>
-    <article class="s">
-      <div class="n">Slide 39</div>
-      <h2>Part 4 — Speech Tech at OCBC</h2>
-      <ul>
-        <li>The last stretch, about 8 minutes. We tie both directions into one end-to-end voice-bot.</li>
-        <li>Everything open-source and on-premise — audio never leaves OCBC.</li>
-        <li>Then recap the mirror, the mechanisms, and the adaptation ladder.</li>
-      </ul>
-    </article>
-    <article class="s">
-      <div class="n">Slide 40</div>
-      <h2>Listen → understand → speak, on-prem</h2>
-      <ul>
-        <li>Tie the day together: an end-to-end voice-bot, entirely open-source and on-premise. The caller speaks; voice-activity detection plus streaming STT — a transducer or Whisper — turns it into text.</li>
-        <li>That text goes to the Day-1 RAG and LLM stack, which picks an answer. TTS — Piper or XTTS — speaks the answer back.</li>
-        <li>Every block is self-hosted; audio never leaves OCBC. Specifics here are illustrative unless we have real internal details.</li>
-      </ul>
-    </article>
-    <article class="s">
-      <div class="n">Slide 41</div>
-      <h2>Listen with Whisper, speak with Piper</h2>
-      <ul>
-        <li>Recorded demo, replayed live. The voice round-trip in a few lines of open-source Python — listen with Whisper, speak with Piper, both on-prem.</li>
-        <li>Cell 1 loads faster-whisper. Cell 2 transcribes a call, returning Indonesian-English code-switched text. Cell 3 loads a Piper voice. Cell 4 synthesizes a reply to a .wav — shown as a small mock waveform.</li>
-        <li>Press R to replay. That is the whole mirror in code: audio to text, then text back to audio, never leaving the bank.</li>
-      </ul>
-    </article>
-    <article class="s">
-      <div class="n">Slide 42</div>
       <h2>Listen, and speak — on our terms</h2>
       <ul>
-        <li>Land the plane. The mirror: STT listens, TTS speaks — two directions of one pipeline.</li>
-        <li>The mechanisms: STT decodes via CTC, attention, or transducer; TTS runs frontend, then acoustic model, then vocoder. Adaptation climbs from prompting to frontend to LoRA to full fine-tuning — always open-source.</li>
-        <li>Three takeaways: pick the STT architecture by latency versus accuracy; naturalness lives in the acoustic model plus vocoder; adapt to our languages and measure on our data. Pointers: the Whisper repo, Coqui and Piper, and the Hugging Face Open ASR leaderboard. Questions.</li>
+        <li>Let us wrap up. A voice assistant is two sides of one coin: it listens, then it speaks.</li>
+        <li>Modern AI now does each half in one step. We teach it our accents and names, cheapest fixes first. Our bank assistant uses all of this, running inside the bank.</li>
+        <li>Three things to remember: listening and speaking are two halves of one system; one AI model now does each; and we make both work for our voices — with audio that never leaves the bank. Questions welcome.</li>
       </ul>
     </article>
   </div>

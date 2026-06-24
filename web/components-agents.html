@@ -301,7 +301,7 @@ body{font-family:var(--fBody); color:var(--text); background:#fafafb; line-heigh
     <img src="assets/ocbc-logo.png" alt="OCBC" />
     <div class="eyebrow"><span class="badge"></span>Component Gallery</div>
     <h1>Animated building blocks</h1>
-    <p>The reusable, zero-dependency motion components behind the <b>Agentic AI Paradigms</b> deck. Each tile reveals on scroll-in &mdash; click any tile to replay its animation.</p>
+    <p>The reusable, zero-dependency motion components behind the <b>Agentic AI Paradigms</b> deck &mdash; the story of AI that <b>talks</b> growing into AI that <b>does things</b>: the Think &rarr; Act &rarr; Observe loop, tools as hands, everyday errands, and a human who says yes to the big moves. Each tile reveals on scroll-in &mdash; click any tile to replay its animation.</p>
   </div>
   <div class="meta">OCBC CRAYON 2026<br/>16:9 deck system<br/>CSS / JS · no libraries</div>
 </header>
@@ -309,21 +309,21 @@ body{font-family:var(--fBody); color:var(--text); background:#fafafb; line-heigh
 <main class="bento" id="bento">
   <!-- augmented LLM -->
   <section class="tile w3 h2" data-comp="aug">
-    <div class="label">Augmented LLM<span class="kind">satellites land</span></div>
-    <div class="desc">LLM + retrieval + tools + memory.</div>
+    <div class="label">An assistant with hands<span class="kind">satellites land</span></div>
+    <div class="desc">A clever writer, now given tools, memory and helpers.</div>
     <span class="replay-hint">click to replay</span>
     <div class="stage"><div class="aug">
-      <div class="satc ret"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div><h4>Retrieval</h4><p>pull knowledge</p></div>
-      <div class="core"><div class="t">LLM</div><div class="s">reasoning engine</div></div>
-      <div class="satc tools"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 7a4 4 0 0 1-5 5L4 17l3 3 5-5a4 4 0 0 1 5-5l-3-3z"/></svg></div><h4>Tools</h4><p>functions to act</p></div>
-      <div class="satc mem"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></div><h4>Memory</h4><p>state across steps</p></div>
+      <div class="satc ret"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 7a4 4 0 0 1-5 5L4 17l3 3 5-5a4 4 0 0 1 5-5l-3-3z"/></svg></div><h4>Tools</h4><p>its hands &mdash; pay, send, look up</p></div>
+      <div class="core"><div class="t">Assistant</div><div class="s">the clever writer</div></div>
+      <div class="satc tools"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></div><h4>Memory</h4><p>holds the thread of the chat</p></div>
+      <div class="satc mem"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0M16 11a3 3 0 0 0 0-6M21 20a6 6 0 0 0-5-5.9"/></svg></div><h4>Helpers</h4><p>a small team for big jobs</p></div>
     </div></div>
   </section>
 
   <!-- agent loop -->
   <section class="tile w3 h2" data-comp="aloop">
-    <div class="label">Agent loop<span class="kind">nodes fade in</span></div>
-    <div class="desc">Think &rarr; Act &rarr; Observe, repeat.</div>
+    <div class="label">The agent loop<span class="kind">nodes fade in</span></div>
+    <div class="desc">Think &rarr; Act &rarr; Observe, repeat &mdash; like cooking and tasting.</div>
     <span class="replay-hint">click to replay</span>
     <div class="stage"><div class="aloop">
       <div class="ring"></div>
@@ -336,87 +336,87 @@ body{font-family:var(--fBody); color:var(--text); background:#fafafb; line-heigh
 
   <!-- function-call round-trip -->
   <section class="tile w6" data-comp="fcall">
-    <div class="label">Function-calling round-trip<span class="kind">nodes + chips reveal</span></div>
-    <div class="desc">The model requests; your code runs it; the result returns.</div>
+    <div class="label">The assistant requests; software does the work<span class="kind">nodes + chips reveal</span></div>
+    <div class="desc">The assistant only asks &mdash; plain software runs the action and hands back the answer. It can never take control.</div>
     <span class="replay-hint">click to replay</span>
     <div class="stage"><div class="fcall">
-      <div class="fnode model"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 7V3M8 13h.01M16 13h.01"/></svg></div><div class="ft">Model</div><div class="fs">emits a tool call</div></div>
-      <div class="fconn"><span class="chip">{"tool":"get_balance"}</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
-      <div class="fnode fn"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 7a4 4 0 0 1-5 5L4 17l3 3 5-5a4 4 0 0 1 5-5l-3-3z"/></svg></div><div class="ft">Your function</div><div class="fs">runs for real</div></div>
-      <div class="fconn"><span class="chip res">"$4,210.50"</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
-      <div class="fnode model"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg></div><div class="ft">Model</div><div class="fs">uses the result</div></div>
+      <div class="fnode model"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 7V3M8 13h.01M16 13h.01"/></svg></div><div class="ft">Assistant</div><div class="fs">please check the balance</div></div>
+      <div class="fconn"><span class="chip">check-balance · A-1029</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="fnode fn"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 7a4 4 0 0 1-5 5L4 17l3 3 5-5a4 4 0 0 1 5-5l-3-3z"/></svg></div><div class="ft">Software</div><div class="fs">runs it for real</div></div>
+      <div class="fconn"><span class="chip res">$4,210.50</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div class="fnode model"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg></div><div class="ft">Assistant</div><div class="fs">reads it, tells you</div></div>
     </div></div>
   </section>
 
-  <!-- five workflow patterns -->
+  <!-- three everyday errands -->
   <section class="tile w6" data-comp="wfpat">
-    <div class="label">Five workflow patterns<span class="kind">cards stagger in</span></div>
-    <div class="desc">Prompt chaining &middot; routing &middot; parallelization &middot; orchestrator&ndash;workers &middot; evaluator&ndash;optimizer.</div>
+    <div class="label">The same loop, three everyday errands<span class="kind">cards stagger in</span></div>
+    <div class="desc">Each is a little errand &mdash; steps, a real action, and a result worth a check &mdash; not just a question.</div>
     <span class="replay-hint">click to replay</span>
     <div class="stage"><div class="wfpat">
-      <div class="wfp"><h4>Prompt chaining</h4><div class="mini"><div class="mb r"></div><span class="ma">&rarr;</span><div class="mb"></div><span class="ma">&rarr;</span><div class="mb r"></div></div><p>Sequential steps.</p></div>
-      <div class="wfp"><h4>Routing</h4><div class="mini"><div class="mb"></div><span class="ma">&rarr;</span><div class="mcol"><div class="mb r"></div><div class="mb s"></div><div class="mb b"></div></div></div><p>Classify &amp; send.</p></div>
-      <div class="wfp"><h4>Parallelization</h4><div class="mini"><div class="mcol"><div class="mb r"></div><div class="mb b"></div><div class="mb r"></div></div></div><p>Run at once / vote.</p></div>
-      <div class="wfp"><h4>Orchestrator&ndash;workers</h4><div class="mini"><div class="mcol" style="align-items:center"><div class="mb r"></div><span class="ma">&darr;</span><div style="display:flex;gap:4px"><div class="mb"></div><div class="mb"></div><div class="mb"></div></div></div></div><p>Split &amp; delegate.</p></div>
-      <div class="wfp"><h4>Evaluator&ndash;optimizer</h4><div class="mini"><div class="mb r"></div><span class="ma">&#8646;</span><div class="mb"></div></div><p>Draft, critique, loop.</p></div>
+      <div class="wfp"><h4>Pay a bill</h4><div class="mini"><div class="mb r"></div><span class="ma">&rarr;</span><div class="mb"></div><span class="ma">&rarr;</span><div class="mb r"></div></div><p>Pay it, then confirm the new balance.</p></div>
+      <div class="wfp"><h4>Chase a refund</h4><div class="mini"><div class="mb"></div><span class="ma">&rarr;</span><div class="mb r"></div><span class="ma">&rarr;</span><div class="mb s"></div></div><p>Find the order, draft, get a yes.</p></div>
+      <div class="wfp"><h4>Book a trip</h4><div class="mini"><div class="mb b"></div><span class="ma">&rarr;</span><div class="mb r"></div><span class="ma">&rarr;</span><div class="mb r"></div></div><p>Pick a flight and hotel, confirm it.</p></div>
+      <div class="wfp"><h4>Move savings</h4><div class="mini"><div class="mb"></div><span class="ma">&rarr;</span><div class="mb r"></div><span class="ma">&rarr;</span><div class="mb r"></div></div><p>If pay arrived, move $200, check it.</p></div>
+      <div class="wfp"><h4>Just a question?</h4><div class="mini"><div class="mb s"></div></div><p>One fact &mdash; a chatbot is fine, no agent.</p></div>
     </div></div>
   </section>
 
   <!-- trajectory -->
   <section class="tile w3 h2" data-comp="traj">
-    <div class="label">Reasoning trajectory<span class="kind">rows slide in</span></div>
-    <div class="desc">Think / Act / Observe steps.</div>
+    <div class="label">One turn, step by step<span class="kind">rows slide in</span></div>
+    <div class="desc">A strange charge, the safe way &mdash; the assistant prepares; a person decides.</div>
     <span class="replay-hint">click to replay</span>
     <div class="stage"><div class="traj">
-      <div class="trow"><div class="tbadge think">Think</div><div class="tx">Pull recent transactions first.</div></div>
-      <div class="trow"><div class="tbadge act">Act</div><div class="tx"><code>get_transactions("A-1029")</code></div></div>
-      <div class="trow"><div class="tbadge obs">Observe</div><div class="tx">One SGD 9,650 charge overseas.</div></div>
-      <div class="trow"><div class="tbadge act">Act</div><div class="tx"><code>check_travel_notice("A-1029")</code></div></div>
-      <div class="trow"><div class="tbadge obs">Observe</div><div class="tx">None on file &mdash; escalate to a human.</div></div>
+      <div class="trow"><div class="tbadge think">Think</div><div class="tx">Look at the recent payments first.</div></div>
+      <div class="trow"><div class="tbadge act">Act</div><div class="tx"><code>read recent payments</code></div></div>
+      <div class="trow"><div class="tbadge obs">Observe</div><div class="tx">One odd payment from abroad.</div></div>
+      <div class="trow"><div class="tbadge act">Act</div><div class="tx"><code>get a case ready</code></div></div>
+      <div class="trow"><div class="tbadge obs">Observe</div><div class="tx">Don&rsquo;t block the card &mdash; ask a person.</div></div>
     </div></div>
   </section>
 
-  <!-- tool schema -->
+  <!-- giving it hands: a tool belt -->
   <section class="tile w3 h2" data-comp="schema">
-    <div class="label">Tool schema<span class="kind">code card</span></div>
-    <div class="desc">Name, description &amp; input schema the model reads.</div>
+    <div class="label">Giving it hands<span class="kind">code card</span></div>
+    <div class="desc">A tool belt &mdash; each tool lets it do one real thing.</div>
     <span class="replay-hint">click to replay</span>
-    <div class="stage"><div class="schema"><span class="c"># what the model sees</span><br/>{<br/>&nbsp;&nbsp;<span class="s">"name"</span>: <span class="s">"get_account_balance"</span>,<br/>&nbsp;&nbsp;<span class="s">"description"</span>: <span class="s">"Balance in SGD."</span>,<br/>&nbsp;&nbsp;<span class="s">"input_schema"</span>: {<br/>&nbsp;&nbsp;&nbsp;<span class="s">"account_id"</span>: <span class="k">string</span><br/>&nbsp;&nbsp;}<br/>}</div></div>
+    <div class="stage"><div class="schema"><span class="c"># the assistant&rsquo;s hands</span><br/><span class="fn">look up</span> <span class="s">a balance or order</span><br/><span class="fn">send</span> <span class="s">a message</span><br/><span class="fn">make</span> <span class="s">a payment</span><br/><br/><span class="c"># for each step it picks</span><br/><span class="c"># the tool that fits.</span></div></div>
   </section>
 
-  <!-- MCP plug -->
+  <!-- green light, red light -->
   <section class="tile w3 h2" data-comp="mcp">
-    <div class="label">MCP &mdash; a universal plug<span class="kind">pills connect</span></div>
-    <div class="desc">Wrap a tool once; any agent can use it.</div>
+    <div class="label">Green light, red light<span class="kind">pills connect</span></div>
+    <div class="desc">&ldquo;Could I easily undo this?&rdquo; Yes &rarr; go. No &rarr; a person says yes.</div>
     <span class="replay-hint">click to replay</span>
     <div class="stage"><div class="mcp">
-      <div class="mcol2 left"><div class="mpill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg> Database</div><div class="mpill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg> Documents</div><div class="mpill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 7a4 4 0 0 1-5 5L4 17l3 3 5-5a4 4 0 0 1 5-5l-3-3z"/></svg> APIs</div></div>
-      <div class="mhub"><div class="t">MCP</div><div class="s">open standard</div></div>
-      <div class="mcol2 right"><div class="mpill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 7V3M8 13h.01M16 13h.01"/></svg> Agent A</div><div class="mpill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 7V3M8 13h.01M16 13h.01"/></svg> Agent B</div><div class="mpill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg> Any client</div></div>
+      <div class="mcol2 left"><div class="mpill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Read a balance</div><div class="mpill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Write a note</div><div class="mpill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Pay a tiny bill</div></div>
+      <div class="mhub"><div class="t">Human</div><div class="s">says yes to the big moves</div></div>
+      <div class="mcol2 right"><div class="mpill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg> A large transfer</div><div class="mpill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg> Close an account</div><div class="mpill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg> Block a card</div></div>
     </div></div>
   </section>
 
   <!-- complexity scale -->
   <section class="tile w3 h2" data-comp="scale">
-    <div class="label">Start simple<span class="kind">bars grow up</span></div>
-    <div class="desc">Add autonomy only when justified.</div>
+    <div class="label">Keep it simple<span class="kind">bars grow up</span></div>
+    <div class="desc">Add helpers only when the job really needs it.</div>
     <span class="replay-hint">click to replay</span>
     <div class="stage"><div class="scale">
-      <div class="scc"><div class="bar"><h4>Prompt</h4><p>one call</p></div></div>
-      <div class="scc"><div class="bar"><h4>+ tools</h4><p>one shot</p></div></div>
-      <div class="scc"><div class="bar"><h4>Workflow</h4><p>fixed steps</p></div></div>
-      <div class="scc"><div class="bar"><h4>Agent</h4><p>dynamic</p></div></div>
+      <div class="scc"><div class="bar"><h4>Chatbot</h4><p>just answers</p></div></div>
+      <div class="scc"><div class="bar"><h4>+ a few tools</h4><p>can do things</p></div></div>
+      <div class="scc"><div class="bar"><h4>One agent</h4><p>the loop</p></div></div>
+      <div class="scc"><div class="bar"><h4>A few helpers</h4><p>big jobs only</p></div></div>
     </div></div>
   </section>
 
   <!-- spectrum -->
   <section class="tile w3" data-comp="spectrum">
-    <div class="label">Autonomy spectrum<span class="kind">bar + ticks</span></div>
-    <div class="desc">Workflows &rarr; agents.</div>
+    <div class="label">From talking to doing<span class="kind">bar + ticks</span></div>
+    <div class="desc">A chatbot describes the steps; an agent does them.</div>
     <span class="replay-hint">click to replay</span>
     <div class="stage"><div class="spectrum">
-      <div class="spbar"><div class="end">Workflows<span class="ends">you define the path</span></div><div class="end" style="text-align:right">Agents<span class="ends">the LLM directs itself</span></div></div>
-      <div class="sptick"><div class="t"><b>Predictable</b>fixed steps</div><div class="t"><b>Flexible</b>dynamic</div><div class="t"><b>Open-ended</b>autonomy</div></div>
+      <div class="spbar"><div class="end">Chatbot<span class="ends">it talks &mdash; writes you the steps</span></div><div class="end" style="text-align:right">Agent<span class="ends">it does &mdash; takes the actions</span></div></div>
+      <div class="sptick"><div class="t"><b>Talks</b>writes a reply</div><div class="t"><b>Acts</b>uses tools</div><div class="t"><b>Checks</b>looks at the result</div></div>
     </div></div>
   </section>
 

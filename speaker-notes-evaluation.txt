@@ -1,0 +1,163 @@
+OCBC CRAYON 2026 — Conversational AI Evaluation
+Speaker notes · 32 slides
+================================================
+
+Slide 1 — Conversational AI Evaluation
+  • Welcome to the evaluation session. We built an assistant that can listen, look things up, think, stay safe, and speak. Today we ask: is it any good, and how do we know?
+  • We follow the same workflow the chatbot uses, stage by stage, and grade each stage with simple metrics.
+  • For every metric we say what it means in plain words, and we colour the ones teams use most.
+
+Slide 2 — The frame
+  • The whole session in one line: if you cannot measure it, you cannot ship it. A bank cannot launch what it cannot prove is good and safe.
+  • Metrics turn opinions into numbers we can compare and defend.
+  • We will get a number for every stage of the workflow.
+
+Slide 3 — Numbers, not feelings
+  • A nice demo can still hide wrong answers, made-up facts, a data leak, or a slow reply. These are quiet until a real customer hits them.
+  • Numbers let us compare versions, set a pass mark, and show risk and compliance the proof they need.
+  • Each part of the workflow fails in its own way, so each part needs its own number.
+
+Slide 4 — The workflow we grade
+  • This is the path the chatbot follows for every call. Speech becomes text, it looks up facts, the model thinks and answers, a safety check runs, and the reply is spoken back.
+  • Each box can go wrong on its own, so each box gets its own metrics.
+  • We will walk this workflow left to right and grade each stage.
+
+Slide 5 — How to read a metric
+  • A few words first, so the tables make sense. A score is a grade — usually higher is better. A rate is how often something happens — usually lower is better.
+  • '@k' means 'in the top k results', so Recall@5 looks at the top 5. p95 means the slow end — 95 out of 100 are faster than this, so it catches the bad cases.
+  • For every metric we also say which way is good, and colour the ones used most.
+
+Slide 6 — Metrics by stage — red = most used
+  • A map you can keep: each stage of the workflow and the metrics that go with it.
+  • The red ones are the metrics teams use most. The gray ones are also useful, just used less.
+  • We go through each of these stages next, one by one.
+
+Slide 7 — Part 1 — Grading Each Stage
+  • Part 1: we walk the workflow stage by stage.
+  • For each stage we explain what it does, then list its metrics with a plain meaning.
+  • Red star means the metric is used most in real life.
+
+Slide 8 — Stage 1 — hearing the caller
+  • The first stage turns the caller's speech into text. If it mishears here, every later step works on the wrong words.
+  • It is hard because of noise, accents, names, and people switching languages.
+  • So we grade how accurate it is, and how fast.
+
+Slide 9 — Speech-to-text metrics
+  • Word Error Rate is the main one: out of all the words, how many did it hear wrong — swapped, added, or missed. Lower is better.
+  • CER is the same idea per letter, handy for names and numbers. Real-Time Factor checks it keeps up with live speech.
+  • Always test on our own audio, not a clean demo recording.
+
+Slide 10 — Stage 2 — finding the facts
+  • Our assistant looks up real bank data before it answers. This stage fetches the right pages.
+  • If the right fact was never fetched, no clever wording can save the answer.
+  • So we grade the look-up on its own, before the answer.
+
+Slide 11 — Retrieval metrics
+  • Recall@k asks: out of all the right pages, how many did it find in the top k. Context precision and recall check how much of the fetched text was useful, and how much of what was needed it got.
+  • Precision@k, MRR and nDCG check how clean and how well-ranked the results are.
+  • Recall and context metrics are the ones teams watch most.
+
+Slide 12 — Recall vs precision — the fishing net
+  • A simple picture. Precision is a clean net: almost everything you pull up is a fish you wanted. Recall is a full net: you caught most of the fish that were there.
+  • Cast a wider net and you catch more fish (recall up) but also more rubbish (precision down).
+  • The art is catching the answer without dragging in junk for the model to wade through.
+
+Slide 13 — Stage 3 — the answer itself
+  • Now the model writes the reply. This is the hardest stage to grade, because most replies have no single right wording.
+  • We grade it two ways: against a known correct answer when there is one, and by its qualities when there is not.
+  • The most important quality for a bank: it sticks to the real facts and makes nothing up.
+
+Slide 14 — When there is a known right answer
+  • These compare the reply to a known answer. Exact Match and F1 work for closed answers like a balance or a date.
+  • BLEU and ROUGE measure word overlap (built for translation and summaries). METEOR adds synonyms; BERTScore compares meaning, so a good paraphrase still scores well.
+  • They are weak for open chat, because they reward matching the exact words.
+
+Slide 15 — Grading quality without a known answer
+  • Most replies have no reference, so we grade qualities directly. Faithfulness asks: is every claim backed by the facts it was given — no making things up. This is the top one for a bank.
+  • Answer relevance asks if it actually answered the question. Hallucination rate counts how often it says something the facts do not support.
+  • These three are the ones teams watch most.
+
+Slide 16 — Good answer vs bad answer
+  • Same question, same facts. The good answer uses only the real fee and points to where it came from. The bad answer guesses a number that was never given.
+  • Faithfulness catches exactly this: the bad one has a claim with no backing.
+  • This is the single most important check for a bank chatbot.
+
+Slide 17 — Stage 3c — the AI examiner
+  • How do we grade those qualities at scale? We use a strong model as a fair examiner. We give it the question, the answer, and a marking guide (a rubric — a checklist of what a good answer needs).
+  • It returns a score and a short reason. Asking for the reason first makes the grade checkable.
+  • This is the workhorse — but we must check the examiner itself, coming up.
+
+Slide 18 — AI-examiner metrics
+  • Pointwise score: the examiner grades one answer on a scale against the guide. Pairwise win-rate: show two answers and count how often the new one is picked as better.
+  • Agreement checks how often the examiner agrees with human graders — so we can trust it. Bias checks make sure it is not fooled by order or by a longer answer.
+  • Pointwise and pairwise are the everyday ones.
+
+Slide 19 — Stage 4 — the safety check
+  • Before a reply goes out, a guardrail checks it. For a bank these checks are pass/fail, not nice-to-have.
+  • We test for leaked private data, trick prompts that try to break the rules, and rude or harmful replies.
+  • We build a set of attack prompts and run it every release.
+
+Slide 20 — Safety & guardrail metrics
+  • PII leak rate is how often it shows private data it should not — it must be near zero. Jailbreak rate is how often a trick prompt gets past the rules.
+  • Refusal correctness checks it says no to harmful asks but still helps with normal ones. Toxicity rate covers rude, biased, or harmful replies.
+  • Leak and jailbreak rates are the ones a bank watches hardest.
+
+Slide 21 — Stage 5 — speaking back
+  • The last stage turns the reply text into a voice. The words can be perfect, but a flat or unclear voice still feels broken on a call.
+  • We grade how natural and clear it sounds, and how fast it starts.
+  • A slow or robotic voice undoes all the good work upstream.
+
+Slide 22 — Text-to-speech metrics
+  • MOS is the main one: people rate how natural the voice sounds, 1 to 5. Intelligibility asks if listeners understand it clearly.
+  • Round-trip WER is a neat auto check: speak the text, transcribe it back, and see how much survived. Latency is the delay before it starts speaking.
+  • MOS is the headline number for a voice.
+
+Slide 23 — Part 2 — The Whole Picture
+  • Part 2 zooms out from single stages to the whole conversation and to real users.
+  • A stage can look perfect while the whole chat still fails.
+  • These are the numbers leadership and risk watch day to day.
+
+Slide 24 — The whole conversation
+  • Now we grade the whole chat, not one stage. The headline is task success: did the customer actually get what they came for.
+  • We also look at how many turns it took, and whether it stayed on topic without contradicting itself.
+  • These need a full conversation to score, not a single reply.
+
+Slide 25 — Out in production
+  • Offline scores predict; real customers decide. Containment is the share of chats finished without a human. CSAT is the satisfaction score after the chat.
+  • p95 latency is the slow end of response time — what your unhappiest one-in-twenty feel. Escalation, cost, and repeat-contact fill in the picture.
+  • Containment, CSAT and p95 latency are the everyday production numbers.
+
+Slide 26 — How we get the live numbers
+  • The cleanest way to test a change: send a small share of real chats to the new version and compare it with the old one on the numbers that matter.
+  • Alongside it, watch the safety and speed numbers live, with alerts, so a problem is caught in minutes, not weeks.
+  • Always keep a way to roll back.
+
+Slide 27 — Part 3 — Make It a Habit
+  • Part 3: turning all these numbers into a routine, not a one-off.
+  • A living test set, an automatic re-test before each update, and one scorecard.
+  • We close with how to read the whole workflow at a glance.
+
+Slide 28 — Build a practice-question set
+  • Every metric needs data to run on. Build a golden set: real chats with known good answers, taken from anonymised transcripts.
+  • On purpose, add the hard cases — unclear asks, topic switches, angry customers, and old bugs. Each bug you fix becomes a permanent test.
+  • Keep it growing, or it slowly stops protecting you.
+
+Slide 29 — Re-test before every update
+  • Tie it together: before any change goes live, run all the stage metrics and the AI examiner over the practice set, automatically.
+  • Set a pass mark. If faithfulness drops or a safety check fails, the change is blocked — like a smoke alarm.
+  • Then sample for human review and watch the live numbers after launch. Evaluation becomes a loop, not a one-off.
+
+Slide 30 — The end-to-end scorecard
+  • The whole workflow on one page: each stage, its key metric, and a good target. This is the scorecard you could put on a wall.
+  • Read top to bottom, it follows the chat: hearing, finding facts, answering, staying safe, speaking, and the final result.
+  • If any row goes red, you know exactly which stage to fix.
+
+Slide 31 — Which number do I look at?
+  • A quick guide when something feels off. If it mishears, look at Word Error Rate. If it can't find the answer, look at Recall@k.
+  • If it makes things up, look at Faithfulness. If it leaks data, look at PII leak rate. If it's slow, look at p95 latency. If customers are upset, look at CSAT and repeat-contact.
+  • Each problem points to one stage and one metric.
+
+Slide 32 — Graded, stage by stage
+  • Wrap up. Grade every stage of the workflow and the whole chat. Use a known answer where there is one, and the AI examiner where there is not — but check the examiner against people.
+  • Safety checks are pass/fail. Live numbers like containment, p95 and CSAT decide if it really works. Run it all on a growing practice set, re-tested before each update.
+  • For OCBC, run the examiner on our own servers so chats stay in the bank, and grade the whole workflow. Thank you — questions.

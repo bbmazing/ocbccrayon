@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Capstone — Building a Voice Agentic AI Chatbot · OCBC CRAYON</title>
+<title>Sizing the AI Stack: Models, Memory &amp; GPUs · OCBC CRAYON</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
@@ -840,45 +840,45 @@ body.static .gb .gbbar span{transition:none !important}
 <div class="stage">
   <main class="deck" id="deck">
 
-  <section class="slide dark cover active" data-notes='["Welcome to the Day-2 capstone. Across the last three sessions we learned to make a chatbot listen, think and act, and talk. Today we put it all together into one buildable system.", "This is the engineering view of our class project: a voice agentic AI chatbot for OCBC. We will name the open-source models, work out how big they are, and pick a GPU.", "Everything is open-source and self-hosted, so customer audio and data stay inside the bank. By the end you can size the whole stack on paper."]'>
+  <section class="slide dark cover active" data-notes='["Welcome to the Day&ndash;2 capstone. In the last three sessions we made a chatbot listen, think and act, and talk. Today we join it all into one system you can build.", "This is the build view of our class project: a voice AI chatbot for OCBC. We will name the open&ndash;source models, work out how big they are, and pick a GPU.", "All the models are open&ndash;source and run on our own servers. So customer audio and data stay inside the bank. By the end you can plan the whole stack on paper."]'>
     <div class="bg"></div><div class="scrim"></div>
     <div class="inner">
       <img class="logo" src="assets/ocbc-logo.png" alt="OCBC" />
       <h1 data-r data-d="1">Capstone<span class="red">Voice Agentic AI</span></h1>
       <div class="rule" data-r data-d="2"></div>
-      <div class="meta" data-r data-d="3"><strong>Building a Voice Agentic AI Chatbot &mdash; the model stack, the sizing math, the GPU</strong><br/>Assembling speech, agents &amp; conversation into one system<br/>OCBC CRAYON 2026 · ADM Team · 60 minutes</div>
+      <div class="meta" data-r data-d="3"><strong>Build a Voice AI Chatbot &mdash; the models, the size math, the GPU</strong><br/>Join speech, agents &amp; conversation into one system<br/>OCBC CRAYON 2026 · ADM Team · 60 minutes</div>
       <div class="program" data-r data-d="4">OCBC CRAYON · Day 2 · Capstone</div>
     </div>
   </section>
 
-  <section class="slide dark" data-notes='["The whole day in one line. We learned to listen, to think and act, and to talk. Now we assemble it, and answer the practical questions: what models, how big, and which GPU.", "This is the bridge from ideas to a thing you can actually stand up on a server.", "Keep this framing in mind &mdash; listen, think, talk, assemble &mdash; we return to it at the end."]'>
+  <section class="slide dark" data-notes='["The whole day in one line. We learned to listen, to think and act, and to talk. Now we join it all, and answer three plain questions: what models, how big, and which GPU.", "This is the step from ideas to a real thing you can run on a server.", "Keep this in mind &mdash; listen, think, talk, join &mdash; we come back to it at the end."]'>
     <div class="body-area">
       <div class="kicker"><span class="badge"></span>The frame</div>
       <div class="quote-wrap">
         <div class="quote-mark" data-r data-d="2">&ldquo;</div>
-        <blockquote data-r data-d="3">We learned to <em>listen</em>, to <em>think &amp; act</em>, and to <em>talk</em>. Now assemble it &mdash; and figure out the models, the size, and the GPU.</blockquote>
+        <blockquote data-r data-d="3">We learned to <em>listen</em>, to <em>think &amp; act</em>, and to <em>talk</em>. Now join it all &mdash; and work out the models, the size, and the GPU.</blockquote>
         <cite data-r data-d="4">The capstone in one sentence</cite>
       </div>
     </div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">02</span></div>
   </section>
 
-  <section class="slide" data-notes='["Day 2 in one picture. Topic 1 taught speech: speech-to-text and text-to-speech. Topic 2 taught agents: an LLM that reasons, retrieves with RAG, and calls tools. Topic 3 taught the conversation design on top.", "Today, Topic 4, is the join: take those three and wire them into one running system.", "Each box here becomes a real open-source model in the next part of the deck."]'>
+  <section class="slide" data-notes='["Day 2 in one picture. Topic 1 was speech: speech&ndash;to&ndash;text and text&ndash;to&ndash;speech. Topic 2 was agents: an LLM that thinks, looks things up with RAG, and uses tools. Topic 3 was how to design the talk on top.", "Today, Topic 4, is the join. We take those three and wire them into one running system.", "Each box here becomes a real open&ndash;source model in the next part of the deck."]'>
     <div class="kicker"><span class="badge"></span>Day 2 in one picture</div>
     <h2 class="slide-title" data-r data-d="1">Three topics, now joined into one system</h2>
     <div class="flow" style="margin-top:8px">
       <div class="step"><div class="node">1</div><h4>Listen</h4><p>Speech: speech-to-text (STT) &amp; text-to-speech (TTS)</p><div class="arrow"></div></div>
-      <div class="step"><div class="node">2</div><h4>Think &amp; act</h4><p>Agents: LLM + retrieval (RAG) + tool-calling</p><div class="arrow"></div></div>
-      <div class="step"><div class="node">3</div><h4>Talk</h4><p>Conversation: turns, confirm, recover</p><div class="arrow"></div></div>
-      <div class="step"><div class="node">4</div><h4>Assemble</h4><p>Today: wire it all together</p></div>
+      <div class="step"><div class="node">2</div><h4>Think &amp; act</h4><p>Agents: LLM + look&ndash;up (RAG) + tool use</p><div class="arrow"></div></div>
+      <div class="step"><div class="node">3</div><h4>Talk</h4><p>Conversation: take turns, check, fix</p><div class="arrow"></div></div>
+      <div class="step"><div class="node">4</div><h4>Join</h4><p>Today: wire it all together</p></div>
     </div>
-    <div class="flow-cap">Speech &rarr; Agents &rarr; Conversation &rarr; <b style="color:var(--red)">putting it together</b> &mdash; that is the capstone.</div>
+    <div class="flow-cap">Speech &rarr; Agents &rarr; Conversation &rarr; <b style="color:var(--red)">put it together</b> &mdash; that is the capstone.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">03</span></div>
   </section>
 
-  <section class="slide" data-notes='["The end-to-end voice agentic loop. Sound comes in the microphone, speech-to-text turns it into words, guardrails check the input, the LLM agent reasons &mdash; using RAG and tool-calling &mdash; guardrails check the output, text-to-speech turns the reply back into sound, and it plays on the speaker.", "Notice it is a loop: every turn goes around this circle. Guardrails sit on both the way in and the way out, which is what a bank needs.", "The whole loop runs on-prem on our own servers, so the customer audio never leaves the bank. Each stage is an open-source model we will size next."]'>
-    <div class="kicker"><span class="badge"></span>The end-to-end loop</div>
-    <h2 class="slide-title" data-r data-d="1">The voice agentic AI loop, one turn</h2>
+  <section class="slide" data-notes='["The full voice AI loop. Sound comes in the microphone. Speech&ndash;to&ndash;text turns it into words. Guardrails (safety checks) read the input. The LLM agent thinks, using RAG and tools. Guardrails read the output. Text&ndash;to&ndash;speech turns the reply back into sound. It plays on the speaker.", "See that it is a loop. Every turn goes around this circle. Guardrails sit on the way in and the way out. A bank needs both.", "The whole loop runs on our own servers. So the customer audio never leaves the bank. Each step is an open&ndash;source model. We size them next."]'>
+    <div class="kicker"><span class="badge"></span>The full loop</div>
+    <h2 class="slide-title" data-r data-d="1">The voice AI loop, one turn</h2>
     <div class="loopstrip">
       <div class="lp"><div class="lpic mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></div><div class="lpn">Mic</div><div class="lps">audio in</div></div>
       <span class="lparr">&rarr;</span>
@@ -894,28 +894,48 @@ body.static .gb .gbbar span{transition:none !important}
       <span class="lparr">&rarr;</span>
       <div class="lp"><div class="lpic mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9v6h4l5 4V5L7 9z"/><path d="M16 8a5 5 0 0 1 0 8M19 5a9 9 0 0 1 0 14"/></svg></div><div class="lpn">Speaker</div><div class="lps">audio out</div></div>
     </div>
-    <div class="flow-cap">Every turn loops around this circle &mdash; and <b style="color:var(--red)">all of it runs on-prem, so audio stays in the bank</b>.</div>
+    <div class="flow-cap">Every turn goes around this circle &mdash; and <b style="color:var(--red)">it all runs on our own servers, so audio stays in the bank</b>.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">04</span></div>
   </section>
 
-  <section class="slide dark divider" data-notes='["Part 1: the model stack. We go component by component, naming the open-source options for each, what each one does, and a rough size.", "Order matters &mdash; this is the order the audio flows: speech-to-text, the LLM brain, the embedding model and vector database for RAG, guardrails, text-to-speech, and the orchestration that ties tools together.", "All open-weight and self-hostable, so we control cost and keep data in the bank."]'>
+  <section class="slide" data-notes='["Follow one caller through one turn, with rough times. The caller stops speaking. Whisper turns it into text in a few hundred milliseconds. Guardrails check the input almost at once. The LLM thinks and may use a tool &mdash; the slowest step, often half a second to one second. Then text&ndash;to&ndash;speech starts the spoken reply.", "The number people feel is time&ndash;to&ndash;first&ndash;audio. That is the wait after they stop talking before they hear a voice. Try to keep the whole chain under about one and a half seconds. Then it feels like a real talk, not a wait.", "The LLM is the slow link. So the GPU you pick is mostly about keeping that one step fast for the OCBC voice assistant. The speech models are quick next to it."]'>
+    <div class="kicker"><span class="badge"></span>One caller, one turn &middot; the timeline</div>
+    <h2 class="slide-title" data-r data-d="1">Where the time goes in one turn</h2>
+    <div class="loopstrip">
+      <div class="lp"><div class="lpic mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></div><div class="lpn">Caller stops</div><div class="lps">~0 ms</div></div>
+      <span class="lparr">&rarr;</span>
+      <div class="lp"><div class="lpic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16M4 10h16M4 15h10"/></svg></div><div class="lpn">STT</div><div class="lps">~200&ndash;400 ms</div></div>
+      <span class="lparr">&rarr;</span>
+      <div class="lp"><div class="lpic grd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg></div><div class="lpn">Guardrails</div><div class="lps">~tens ms</div></div>
+      <span class="lparr">&rarr;</span>
+      <div class="lp big"><div class="lpic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5 3 3 0 0 0 2 4 3 3 0 0 0 5 1V4.5A2.5 2.5 0 0 0 9 4zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5 3 3 0 0 1-2 4 3 3 0 0 1-5 1"/></svg></div><div class="lpn">LLM + tool</div><div class="lps">~0.5&ndash;1 s</div></div>
+      <span class="lparr">&rarr;</span>
+      <div class="lp"><div class="lpic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9v6h4l5 4V5L7 9z"/><path d="M16 8a5 5 0 0 1 0 8"/></svg></div><div class="lpn">TTS starts</div><div class="lps">~100&ndash;200 ms</div></div>
+      <span class="lparr">&rarr;</span>
+      <div class="lp"><div class="lpic mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9v6h4l5 4V5L7 9z"/><path d="M16 8a5 5 0 0 1 0 8M19 5a9 9 0 0 1 0 14"/></svg></div><div class="lpn">Caller hears</div><div class="lps">first audio</div></div>
+    </div>
+    <div class="ruleband" data-r data-d="2"><b>Time-to-first-audio:</b> keep the whole chain <b style="color:#fff">under ~1.5 s</b> so it feels like a real talk &mdash; the <b style="color:var(--red)">LLM is the slow link</b>, which is why it drives the GPU choice.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["Part 1: the model stack &mdash; the set of models we will use. We go part by part. For each one we name the open&ndash;source options, what it does, and a rough size.", "The order is the order the audio flows: speech&ndash;to&ndash;text, the LLM brain, the embedding model and vector database for RAG, guardrails, text&ndash;to&ndash;speech, and the glue that links the tools.", "All models are open and run on our own servers. So we control cost and keep data in the bank."]'>
     <div class="pillar-no">01</div>
     <div class="eyebrow"><span class="dot"></span>Part 1</div>
     <h2>The Model Stack</h2>
-    <p class="lead">Component by component: the open-source options, what each does, and a rough size &mdash; STT, LLM, embeddings, guardrails, TTS, orchestration.</p>
+    <p class="lead">Part by part: the open-source options, what each does, and a rough size &mdash; STT, LLM, embeddings, guardrails, TTS, and the glue.</p>
     <div class="prog-rail"><span class="on">Model stack</span><span>Sizing math</span><span>Which GPU</span></div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">05</span></div>
   </section>
 
-  <section class="slide" data-notes='["Speech-to-text, or STT, turns the customer audio into text. The open default is Whisper, the free and open model from OpenAI &mdash; large-v3 is about 1.5 billion parameters.", "For lower cost there are faster-whisper and whisper.cpp, which can even run on a plain CPU with no GPU at all.", "This is the first stage of the loop: sound in, words out. It is small compared to the LLM."]'>
-    <div class="kicker"><span class="badge"></span>Stage 1 &middot; Speech-to-text (STT)</div>
+  <section class="slide" data-notes='["Speech&ndash;to&ndash;text, or STT, turns the customer audio into text. The common open choice is Whisper, the free open model from OpenAI. Its large&ndash;v3 size has about 1.5 billion parameters (the numbers a model learns).", "To save money you can use faster&ndash;whisper or whisper.cpp. They can even run on a plain CPU (the normal chip), with no GPU at all.", "This is the first step of the loop: sound in, words out. It is small next to the LLM."]'>
+    <div class="kicker"><span class="badge"></span>Step 1 &middot; Speech-to-text (STT)</div>
     <h2 class="slide-title" data-r data-d="1">STT: Whisper turns speech into text</h2>
     <div class="two wide-r" style="margin-top:12px">
       <div class="txt">
         <ul class="bullets">
-          <li data-r data-d="2"><b>Whisper</b> (open, from OpenAI) &mdash; <code>large-v3</code> is about <b>1.5B parameters</b>.</li>
-          <li data-r data-d="3"><b>faster-whisper</b> / <b>whisper.cpp</b> &mdash; cheaper, can run on <b>CPU</b>.</li>
-          <li data-r data-d="4" class="strong">Job: <b style="color:var(--red)">speech &rarr; text</b>, the first stage of the loop.</li>
+          <li data-r data-d="2"><b>Whisper</b> (open, from OpenAI) &mdash; <code>large-v3</code> has about <b>1.5B parameters</b> (learned numbers).</li>
+          <li data-r data-d="3"><b>faster-whisper</b> / <b>whisper.cpp</b> &mdash; cheaper, can run on <b>CPU</b> (the normal chip).</li>
+          <li data-r data-d="4" class="strong">Job: <b style="color:var(--red)">speech &rarr; text</b>, the first step of the loop.</li>
         </ul>
       </div>
       <div class="viz">
@@ -926,28 +946,28 @@ body.static .gb .gbbar span{transition:none !important}
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">06</span></div>
   </section>
 
-  <section class="slide" data-notes='["The LLM is the brain of the agent: it reasons, decides which tool to call, and writes the reply. Good open-weight choices are Qwen2.5 and Llama 3.x.", "There is a real trade-off here. A 7-to-8 billion parameter model is cheap and fast; a 70 billion model is higher quality but much more expensive.", "This is the big VRAM cost in the whole stack &mdash; nearly all your GPU memory goes here. We size it carefully in Part 2."]'>
-    <div class="kicker"><span class="badge"></span>Stage 2 &middot; The agent brain (LLM)</div>
-    <h2 class="slide-title" data-r data-d="1">LLM: the reasoning &amp; tool-calling brain</h2>
+  <section class="slide" data-notes='["The LLM is the brain of the agent. It thinks, picks which tool to use, and writes the reply. Good open choices are Qwen2.5 and Llama 3.x.", "There is a real choice to make here. A 7&ndash;to&ndash;8 billion model is cheap and fast. A 70 billion model is better, but costs a lot more.", "This is the big VRAM cost in the whole stack &mdash; almost all your GPU memory goes here. We size it with care in Part 2."]'>
+    <div class="kicker"><span class="badge"></span>Step 2 &middot; The agent brain (LLM)</div>
+    <h2 class="slide-title" data-r data-d="1">LLM: the brain that thinks &amp; uses tools</h2>
     <div class="two wide-r" style="margin-top:12px">
       <div class="txt">
         <ul class="bullets">
-          <li data-r data-d="2">Open-weight <b>Qwen2.5</b> / <b>Llama 3.x</b> &mdash; reasons &amp; calls tools.</li>
-          <li data-r data-d="3"><b>7&ndash;8B</b> for cost &amp; speed &middot; <b>70B</b> for quality.</li>
+          <li data-r data-d="2">Open models <b>Qwen2.5</b> / <b>Llama 3.x</b> &mdash; they think &amp; use tools.</li>
+          <li data-r data-d="3"><b>7&ndash;8B</b> for low cost &amp; speed &middot; <b>70B</b> for better quality.</li>
           <li data-r data-d="4" class="strong">The <b style="color:var(--red)">big VRAM cost</b> of the whole stack.</li>
         </ul>
       </div>
       <div class="viz">
-        <div class="modelcard accent"><div class="mcname">Qwen2.5 / Llama 3.x<span class="mcsz">7&ndash;70B</span></div><div class="mcrole">reason &middot; RAG &middot; tool-calling</div><div class="mcvram"><span class="mcv">~14&ndash;140 GB</span><span class="mcl">weights, FP16</span></div><div class="mctag">the GPU budget lives here</div></div>
+        <div class="modelcard accent"><div class="mcname">Qwen2.5 / Llama 3.x<span class="mcsz">7&ndash;70B</span></div><div class="mcrole">think &middot; RAG &middot; use tools</div><div class="mcvram"><span class="mcv">~14&ndash;140 GB</span><span class="mcl">weights, FP16</span></div><div class="mctag">the GPU budget lives here</div></div>
       </div>
     </div>
-    <div class="flow-cap">VRAM = <b>video memory</b> (the GPU&#39;s RAM). The LLM eats most of it &mdash; which is why we <b style="color:var(--red)">quantize</b> it.</div>
+    <div class="flow-cap">VRAM = <b>video memory</b> (the GPU&#39;s RAM). The LLM uses most of it &mdash; which is why we <b style="color:var(--red)">quantize</b> it (make it smaller).</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">07</span></div>
   </section>
 
-  <section class="slide" data-notes='["RAG, retrieval-augmented generation, lets the agent look things up in our own documents before it answers. Two pieces make it work: an embedding model and a vector database.", "The embedding model turns each document and each question into a vector &mdash; a list of numbers that captures meaning. Good open options are Qwen3-Embedding, in a small 0.6B or a larger 8B, and the bge and e5 families.", "Then the vector database stores those vectors and finds the closest matches fast. FAISS, pgvector and Milvus are the common open choices. The vector DB is not a GPU model &mdash; it runs on ordinary servers."]'>
-    <div class="kicker"><span class="badge"></span>Stage 3 &middot; RAG: embeddings + vector DB</div>
-    <h2 class="slide-title" data-r data-d="1">Embeddings + vector DB power retrieval</h2>
+  <section class="slide" data-notes='["RAG (retrieval&ndash;augmented generation) lets the agent look things up in our own documents before it answers. Two parts make it work: an embedding model and a vector database.", "The embedding model turns each document and each question into a vector &mdash; a list of numbers that holds the meaning. Good open options are Qwen3&ndash;Embedding (a small 0.6B or a bigger 8B) and the bge and e5 families.", "The vector database stores those vectors and finds the closest matches fast. FAISS, pgvector and Milvus are common open choices. The vector DB is not a GPU model. It runs on normal servers."]'>
+    <div class="kicker"><span class="badge"></span>Step 3 &middot; RAG: embeddings + vector DB</div>
+    <h2 class="slide-title" data-r data-d="1">Embeddings + vector DB do the look-up</h2>
     <div class="vs" style="margin-top:20px">
       <div class="panel accent" data-r data-d="2">
         <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h10"/></svg></span>Embedding model</div>
@@ -959,14 +979,14 @@ body.static .gb .gbbar span{transition:none !important}
         <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></span>Vector database</div>
         <div class="ps">Stores vectors &amp; finds the closest matches fast (not a GPU model).</div>
         <div class="chips"><span class="chip">FAISS</span><span class="chip">pgvector</span><span class="chip">Milvus</span></div>
-        <div class="where">Runs on <b>ordinary servers / CPU</b> &mdash; part of the stack, not the GPU bill.</div>
+        <div class="where">Runs on <b>normal servers / CPU</b> &mdash; part of the stack, not the GPU bill.</div>
       </div>
     </div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">08</span></div>
   </section>
 
-  <section class="slide" data-notes='["Guardrails are the safety layer. They check the input on the way in and the output on the way out &mdash; blocking unsafe requests and catching leaked personal data, or PII.", "Open options include Llama Guard, about 8 billion parameters, plus NeMo Guardrails and Granite Guardian.", "In a bank this is not optional. Notice the guardrail is itself a model, so it adds its own VRAM cost &mdash; budget for it like a second small LLM."]'>
-    <div class="kicker"><span class="badge"></span>Stage 4 &middot; Guardrails</div>
+  <section class="slide" data-notes='["Guardrails are the safety layer. They check the input on the way in and the output on the way out. They block unsafe requests and catch leaked personal data (PII).", "Open options are Llama Guard (about 8 billion parameters), NeMo Guardrails and Granite Guardian.", "In a bank this is a must, not a choice. The guardrail is itself a model, so it adds its own VRAM cost. Plan for it like a second small LLM."]'>
+    <div class="kicker"><span class="badge"></span>Step 4 &middot; Guardrails</div>
     <h2 class="slide-title" data-r data-d="1">Guardrails check input and output</h2>
     <div class="two wide-r" style="margin-top:12px">
       <div class="txt">
@@ -980,19 +1000,19 @@ body.static .gb .gbbar span{transition:none !important}
         <div class="modelcard"><div class="mcname">Llama Guard<span class="mcsz">~8B</span></div><div class="mcrole">safety &middot; PII check</div><div class="mcvram"><span class="mcv">~16 GB</span><span class="mcl">weights, FP16</span></div><div class="mctag">a second small LLM</div></div>
       </div>
     </div>
-    <div class="flow-cap">Both ends of the loop &mdash; a <b style="color:var(--red)">required</b> layer for a bank, and it costs memory too.</div>
+    <div class="flow-cap">Both ends of the loop &mdash; a <b style="color:var(--red)">must&ndash;have</b> layer for a bank, and it costs memory too.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">09</span></div>
   </section>
 
-  <section class="slide" data-notes='["Text-to-speech, or TTS, turns the reply text back into a voice. The tiny option is Piper, which is so small it runs comfortably on a CPU.", "If you want a richer or cloned voice, XTTS and VITS are good open choices, at a slightly higher cost.", "Like Whisper, this is small &mdash; it almost never drives the GPU bill. The last stage of the loop: text out as sound."]'>
-    <div class="kicker"><span class="badge"></span>Stage 5 &middot; Text-to-speech (TTS)</div>
+  <section class="slide" data-notes='["Text&ndash;to&ndash;speech, or TTS, turns the reply text back into a voice. The tiny option is Piper. It is so small it runs well on a CPU.", "If you want a richer or cloned voice, XTTS and VITS are good open choices, at a bit more cost.", "Like Whisper, this is small. It almost never drives the GPU bill. It is the last step of the loop: text out as sound."]'>
+    <div class="kicker"><span class="badge"></span>Step 5 &middot; Text-to-speech (TTS)</div>
     <h2 class="slide-title" data-r data-d="1">TTS: turn the reply back into a voice</h2>
     <div class="two wide-r" style="margin-top:12px">
       <div class="txt">
         <ul class="bullets">
-          <li data-r data-d="2"><b>Piper</b> &mdash; tiny, runs on <b>CPU</b>, great default.</li>
+          <li data-r data-d="2"><b>Piper</b> &mdash; tiny, runs on <b>CPU</b>, a good first choice.</li>
           <li data-r data-d="3"><b>XTTS</b> / <b>VITS</b> &mdash; richer or cloned voices, a bit more cost.</li>
-          <li data-r data-d="4" class="strong">Job: <b style="color:var(--red)">text &rarr; speech</b>, the last stage of the loop.</li>
+          <li data-r data-d="4" class="strong">Job: <b style="color:var(--red)">text &rarr; speech</b>, the last step of the loop.</li>
         </ul>
       </div>
       <div class="viz">
@@ -1003,9 +1023,9 @@ body.static .gb .gbbar span{transition:none !important}
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">10</span></div>
   </section>
 
-  <section class="slide" data-notes='["The glue that holds it together is orchestration. LangGraph, from the Agentic AI session, defines the steps and decisions of the agent as a graph &mdash; when to retrieve, when to call a tool, when to answer.", "MCP, the Model Context Protocol, is the standard way the agent connects to tools &mdash; a balance API, a transfer action, a card-block action &mdash; without custom glue for each.", "This is a callback to Topic 2. It is mostly code, not a heavy model, so it costs little memory but it is what makes the agent actually do things."]'>
-    <div class="kicker"><span class="badge"></span>Orchestration &amp; tool-calling</div>
-    <h2 class="slide-title" data-r data-d="1">LangGraph + MCP wire the agent to tools</h2>
+  <section class="slide" data-notes='["The glue that holds it together is orchestration (the part that runs the steps in order). LangGraph, from the Agentic AI session, draws the agent&#39;s steps and choices as a graph &mdash; when to look up, when to use a tool, when to answer.", "MCP (Model Context Protocol) is the standard way the agent links to tools &mdash; a balance check, a transfer, a card&ndash;block &mdash; with no custom glue for each one.", "This is a link back to Topic 2. It is mostly code, not a heavy model. So it costs little memory, but it is what makes the agent actually do things."]'>
+    <div class="kicker"><span class="badge"></span>Orchestration &amp; tool use</div>
+    <h2 class="slide-title" data-r data-d="1">LangGraph + MCP link the agent to tools</h2>
     <div class="fcall">
       <div class="fnode model" data-r data-d="2"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M7.5 8l3.5 8M16.5 8l-3.5 8"/></svg></div><div class="ft">LangGraph</div><div class="fs">steps &amp; decisions as a graph</div></div>
       <div class="fconn"><span class="chip">tool call</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
@@ -1013,38 +1033,38 @@ body.static .gb .gbbar span{transition:none !important}
       <div class="fconn"><span class="chip res">result</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 12H5M11 6l-6 6 6 6"/></svg></div>
       <div class="fnode model" data-r data-d="4"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg></div><div class="ft">Agent reply</div><div class="fs">grounded in real data</div></div>
     </div>
-    <div class="flow-cap">A callback to the <b>Agentic AI</b> topic &mdash; mostly code, little VRAM, but it is what makes the agent <b style="color:var(--red)">act</b>.</div>
+    <div class="flow-cap">A link back to the <b>Agentic AI</b> topic &mdash; mostly code, little VRAM, but it is what makes the agent <b style="color:var(--red)">act</b>.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">11</span></div>
   </section>
 
-  <section class="slide" data-notes='["The whole stack on one slide. Five model boxes plus a vector database and the orchestration. Read it top to bottom: STT, the LLM brain, the embedding model, guardrails, TTS.", "Notice the pattern &mdash; the LLM is the only really big one. STT and TTS are small or CPU, embeddings can be small or CPU, guardrails is a second small LLM.", "Keep this table in your head &mdash; in the next part we attach a real memory number to each row."]'>
+  <section class="slide" data-notes='["The whole stack on one slide. Five model boxes plus a vector database and the glue. Read it top to bottom: STT, the LLM brain, the embedding model, guardrails, TTS.", "See the pattern &mdash; the LLM is the only really big one. STT and TTS are small or CPU. Embeddings can be small or CPU. Guardrails is a second small LLM.", "Keep this table in mind. In the next part we add a real memory number to each row."]'>
     <div class="kicker"><span class="badge"></span>The whole stack, one slide</div>
-    <h2 class="slide-title" data-r data-d="1">Every component in one table</h2>
+    <h2 class="slide-title" data-r data-d="1">Every part in one table</h2>
     <table class="dtable" style="margin-top:14px">
-      <tr><th>Component</th><th>Open-source option</th><th>What it does</th><th class="target">Rough size (FP16)</th></tr>
+      <tr><th>Part</th><th>Open-source option</th><th>What it does</th><th class="target">Rough size (FP16)</th></tr>
       <tr><td>STT</td><td>Whisper large-v3</td><td>speech &rarr; text</td><td class="target">~1.5B &middot; ~3 GB</td></tr>
-      <tr><td>LLM (brain)</td><td>Qwen2.5 / Llama 3.x</td><td>reason, RAG, tool-calling</td><td class="target">7&ndash;70B &middot; ~14&ndash;140 GB</td></tr>
-      <tr><td>Embeddings</td><td>Qwen3-Embedding / bge / e5</td><td>docs &amp; queries &rarr; vectors</td><td class="target">0.6&ndash;8B &middot; ~1&ndash;16 GB</td></tr>
+      <tr><td>LLM (brain)</td><td>Qwen2.5 / Llama 3.x</td><td>think, RAG, use tools</td><td class="target">7&ndash;70B &middot; ~14&ndash;140 GB</td></tr>
+      <tr><td>Embeddings</td><td>Qwen3-Embedding / bge / e5</td><td>docs &amp; questions &rarr; vectors</td><td class="target">0.6&ndash;8B &middot; ~1&ndash;16 GB</td></tr>
       <tr><td>Vector DB</td><td>FAISS / pgvector / Milvus</td><td>store &amp; search vectors</td><td class="target">CPU &middot; not GPU</td></tr>
       <tr><td>Guardrails</td><td>Llama Guard / NeMo / Granite</td><td>safety &amp; PII, in &amp; out</td><td class="target">~8B &middot; ~16 GB</td></tr>
       <tr><td>TTS</td><td>Piper / XTTS / VITS</td><td>text &rarr; speech</td><td class="target">tiny &middot; ~CPU</td></tr>
-      <tr><td>Orchestration</td><td>LangGraph + MCP</td><td>steps &amp; tool-calling</td><td class="target">code &middot; little VRAM</td></tr>
+      <tr><td>Glue</td><td>LangGraph + MCP</td><td>run steps &amp; use tools</td><td class="target">code &middot; little VRAM</td></tr>
     </table>
     <div class="flow-cap">One big model (the <b style="color:var(--red)">LLM</b>) and a few small ones &mdash; that shape decides the GPU.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">12</span></div>
   </section>
 
-  <section class="slide dark divider" data-notes='["Part 2: how big is a model? This is the sizing math &mdash; the most useful skill from today. With one formula you can estimate the memory of any model.", "We cover the core formula, a worked examples table, the overhead you must not forget, and adding up the whole stack.", "All numbers are rules of thumb for teaching, not exact specs &mdash; but they get you within range, which is what planning needs."]'>
+  <section class="slide dark divider" data-notes='["Part 2: how big is a model? This is the size math &mdash; the most useful skill from today. With one simple sum you can guess the memory of any model.", "We cover the main sum, a table of worked examples, the extra memory you must not forget, and adding up the whole stack.", "All numbers are rough guides for teaching, not exact specs. But they get you in the right range, which is all planning needs."]'>
     <div class="pillar-no">02</div>
     <div class="eyebrow"><span class="dot"></span>Part 2</div>
     <h2>How Big Is a Model?</h2>
-    <p class="lead">The sizing math: weights = parameters &times; bytes-per-parameter, the worked examples, the overhead, and adding up the whole stack.</p>
+    <p class="lead">The size math: weights = parameters &times; bytes&ndash;per&ndash;parameter, the worked examples, the extra memory, and adding up the whole stack.</p>
     <div class="prog-rail"><span>Model stack</span><span class="on">Sizing math</span><span>Which GPU</span></div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">13</span></div>
   </section>
 
-  <section class="slide" data-notes='["The one formula to remember. The memory for a model&#39;s weights is roughly the number of parameters times the bytes per parameter.", "Precision sets the bytes. FP32, full precision, is 4 bytes. FP16 or BF16, half precision, is 2 bytes. INT8 is 1 byte. INT4 is about half a byte. Lower precision means smaller and cheaper, with a small quality cost &mdash; that is quantization.", "So a model with N billion parameters needs about 2N gigabytes in FP16, about N gigabytes in INT8, and about half-N gigabytes in INT4. That single line lets you size anything."]'>
-    <div class="kicker"><span class="badge"></span>The core formula</div>
+  <section class="slide" data-notes='["The one sum to remember. The memory for a model&#39;s weights is about the number of parameters times the bytes per parameter.", "Precision sets the bytes. FP32 (full) is 4 bytes. FP16 or BF16 (half) is 2 bytes. INT8 is 1 byte. INT4 is about half a byte. Lower precision means smaller and cheaper, with a small quality cost. That is quantization (making the model smaller).", "So a model with N billion parameters needs about 2N gigabytes in FP16, about N gigabytes in INT8, and about half&ndash;N gigabytes in INT4. That one line lets you size anything."]'>
+    <div class="kicker"><span class="badge"></span>The main sum</div>
     <h2 class="slide-title" data-r data-d="1">VRAM for weights = params &times; bytes</h2>
     <div class="formula" data-r data-d="2"><span class="fpart">VRAM<small>weights</small></span><span class="fop">&asymp;</span><span class="fpart hot">parameters</span><span class="fop">&times;</span><span class="fpart">bytes / parameter</span></div>
     <div class="prec-row">
@@ -1054,12 +1074,73 @@ body.static .gb .gbbar span{transition:none !important}
       <div class="prec hot" data-r data-d="6"><div class="pp">INT4</div><div class="pb">~0.5 byte</div><div class="pf">&asymp; 0.5N GB</div></div>
     </div>
     <div class="flow-cap">For <b>N billion</b> parameters: <b style="color:var(--red)">~2N GB in FP16, ~N GB in INT8, ~0.5N GB in INT4</b> &mdash; just the weights.</div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">14</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
   </section>
 
-  <section class="slide" data-notes='["The same formula applied to our actual models. Whisper at 1.5B is about 3 GB in FP16. A 7-to-8B model is about 14-to-16 GB in FP16, but only 7-to-8 GB in INT8, and about 4 GB in INT4.", "The 8B embedding model and the 8B guardrail are each about 16 GB in FP16. The big one is the 70B: about 140 GB in FP16, dropping to about 35-to-40 GB in INT4.", "Read across each row and watch quantization shrink the number &mdash; that is the lever that fits a model onto a smaller GPU."]'>
+  <section class="slide" data-notes='["A simple way to picture precision. Think of the model&#39;s numbers as clothes in a suitcase. FP16 packs each number loosely in 2 bytes. INT8 vacuum&ndash;packs to 1 byte. INT4 packs harder, about half a byte each. Same clothes, smaller suitcase. That is quantization.", "For our 8B model that is the gap between about 16 GB, 8 GB, and 4 GB. Pack a bit too hard and the clothes wrinkle. INT4 gives up a little quality for a much smaller size.", "The best choice for the OCBC voice assistant is usually INT8 or a good INT4 build: most of the quality, a quarter to half the memory. So it fits on a smaller, cheaper GPU."]'>
+    <div class="kicker"><span class="badge"></span>FP16 vs INT8 vs INT4 &middot; the idea</div>
+    <h2 class="slide-title" data-r data-d="1">Quantize = vacuum-pack the same model</h2>
+    <div class="prec-row" style="margin-top:18px">
+      <div class="prec" data-r data-d="2"><div class="pp">FP16</div><div class="pb">2 bytes &middot; loosely packed</div><div class="pf">~16 GB</div></div>
+      <div class="prec" data-r data-d="3"><div class="pp">INT8</div><div class="pb">1 byte &middot; vacuum-packed</div><div class="pf">~8 GB</div></div>
+      <div class="prec hot" data-r data-d="4"><div class="pp">INT4</div><div class="pb">~0.5 byte &middot; packed hard</div><div class="pf">~4 GB</div></div>
+      <div class="prec" data-r data-d="5"><div class="pp">Quality</div><div class="pb">tiny drop INT8 &middot; small INT4</div><div class="pf">&asymp; same</div></div>
+    </div>
+    <div class="ruleband" data-r data-d="6"><b>Suitcase idea:</b> same clothes (the model&#39;s numbers), <b style="color:#fff">a smaller suitcase</b>. Pack a bit too hard and they wrinkle &mdash; <b style="color:var(--red)">INT8 or a good INT4 is the usual best choice</b> (numbers shown for an 8B model).</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide" data-notes='["A full reference table you can keep. The base rule is easy: bytes per parameter = bits divided by 8. Then multiply by the number of parameters &mdash; here a 35&ndash;billion model.", "Top to bottom, the model gets smaller as you use fewer bits. FP32 (full) is the biggest at about 140 GB. FP16 is about 70 GB. INT8 about 35 GB. INT4 about 18 GB. Very low settings like 2&ndash;bit or BitNet drop under 10 GB.", "Fewer bits save memory but cost a little quality, so most teams pick INT8 or a good INT4. The starred rows are k&ndash;quants, which mix sizes, so they are averages."]'>
+    <div class="kicker"><span class="badge"></span>Full reference &middot; format &rarr; memory</div>
+    <h2 class="slide-title" data-r data-d="1">Every format, and what a 35B model weighs</h2>
+    <div class="ruleband" data-r data-d="2" style="margin-top:12px"><b>Base rule:</b> byte per param = <b style="color:#fff">bits &divide; 8</b>, then &times; the number of params (here 35B).</div>
+    <table class="dtable" style="margin-top:12px;font-size:12px">
+      <tr><th>Format</th><th>Bit / param</th><th>Byte / param</th><th class="target">VRAM 35B (weights)</th></tr>
+      <tr><td>FP32</td><td>32</td><td>4</td><td class="target">~140 GB</td></tr>
+      <tr><td>FP16 / BF16</td><td>16</td><td>2</td><td class="target">~70 GB</td></tr>
+      <tr><td>FP8 (E4M3/E5M2)</td><td>8</td><td>1</td><td class="target">~35 GB</td></tr>
+      <tr><td>INT8 / Q8</td><td>8</td><td>1</td><td class="target">~35 GB</td></tr>
+      <tr><td>FP6</td><td>6</td><td>0.75</td><td class="target">~26 GB</td></tr>
+      <tr><td>Q5_K_M</td><td>~5.5*</td><td>~0.69</td><td class="target">~24 GB</td></tr>
+      <tr><td>INT4 / FP4 / NF4 / AWQ / GPTQ</td><td>4</td><td>0.5</td><td class="target">~18 GB</td></tr>
+      <tr><td>Q4_K_M</td><td>~4.8*</td><td>~0.6</td><td class="target">~20 GB</td></tr>
+      <tr><td>INT3 / Q3</td><td>3</td><td>0.375</td><td class="target">~13 GB</td></tr>
+      <tr><td>INT2 / Q2</td><td>2</td><td>0.25</td><td class="target">~9 GB</td></tr>
+      <tr><td>BitNet (1.58-bit)</td><td>~1.58</td><td>~0.2</td><td class="target">~7 GB</td></tr>
+      <tr><td>INT1 (binary)</td><td>1</td><td>0.125</td><td class="target">~4 GB</td></tr>
+    </table>
+    <div class="flow-cap">Fewer bits &rarr; smaller model &rarr; fits a smaller GPU. <b style="color:var(--red)">INT8 or a good INT4 is the usual sweet spot.</b> <span style="color:var(--muted)">*k&ndash;quants mix sizes &mdash; averages.</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide" data-notes='["A full worked example for one model, so you can do it yourself. Take an 8&ndash;billion&ndash;parameter LLM. Step one: weights = parameters times bytes. 8 billion times 2 bytes in FP16 is about 16 GB.", "Step two: add spare room for run time &mdash; the KV cache, activations and runtime. Times by about 1.3, so about 21 GB. Step three: if that is tight, quantize. INT8 halves the weights to about 8 GB, so about 11 GB all in. INT4 quarters them to about 4 GB, so about 6 GB all in.", "So the same 8B model lands from about 6 GB to 21 GB, based on precision. This three&ndash;step plan &mdash; weights, spare room, quantize &mdash; is all you need to size any model on paper."]'>
+    <div class="kicker"><span class="badge"></span>Worked example &middot; one model, step by step</div>
+    <h2 class="slide-title" data-r data-d="1">Size an 8B LLM in three steps</h2>
+    <div class="two wide-r" style="margin-top:12px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2"><b>1 &middot; Weights</b> = params &times; bytes &rarr; <code>8B &times; 2 = ~16 GB</code> (FP16).</li>
+          <li data-r data-d="3"><b>2 &middot; Spare room</b> &times;1.3 for KV cache + activations + runtime &rarr; <code>~21 GB</code>.</li>
+          <li data-r data-d="4"><b>3 &middot; Quantize to fit</b>: INT8 &rarr; <code>~11 GB</code> &middot; INT4 &rarr; <code>~6 GB</code>.</li>
+          <li data-r data-d="5" class="strong">Same model, <b style="color:var(--red)">~6&ndash;21 GB</b> based on precision.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="sumlist">
+          <div class="sl"><span>FP16 weights (8B &times; 2)</span><b>~16 GB</b></div>
+          <div class="sl"><span>+ spare room (&times;1.3)</span><b>~21 GB</b></div>
+          <div class="sl"><span>INT8, all-in</span><b>~11 GB</b></div>
+          <div class="sl tot"><span>INT4, all-in</span><b>~6 GB</b></div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-cap">The plan for <b style="color:var(--red)">any</b> model: <b>weights &rarr; spare room &rarr; quantize</b>. That is the whole size skill.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The same sum used on our real models. Whisper at 1.5B is about 3 GB in FP16. A 7&ndash;to&ndash;8B model is about 14&ndash;to&ndash;16 GB in FP16, but only 7&ndash;to&ndash;8 GB in INT8, and about 4 GB in INT4.", "The 8B embedding model and the 8B guardrail are each about 16 GB in FP16. The big one is the 70B: about 140 GB in FP16, down to about 35&ndash;to&ndash;40 GB in INT4.", "Read across each row and watch quantization make the number smaller. That is the lever that fits a model onto a smaller GPU."]'>
     <div class="kicker"><span class="badge"></span>Worked examples</div>
-    <h2 class="slide-title" data-r data-d="1">The formula on our actual models</h2>
+    <h2 class="slide-title" data-r data-d="1">The sum on our real models</h2>
     <table class="dtable" style="margin-top:14px">
       <tr><th>Model</th><th>Params</th><th>FP16 (~2N)</th><th>INT8 (~N)</th><th class="target">INT4 (~0.5N)</th></tr>
       <tr><td>Whisper large</td><td>~1.5B</td><td>~3 GB</td><td>~1.5 GB</td><td class="target">~1 GB</td></tr>
@@ -1072,19 +1153,42 @@ body.static .gb .gbbar span{transition:none !important}
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">15</span></div>
   </section>
 
-  <section class="slide" data-notes='["Weights are not everything. Three more things use memory at run time: the KV cache, which grows with context length, batch size and the number of layers; the activations during a forward pass; and the runtime itself, about one to two gigabytes.", "KV cache, key-value cache, is the model&#39;s short-term memory of the conversation so far &mdash; longer chats and more simultaneous users make it bigger.", "Rule of thumb: budget about 1.2 to 1.5 times the weight size for inference headroom. Long context or large batches need more. And quantizing to INT8 or INT4 is the main lever to fit a smaller GPU, at a small quality cost."]'>
-    <div class="kicker"><span class="badge"></span>Don&#39;t forget the overhead</div>
-    <h2 class="slide-title" data-r data-d="1">Weights aren&#39;t everything: add headroom</h2>
+  <section class="slide" data-notes='["Weights are not the whole story. Three more things use memory while the model runs: the KV cache, which grows with how long the chat is, how many callers at once, and the number of layers; the activations during each pass; and the runtime itself, about one to two gigabytes.", "KV cache (key&ndash;value cache) is the model&#39;s short&ndash;term memory of the chat so far. Longer chats and more callers at once make it bigger.", "Rough guide: plan about 1.2 to 1.5 times the weight size for spare room. Long chats or many callers need more. And quantizing to INT8 or INT4 is the main lever to fit a smaller GPU, at a small quality cost."]'>
+    <div class="kicker"><span class="badge"></span>Don&#39;t forget the extra memory</div>
+    <h2 class="slide-title" data-r data-d="1">Weights aren&#39;t all: add spare room</h2>
     <div class="cards c3" style="margin-top:18px">
-      <div class="card" data-r data-d="2"><div class="num">+</div><h3>KV cache</h3><p>the model&#39;s memory of the chat so far &mdash; grows with context length &times; batch &times; layers (KV = key-value)</p></div>
-      <div class="card" data-r data-d="3"><div class="num">+</div><h3>Activations</h3><p>scratch memory used during each forward pass</p></div>
+      <div class="card" data-r data-d="2"><div class="num">+</div><h3>KV cache</h3><p>the model&#39;s memory of the chat so far &mdash; like a <b>personal notepad</b> of notes per caller; grows with chat length &times; callers &times; layers (KV = key&ndash;value)</p></div>
+      <div class="card" data-r data-d="3"><div class="num">+</div><h3>Activations</h3><p>scratch memory used during each pass</p></div>
       <div class="card" data-r data-d="4"><div class="num">+</div><h3>Runtime</h3><p>the serving engine itself &mdash; about 1&ndash;2 GB</p></div>
     </div>
-    <div class="ruleband" data-r data-d="5"><b>Rule of thumb:</b> budget <b style="color:var(--red)">~1.2&ndash;1.5&times; the weight size</b> for inference &mdash; more for long context or large batch. Quantize to fit.</div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">16</span></div>
+    <div class="ruleband" data-r data-d="5"><b>Rough guide:</b> plan <b style="color:var(--red)">~1.2&ndash;1.5&times; the weight size</b> for run time &mdash; more for long chats or many callers. Quantize to fit.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
   </section>
 
-  <section class="slide" data-notes='["Now add up the whole stack two ways. The lean path: an INT4 8B LLM is about 5 GB, Whisper about 3 GB, the embedding model run on CPU or small, an INT4 8B guardrail about 5 GB, and Piper on CPU. Total is well under 24 GB &mdash; it fits comfortably on one 24 GB GPU.", "The premium path: a full-precision FP16 70B LLM alone is about 140 GB, before overhead &mdash; that needs multiple 80 GB data-center GPUs.", "Same system, two very different hardware bills. The quantized small-model path is what most teams ship; reserve the 70B path for when quality really demands it."]'>
+  <section class="slide" data-notes='["The simplest way to picture the KV cache. While the model talks with a caller, it keeps that caller&#39;s notes on a personal notepad &mdash; what was asked, what it said, the chat so far. Those notes are the KV cache (key&ndash;value cache).", "Here is the catch for real use: every extra caller at the same time needs their own notepad. So more callers at once need more memory. The model&#39;s weights load only once and are shared, but each caller adds a fresh notepad on top.", "So for the OCBC voice assistant the weights are a fixed cost, but the KV&ndash;cache notepads grow with how many people are on the line at once. Size for the busy hour, not the average."]'>
+    <div class="kicker"><span class="badge"></span>KV cache, in plain words</div>
+    <h2 class="slide-title" data-r data-d="1">KV cache = a notepad per caller</h2>
+    <div class="two wide-r" style="margin-top:12px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">While talking with a caller, the model keeps that caller&#39;s <b>notes on a personal notepad</b> &mdash; that notepad is the <b>KV cache</b> (key&ndash;value cache).</li>
+          <li data-r data-d="3">Every <b>extra caller</b> at the same time needs <b>their own notepad</b> &mdash; so more callers at once need <b style="color:var(--red)">more memory</b>.</li>
+          <li data-r data-d="4" class="strong">Weights load <b>once</b> and are shared; the notepads <b>add up</b> per caller.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="conc">
+          <div class="cc" data-r data-d="2"><div class="cch">1 caller</div><div class="ccbar"><span class="w"></span><span class="kv" style="flex:0 0 26px"></span></div><div class="ccl">weights once + 1 notepad</div></div>
+          <div class="cc" data-r data-d="3"><div class="cch">3 callers</div><div class="ccbar"><span class="w"></span><span class="kv" style="flex:0 0 78px"></span></div><div class="ccl">weights once + 3 notepads</div></div>
+          <div class="cc" data-r data-d="4"><div class="cch">8 callers</div><div class="ccbar"><span class="w"></span><span class="kv" style="flex:0 0 180px"></span></div><div class="ccl">weights once + 8 notepads</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-cap">One shared model, <b style="color:var(--red)">one notepad per live caller</b> &mdash; that is why the number of callers at once, not just model size, drives the memory bill.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Now add up the whole stack two ways. The lean path: an INT4 8B LLM is about 5 GB, Whisper about 3 GB, the embedding model on CPU or small, an INT4 8B guardrail about 5 GB, and Piper on CPU. The total is well under 24 GB. It fits well on one 24 GB GPU.", "The premium path: a full FP16 70B LLM alone is about 140 GB, before extra memory. That needs more than one 80 GB data&ndash;center GPU.", "Same system, two very different hardware bills. The quantized small&ndash;model path is what most teams ship. Keep the 70B path for when quality really needs it."]'>
     <div class="kicker"><span class="badge"></span>Add up the whole stack</div>
     <h2 class="slide-title" data-r data-d="1">Two ways to add it up</h2>
     <div class="vs" style="margin-top:18px">
@@ -1098,32 +1202,57 @@ body.static .gb .gbbar span{transition:none !important}
           <div class="sl"><span>Piper TTS</span><b>~CPU</b></div>
           <div class="sl tot"><span>Total</span><b>&lt; 24 GB</b></div>
         </div>
-        <div class="where">Fits comfortably on <b>one 24 GB GPU</b>.</div>
+        <div class="where">Fits well on <b>one 24 GB GPU</b>.</div>
       </div>
       <div class="panel" data-r data-d="3">
         <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3zM12 10v4M12 17h.01"/></svg></span>Premium &mdash; FP16 70B</div>
         <div class="sumlist">
           <div class="sl"><span>LLM 70B FP16</span><b>~140 GB</b></div>
-          <div class="sl"><span>+ KV cache &amp; overhead</span><b>more</b></div>
+          <div class="sl"><span>+ KV cache &amp; extra memory</span><b>more</b></div>
           <div class="sl tot"><span>Total</span><b>&gt; 140 GB</b></div>
         </div>
-        <div class="where">Needs <b style="color:var(--red)">multiple 80 GB GPUs</b>.</div>
+        <div class="where">Needs <b style="color:var(--red)">more than one 80 GB GPU</b>.</div>
       </div>
     </div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">17</span></div>
   </section>
 
-  <section class="slide dark divider" data-notes='["Part 3: which GPU? Now we map our memory numbers onto real hardware. The first number that matters is always VRAM &mdash; the gigabytes of memory on the card.", "We give an approximate 2026 cheat-sheet, then match a GPU to each kind of job, then a note on concurrency.", "Treat the cheat-sheet as a snapshot &mdash; verify current models and memory before you buy, because the lineup changes fast."]'>
+  <section class="slide" data-notes='["A second worked example, the big one: a 70&ndash;billion model. Same three steps. Step one weights: 70 billion times 2 bytes in FP16 is about 140 GB. Step two spare room: times about 1.3 is roughly 180 GB. That is already far past any single card.", "Step three quantize: INT8 halves the weights to about 70 GB, and INT4 quarters them to about 35&ndash;40 GB. So even quantized hard, a 70B sits near the very top of one 80 GB card &mdash; with almost no room left for KV&ndash;cache notepads.", "The lesson: a 70B does not fit one normal card in FP16, so you split it across two or more GPUs (called tensor parallel &mdash; sharing one model over many cards). That is why the 70B path is a multi&ndash;GPU, premium choice."]'>
+    <div class="kicker"><span class="badge"></span>Worked example &middot; the big one</div>
+    <h2 class="slide-title" data-r data-d="1">Why a 70B needs more than one GPU</h2>
+    <div class="two wide-r" style="margin-top:12px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2"><b>1 &middot; Weights</b> &rarr; <code>70B &times; 2 = ~140 GB</code> (FP16) &mdash; already past any one card.</li>
+          <li data-r data-d="3"><b>2 &middot; Spare room</b> &times;1.3 &rarr; <code>~180 GB</code> for KV cache + runtime.</li>
+          <li data-r data-d="4"><b>3 &middot; Quantize</b>: INT8 &rarr; <code>~70 GB</code> &middot; INT4 &rarr; <code>~35&ndash;40 GB</code>.</li>
+          <li data-r data-d="5" class="strong">Even INT4 fills <b style="color:var(--red)">most of one 80 GB card</b> &mdash; little room for callers.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="sumlist">
+          <div class="sl"><span>FP16 weights (70B &times; 2)</span><b>~140 GB</b></div>
+          <div class="sl"><span>+ spare room (&times;1.3)</span><b>~180 GB</b></div>
+          <div class="sl"><span>INT8, weights</span><b>~70 GB</b></div>
+          <div class="sl tot"><span>INT4, weights</span><b>~35&ndash;40 GB</b></div>
+        </div>
+      </div>
+    </div>
+    <div class="ruleband" data-r data-d="6"><b>Split it:</b> FP16 70B spans <b style="color:#fff">two or more 80 GB cards</b> (tensor parallel = sharing one model over many GPUs) &mdash; <b style="color:var(--red)">that is why 70B is the premium, multi&ndash;GPU path</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide dark divider" data-notes='["Part 3: which GPU? Now we match our memory numbers to real hardware. The first number that matters is always VRAM &mdash; the gigabytes of memory on the card.", "We give a rough 2026 quick guide, then match a GPU to each kind of job, then a note on many callers at once.", "Treat the quick guide as a snapshot. Check the current models and memory before you buy, because the list changes fast."]'>
     <div class="pillar-no">03</div>
     <div class="eyebrow"><span class="dot"></span>Part 3</div>
     <h2>Which GPU?</h2>
-    <p class="lead">Map memory onto hardware: the VRAM cheat-sheet, matching a GPU to the job, and what concurrency does to the budget.</p>
+    <p class="lead">Match memory to hardware: the VRAM quick guide, matching a GPU to the job, and what many callers at once do to the budget.</p>
     <div class="prog-rail"><span>Model stack</span><span>Sizing math</span><span class="on">Which GPU</span></div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">18</span></div>
   </section>
 
-  <section class="slide" data-notes='["An approximate 2026 snapshot of GPU memory &mdash; please verify current numbers, the lineup moves fast. The consumer cards, RTX 3090 and 4090, have 24 GB. In the data center, the L4 has 24 GB, the L40S has 48 GB.", "The A100 comes in 40 or 80 GB, the H100 has 80 GB, and the H200 has 141 GB.", "The number to look at first is always VRAM in gigabytes &mdash; it decides whether your model even fits before you worry about speed or price."]'>
-    <div class="kicker"><span class="badge"></span>GPU memory cheat-sheet &middot; ~2026, verify current</div>
+  <section class="slide" data-notes='["A rough 2026 snapshot of GPU memory &mdash; please check the current numbers, the list moves fast. The consumer cards, RTX 3090 and 4090, have 24 GB. In the data center, the L4 has 24 GB and the L40S has 48 GB.", "The A100 comes in 40 or 80 GB, the H100 has 80 GB, and the H200 has 141 GB.", "Look at VRAM in gigabytes first. It tells you if your model even fits, before you think about speed or price."]'>
+    <div class="kicker"><span class="badge"></span>GPU memory quick guide &middot; ~2026, check current</div>
     <h2 class="slide-title" data-r data-d="1">VRAM is the first number to check</h2>
     <div class="gpubars">
       <div class="gb" data-r data-d="2"><div class="gbn">RTX 3090 / 4090<span class="gbt">consumer</span></div><div class="gbbar"><span style="--w:17%"></span></div><div class="gbv">24 GB</div></div>
@@ -1133,11 +1262,68 @@ body.static .gb .gbbar span{transition:none !important}
       <div class="gb" data-r data-d="6"><div class="gbn">H100<span class="gbt">data-center</span></div><div class="gbbar"><span style="--w:57%"></span></div><div class="gbv">80 GB</div></div>
       <div class="gb hot" data-r data-d="7"><div class="gbn">H200<span class="gbt">data-center</span></div><div class="gbbar"><span style="--w:100%"></span></div><div class="gbv">141 GB</div></div>
     </div>
-    <div class="flow-cap">A <b>2026 snapshot</b> &mdash; <b style="color:var(--red)">verify current specs</b>. Look at VRAM (GB) first: it decides whether the model fits.</div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">19</span></div>
+    <div class="flow-cap">A <b>2026 snapshot</b> &mdash; <b style="color:var(--red)">check current specs</b>. Look at VRAM (GB) first: it tells you if the model fits.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
   </section>
 
-  <section class="slide" data-notes='["Match the GPU to the job, four cases. A quantized 7-to-8B chatbot stack &mdash; our lean path &mdash; fits on one 24 GB card, an RTX 4090 or an L4.", "If you want full-precision FP16 7-8B plus embeddings, guardrails and STT/TTS all on the GPU together, step up to one 48 GB L40S or one 80 GB A100.", "For a high-quality 70B you need one or two 80 GB A100 or H100 cards. And for a tiny on-device demo, skip the GPU entirely: whisper.cpp, Piper, and a 3-to-4B INT4 LLM on CPU."]'>
+  <section class="slide" data-notes='["A few real GPUs side by side, so the quick guide has names and a sense of where each one lives. The RTX 4090 is a 24 GB consumer card you can put under a desk. The L4 is a 24 GB low&ndash;power data&ndash;center card. The L40S has 48 GB.", "Stepping up: the A100 comes in 40 or 80 GB, the H100 has 80 GB of fast memory, and the H200 has 141 GB &mdash; the big single&ndash;card option for large models.", "The point is not to learn prices by heart, since they change. It is to see that VRAM about doubles as you go up the ladder. The bigger the model, the higher up you must go."]'>
+    <div class="kicker"><span class="badge"></span>Real GPUs &middot; ~2026, check current</div>
+    <h2 class="slide-title" data-r data-d="1">A short table of GPUs and their memory</h2>
+    <table class="dtable" style="margin-top:14px">
+      <tr><th>GPU</th><th>Class</th><th>Memory type</th><th class="target">VRAM</th></tr>
+      <tr><td>RTX 3090 / 4090</td><td>consumer</td><td>GDDR6X</td><td class="target">24 GB</td></tr>
+      <tr><td>L4</td><td>data-center, low-power</td><td>GDDR6</td><td class="target">24 GB</td></tr>
+      <tr><td>L40S</td><td>data-center</td><td>GDDR6</td><td class="target">48 GB</td></tr>
+      <tr><td>A100</td><td>data-center</td><td>HBM2e</td><td class="target">40 / 80 GB</td></tr>
+      <tr><td>H100</td><td>data-center</td><td>HBM3</td><td class="target">80 GB</td></tr>
+      <tr><td>H200</td><td>data-center</td><td>HBM3e</td><td class="target">141 GB</td></tr>
+    </table>
+    <div class="flow-cap">VRAM about <b>doubles</b> up the ladder &mdash; <b style="color:var(--red)">the bigger the model, the higher you go</b>. Prices and the list move fast, so check.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide" data-notes='["A cheat&ndash;sheet: what fits on each common card size, for an LLM with spare room. On a small 8 GB card you fit a 7&ndash;to&ndash;8B model at INT4 &mdash; good for a tiny demo. On 16 GB you fit an 8B at INT8 or a 13B at INT4.", "On a 24 GB card &mdash; an RTX 4090 or an L4 &mdash; our whole lean voice stack fits with room to spare. On 48 GB you can run a full FP16 8B plus the small models together. On 80 GB you fit a 70B quantized to INT4.", "Read it as a ladder: more VRAM means a bigger model, or the same model at higher precision, or more callers at once. For the OCBC voice assistant the 24 GB row is the sweet spot."]'>
+    <div class="kicker"><span class="badge"></span>What fits on each card</div>
+    <h2 class="slide-title" data-r data-d="1">A quick guide: what fits on 8&rarr;80 GB</h2>
+    <table class="dtable" style="margin-top:14px">
+      <tr><th>Card VRAM</th><th>Example card</th><th>Comfortable LLM (with spare room)</th><th class="target">Good for</th></tr>
+      <tr><td>8 GB</td><td>small / older</td><td>7&ndash;8B at INT4</td><td class="target">tiny demo</td></tr>
+      <tr><td>16 GB</td><td>RTX 4060 Ti / A4000</td><td>8B at INT8, or 13B at INT4</td><td class="target">single caller</td></tr>
+      <tr><td>24 GB</td><td>RTX 4090 / L4</td><td>our whole lean voice stack</td><td class="target">the sweet spot</td></tr>
+      <tr><td>48 GB</td><td>L40S</td><td>FP16 8B + small models together</td><td class="target">all on GPU</td></tr>
+      <tr><td>80 GB</td><td>A100 / H100</td><td>70B at INT4, or many callers</td><td class="target">premium / scale</td></tr>
+    </table>
+    <div class="flow-cap">More VRAM buys a <b>bigger model</b>, <b>higher precision</b>, or <b>more callers</b> &mdash; <b style="color:var(--red)">24 GB is the sweet spot for our lean stack</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The question every team asks: does my stack fit on one 24 GB card &mdash; an RTX 4090 or an L4? Let us walk through it with our lean path. Whisper for speech is about 3 GB. An INT4 8B LLM with spare room is about 6 GB. An INT4 8B guardrail is about 6 GB more. Embeddings run small or on CPU, and Piper text&ndash;to&ndash;speech runs on CPU.", "Add the GPU parts: about 3 plus 6 plus 6 is about 15 GB, well under 24. So yes &mdash; it fits, with room left for a few callers&#39; KV&ndash;cache notepads.", "If instead you wanted every part at full FP16 on the GPU at once, you would go past 24 GB and need a 48 or 80 GB card. The lesson: quantization turns a many&ndash;card job into a one&ndash;card job."]'>
+    <div class="kicker"><span class="badge"></span>Does it fit? &middot; a 24 GB walk-through</div>
+    <h2 class="slide-title" data-r data-d="1">Does our stack fit on a 24 GB card?</h2>
+    <div class="two wide-r" style="margin-top:12px">
+      <div class="txt">
+        <ul class="bullets">
+          <li data-r data-d="2">Goal: <b>one 24 GB card</b> (RTX 4090 / L4).</li>
+          <li data-r data-d="3">Add the GPU parts: <code>3 + 6 + 6 &asymp; 15 GB</code> &mdash; embeddings + TTS sit on CPU.</li>
+          <li data-r data-d="4">~15 GB of 24 GB used &rarr; <b style="color:var(--red)">it fits</b>, with room for a few callers&#39; notepads.</li>
+          <li data-r data-d="5" class="strong">All&ndash;FP16&ndash;on&ndash;GPU would go over &mdash; <b>quantizing keeps it one card</b>.</li>
+        </ul>
+      </div>
+      <div class="viz">
+        <div class="sumlist">
+          <div class="sl"><span>Whisper STT</span><b>~3 GB</b></div>
+          <div class="sl"><span>LLM 8B INT4 (with spare room)</span><b>~6 GB</b></div>
+          <div class="sl"><span>Guardrail 8B INT4</span><b>~6 GB</b></div>
+          <div class="sl"><span>Embeddings + Piper TTS</span><b>CPU</b></div>
+          <div class="sl tot"><span>GPU total of 24 GB</span><b>~15 GB &#10004;</b></div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-cap">Fits on one 24 GB GPU with room to spare &mdash; <b style="color:var(--red)">quantization turns a many&ndash;card job into a one&ndash;card job</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Match the GPU to the job, four cases. A quantized 7&ndash;to&ndash;8B chatbot stack &mdash; our lean path &mdash; fits on one 24 GB card, an RTX 4090 or an L4.", "If you want full FP16 7&ndash;8B plus embeddings, guardrails and STT/TTS all on the GPU together, step up to one 48 GB L40S or one 80 GB A100.", "For a high&ndash;quality 70B you need one or two 80 GB A100 or H100 cards. And for a tiny on&ndash;device demo, skip the GPU: whisper.cpp, Piper, and a 3&ndash;to&ndash;4B INT4 LLM on CPU."]'>
     <div class="kicker"><span class="badge"></span>Match GPU to the job</div>
     <h2 class="slide-title" data-r data-d="1">Pick the card the job needs</h2>
     <div class="cards c2" style="margin-top:16px">
@@ -1146,34 +1332,90 @@ body.static .gb .gbbar span{transition:none !important}
       <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="9" height="12" rx="2"/><rect x="13" y="6" width="9" height="12" rx="2"/></svg></div><h3>70B high-quality</h3><p>top quality, premium path</p><div class="tag">1&ndash;2&times; 80 GB &middot; A100 / H100</div></div>
       <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3h6v4H9zM5 7h14v14H5z"/><path d="M9 12h6"/></svg></div><h3>Tiny / on-device demo</h3><p>whisper.cpp + Piper + 3&ndash;4B INT4 LLM</p><div class="tag">CPU &middot; no GPU</div></div>
     </div>
-    <div class="flow-cap">Most teams ship the <b style="color:var(--red)">quantized one-GPU path</b> &mdash; reserve 70B for when quality demands it.</div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">20</span></div>
+    <div class="flow-cap">Most teams ship the <b style="color:var(--red)">quantized one&ndash;GPU path</b> &mdash; keep 70B for when quality really needs it.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
   </section>
 
-  <section class="slide" data-notes='["One more thing for production: concurrency. Each simultaneous caller needs their own KV cache &mdash; their own slice of the conversation memory. Ten callers means roughly ten times the KV-cache memory.", "So the comfortable single-user numbers we computed are a floor, not the production answer. More users multiplies the run-time memory, even though the weights are loaded only once.", "Production sizing must account for the number of concurrent callers &mdash; plan for the peak, not the average."]'>
-    <div class="kicker"><span class="badge"></span>Concurrency multiplies memory</div>
+  <section class="slide" data-notes='["A feel for cost, not exact prices &mdash; those change, so always check. A small 24 GB card like an L4 is the cheap, low&ndash;power choice that runs our quantized lean stack. A big 80 GB card like an H100 can cost many times more to buy or rent.", "So the choice is not just does it fit &mdash; it is also what does it cost to run all day. A 70B on a big card may give a little more quality for a lot more money. Often a quantized 8B on a small card is the better deal.", "Rule of thumb: the smallest card that fits the job is almost always the cheapest to run. Pay for a big card only when more callers or higher quality truly need it."]'>
+    <div class="kicker"><span class="badge"></span>Cost intuition &middot; small vs big card</div>
+    <h2 class="slide-title" data-r data-d="1">A small card costs far less to run</h2>
+    <div class="cards c2" style="margin-top:16px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 18v2M17 18v2"/></svg></div><h3>Small 24 GB card (L4)</h3><p>low power, low cost &mdash; runs our quantized lean stack all day</p><div class="tag">cheap &middot; one card &middot; ~$ per hour</div></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="9" height="12" rx="2"/><rect x="13" y="6" width="9" height="12" rx="2"/></svg></div><h3>Big 80 GB card (H100)</h3><p>much more memory and speed &mdash; and many times the cost to buy or rent</p><div class="tag">premium &middot; ~$$$ per hour</div></div>
+    </div>
+    <div class="ruleband" data-r data-d="4"><b>The deal:</b> a <b style="color:#fff">quantized 8B on a small card</b> often beats a 70B on a big card &mdash; <b style="color:var(--red)">the smallest card that fits is usually the cheapest to run</b>. Prices move, so check current rates.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide" data-notes='["A simple checklist, run top to bottom. Add up the model sizes for the stack you want. Times by about 1.3 for run&ndash;time spare room. Times again by how many callers you expect at the busy peak, because each one needs their own KV&ndash;cache notepad. Then pick the smallest GPU whose VRAM beats that number, with a little safety room.", "The main rule: pick the smallest GPU the job fits on. Bigger cards cost a lot more and sit idle if you do not need them. The goal is fits with room to spare, not biggest you can buy.", "If nothing fits, you have two levers before buying a bigger card: quantize harder (INT8 or INT4), or put fewer models on the GPU. Most teams reach the one&ndash;card answer this way for a service like the OCBC voice assistant."]'>
+    <div class="kicker"><span class="badge"></span>A decision checklist</div>
+    <h2 class="slide-title" data-r data-d="1">Pick the smallest GPU the job fits on</h2>
+    <div class="cards c2" style="margin-top:16px">
+      <div class="card" data-r data-d="2"><div class="num">1</div><h3>Add up the model sizes</h3><p>add the weights for the stack you want on the GPU</p></div>
+      <div class="card" data-r data-d="3"><div class="num">2</div><h3>&times;1.3 spare room</h3><p>KV cache + activations + runtime for one caller</p></div>
+      <div class="card" data-r data-d="4"><div class="num">3</div><h3>&times; peak callers</h3><p>each caller at once needs their own KV&ndash;cache notepad</p></div>
+      <div class="card" data-r data-d="5"><div class="num">4</div><h3>Smallest card that beats it</h3><p>pick the lowest VRAM that fits with safety room &mdash; not the biggest</p></div>
+    </div>
+    <div class="ruleband" data-r data-d="6"><b>If nothing fits:</b> <b style="color:#fff">quantize harder</b> (INT8 / INT4) or put fewer models on the GPU &mdash; <b style="color:var(--red)">fits with room to spare beats biggest you can buy</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide" data-notes='["One more thing for real use: many callers at once. Each caller on the line needs their own KV cache &mdash; their own slice of the chat memory. Ten callers means about ten times the KV&ndash;cache memory.", "So the easy single&ndash;user numbers we worked out are a floor, not the real&ndash;use answer. More callers times the run&ndash;time memory, even though the weights load only once.", "Real&ndash;use sizing must count the number of callers at once. Plan for the busy peak, not the average."]'>
+    <div class="kicker"><span class="badge"></span>More callers, more memory</div>
     <h2 class="slide-title" data-r data-d="1">Many callers multiply the KV cache</h2>
+    <div class="flow-cap" style="margin-top:0;margin-bottom:6px">Each live caller keeps their own <b>KV&ndash;cache notepad</b> &mdash; <b style="color:var(--red)">more callers at once means more notepads, means more memory</b>.</div>
     <div class="conc">
       <div class="cc" data-r data-d="2"><div class="cch">1 caller</div><div class="ccbar"><span class="w"></span><span class="kv" style="flex:0 0 18px"></span></div><div class="ccl">weights once + 1&times; KV cache</div></div>
       <div class="cc" data-r data-d="3"><div class="cch">5 callers</div><div class="ccbar"><span class="w"></span><span class="kv" style="flex:0 0 70px"></span></div><div class="ccl">weights once + 5&times; KV cache</div></div>
       <div class="cc" data-r data-d="4"><div class="cch">20 callers</div><div class="ccbar"><span class="w"></span><span class="kv" style="flex:0 0 200px"></span></div><div class="ccl">weights once + 20&times; KV cache &mdash; may need a bigger / second GPU</div></div>
     </div>
-    <div class="flow-cap">Weights load <b>once</b>; the <b style="color:var(--red)">KV cache scales with concurrent users</b> &mdash; size for the peak.</div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">21</span></div>
+    <div class="flow-cap">Weights load <b>once</b>; the <b style="color:var(--red)">KV cache grows with callers at once</b> &mdash; size for the peak.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
   </section>
 
-  <section class="slide dark" data-notes='["Wrap up. Three things to take away. The stack: STT, the LLM brain, embeddings for RAG, guardrails, and TTS, glued by LangGraph and MCP. The sizing rule: about 2N GB in FP16, and quantize to INT8 or INT4 to fit. And GPU matching: check VRAM first, then pick the smallest card the job fits on.", "The big picture: a useful voice agentic chatbot fits on a single 24 GB GPU when you quantize, and everything is open-source and self-hosted, so audio and data stay inside the bank.", "That is the whole of Day 2 assembled into one system you could actually build. Thank you &mdash; questions."]'>
+  <section class="slide" data-notes='["The whole sized stack in one table &mdash; the reward of the day. Each row is a real open&ndash;source model, sized at the precision we would really ship, with where it runs. STT Whisper about 3 GB. The LLM 8B at INT4 about 6 GB. The guardrail 8B at INT4 about 6 GB. Embeddings small or on CPU. The vector database and TTS on CPU.", "Add the GPU rows and you land near 15 GB &mdash; the lean voice AI stack on one 24 GB card, with room for a handful of callers&#39; notepads.", "This is the OCBC voice assistant sized end to end on paper: open&ndash;source, on our own servers, one low&ndash;cost GPU. From here it is a build job, not a research question."]'>
+    <div class="kicker"><span class="badge"></span>The whole sized stack</div>
+    <h2 class="slide-title" data-r data-d="1">Every part, sized and placed</h2>
+    <table class="dtable" style="margin-top:14px">
+      <tr><th>Part</th><th>Model</th><th>Precision</th><th>Runs on</th><th class="target">Size</th></tr>
+      <tr><td>STT</td><td>Whisper large-v3</td><td>FP16</td><td>GPU / CPU</td><td class="target">~3 GB</td></tr>
+      <tr><td>LLM (brain)</td><td>Qwen2.5 / Llama 3.x 8B</td><td>INT4</td><td>GPU</td><td class="target">~6 GB</td></tr>
+      <tr><td>Embeddings</td><td>Qwen3-Embedding / bge</td><td>small</td><td>GPU / CPU</td><td class="target">~0&ndash;4 GB</td></tr>
+      <tr><td>Vector DB</td><td>FAISS / pgvector</td><td>&mdash;</td><td>CPU</td><td class="target">CPU</td></tr>
+      <tr><td>Guardrails</td><td>Llama Guard 8B</td><td>INT4</td><td>GPU</td><td class="target">~6 GB</td></tr>
+      <tr><td>TTS</td><td>Piper</td><td>tiny</td><td>CPU</td><td class="target">CPU</td></tr>
+      <tr><td>Glue</td><td>LangGraph + MCP</td><td>code</td><td>CPU</td><td class="target">little</td></tr>
+    </table>
+    <div class="flow-cap">The lean stack lands near <b style="color:var(--red)">~15 GB on one 24 GB GPU</b> &mdash; open-source, on our own servers, sized end to end on paper.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide" data-notes='["The whole sizing recipe on one slide &mdash; five steps to keep. One: list the models you want and their parameter counts. Two: weights = params times bytes, so about 2N GB in FP16. Three: pick a precision &mdash; quantize to INT8 or INT4 to make it smaller. Four: add spare room, about 1.2 to 1.5 times, then times the callers at the busy peak.", "Five: pick the smallest GPU whose VRAM beats that number, with a little safety room. That is the whole skill from today, in order.", "Memorise the arrows: params &rarr; weights &rarr; quantize &rarr; spare room &times; callers &rarr; smallest GPU that fits. With that one line you can size any model stack on paper, for the OCBC voice assistant or anything else."]'>
+    <div class="kicker"><span class="badge"></span>The whole recipe, in order</div>
+    <h2 class="slide-title" data-r data-d="1">The sizing recipe in five steps</h2>
+    <div class="formula" data-r data-d="2"><span class="fpart">params</span><span class="fop">&rarr;</span><span class="fpart">weights</span><span class="fop">&rarr;</span><span class="fpart hot">quantize</span><span class="fop">&rarr;</span><span class="fpart">&times; callers</span><span class="fop">&rarr;</span><span class="fpart">GPU</span></div>
+    <div class="cards c2" style="margin-top:8px">
+      <div class="card" data-r data-d="3"><div class="num">1</div><h3>List models &amp; params</h3><p>name each part and its parameter count (the learned numbers)</p></div>
+      <div class="card" data-r data-d="4"><div class="num">2</div><h3>Weights = params &times; bytes</h3><p>~2N GB in FP16 &mdash; the main sum</p></div>
+      <div class="card" data-r data-d="5"><div class="num">3</div><h3>Quantize to fit</h3><p>INT8 ~N GB &middot; INT4 ~0.5N GB &mdash; smaller suitcase</p></div>
+      <div class="card" data-r data-d="6"><div class="num">4</div><h3>Spare room &times; callers</h3><p>&times;1.3 run time, then &times; the busy&ndash;peak callers (notepads)</p></div>
+    </div>
+    <div class="ruleband" data-r data-d="7"><b>Step 5:</b> pick the <b style="color:#fff">smallest GPU whose VRAM beats that number</b>, with safety room &mdash; <b style="color:var(--red)">that one line sizes any stack on paper</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Capstone</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide dark" data-notes='["Wrap up. Three things to take away. The stack: STT, the LLM brain, embeddings for RAG, guardrails, and TTS, glued by LangGraph and MCP. The size rule: about 2N GB in FP16, and quantize to INT8 or INT4 to fit. And GPU matching: check VRAM first, then pick the smallest card the job fits on.", "The big picture: a useful voice AI chatbot fits on one 24 GB GPU when you quantize. And every part is open&ndash;source and runs on our own servers, so audio and data stay inside the bank.", "That is the whole of Day 2 joined into one system you could really build. Thank you &mdash; questions."]'>
     <div class="body-area" style="justify-content:center">
       <div class="kicker" data-r><span class="badge"></span>Wrap &amp; Q&amp;A</div>
       <h2 class="slide-title" data-r data-d="1" style="font-size:44px;margin-bottom:6px">The whole stack, sized and placed</h2>
-      <p class="slide-sub" data-r data-d="2" style="color:rgba(255,255,255,.65);margin-bottom:26px">Open-source &amp; self-hosted &mdash; so audio and data stay inside the bank.</p>
+      <p class="slide-sub" data-r data-d="2" style="color:rgba(255,255,255,.65);margin-bottom:26px">Open-source &amp; on our own servers &mdash; so audio and data stay inside the bank.</p>
       <div class="recap-grid" style="flex:none">
         <div class="recap-col recap" data-r data-d="3">
           <h4><span style="width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block"></span>What we covered</h4>
           <ul>
             <li>The stack: STT &middot; LLM &middot; embeddings &middot; guardrails &middot; TTS</li>
             <li>Sizing: ~2N GB FP16 &middot; ~N GB INT8 &middot; ~0.5N GB INT4</li>
-            <li>Overhead: budget ~1.2&ndash;1.5&times; weights for inference</li>
+            <li>Spare room: plan ~1.2&ndash;1.5&times; weights for run time</li>
             <li>GPU: check VRAM first, match the card to the job</li>
           </ul>
         </div>
@@ -1181,8 +1423,8 @@ body.static .gb .gbbar span{transition:none !important}
           <h4><span style="width:8px;height:8px;border-radius:50%;background:#ff6a6f;display:inline-block"></span>The takeaway</h4>
           <ul>
             <li><b style="color:#fff">Quantize and it fits on one 24 GB GPU</b></li>
-            <li>70B FP16 needs multiple 80 GB GPUs</li>
-            <li>All open-source &amp; self-hosted &mdash; data stays in the bank</li>
+            <li>70B FP16 needs more than one 80 GB GPU</li>
+            <li>All open-source &amp; on our own servers &mdash; data stays in the bank</li>
           </ul>
         </div>
       </div>
@@ -1193,6 +1435,18 @@ body.static .gb .gbbar span{transition:none !important}
   </main>
 </div>
 
+<style>
+.home-btn{position:fixed; top:16px; left:18px; z-index:55; display:flex; align-items:center; gap:7px;
+  font-family:var(--fMono,'JetBrains Mono',monospace); font-size:12px; font-weight:600; letter-spacing:.01em; text-decoration:none;
+  color:#fff; background:rgba(18,18,22,.6); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+  border:1px solid rgba(255,255,255,.2); padding:7px 13px 7px 11px; border-radius:99px;
+  transition:background .2s ease, transform .2s ease, opacity .2s ease; opacity:.82}
+.home-btn:hover{background:var(--red,#EC1B23); border-color:transparent; opacity:1; transform:translateY(-1px)}
+.home-btn:active{transform:translateY(0)}
+.home-btn svg{width:15px; height:15px}
+@media print{.home-btn{display:none}}
+</style>
+<a class="home-btn" href="../index.html" aria-label="Back to home" title="Back to home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9h5v-5h4v5h5v-9"/></svg>Home</a>
 <div class="hud">
   <div class="dots" id="dots"></div>
   <div class="count">slide <b id="cur">1</b> / <span id="tot">34</span></div>

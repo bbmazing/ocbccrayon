@@ -65,7 +65,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
 <header class="bar">
   <div>
     <div class="ttl">Speaker notes</div>
-    <div class="sub">Agentic AI Paradigms · 41 slides</div>
+    <div class="sub">Agentic AI Paradigms · 35 slides</div>
   </div>
   <div class="right">
     <a class="btn ghost" href="index.html">&larr; Back</a>
@@ -83,375 +83,321 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
 <div class="banner" id="banner">&#9998;&nbsp; Editing — your changes are saved in this browser. Use <b>Download .txt</b> to keep a copy.</div>
 <main>
   <h1 class="lead">Talk track <span class="red">&middot; every slide</span></h1>
-  <p class="intro">Speaker notes for the OCBC CRAYON 2026 &mdash; Agentic AI Paradigms deck. 41 slides, in order. Press <b>Edit</b> to tweak the wording inline (saved to this browser), or <b>Download .txt</b> for a copy.</p>
+  <p class="intro">Speaker notes for the OCBC CRAYON 2026 &mdash; Agentic AI Paradigms deck. 35 slides, in order. Press <b>Edit</b> to tweak the wording inline (saved to this browser), or <b>Download .txt</b> for a copy.</p>
   <div id="notes">
     <article class="s">
       <div class="n">Slide 1</div>
       <h2>Agentic AI Paradigms</h2>
       <ul>
-        <li>Welcome to the second Day-2 session. You know LLMs, prompting and RAG. Today we give the model the ability to take actions — to become an agent.</li>
-        <li>90 minutes, intuition-first: agent = LLM + tools + a loop. One demo. Banking examples throughout, and an open-source, self-hostable stance.</li>
-        <li>Promise: by the end you can reason about an agent end to end, and explain why a bank wires a human into the loop.</li>
+        <li>So far you have seen AI that talks. A chatbot answers your questions. Today we meet AI that does things. We call it an agent. It takes actions and checks the result.</li>
+        <li>The whole talk uses one simple picture. Do a step. See what happened. Then do the next step. It is like cooking and tasting as you go.</li>
+        <li>By the end you can explain how a chatbot and an agent are different. You will also see why a person still says yes to the big moves.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 2</div>
-      <h2>The frame</h2>
+      <h2>The big idea</h2>
       <ul>
-        <li>The whole deck in one line. An agent is a language model that can take actions — and, crucially, decide which ones to take.</li>
-        <li>That decision-making is the leap from a chatbot that answers to a system that acts toward a goal.</li>
-        <li>Three ingredients underneath: an LLM, some tools, and a loop. We will build up to all three.</li>
+        <li>This is the one idea for the whole talk. An agent is an assistant that can take real actions. It does not just write a reply.</li>
+        <li>Hold on to this pair of words: talking and doing. Every slide today looks at it in a new way.</li>
+        <li>Keep it friendly. Think of it as a very clever writer that now has a pair of hands.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 3</div>
-      <h2>From predicting text to taking action</h2>
+      <h2>One describes the steps; the other does them</h2>
       <ul>
-        <li>Recap the journey. A plain LLM only predicts text — no memory of past steps, no live data, and it cannot do anything in the world.</li>
-        <li>RAG, from Day 1, added knowledge — grounding answers in real documents. Agents add the missing piece: action.</li>
-        <li>Today is about turning a knowledgeable text predictor into something that can act toward a goal.</li>
+        <li>Here is a picture of the two. Ask a chatbot how to book a trip to Tokyo. It writes you a neat list of steps, then stops. You still have to do all the clicking.</li>
+        <li>An agent gets the same request and really does it. It looks at flights, picks one, books it, and tells you it is done. It acts. It does not just describe.</li>
+        <li>That jump is the whole topic. We move from telling you the steps to doing the steps for you.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 4</div>
-      <h2>A chatbot answers; an agent acts</h2>
+      <h2>Part 1 — How an Agent Works</h2>
       <ul>
-        <li>The core distinction. A chatbot answers a question and stops. An agent acts: it can search, call APIs, run code, update systems — and loop until a goal is met.</li>
-        <li>Banking contrast: what is this customer's risk is a question a chatbot answers. Investigate and flag this alert is a goal an agent pursues across many steps.</li>
-        <li>Everything else today builds on this shift from answering to acting.</li>
+        <li>Part one is how an agent works inside. It is simpler than it sounds. There is one habit it repeats, and a set of hands.</li>
+        <li>We will use easy pictures the whole way. Cooking and tasting. Doing small errands. Giving an assistant hands.</li>
+        <li>No maths. No hard words. Just the simple shape of how it thinks and acts.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 5</div>
-      <h2>You already use voice agents</h2>
+      <h2>Think → Act → Observe — like cooking and tasting</h2>
       <ul>
-        <li>You already use voice agents every day. Siri, Alexa and Google Assistant all do the same three things our project chatbot will do.</li>
-        <li>They listen and turn your speech into text, the agent brain decides what to do and calls a tool, then they speak the answer back to you.</li>
-        <li>Our OCBC voice chatbot is the same idea, just pointed at banking tasks and kept inside the bank. Keep this picture in mind for the rest of the talk.</li>
+        <li>This is the heart of every agent. Think of cooking. You add a little salt. That is act. You taste it. That is observe. Then you decide the next step. That is think. You go round and round until the food is right.</li>
+        <li>An agent does the same thing. It thinks of the next step. It does one step. It looks at what happened. Then it thinks again. It keeps going until the goal is reached.</li>
+        <li>This loop is the most important idea in the whole topic. Watch it go round.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 6</div>
-      <h2>A spectrum of autonomy</h2>
+      <h2>Walk one turn of the loop, slowly</h2>
       <ul>
-        <li>Anthropic draws a useful line. Workflows are LLMs and tools wired on fixed code paths — predictable and easy to debug.</li>
-        <li>Agents let the LLM choose its own steps and tools — more flexible, but harder to predict.</li>
-        <li>Both count as agentic systems. The skill is choosing how much freedom a task really needs.</li>
+        <li>Let us slow the loop right down and watch one turn. Say the goal is 'pay my water bill'. First the agent thinks of the next small step.</li>
+        <li>Then it acts: it pays the bill. Then it observes: it reads back whether the payment went through. Only after looking does it think again about what to do next.</li>
+        <li>That is one full turn of the loop. Think, act, observe, then think again. The agent just keeps turning this wheel until the goal is reached.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 7</div>
-      <h2>Start simple — add autonomy only when justified</h2>
+      <h2>Every step gives it a reality check</h2>
       <ul>
-        <li>The number-one lesson from the labs: start simple. Use the simplest thing that works.</li>
-        <li>Do not build an autonomous agent when a workflow, or even a single prompt, would do. Each step up adds latency, cost and unpredictability.</li>
-        <li>Only pay for autonomy when the flexibility is genuinely justified.</li>
+        <li>Why does this loop work so well? Every step shows the agent what is real. It is like tasting, which tells the cook the truth.</li>
+        <li>The agent does not guess the whole answer at once. It does one step. It sees the real result. If the step went wrong, it fixes it.</li>
+        <li>This is the trick for long jobs with many steps. The real result keeps the agent honest at every step.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 8</div>
-      <h2>Multi-step work, across systems</h2>
+      <h2>A good agent looks before it leaps</h2>
       <ul>
-        <li>What agents unlock for a bank: genuinely multi-step work that spans systems.</li>
-        <li>Multi-step KYC onboarding, investigating a fraud alert, an RM researching across internal systems, and reconciliation that chases discrepancies.</li>
-        <li>But flag the caution now: autonomy plus money needs guardrails. We dedicate the final section to that.</li>
+        <li>Here is a quick way to feel the difference. A good agent does one small step. Then it looks before it moves on. A clumsy one tries to do it all at once, with no looking.</li>
+        <li>The good cook tastes after each bit of salt. The bad cook pours in the whole jar and hopes. It is the same idea here. Check, then go on.</li>
+        <li>So the loop is not just a nice habit. It is what makes an agent you can trust, not one that goes wrong.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 9</div>
-      <h2>Part 1 — What an Agent Is Made Of</h2>
+      <h2>“Book me a trip to Tokyo next month”</h2>
       <ul>
-        <li>Part 1, about 24 minutes. We define the augmented LLM, the think-act-observe loop, and the five workflow patterns.</li>
-        <li>These are composable building blocks — most production systems are workflows, not fully autonomous agents.</li>
-        <li>End on a pragmatic take on frameworks: helpful, not required.</li>
+        <li>Now watch the loop on a bigger job. Book me a trip to Tokyo next month. Read it from top to bottom. Think, act, observe, again and again.</li>
+        <li>Notice it does not plan the whole trip at once. It looks for flights. It sees the prices. It picks one. It books it. Then it checks the booking really went through.</li>
+        <li>This is the same simple habit as before. It is just used on a longer, more real job.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 10</div>
-      <h2>The augmented LLM</h2>
+      <h2>Three signs a job needs an agent</h2>
       <ul>
-        <li>The building block. An agent starts as an LLM with three extra powers bolted on.</li>
-        <li>Retrieval, the RAG from Day 1, to pull in knowledge. Tools, functions it can call to act. Memory, the notes it keeps across steps.</li>
-        <li>Everything else today is built from this augmented LLM. It is the basic unit of agent design.</li>
+        <li>When is a job an agent job, and not just a question? Here is a simple test. Does it have many steps, real actions, and a result worth a check?</li>
+        <li>Book a trip. Pay a bill, then check the balance. Get a refund. These all pass the test. But “what is the capital of Japan?” does not. That is just a question.</li>
+        <li>Use this as a quick test. One fact? A chatbot is fine. A small errand with steps? That is the job for an agent.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 11</div>
-      <h2>Think → Act → Observe → repeat</h2>
+      <h2>Sometimes an agent is the wrong tool</h2>
       <ul>
-        <li>The heartbeat of every agent: think, act, observe, repeat, until the goal is met or a stop rule fires.</li>
-        <li>The model works out what to do, calls a tool, reads the result, then picks the next step. Our voice chatbot runs this same loop after it hears you.</li>
-        <li>This loop is what makes an agent more than a single model call. Watch it cycle.</li>
+        <li>Just as important: knowing when not to use an agent. An agent is a heavy tool. For many jobs it is too much, and a plain answer is better and safer.</li>
+        <li>Do not use an agent for a single fact, like 'what time do you open?'. Do not use one when there is only one fixed path, like a set form. And do not use one when a wrong move would be hard to undo and there is no human to check.</li>
+        <li>Reach for an agent only when there are real steps, real choices, and a result worth a look. Otherwise keep it simple.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 12</div>
-      <h2>Every step gets real feedback</h2>
+      <h2>Tools let the assistant actually do things</h2>
       <ul>
-        <li>Why the loop works at all: grounding. Every action returns real feedback from the environment — a tool result, code output, an API response.</li>
-        <li>The agent uses that feedback to course-correct, rather than guessing in a vacuum the way a single prompt must.</li>
-        <li>This is the deep reason agents can tackle multi-step tasks: reality checks them at every step.</li>
+        <li>So the agent can think. But thinking alone cannot pay a bill or send a message. It needs hands. We call those hands tools.</li>
+        <li>A tool lets the assistant do one real thing. Look something up. Send a message. Make a payment. More tools means it can do more.</li>
+        <li>Two small extras finish the picture. It remembers what was said earlier in the chat. And for big jobs, a few helpers can share the work.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 13</div>
-      <h2>What every agent needs</h2>
+      <h2>It remembers, and it can ask for help</h2>
       <ul>
-        <li>What every production agent needs, named. The reasoning engine is the LLM itself.</li>
-        <li>Tools are the actions; memory is context and state; orchestration is the loop and control flow; guardrails are the safety limits.</li>
-        <li>Keep this map in mind — the rest of the deck deepens tools, orchestration patterns, and guardrails.</li>
+        <li>Two small helpers to know. First is memory. The assistant remembers what was said earlier in the same chat. So you do not have to say it again.</li>
+        <li>Second is teamwork. For a big job, a few helpers can share the work. One finds the facts. One checks them. It is like a small team.</li>
+        <li>Keep it light. Most of the time one assistant is enough. The team idea is only for very big jobs.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 14</div>
-      <h2>Short-term vs long-term</h2>
+      <h2>Part 2 — How It Uses a Tool</h2>
       <ul>
-        <li>Memory comes in two kinds. Short-term is the running context window — this task's steps so far.</li>
-        <li>Long-term is persisted facts and past tasks, usually stored and pulled back via RAG or a store.</li>
-        <li>Managing context — what to keep, summarise or drop — is the real constraint on how far an agent can go.</li>
+        <li>Part two shows how the assistant uses a tool. Then a short demo, so the idea feels real.</li>
+        <li>Here is the calming part. The assistant never takes control. It just asks. Plain software does the action.</li>
+        <li>We keep it simple with one example: check my balance.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 15</div>
-      <h2>One agent first; multi only when needed</h2>
+      <h2>The assistant requests; software does the work</h2>
       <ul>
-        <li>Resist the urge to go multi-agent first. Start with one agent that does one thing well.</li>
-        <li>Add an orchestrator plus worker agents only when complexity genuinely demands it — for example a researcher plus a separate verifier.</li>
-        <li>More agents means more coordination overhead and more ways to fail. Single first.</li>
+        <li>This part surprises people. The assistant never does anything by itself. It just says: please run check-balance for account A-1029.</li>
+        <li>Plain software joins the assistant to its tools. The software runs the real action. Then it gives back the answer. The assistant reads it and goes on.</li>
+        <li>This hand-off is why it stays safe. The assistant can only ask. It can never take control.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 16</div>
-      <h2>Composable building blocks</h2>
+      <h2>Watch one tool, one loop</h2>
       <ul>
-        <li>Five tried-and-tested workflow patterns you can mix and match. Prompt chaining runs steps in order, each one feeding the next, sometimes with a check in between.</li>
-        <li>Routing looks at the input and sends it down the right path. Parallelization runs jobs that do not depend on each other at the same time, or has them vote.</li>
-        <li>Orchestrator-workers has a lead model split a task and hand out the pieces; evaluator-optimizer has one model write a draft and another give feedback, looping until it is good.</li>
+        <li>A short demo, played for you. This is the smallest agent you can build. One tool, one loop. It does just what we said.</li>
+        <li>Watch the four steps. We give it one tool: check a balance. It asks to use that tool. The software runs it for real. Then the assistant reads the result and writes the answer.</li>
+        <li>Press R to play it again. This is every agent in small form. Ask, run the tool, read the result, answer.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 17</div>
-      <h2>Pick by the shape of the problem</h2>
+      <h2>“Pay my bill, then tell me my balance”</h2>
       <ul>
-        <li>A decision aid for picking a pattern. Clear sequential steps point to chaining; distinct input types point to routing.</li>
-        <li>Independent subtasks favour parallelization; unpredictable complexity favours orchestrator-workers; iterative refinement favours evaluator-optimizer.</li>
-        <li>Only truly open-ended problems justify a fully autonomous agent. Match the pattern to the problem shape.</li>
+        <li>Now see the loop on a real job. Pay my electricity bill, then tell me my new balance. Read it from top to bottom. Think, act, observe, again.</li>
+        <li>Notice the assistant does not guess. It pays. Then it checks the real balance after. So the number it gives you is true.</li>
+        <li>This is the whole topic in one screen. A chatbot could only tell you the steps. The agent really does them.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 18</div>
-      <h2>You can build agents against the API directly</h2>
+      <h2>For each step, it picks the tool that fits</h2>
       <ul>
-        <li>An honest take on frameworks. You can build a capable agent in a few lines directly against the LLM API — the loop is not complicated.</li>
-        <li>Open-source frameworks like LangGraph, LlamaIndex, CrewAI and BeeAI help with state and orchestration, but they add abstraction that can hide your prompts and your bugs.</li>
-        <li>Use them if they earn their keep, but understand what is under the hood. As of 2026 this space moves fast — verify current options.</li>
+        <li>Most real jobs need more than one tool. The assistant picks the right one each time. It is like a worker who picks the right tool from a tool belt.</li>
+        <li>Here it has three tools. Look up a fact. Send a message. Make a payment. For each step, it picks the one that fits. Then it asks the software to run it.</li>
+        <li>The lesson is simple. Give an assistant only the few tools the job needs. Then it picks the right one at the right time.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 19</div>
-      <h2>Part 2 — Tools — Giving the Model Hands</h2>
+      <h2>Same job, same tools — very different agents</h2>
       <ul>
-        <li>Part 2, about 22 minutes. The demystifying spine: a tool is a normal function the model can ask you to run.</li>
-        <li>We cover how function-calling actually works, how to write good tools, error handling, and MCP, the open standard.</li>
-        <li>All open-source and self-hostable — you write the functions.</li>
+        <li>Let us make good and bad feel real with one job: 'book me a hotel for next week'. Both agents have the same tools. The difference is how they work.</li>
+        <li>The good agent checks the dates first, sees the room is free, books it, then reads back the confirmation number. It looks before and after each step. The bad agent books the first room it sees, never checks the dates, and never confirms it worked. So nobody knows if the booking is even real.</li>
+        <li>Same tools, very different agents. The good one is careful and checks; the bad one rushes and hopes. The loop is what makes the difference.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 20</div>
-      <h2>No proprietary magic — you write the function</h2>
+      <h2>It notices a failure — and tries a fix</h2>
       <ul>
-        <li>The single most demystifying point of the day: a tool is just a normal function — search a database, call an API, run a calculation.</li>
-        <li>Plus a description and an input schema the model can read, so it knows when and how to use it.</li>
-        <li>There is no proprietary magic. You write the function; the description tells the model what it does.</li>
+        <li>What happens when a step goes wrong? This is where the loop really helps. The assistant tries something. It sees it failed. Then it tries a smart fix. It does not just give up.</li>
+        <li>Here a payment is turned down. The assistant does not stop. It notices, moves to the backup account, and the next try works.</li>
+        <li>It is like a cook who tastes the soup and finds it too salty. So the cook adds water, not serves it as is. Seeing the result is what makes the fix possible.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 21</div>
-      <h2>The model requests; your code runs it</h2>
+      <h2>It remembers, so you don't repeat yourself</h2>
       <ul>
-        <li>How function-calling really works, in one round-trip. You hand the model the list of tools. The model replies with plain JSON that names a tool and its arguments.</li>
-        <li>Your code runs the real function and sends the result back. The model reads it and carries on.</li>
-        <li>The key point: the model never runs anything itself. It only asks; your code does the work. That is what keeps it under control.</li>
+        <li>Memory makes the assistant feel more human. It remembers what was said earlier in the same chat. So you can talk in a normal way and not repeat things.</li>
+        <li>Watch this. You name your account once. Later you just say “pay it from there.” And it knows which account “there” means.</li>
+        <li>That is all memory means here. It holds the thread of the chat, the way a good helper does.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 22</div>
-      <h2>Name, description, input schema</h2>
+      <h2>“Did my pay come in? If so, move $200 to savings”</h2>
       <ul>
-        <li>A closer look at what the model actually sees. Three parts: a clear name, a plain-English description of what the tool does and when to use it, and a list of typed inputs.</li>
-        <li>The model reads only these. It never sees your code, so the description and the input list act as the prompt for the tool.</li>
-        <li>A vague description means the model picks the wrong tool at the wrong time. Write it as carefully as you would write a button label.</li>
+        <li>Here is one more everyday story, end to end. The request is: 'Did my pay come in yet? If it did, move two hundred to savings.' This has a check, a choice, and an action.</li>
+        <li>The agent reads the recent money in. It sees the salary did arrive. Because it did, it moves the two hundred across. Then it reads the savings balance back to be sure it landed.</li>
+        <li>Notice the 'if'. The agent only moves the money because the pay really came in. It checked first. That is the loop helping it do the right thing.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 23</div>
-      <h2>Design tools like you'd brief a new hire</h2>
+      <h2>Same hand-off, even when it changes things</h2>
       <ul>
-        <li>How to write tools the model uses well. Make each tool do one clear thing, with a clear description and a name that says what it is for.</li>
-        <li>Do not have two tools that do almost the same job, or the model will keep flip-flopping between them. Keep the inputs few and clearly typed.</li>
-        <li>Simple test: if a new hire could not tell from the description when to use the tool, the model cannot either.</li>
+        <li>One more look at the hand-off. This time the tool changes something. The assistant asks: please send the email. It does not open an inbox itself.</li>
+        <li>Plain software sends the email. Then it reports back: sent. The assistant reads that and tells you it is done.</li>
+        <li>It is the same shape as a look-up. Ask, the tool runs for real, the answer comes back. Whether it reads or does, the assistant only asks.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 24</div>
-      <h2>Return results the model can act on</h2>
+      <h2>Part 3 — Staying in Control</h2>
       <ul>
-        <li>What a tool gives back matters as much as what it does. Return short, tidy results the model can read, not a 5,000-row dump that fills up its memory.</li>
-        <li>Treat errors as data. Instead of crashing, return a clear message like account not found so the model can recover and try another path.</li>
-        <li>Good error text turns a dead end into a second chance. An agent is only as sturdy as what its tools hand back.</li>
+        <li>Part three is the most important. It is how we keep all of this safe. The power to take actions is also the power to make a costly mistake.</li>
+        <li>Here is the simple rule. A person says yes to anything big or risky before it happens.</li>
+        <li>Short and useful. Just the key points for staying in control.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 25</div>
-      <h2>A universal plug for tools</h2>
+      <h2>A human approves the important moves</h2>
       <ul>
-        <li>The problem: every team keeps re-building the same tool connections, which is wasteful. The Model Context Protocol (MCP) is an open standard that fixes this.</li>
-        <li>Think of it as a universal plug. You wrap a tool or data source once as an MCP server, and any MCP-aware agent can use it, like a USB port for tools.</li>
-        <li>It is open and self-hostable, so a bank can run its own MCP servers in-house and share tools across teams without letting data out.</li>
+        <li>This is the one safety rule that matters. The assistant can get things ready and suggest a step. But a person says yes before anything big or risky happens.</li>
+        <li>Pay a small bill you set up? Fine on its own. Move a large sum, or do anything you cannot undo? A person says yes first.</li>
+        <li>Think of the assistant as a smart new helper who prepares the work. A person signs off on the big choices. That keeps you in control.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 26</div>
-      <h2>All self-hostable, in-house</h2>
+      <h2>“Chase a refund for my faulty order”</h2>
       <ul>
-        <li>The open-source agent stack a bank can actually run in-house. Open-weight models like Qwen and Llama as the reasoning engine.</li>
-        <li>Frameworks such as LangGraph and LlamaIndex for orchestration; MCP for tools; and vector stores like FAISS or pgvector for memory and retrieval.</li>
-        <li>Everything here is self-hostable — no customer data leaves the bank. As of 2026 the names move fast; the layers are what to remember.</li>
+        <li>Here is the safety rule at work. The customer asks the assistant to get a refund for a broken order. This job has many steps and a real result.</li>
+        <li>The assistant does the hard part. It finds the order. It writes the refund request. It gets it all ready. Then it stops at the step that matters.</li>
+        <li>It does not send the request on its own. It shows the customer the draft and waits for a yes. The assistant prepares. The person says yes.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 27</div>
-      <h2>An agent loop in plain Python</h2>
+      <h2>Keep it simple — add helpers only when you must</h2>
       <ul>
-        <li>A recorded demo, replayed live. The smallest possible agent loop in plain Python against the LLM API, with no framework.</li>
-        <li>Cell 1 makes one tool, get_account_balance. Cell 2 sends the question plus the tool. Cell 3 shows the model asking for the tool as plain JSON, and our code runs the real function. Cell 4 sends the result back and the model writes the final answer.</li>
-        <li>Press R to replay. This is the same brain our voice chatbot uses once your speech has been turned into text: make tools, let the model ask, run it, return the result, repeat.</li>
+        <li>Here is a useful design tip. Start simple. Most jobs need just one assistant with a few tools. Add more only when the job really needs it.</li>
+        <li>On the left is the normal case. One helper, a few tools, a person to say yes to the big moves. This covers nearly all useful agents.</li>
+        <li>On the right is the rare case. A very big job where a few helpers share the work. Adding all that too soon just makes things hard to trust and follow.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 28</div>
-      <h2>Part 3 — Planning &amp; Reasoning</h2>
+      <h2>Three questions before you trust an agent</h2>
       <ul>
-        <li>Part 3, about 24 minutes. Now the agent has hands; this is the brain — how it decides the next step.</li>
-        <li>We cover three reasoning patterns: ReAct, plan-and-execute, and Reflexion-style self-critique.</li>
-        <li>Then a worked banking trajectory, how to evaluate agents, and the failure modes that bite in production.</li>
+        <li>Before you trust an agent with a real job, ask a few questions. These three catch most of the trouble.</li>
+        <li>Does it have only the tools it needs? Does a person say yes to the risky moves? And can you see what it did, step by step, after?</li>
+        <li>If all three are yes, you have a helper you can trust. If any one is no, fix it first.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 29</div>
-      <h2>Real tasks have many dependent steps</h2>
+      <h2>An OCBC assistant prepares; a human decides</h2>
       <ul>
-        <li>Why planning matters. For a one-step question the model can just answer. But real banking tasks have many steps with dependencies — you must do A before you can do B.</li>
-        <li>Without a plan the agent wanders, repeats itself, or stops early. Planning is how it sequences steps toward a goal and knows when it's done.</li>
-        <li>The patterns that follow are different answers to one question: how much to plan up front versus decide step by step.</li>
+        <li>Now a quick bank example. An OCBC assistant could look into a strange charge. It pulls the recent payments, spots an odd payment from abroad, and gets a case ready.</li>
+        <li>But it does not block your card by itself. It gives the choice to a person, just as our safety rule says.</li>
+        <li>This is only an example. But the shape is right. The assistant does the hard work. A person makes the call that matters.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 30</div>
-      <h2>Reason + Act, one step at a time</h2>
+      <h2>“Could I easily undo this?”</h2>
       <ul>
-        <li>The workhorse pattern: ReAct, short for Reason and Act, mixed together. The agent thinks out loud, takes one action, looks at the result, then thinks again.</li>
-        <li>It plans one step at a time and uses the real result before choosing the next step. That makes it sturdy and easy to follow, because you can read its thinking.</li>
-        <li>ReAct is the sensible default for most agents. Plan one step, act, observe, repeat.</li>
+        <li>Here is an easy way to decide what an agent may do alone. Ask: could I easily undo this? If yes, green light. If no, it waits for a person.</li>
+        <li>Green-light actions are small and easy to undo. Read a balance. Write a note. Pay a tiny set-up bill. The assistant just does them.</li>
+        <li>Red-light actions are big or final. A large transfer. Close an account. Block a card. These always wait for a person to say yes.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 31</div>
-      <h2>Plan all steps first, then execute</h2>
+      <h2>Three reasons to keep a person in the loop</h2>
       <ul>
-        <li>Plan-and-execute flips the order: the agent writes a full plan up front, then carries out each step, optionally re-planning if something changes.</li>
-        <li>Up-front planning is more efficient for long tasks — fewer expensive reasoning calls — and the plan is easy to review before anything runs.</li>
-        <li>The trade-off: a plan made too early can be wrong. Good systems let the agent revise the plan when reality disagrees.</li>
+        <li>Why keep a person in the loop at all? Three plain reasons, easy to remember.</li>
+        <li>It catches honest mistakes before they cost money. It keeps a person in charge of the big calls. And it builds trust, because people can see a person is watching.</li>
+        <li>None of this slows down the everyday stuff. The small, easy-to-undo actions still go fast. The person only steps in where it counts.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 32</div>
-      <h2>The agent critiques its own work</h2>
+      <h2>The same loop, three everyday errands</h2>
       <ul>
-        <li>The third pattern adds self-checking. After a try, the agent asks itself: did that work? what went wrong? Then it uses that feedback to do better next time.</li>
-        <li>These reflect-and-retry loops clearly raise quality on hard tasks, because the agent learns from its own mistakes during the run.</li>
-        <li>The cost is more steps and more tokens, so save it for high-stakes tasks where getting it right is worth the extra spend.</li>
+        <li>Before we wrap up, here are three small stories together, the kind of thing an agent does well. Each one has steps, an action, and a check.</li>
+        <li>Pay a bill and confirm the new balance. Chase a refund for a broken order. Book a trip with a flight and a hotel. Same simple loop behind all three: think, act, observe, repeat.</li>
+        <li>Notice the pattern. Every one of these is a little errand, not just a question. That is exactly the kind of job an agent is for.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 33</div>
-      <h2>Mix patterns to fit the task</h2>
+      <h2>Chatbot vs agent, at a glance</h2>
       <ul>
-        <li>These patterns are not rivals — you combine them. ReAct for the moment-to-moment loop, a plan to give it structure, reflection at checkpoints for quality.</li>
-        <li>Match the pattern to the task: simple and reactive, use ReAct; long and structured, plan first; high-stakes, add reflection.</li>
-        <li>Start with the simplest that works and layer on only what the task demands — the golden rule, again.</li>
+        <li>Before the recap, one clear side-by-side. Same request, two very different things happen. This table is the whole topic on one screen.</li>
+        <li>A chatbot writes a reply and stops. An agent takes actions, checks each result, and keeps going until the job is done. And a person says yes to the big moves.</li>
+        <li>If you remember just one slide, make it this one. Talking and doing, line by line.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 34</div>
-      <h2>Fraud alert, step by step</h2>
+      <h2>Four things to take away</h2>
       <ul>
-        <li>A concrete trajectory: an agent investigating a fraud alert, shown as think-act-observe steps. This is illustrative, not a real OCBC system.</li>
-        <li>It reasons about what to check, calls a tool to pull recent transactions, observes an unusual overseas charge, checks the customer's travel notes, finds none, and drafts a case for a human.</li>
-        <li>Notice the last step: it does not block the card itself. It prepares the decision and hands off to a human. That hand-off is the whole point of the next section.</li>
+        <li>Let us pull it together. An agent is an assistant that does things, not just talks. It takes actions and checks the result.</li>
+        <li>It runs one simple habit, think-act-observe, again and again. Tools are its hands. It remembers the chat. And for big jobs, a few helpers can share the work.</li>
+        <li>And most of all: a person says yes to anything big or risky. That is the whole story.</li>
       </ul>
     </article>
     <article class="s">
       <div class="n">Slide 35</div>
-      <h2>The path matters, not just the answer</h2>
+      <h2>From talking to doing</h2>
       <ul>
-        <li>Evaluating agents is harder than evaluating a single answer, because the path matters, not just the final output.</li>
-        <li>Track four things: task success — did it achieve the goal; trajectory quality — were the steps sensible; cost and latency — tokens, tool calls, time; and safety — did it stay within bounds.</li>
-        <li>Build a test set of real tasks and score runs against it. As with any model, you cannot improve what you do not measure.</li>
-      </ul>
-    </article>
-    <article class="s">
-      <div class="n">Slide 36</div>
-      <h2>What goes wrong in production</h2>
-      <ul>
-        <li>The failure modes that bite in production. Runaway loops: an agent stuck repeating actions can burn real money — one widely-cited case ran up about 47,000 US dollars in API costs from an unbounded loop.</li>
-        <li>Prompt injection: malicious text inside a document or web page hijacks the agent's instructions — a serious risk when tools touch money. Hallucinated tool calls and compounding errors round it out.</li>
-        <li>Each of these is why the next slide is guardrails. Autonomy without limits is a liability.</li>
-      </ul>
-    </article>
-    <article class="s">
-      <div class="n">Slide 37</div>
-      <h2>Part 4 — Production &amp; Safety</h2>
-      <ul>
-        <li>Part 4, the last stretch, about 12 minutes. Everything so far is capability; this is responsibility.</li>
-        <li>Guardrails, human-in-the-loop, and an end-to-end picture of how a bank would deploy an agent.</li>
-        <li>This is the section that matters most in a regulated environment — autonomy plus money demands control.</li>
-      </ul>
-    </article>
-    <article class="s">
-      <div class="n">Slide 38</div>
-      <h2>The agent proposes; a human disposes</h2>
-      <ul>
-        <li>The control layer. Permission scopes: the agent only gets tools it truly needs — least privilege. Limits: caps on steps, spend and time so a loop can't run away.</li>
-        <li>Human-in-the-loop: a person approves any high-stakes or irreversible action — moving money, blocking a card. Validation: check tool inputs and outputs, and sandbox anything that runs code.</li>
-        <li>For a bank these are not optional. The design rule: the agent proposes, a human disposes on anything that matters.</li>
-      </ul>
-    </article>
-    <article class="s">
-      <div class="n">Slide 39</div>
-      <h2>An agent, wired responsibly</h2>
-      <ul>
-        <li>Putting it all together for a bank. A request comes in; the agent plans; it calls in-house tools over MCP, all on open-weight models hosted on-premise so data never leaves.</li>
-        <li>Guardrails wrap every step — scopes, limits, validation — and any high-stakes action routes to a human for approval before it executes.</li>
-        <li>This is illustrative unless we have real details, but the shape is right: open, self-hosted, guard-railed, with a human on the critical path.</li>
-      </ul>
-    </article>
-    <article class="s">
-      <div class="n">Slide 40</div>
-      <h2>Five things to take away</h2>
-      <ul>
-        <li>Recap the whole deck. An agent is an LLM plus tools plus a loop that runs until a goal is met.</li>
-        <li>A tool is just a function with a description and schema; planning patterns — ReAct, plan-and-execute, reflection — decide the next step; and guardrails plus a human keep it safe.</li>
-        <li>Above all: start simple, add autonomy only when justified, and keep a human on anything that moves money.</li>
-      </ul>
-    </article>
-    <article class="s">
-      <div class="n">Slide 41</div>
-      <h2>From text predictor to agent</h2>
-      <ul>
-        <li>Land the plane. We turned a knowledgeable text predictor into something that can act — an agent — and saw how to do it safely in a bank.</li>
-        <li>Call back to the opener: an agent is just a language model that can take actions, and decide which ones to take. Now you can reason about one end to end.</li>
-        <li>Thank them. This wraps the CRAYON series — open the floor for questions.</li>
+        <li>Let us close. We went from AI that talks to AI that does things, an agent. We saw the simple loop and the safety rule behind it.</li>
+        <li>Think back to the start. A chatbot talks. An agent acts and checks what happened. You can now explain that difference to anyone.</li>
+        <li>Thank everyone and take their questions.</li>
       </ul>
     </article>
   </div>
