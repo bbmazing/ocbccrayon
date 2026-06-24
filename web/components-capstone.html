@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Component Gallery · Conversational AI · OCBC CRAYON</title>
+<title>Component Gallery · Capstone · OCBC CRAYON</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
@@ -264,6 +264,77 @@ body{font-family:var(--fBody); color:var(--text); background:#fafafb; line-heigh
 .persona{padding:20px 22px;gap:18px}.persona .pav{width:72px;height:72px}.persona .pav svg{width:34px;height:34px}
 .persona .pinfo h4{font-size:17px}.persona .pquote{font-size:13px}
 
+
+/* ===== Day 2 · Capstone gallery components ===== */
+/* end-to-end loop strip */
+.loopstrip{display:flex; align-items:center; justify-content:center; gap:1px; width:100%; margin:auto 0; flex-wrap:wrap}
+.lp{flex:0 0 auto; text-align:center; display:flex; flex-direction:column; align-items:center; gap:3px; padding:0 1px; opacity:0; transform:translateY(10px); transition:opacity .45s ease, transform .45s ease}
+.tile.seen .lp{opacity:1; transform:none}
+.tile.seen .lp:nth-child(1){transition-delay:.08s}.tile.seen .lp:nth-child(3){transition-delay:.2s}.tile.seen .lp:nth-child(5){transition-delay:.32s}.tile.seen .lp:nth-child(7){transition-delay:.44s}.tile.seen .lp:nth-child(9){transition-delay:.56s}.tile.seen .lp:nth-child(11){transition-delay:.68s}.tile.seen .lp:nth-child(13){transition-delay:.8s}
+.lp .lpic{width:34px; height:34px; border-radius:10px; background:var(--ink); color:#fff; display:grid; place-items:center}
+.lp .lpic svg{width:18px; height:18px}
+.lp .lpic.mic{background:var(--red)} .lp .lpic.grd{background:linear-gradient(155deg,#26262b,#161618); color:#ff7a7e}
+.lp.big .lpic{width:42px; height:42px; background:linear-gradient(155deg,var(--red),var(--red-dark))}
+.lp.big .lpic svg{width:22px; height:22px}
+.lp .lpn{font-family:var(--fHead); font-weight:800; font-size:10px; color:var(--ink)}
+.lp .lps{font-size:8px; color:var(--muted)}
+.lparr{color:var(--red); font-weight:800; font-size:13px; flex:0 0 auto}
+
+/* model card */
+.modelcard{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px 18px; display:flex; flex-direction:column; gap:7px; position:relative; overflow:hidden; margin:auto 0}
+.modelcard.accent{background:linear-gradient(165deg,var(--tint-red),#fff); border-color:var(--tint-red-2)}
+.modelcard::before{content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--red)}
+.modelcard .mcname{font-family:var(--fHead); font-weight:800; font-size:16px; color:var(--ink); display:flex; align-items:baseline; justify-content:space-between; gap:8px}
+.modelcard .mcsz{font-family:var(--fMono); font-size:11px; color:var(--red); font-weight:700}
+.modelcard .mcrole{font-size:12px; color:var(--muted)}
+.modelcard .mcvram{display:flex; align-items:baseline; gap:8px}
+.modelcard .mcv{font-family:var(--fHead); font-weight:800; font-size:24px; color:var(--red)}
+.modelcard .mcl{font-size:10px; color:var(--faint)}
+.modelcard .mctag{font-family:var(--fMono); font-size:10px; color:var(--red); background:#fff; border:1px solid var(--tint-red-2); border-radius:7px; padding:4px 8px; align-self:flex-start}
+
+/* core formula + precision */
+.formula{display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; margin-bottom:12px}
+.formula .fpart{font-family:var(--fHead); font-weight:800; font-size:13px; color:var(--ink); background:var(--card); border:1px solid var(--line); border-radius:9px; padding:8px 12px}
+.formula .fpart small{font-size:9px; color:var(--muted)}
+.formula .fpart.hot{background:var(--tint-red); border-color:var(--tint-red-2); color:var(--red-dark)}
+.formula .fop{font-family:var(--fHead); font-weight:800; font-size:15px; color:var(--red)}
+.prec-row{display:grid; grid-template-columns:repeat(4,1fr); gap:9px}
+.prec{border:1px solid var(--line); border-radius:11px; padding:11px 6px; background:var(--surface); text-align:center; opacity:0; transform:translateY(10px); transition:opacity .45s ease, transform .45s ease}
+.tile.seen .prec{opacity:1; transform:none}
+.tile.seen .prec:nth-child(1){transition-delay:.1s}.tile.seen .prec:nth-child(2){transition-delay:.24s}.tile.seen .prec:nth-child(3){transition-delay:.38s}.tile.seen .prec:nth-child(4){transition-delay:.52s}
+.prec.hot{background:linear-gradient(180deg,var(--tint-red),#fff); border-color:var(--tint-red-2)}
+.prec .pp{font-family:var(--fHead); font-weight:800; font-size:13px; color:var(--ink)}
+.prec .pb{font-family:var(--fMono); font-size:10px; color:var(--muted); margin:3px 0 5px}
+.prec .pf{font-family:var(--fHead); font-weight:800; font-size:15px; color:var(--red)}
+
+/* gpu bars */
+.gpubars{display:flex; flex-direction:column; gap:8px; width:100%; margin:auto 0}
+.gb{display:grid; grid-template-columns:90px 1fr 60px; align-items:center; gap:10px; opacity:0; transform:translateX(-12px); transition:opacity .45s ease, transform .45s ease}
+.tile.seen .gb{opacity:1; transform:none}
+.tile.seen .gb:nth-child(1){transition-delay:.1s}.tile.seen .gb:nth-child(2){transition-delay:.2s}.tile.seen .gb:nth-child(3){transition-delay:.3s}.tile.seen .gb:nth-child(4){transition-delay:.4s}.tile.seen .gb:nth-child(5){transition-delay:.5s}.tile.seen .gb:nth-child(6){transition-delay:.6s}
+.gb .gbn{font-family:var(--fHead); font-weight:800; font-size:11px; color:var(--ink)}
+.gb .gbt{display:none}
+.gb .gbbar{height:14px; background:var(--card-2); border-radius:5px; overflow:hidden}
+.gb .gbbar span{display:block; height:100%; background:linear-gradient(90deg,var(--red-dark),var(--red)); border-radius:5px; width:0; transition:width .8s cubic-bezier(.16,1,.3,1) .2s}
+.tile.seen .gb .gbbar span{width:var(--w)}
+.gb.hot .gbbar span{background:linear-gradient(90deg,var(--red),#ff6a6f)}
+.gb .gbv{font-family:var(--fHead); font-weight:800; font-size:12px; color:var(--red); text-align:right}
+
+/* concurrency */
+.conc{display:flex; flex-direction:column; gap:11px; width:100%; margin:auto 0}
+.cc{display:flex; flex-direction:column; gap:4px; opacity:0; transform:translateY(10px); transition:opacity .45s ease, transform .45s ease}
+.tile.seen .cc{opacity:1; transform:none}
+.tile.seen .cc:nth-child(1){transition-delay:.12s}.tile.seen .cc:nth-child(2){transition-delay:.32s}.tile.seen .cc:nth-child(3){transition-delay:.52s}
+.cc .cch{font-family:var(--fHead); font-weight:800; font-size:12px; color:var(--ink)}
+.cc .ccbar{display:flex; align-items:stretch; gap:4px; height:20px}
+.cc .ccbar .w{flex:0 0 70px; background:linear-gradient(155deg,#26262b,#161618); border-radius:5px; position:relative}
+.cc .ccbar .w::after{content:"weights"; position:absolute; inset:0; display:grid; place-items:center; font-family:var(--fMono); font-size:9px; color:rgba(255,255,255,.8)}
+.cc .ccbar .kv{background:linear-gradient(90deg,var(--red),#ff6a6f); border-radius:5px; min-width:12px}
+.cc .ccl{font-size:10px; color:var(--muted)}
+
+/* sizing table (reuse dtable) */
+.dtable.size td.t, .dtable.size th.t{background:var(--red)}
+
 </style>
 </head>
 <body>
@@ -272,99 +343,117 @@ body{font-family:var(--fBody); color:var(--text); background:#fafafb; line-heigh
     <img src="assets/ocbc-logo.png" alt="OCBC" />
     <div class="eyebrow"><span class="badge"></span>Component Gallery</div>
     <h1>Animated building blocks</h1>
-    <p>The reusable, zero-dependency motion components behind the <b>Conversational AI Design</b> deck. Each tile reveals on scroll-in &mdash; click any tile to replay its animation.</p>
+    <p>The reusable, zero-dependency motion components behind the <b>Capstone &mdash; Voice Agentic AI</b> deck. Each tile reveals on scroll-in &mdash; click any tile to replay its animation.</p>
   </div>
   <div class="meta">OCBC CRAYON 2026<br/>16:9 deck system<br/>CSS / JS · no libraries</div>
 </header>
 
 <main class="bento" id="bento">
-  <!-- chat turn-taking -->
-  <section class="tile w4 h2" data-comp="chat">
-    <div class="label">Chat turn-taking<span class="kind">bubbles play out</span></div>
-    <div class="desc">Short, relevant turns &mdash; the cooperative rules.</div>
+  <!-- end-to-end loop -->
+  <section class="tile w6" data-comp="loop">
+    <div class="label">Voice agentic loop<span class="kind">stages reveal</span></div>
+    <div class="desc">Mic &rarr; STT &rarr; guardrails &rarr; LLM (RAG + tools) &rarr; guardrails &rarr; TTS &rarr; speaker.</div>
     <span class="replay-hint">click to replay</span>
-    <div class="stage"><div class="chat">
-      <div class="cb u"><div class="who">Customer</div>What&#39;s my balance?</div>
-      <div class="cb b"><div class="who">OCBC assistant</div>IDR 42,500,000. Anything else?</div>
-      <div class="cb u"><div class="who">Customer</div>Move IDR 5,000,000 to my mum.</div>
-      <div class="cb b"><div class="who">OCBC assistant</div>IDR 5,000,000 to Mdm Tan &mdash; shall I proceed?</div>
+    <div class="stage"><div class="loopstrip">
+      <div class="lp"><div class="lpic mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></div><div class="lpn">Mic</div><div class="lps">in</div></div>
+      <span class="lparr">&rarr;</span>
+      <div class="lp"><div class="lpic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16M4 10h16M4 15h10"/></svg></div><div class="lpn">STT</div><div class="lps">Whisper</div></div>
+      <span class="lparr">&rarr;</span>
+      <div class="lp"><div class="lpic grd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg></div><div class="lpn">Guard</div><div class="lps">in</div></div>
+      <span class="lparr">&rarr;</span>
+      <div class="lp big"><div class="lpic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5 3 3 0 0 0 2 4 3 3 0 0 0 5 1V4.5A2.5 2.5 0 0 0 9 4zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5 3 3 0 0 1-2 4 3 3 0 0 1-5 1"/></svg></div><div class="lpn">LLM</div><div class="lps">RAG+tools</div></div>
+      <span class="lparr">&rarr;</span>
+      <div class="lp"><div class="lpic grd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg></div><div class="lpn">Guard</div><div class="lps">out</div></div>
+      <span class="lparr">&rarr;</span>
+      <div class="lp"><div class="lpic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9v6h4l5 4V5L7 9z"/><path d="M16 8a5 5 0 0 1 0 8"/></svg></div><div class="lpn">TTS</div><div class="lps">Piper</div></div>
+      <span class="lparr">&rarr;</span>
+      <div class="lp"><div class="lpic mic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9v6h4l5 4V5L7 9z"/><path d="M16 8a5 5 0 0 1 0 8M19 5a9 9 0 0 1 0 14"/></svg></div><div class="lpn">Spk</div><div class="lps">out</div></div>
     </div></div>
   </section>
 
-  <!-- reference resolution -->
-  <section class="tile w2 h2" data-comp="ref">
-    <div class="label">Resolve &ldquo;it&rdquo;<span class="kind">context carry</span></div>
-    <div class="desc">Resolve references from context.</div>
+  <!-- model card -->
+  <section class="tile w2 h2" data-comp="model">
+    <div class="label">Model card<span class="kind">VRAM per model</span></div>
+    <div class="desc">Name, size, role, VRAM.</div>
     <span class="replay-hint">click to replay</span>
-    <div class="stage"><div class="chat">
-      <div class="cb b"><div class="who">Assistant</div>Your IDR 5,000,000 transfer is set for tomorrow.</div>
-      <div class="cb u"><div class="who">Customer</div>Cancel <span class="ref">it</span>.</div>
-      <div class="cb b"><div class="who">Assistant</div>Cancelled the <span class="ref">IDR 5,000,000 transfer</span>.</div>
+    <div class="stage"><div class="modelcard accent"><div class="mcname">Qwen2.5 / Llama 3.x<span class="mcsz">7&ndash;70B</span></div><div class="mcrole">reason &middot; RAG &middot; tools</div><div class="mcvram"><span class="mcv">~14&ndash;140 GB</span><span class="mcl">FP16</span></div><div class="mctag">the GPU budget</div></div></div>
+  </section>
+
+  <!-- sizing precision formula -->
+  <section class="tile w4 h2" data-comp="prec">
+    <div class="label">Sizing math<span class="kind">precision &rarr; bytes</span></div>
+    <div class="desc">VRAM &asymp; params &times; bytes/param.</div>
+    <span class="replay-hint">click to replay</span>
+    <div class="stage">
+      <div class="formula"><span class="fpart">VRAM<small>w</small></span><span class="fop">&asymp;</span><span class="fpart hot">params</span><span class="fop">&times;</span><span class="fpart">bytes</span></div>
+      <div class="prec-row">
+        <div class="prec"><div class="pp">FP32</div><div class="pb">4 B</div><div class="pf">4N</div></div>
+        <div class="prec"><div class="pp">FP16</div><div class="pb">2 B</div><div class="pf">2N</div></div>
+        <div class="prec"><div class="pp">INT8</div><div class="pb">1 B</div><div class="pf">N</div></div>
+        <div class="prec hot"><div class="pp">INT4</div><div class="pb">~0.5</div><div class="pf">0.5N</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- sizing table -->
+  <section class="tile w3 h2" data-comp="sizetbl">
+    <div class="label">Worked sizes<span class="kind">rows slide in</span></div>
+    <div class="desc">The formula on real models.</div>
+    <span class="replay-hint">click to replay</span>
+    <div class="stage"><table class="dtable size">
+      <tr><th>Model</th><th>FP16</th><th class="t">INT4</th></tr>
+      <tr><td>Whisper 1.5B</td><td>~3 GB</td><td class="t">~1 GB</td></tr>
+      <tr><td>LLM 7&ndash;8B</td><td>~14&ndash;16</td><td class="t">~4 GB</td></tr>
+      <tr><td>Guard 8B</td><td>~16 GB</td><td class="t">~4 GB</td></tr>
+      <tr><td>LLM 70B</td><td>~140 GB</td><td class="t">~35&ndash;40</td></tr>
+    </table></div>
+  </section>
+
+  <!-- GPU bars -->
+  <section class="tile w3 h2" data-comp="gpu">
+    <div class="label">GPU VRAM cheat-sheet<span class="kind">bars grow</span></div>
+    <div class="desc">~2026 snapshot &mdash; verify current.</div>
+    <span class="replay-hint">click to replay</span>
+    <div class="stage"><div class="gpubars">
+      <div class="gb"><div class="gbn">RTX 4090</div><div class="gbbar"><span style="--w:17%"></span></div><div class="gbv">24</div></div>
+      <div class="gb"><div class="gbn">L4</div><div class="gbbar"><span style="--w:17%"></span></div><div class="gbv">24</div></div>
+      <div class="gb"><div class="gbn">L40S</div><div class="gbbar"><span style="--w:34%"></span></div><div class="gbv">48</div></div>
+      <div class="gb"><div class="gbn">A100</div><div class="gbbar"><span style="--w:57%"></span></div><div class="gbv">80</div></div>
+      <div class="gb"><div class="gbn">H100</div><div class="gbbar"><span style="--w:57%"></span></div><div class="gbv">80</div></div>
+      <div class="gb hot"><div class="gbn">H200</div><div class="gbbar"><span style="--w:100%"></span></div><div class="gbv">141</div></div>
     </div></div>
   </section>
 
-  <!-- slot filling -->
-  <section class="tile w6" data-comp="slot">
-    <div class="label">Intent &amp; slot filling<span class="kind">slots fill in</span></div>
-    <div class="desc">Utterance &rarr; intent &rarr; slots &rarr; prompt.</div>
+  <!-- concurrency -->
+  <section class="tile w3" data-comp="conc">
+    <div class="label">Concurrency &times; KV cache<span class="kind">bars reveal</span></div>
+    <div class="desc">More callers multiply the KV cache.</div>
     <span class="replay-hint">click to replay</span>
-    <div class="stage"><div class="slotfill">
-      <div class="sfrow"><div class="uttr">&ldquo;I want to <b>transfer money</b>&rdquo;</div><span class="sfarrow">&rarr;</span><div class="ibadge">Intent: Transfer</div></div>
-      <div class="slots"><div class="slot filled"><span class="sl">SLOT</span>Amount<br/><b>IDR 5,000,000</b></div><div class="slot filled"><span class="sl">SLOT</span>Payee<br/><b>Mdm Tan</b></div><div class="slot"><span class="sl">SLOT</span>Date<br/>&mdash; needed</div></div>
+    <div class="stage"><div class="conc">
+      <div class="cc"><div class="cch">1 caller</div><div class="ccbar"><span class="w"></span><span class="kv" style="flex:0 0 14px"></span></div></div>
+      <div class="cc"><div class="cch">5 callers</div><div class="ccbar"><span class="w"></span><span class="kv" style="flex:0 0 50px"></span></div></div>
+      <div class="cc"><div class="cch">20 callers</div><div class="ccbar"><span class="w"></span><span class="kv" style="flex:0 0 130px"></span></div></div>
     </div></div>
   </section>
 
-  <!-- error recovery ladder -->
-  <section class="tile w3 h2" data-comp="erl">
-    <div class="label">Error-recovery ladder<span class="kind">steps slide in</span></div>
-    <div class="desc">Detect &rarr; clarify &rarr; rephrase &rarr; escalate.</div>
+  <!-- stack table -->
+  <section class="tile w3" data-comp="stack">
+    <div class="label">The whole stack<span class="kind">rows slide in</span></div>
+    <div class="desc">One big model, a few small ones.</div>
     <span class="replay-hint">click to replay</span>
-    <div class="stage"><div class="erl">
-      <div class="erstep"><div class="ern">1</div><div class="ertx"><div class="ert">Detect low confidence</div></div></div>
-      <div class="erstep"><div class="ern">2</div><div class="ertx"><div class="ert">Ask a clarifying question</div></div></div>
-      <div class="erstep"><div class="ern">3</div><div class="ertx"><div class="ert">Allow easy rephrase</div></div></div>
-      <div class="erstep"><div class="ern">4</div><div class="ertx"><div class="ert">Escalate to a human</div></div></div>
-    </div></div>
-  </section>
-
-  <!-- persona card -->
-  <section class="tile w3 h2" data-comp="persona">
-    <div class="label">Persona &amp; tone<span class="kind">brand voice</span></div>
-    <div class="desc">Tone is brand, in word choice.</div>
-    <span class="replay-hint">click to replay</span>
-    <div class="stage"><div class="persona">
-      <div class="pav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H8l-4 4z"/><path d="M8 9h8M8 12h5"/></svg></div>
-      <div class="pinfo"><h4>The OCBC assistant</h4><div class="ptone"><span>Trustworthy</span><span>Clear</span><span>Professional</span></div><div class="pquote">&ldquo;Your transfer is scheduled for tomorrow.&rdquo;</div></div>
-    </div></div>
-  </section>
-
-  <!-- engine vs experience -->
-  <section class="tile w3" data-comp="lyr">
-    <div class="label">Experience on the engine<span class="kind">layers reveal</span></div>
-    <div class="desc">A model isn&#39;t a product; a conversation is.</div>
-    <span class="replay-hint">click to replay</span>
-    <div class="stage"><div class="lyr">
-      <div class="lyrb exp"><div class="lt">Designed experience</div><div class="ls">what the customer feels</div></div>
-      <div class="lyrlab">sits on top of</div>
-      <div class="lyrb eng"><div class="lt">Engine (LLM)</div><div class="ls">understands, retrieves, acts</div></div>
-    </div></div>
-  </section>
-
-  <!-- handoff -->
-  <section class="tile w3" data-comp="handoff">
-    <div class="label">Handoff with context<span class="kind">nodes reveal</span></div>
-    <div class="desc">Pass the thread to a human.</div>
-    <span class="replay-hint">click to replay</span>
-    <div class="stage"><div class="fcall">
-      <div class="fnode fn"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 7V3M8 13h.01M16 13h.01"/></svg></div><div class="ft">Assistant</div><div class="fs">stuck / sensitive</div></div>
-      <div class="fconn"><span class="chip">+ transcript &amp; slots</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
-      <div class="fnode model"><div class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><div class="ft">Human agent</div><div class="fs">picks up mid-thread</div></div>
-    </div></div>
+    <div class="stage"><table class="dtable size">
+      <tr><th>Component</th><th class="t">Size</th></tr>
+      <tr><td>STT Whisper</td><td class="t">~3 GB</td></tr>
+      <tr><td>LLM brain</td><td class="t">~14&ndash;140</td></tr>
+      <tr><td>Guardrails</td><td class="t">~16 GB</td></tr>
+      <tr><td>TTS Piper</td><td class="t">~CPU</td></tr>
+    </table></div>
   </section>
 
 </main>
+</main>
 
-<footer class="footer"><img src="assets/ocbc-icon.png" alt="" />OCBC CRAYON 2026 · Component gallery · open <code>conversational-ai-design.html</code> for the full deck.</footer>
+<footer class="footer"><img src="assets/ocbc-icon.png" alt="" />OCBC CRAYON 2026 · Component gallery · open <code>voice-ai-capstone.html</code> for the full deck.</footer>
 
 <script>
 const io=new IntersectionObserver((es)=>{

@@ -65,7 +65,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
 <header class="bar">
   <div>
     <div class="ttl">Speaker notes</div>
-    <div class="sub">Speech Technologies · 41 slides</div>
+    <div class="sub">Speech Technologies · 42 slides</div>
   </div>
   <div class="right">
     <a class="btn ghost" href="index.html">&larr; Back</a>
@@ -83,11 +83,11 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
 <div class="banner" id="banner">&#9998;&nbsp; Editing — your changes are saved in this browser. Use <b>Download .txt</b> to keep a copy.</div>
 <main>
   <h1 class="lead">Talk track <span class="red">&middot; every slide</span></h1>
-  <p class="intro">Speaker notes for the OCBC CRAYON 2026 &mdash; Speech Technologies deck. 41 slides, in order. Press <b>Edit</b> to tweak the wording inline (saved to this browser), or <b>Download .txt</b> for a copy.</p>
+  <p class="intro">Speaker notes for the OCBC CRAYON 2026 &mdash; Speech Technologies deck. 42 slides, in order. Press <b>Edit</b> to tweak the wording inline (saved to this browser), or <b>Download .txt</b> for a copy.</p>
   <div id="notes">
     <article class="s">
       <div class="n">Slide 1</div>
-      <h2>Speech Technologies STT & TTS</h2>
+      <h2>Speech Technologies STT &amp; TTS</h2>
       <ul>
         <li>Welcome to Day 2, Session 2. Session 1 turned sound into spectrograms and features and used Whisper to transcribe. Today we open the box: how speech-to-text really works, and the reverse direction, text-to-speech.</li>
         <li>90 minutes, intuition-first: no signal-processing maths. One animated demo. Banking voice examples throughout, and an open-source, self-hostable stance — sensitive customer audio cannot leave the bank.</li>
@@ -123,6 +123,15 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
     </article>
     <article class="s">
       <div class="n">Slide 5</div>
+      <h2>Siri, Alexa &amp; Google Assistant are STT + TTS</h2>
+      <ul>
+        <li>You already use this every day. Siri, Alexa and Google Assistant are all the same STT-plus-TTS loop we just drew: a wake word, speech-to-text to understand you, a brain that decides the answer, then text-to-speech to reply out loud.</li>
+        <li>Apple Siri keeps a lot of the work on the iPhone itself; Amazon Alexa does most of it in the cloud and powers millions of Echo speakers; Google Assistant is strong across many languages.</li>
+        <li>The point for students: a bank voice-bot is the exact same loop. The only big difference is OCBC self-hosts every piece, so customer audio never leaves the bank.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 6</div>
       <h2>Listening and speaking, mapped to the bank</h2>
       <ul>
         <li>Map the use cases. On the listening side: transcribe and analyse calls, voice commands, and compliance quality assurance over recorded conversations.</li>
@@ -131,7 +140,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 6</div>
+      <div class="n">Slide 7</div>
       <h2>Sensitive voice never leaves the bank</h2>
       <ul>
         <li>The constraint that shapes every recommendation today. Sensitive customer voice cannot be sent to closed cloud speech APIs — that is audio leaving the bank.</li>
@@ -140,7 +149,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 7</div>
+      <div class="n">Slide 8</div>
       <h2>Speech-to-Text — Teaching Machines to Listen</h2>
       <ul>
         <li>Part 1, about 27 minutes. We define the task and its metric, then the heart of the session: the three architecture families for decoding speech.</li>
@@ -149,7 +158,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 8</div>
+      <div class="n">Slide 9</div>
       <h2>Word Error Rate (WER) is the yardstick</h2>
       <ul>
         <li>The task: audio in, text out. We score quality with Word Error Rate, WER: substitutions plus insertions plus deletions, divided by the number of reference words. Lower is better.</li>
@@ -158,7 +167,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 9</div>
+      <div class="n">Slide 10</div>
       <h2>Old automatic speech recognition (ASR): three glued parts</h2>
       <ul>
         <li>For context, the classic pipeline. Old automatic-speech-recognition systems stitched together three separate parts: an acoustic model, a pronunciation lexicon, and a language model — Kaldi is the classic toolkit.</li>
@@ -167,7 +176,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 10</div>
+      <div class="n">Slide 11</div>
       <h2>One neural network, audio straight to text</h2>
       <ul>
         <li>The modern shift: one neural network learns audio-to-text directly, replacing the three glued parts. Simpler to train, and far more accurate given data.</li>
@@ -176,7 +185,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 11</div>
+      <div class="n">Slide 12</div>
       <h2>CTC vs. attention vs. transducer</h2>
       <ul>
         <li>The key teaching slide. Three architecture families decode speech, and the differences matter for the bank.</li>
@@ -185,7 +194,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 12</div>
+      <div class="n">Slide 13</div>
       <h2>Vote per frame, then collapse</h2>
       <ul>
         <li>CTC, intuitively. Picture each slice of audio voting on a letter. The same sound spans several frames, so you get repeats, and silence votes blank.</li>
@@ -194,7 +203,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 13</div>
+      <div class="n">Slide 14</div>
       <h2>Write text while looking back at the audio</h2>
       <ul>
         <li>Attention encoder-decoder, intuitively — a callback to the Day 1 transformer. The encoder reads the whole clip into a representation.</li>
@@ -203,7 +212,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 14</div>
+      <div class="n">Slide 15</div>
       <h2>Emit words as you speak</h2>
       <ul>
         <li>The transducer, intuitively. Instead of waiting for the whole clip, it emits words as you speak.</li>
@@ -212,16 +221,16 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 15</div>
-      <h2>What OCBC can self-host</h2>
+      <div class="n">Slide 16</div>
+      <h2>Open-source STT models you can use</h2>
       <ul>
-        <li>What OCBC can actually self-host, mapped to the three families. Whisper, including large-v3-turbo, is the attention encoder-decoder — multilingual with a huge ecosystem.</li>
+        <li>The open-source speech-to-text models you can use, mapped to the three families. Whisper, including large-v3-turbo, is the attention encoder-decoder — multilingual with a huge ecosystem, and the most popular open option.</li>
         <li>wav2vec2 and XLS-R are CTC, self-supervised, and excellent bases for fine-tuning low-resource languages. NVIDIA Parakeet and Canary are transducer or encoder-decoder, optimised for speed or accuracy. Kaldi remains the classic modular toolkit.</li>
-        <li>All open-source. Model names move fast — present these as of 2026 and verify the current best before committing.</li>
+        <li>All open-source and free to run on your own machine. Model names move fast — present these as of 2026 and verify the current best before committing.</li>
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 16</div>
+      <div class="n">Slide 17</div>
       <h2>Model + toolchain = production STT</h2>
       <ul>
         <li>Production STT is a model plus a toolchain. Around Whisper sits a practical open-source ecosystem.</li>
@@ -230,7 +239,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 17</div>
+      <div class="n">Slide 18</div>
       <h2>What real call analytics adds on top</h2>
       <ul>
         <li>Call analytics needs more than the words. Diarization labels who spoke when — agent versus customer. Voice-activity detection separates speech from silence and hold music.</li>
@@ -239,7 +248,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 18</div>
+      <div class="n">Slide 19</div>
       <h2>Match the model to the job</h2>
       <ul>
         <li>A decision aid for choosing an STT model. Weigh accuracy, latency, languages and hardware.</li>
@@ -248,7 +257,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 19</div>
+      <div class="n">Slide 20</div>
       <h2>Text-to-Speech — Teaching Machines to Speak</h2>
       <ul>
         <li>Part 2, about 25 minutes. Now the mirror image — turning text into natural-sounding audio.</li>
@@ -257,7 +266,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 20</div>
+      <div class="n">Slide 21</div>
       <h2>Text in, natural speech out</h2>
       <ul>
         <li>The TTS task: text to natural-sounding audio. We judge it on naturalness — often a one-to-five human rating called Mean Opinion Score, MOS — plus intelligibility and speed.</li>
@@ -266,7 +275,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 21</div>
+      <div class="n">Slide 22</div>
       <h2>Text → frontend → acoustic model → vocoder</h2>
       <ul>
         <li>The TTS spine, three stages. First the text frontend normalises the input — dollar-1,250 becomes one thousand two hundred fifty — and grapheme-to-phoneme, G2P, turns letters into sound units.</li>
@@ -275,7 +284,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 22</div>
+      <div class="n">Slide 23</div>
       <h2>Normalize the text, then map letters to sounds</h2>
       <ul>
         <li>Stage one: the unglamorous but critical text frontend. Normalization expands numbers, dates, currency and abbreviations into spoken words.</li>
@@ -284,7 +293,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 23</div>
+      <div class="n">Slide 24</div>
       <h2>Phonemes become the spectrogram picture</h2>
       <ul>
         <li>Stage two: the acoustic model predicts the Mel spectrogram from the phonemes — the same picture we met in Session 1, but now generated rather than measured.</li>
@@ -293,7 +302,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 24</div>
+      <div class="n">Slide 25</div>
       <h2>Turn the picture into sound</h2>
       <ul>
         <li>Stage three: the vocoder turns the spectrogram into an audible waveform. This is the final mile, and its quality makes or breaks naturalness.</li>
@@ -302,7 +311,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 25</div>
+      <div class="n">Slide 26</div>
       <h2>Sequential → parallel → end-to-end</h2>
       <ul>
         <li>How acoustic models matured. Tacotron 2 is an attention sequence-to-sequence model that generates frames one after another — natural, but slow, and it can skip or repeat words.</li>
@@ -311,7 +320,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 26</div>
+      <div class="n">Slide 27</div>
       <h2>Mimic a voice from seconds of audio</h2>
       <ul>
         <li>Newer open models can clone a voice from seconds of audio — zero-shot TTS, including LLM-style speech models like XTTS v2.</li>
@@ -320,8 +329,8 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 27</div>
-      <h2>What OCBC can self-host</h2>
+      <div class="n">Slide 28</div>
+      <h2>Open-source TTS models you can use</h2>
       <ul>
         <li>Self-hostable TTS options. Piper is fast and lightweight, runs on-device, and is ideal for IVR prompts. Coqui TTS and XTTS are multilingual with voice cloning.</li>
         <li>ESPnet and PaddleSpeech are research toolkits with many recipes; VITS is the end-to-end option.</li>
@@ -329,7 +338,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 28</div>
+      <div class="n">Slide 29</div>
       <h2>Match the voice to the use case</h2>
       <ul>
         <li>Choosing a TTS model: weigh naturalness, latency, footprint, and languages or voices.</li>
@@ -338,7 +347,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 29</div>
+      <div class="n">Slide 30</div>
       <h2>Data residency decides it</h2>
       <ul>
         <li>An honest comparison. Closed cloud TTS and STT can be a touch more turnkey and occasionally a notch more natural.</li>
@@ -347,8 +356,8 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 30</div>
-      <h2>Making It Work for Our Languages & Voices</h2>
+      <div class="n">Slide 31</div>
+      <h2>Making It Work for Our Languages &amp; Voices</h2>
       <ul>
         <li>Part 3, about 18 minutes. Base models stumble on our accents, our code-switching, and our product names.</li>
         <li>We climb the adaptation ladder from cheap prompting to full fine-tuning, with LoRA as the practical default.</li>
@@ -356,7 +365,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 31</div>
+      <div class="n">Slide 32</div>
       <h2>Base models stumble on our audio</h2>
       <ul>
         <li>Why adaptation is needed. Base models drop accuracy on accents, on code-switching between Indonesian and English mid-sentence, on local terms, on product names, and on noisy phone audio.</li>
@@ -365,7 +374,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 32</div>
+      <div class="n">Slide 33</div>
       <h2>Cheap → expensive: climb only as needed</h2>
       <ul>
         <li>The adaptation ladder, cheapest to most expensive. Rung one: prompting, biasing and a custom vocabulary — bias the model toward product names and jargon. Almost free.</li>
@@ -374,7 +383,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 33</div>
+      <div class="n">Slide 34</div>
       <h2>Nudge a base model toward our audio</h2>
       <ul>
         <li>Fine-tuning, intuitively. Start from a multilingual base such as Whisper or XLS-R, then continue training on your own audio.</li>
@@ -383,7 +392,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 34</div>
+      <div class="n">Slide 35</div>
       <h2>Freeze the base, train a tiny adapter</h2>
       <ul>
         <li>LoRA and adapters — the practical default, and a callback to Day 1 fine-tuning. Freeze the big base model and train only tiny inserted matrices.</li>
@@ -392,7 +401,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 35</div>
+      <div class="n">Slide 36</div>
       <h2>Adaptation needs labelled audio</h2>
       <ul>
         <li>Data is the real bottleneck. Adaptation needs labelled audio — transcribed calls — and that is the hard part to get.</li>
@@ -401,7 +410,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 36</div>
+      <div class="n">Slide 37</div>
       <h2>Measure on our data, not a leaderboard</h2>
       <ul>
         <li>Evaluate adaptation properly. Measure WER on a held-out set of our own calls and accents — not a generic leaderboard.</li>
@@ -410,7 +419,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 37</div>
+      <div class="n">Slide 38</div>
       <h2>Capability is not permission</h2>
       <ul>
         <li>Governance for voice — bank-specific guardrails. Get explicit consent for voice biometrics, and treat cloning as a deepfake risk to control.</li>
@@ -419,7 +428,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 38</div>
+      <div class="n">Slide 39</div>
       <h2>Speech Tech at OCBC</h2>
       <ul>
         <li>The last stretch, about 8 minutes. We tie both directions into one end-to-end voice-bot.</li>
@@ -428,7 +437,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 39</div>
+      <div class="n">Slide 40</div>
       <h2>Listen → understand → speak, on-prem</h2>
       <ul>
         <li>Tie the day together: an end-to-end voice-bot, entirely open-source and on-premise. The caller speaks; voice-activity detection plus streaming STT — a transducer or Whisper — turns it into text.</li>
@@ -437,7 +446,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 40</div>
+      <div class="n">Slide 41</div>
       <h2>Listen with Whisper, speak with Piper</h2>
       <ul>
         <li>Recorded demo, replayed live. The voice round-trip in a few lines of open-source Python — listen with Whisper, speak with Piper, both on-prem.</li>
@@ -446,7 +455,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 41</div>
+      <div class="n">Slide 42</div>
       <h2>Listen, and speak — on our terms</h2>
       <ul>
         <li>Land the plane. The mirror: STT listens, TTS speaks — two directions of one pipeline.</li>

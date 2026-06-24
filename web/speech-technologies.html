@@ -772,7 +772,7 @@ body.static .fnode, body.static .fconn{opacity:1 !important; transform:none !imp
       <img class="logo" src="assets/ocbc-logo.png" alt="OCBC" />
       <h1 data-r data-d="1">Speech Technologies<span class="red">STT &amp; TTS</span></h1>
       <div class="rule" data-r data-d="2"></div>
-      <div class="meta" data-r data-d="3"><strong>Day 2 &middot; Session 2 — Core Mechanisms, Models &amp; Language Adaptation</strong><br/>Teaching machines to listen, and to speak<br/>OCBC CRAYON 2026 · ADM Team · 90 minutes</div>
+      <div class="meta" data-r data-d="3"><strong>Core Mechanisms, Models &amp; Language Adaptation</strong><br/>Teaching machines to listen, and to speak<br/>OCBC CRAYON 2026 · ADM Team · 90 minutes</div>
       <div class="program" data-r data-d="4">OCBC CRAYON · Day 2</div>
     </div>
   </section>
@@ -821,6 +821,18 @@ body.static .fnode, body.static .fconn{opacity:1 !important; transform:none !imp
     </div>
     <div class="flow-cap"><b>STT</b> listens · <b>TTS</b> speaks &mdash; an interactive voice response (IVR) line / voice-bot needs <b style="color:var(--red)">both</b>.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">04</span></div>
+  </section>
+
+  <section class="slide" data-notes='["You already use this every day. Siri, Alexa and Google Assistant are all the same STT-plus-TTS loop we just drew: a wake word, speech-to-text to understand you, a brain that decides the answer, then text-to-speech to reply out loud.", "Apple Siri keeps a lot of the work on the iPhone itself; Amazon Alexa does most of it in the cloud and powers millions of Echo speakers; Google Assistant is strong across many languages.", "The point for students: a bank voice-bot is the exact same loop. The only big difference is OCBC self-hosts every piece, so customer audio never leaves the bank."]'>
+    <div class="kicker"><span class="badge"></span>You already use this every day</div>
+    <h2 class="slide-title" data-r data-d="1">Siri, Alexa &amp; Google Assistant are STT + TTS</h2>
+    <div class="cards c3" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></div><h3>Apple Siri</h3><p>&ldquo;Hey Siri&rdquo; &rarr; STT &rarr; answer &rarr; TTS reply. Much of it runs <b>on your iPhone</b>.</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12a4 4 0 0 1 8 0M12 8v8"/></svg></div><h3>Amazon Alexa</h3><p>&ldquo;Alexa&hellip;&rdquo; &rarr; STT in the <b>cloud</b> &rarr; skill answers &rarr; TTS. Powers millions of Echo speakers.</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div><h3>Google Assistant</h3><p>&ldquo;Hey Google&rdquo; &rarr; STT &rarr; answer &rarr; TTS. Strong across <b>many languages</b>.</p></div>
+    </div>
+    <div class="flow-cap">All three are the same <b>STT &rarr; brain &rarr; TTS</b> loop. A bank voice-bot is identical &mdash; just <b style="color:var(--red)">self-hosted, so audio stays in OCBC</b>.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">05</span></div>
   </section>
 
   <section class="slide" data-notes='["Map the use cases. On the listening side: transcribe and analyse calls, voice commands, and compliance quality assurance over recorded conversations.", "On the speaking side: voice-bot and IVR replies, accessibility for visually-impaired customers, and proactive voice alerts.", "Almost every voice product a bank ships uses one or both directions. This is why both halves matter."]'>
@@ -989,16 +1001,16 @@ body.static .fnode, body.static .fconn{opacity:1 !important; transform:none !imp
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">14</span></div>
   </section>
 
-  <section class="slide" data-notes='["What OCBC can actually self-host, mapped to the three families. Whisper, including large-v3-turbo, is the attention encoder-decoder — multilingual with a huge ecosystem.", "wav2vec2 and XLS-R are CTC, self-supervised, and excellent bases for fine-tuning low-resource languages. NVIDIA Parakeet and Canary are transducer or encoder-decoder, optimised for speed or accuracy. Kaldi remains the classic modular toolkit.", "All open-source. Model names move fast — present these as of 2026 and verify the current best before committing."]'>
+  <section class="slide" data-notes='["The open-source speech-to-text models you can use, mapped to the three families. Whisper, including large-v3-turbo, is the attention encoder-decoder — multilingual with a huge ecosystem, and the most popular open option.", "wav2vec2 and XLS-R are CTC, self-supervised, and excellent bases for fine-tuning low-resource languages. NVIDIA Parakeet and Canary are transducer or encoder-decoder, optimised for speed or accuracy. Kaldi remains the classic modular toolkit.", "All open-source and free to run on your own machine. Model names move fast — present these as of 2026 and verify the current best before committing."]'>
     <div class="kicker"><span class="badge"></span>The open-source STT landscape</div>
-    <h2 class="slide-title" data-r data-d="1">What OCBC can self-host</h2>
+    <h2 class="slide-title" data-r data-d="1">Open-source STT models you can use</h2>
     <div class="cards" style="grid-template-columns:repeat(4,1fr);margin-top:24px">
-      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5 3 3 0 0 0 2 4 3 3 0 0 0 5 1V4.5A2.5 2.5 0 0 0 9 4zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5 3 3 0 0 1-2 4 3 3 0 0 1-5 1"/></svg></div><h3>Whisper</h3><p>attention enc-dec · multilingual · large-v3-turbo</p></div>
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5 3 3 0 0 0 2 4 3 3 0 0 0 5 1V4.5A2.5 2.5 0 0 0 9 4zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5 3 3 0 0 1-2 4 3 3 0 0 1-5 1"/></svg></div><h3>Whisper ★</h3><p>the famous one · from OpenAI · free, open &amp; multilingual</p></div>
       <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l9 5-9 5-9-5zM3 12l9 5 9-5M3 17l9 5 9-5"/></svg></div><h3>wav2vec2 / XLS-R</h3><p>CTC · self-supervised · great to fine-tune</p></div>
       <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></div><h3>Parakeet / Canary</h3><p>transducer / enc-dec · very fast or very accurate</p></div>
       <div class="card" data-r data-d="5"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></div><h3>Kaldi</h3><p>classic · modular · expert control</p></div>
     </div>
-    <div class="flow-cap" style="font-style:italic">All open-source &amp; self-hostable. Names move fast &mdash; <b>as of 2026, verify current</b>.</div>
+    <div class="flow-cap" style="font-style:italic"><b style="color:var(--red)">Whisper is the most popular &mdash; start there.</b> All open-source &amp; self-hostable; names move fast (2026).</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">15</span></div>
   </section>
 
@@ -1172,7 +1184,7 @@ body.static .fnode, body.static .fconn{opacity:1 !important; transform:none !imp
 
   <section class="slide" data-notes='["Self-hostable TTS options. Piper is fast and lightweight, runs on-device, and is ideal for IVR prompts. Coqui TTS and XTTS are multilingual with voice cloning.", "ESPnet and PaddleSpeech are research toolkits with many recipes; VITS is the end-to-end option.", "All open-source. As with STT, names move fast — present as of 2026 and verify."]'>
     <div class="kicker"><span class="badge"></span>The open-source TTS landscape</div>
-    <h2 class="slide-title" data-r data-d="1">What OCBC can self-host</h2>
+    <h2 class="slide-title" data-r data-d="1">Open-source TTS models you can use</h2>
     <div class="cards" style="grid-template-columns:repeat(4,1fr);margin-top:24px">
       <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7M6 10v9h12v-9"/></svg></div><h3>Piper</h3><p>fast · lightweight · on-device IVR</p></div>
       <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></div><h3>Coqui / XTTS</h3><p>multilingual · voice cloning</p></div>

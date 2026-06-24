@@ -1,5 +1,5 @@
 OCBC CRAYON 2026 — Speech Technologies
-Speaker notes · 41 slides
+Speaker notes · 42 slides
 ================================================
 
 Slide 1 — Speech Technologies STT & TTS
@@ -22,187 +22,192 @@ Slide 4 — Two halves of one voice system
   • An interactive voice response (IVR) line or a voice-bot needs both halves: it has to hear the caller and answer out loud.
   • Everything today slots into one side of this mirror or the other. Keep the round-trip in your head.
 
-Slide 5 — Listening and speaking, mapped to the bank
+Slide 5 — Siri, Alexa & Google Assistant are STT + TTS
+  • You already use this every day. Siri, Alexa and Google Assistant are all the same STT-plus-TTS loop we just drew: a wake word, speech-to-text to understand you, a brain that decides the answer, then text-to-speech to reply out loud.
+  • Apple Siri keeps a lot of the work on the iPhone itself; Amazon Alexa does most of it in the cloud and powers millions of Echo speakers; Google Assistant is strong across many languages.
+  • The point for students: a bank voice-bot is the exact same loop. The only big difference is OCBC self-hosts every piece, so customer audio never leaves the bank.
+
+Slide 6 — Listening and speaking, mapped to the bank
   • Map the use cases. On the listening side: transcribe and analyse calls, voice commands, and compliance quality assurance over recorded conversations.
   • On the speaking side: voice-bot and IVR replies, accessibility for visually-impaired customers, and proactive voice alerts.
   • Almost every voice product a bank ships uses one or both directions. This is why both halves matter.
 
-Slide 6 — Sensitive voice never leaves the bank
+Slide 7 — Sensitive voice never leaves the bank
   • The constraint that shapes every recommendation today. Sensitive customer voice cannot be sent to closed cloud speech APIs — that is audio leaving the bank.
   • We will explain how the big closed services work, but only for understanding. Everything we recommend is open-source and self-hostable.
   • Voice is biometric and deeply personal data. The rule is simple: audio stays inside OCBC infrastructure.
 
-Slide 7 — Speech-to-Text — Teaching Machines to Listen
+Slide 8 — Speech-to-Text — Teaching Machines to Listen
   • Part 1, about 27 minutes. We define the task and its metric, then the heart of the session: the three architecture families for decoding speech.
   • Intuition over maths — no connectionist-temporal-classification equations, just pictures of how each family works.
   • End on the open-source landscape and a decision aid for choosing a model.
 
-Slide 8 — Word Error Rate (WER) is the yardstick
+Slide 9 — Word Error Rate (WER) is the yardstick
   • The task: audio in, text out. We score quality with Word Error Rate, WER: substitutions plus insertions plus deletions, divided by the number of reference words. Lower is better.
   • Worked example: the reference is six words; the model substituted one, inserted one, and deleted one — three errors over six words is fifty percent WER.
   • WER governs every model choice in this section. When we say one model is more accurate, we mean lower WER on the audio we care about.
 
-Slide 9 — Old automatic speech recognition (ASR): three glued parts
+Slide 10 — Old automatic speech recognition (ASR): three glued parts
   • For context, the classic pipeline. Old automatic-speech-recognition systems stitched together three separate parts: an acoustic model, a pronunciation lexicon, and a language model — Kaldi is the classic toolkit.
   • Each part was trained and tuned separately, then glued. Powerful in expert hands, but complex and brittle.
   • This complexity is exactly why the field moved to end-to-end neural models, next.
 
-Slide 10 — One neural network, audio straight to text
+Slide 11 — One neural network, audio straight to text
   • The modern shift: one neural network learns audio-to-text directly, replacing the three glued parts. Simpler to train, and far more accurate given data.
   • The input is the log-Mel spectrogram from Session 1 — the picture of the sound. The network maps that picture straight to text.
   • Everything in the rest of this section is a different way of doing this one end-to-end mapping.
 
-Slide 11 — CTC vs. attention vs. transducer
+Slide 12 — CTC vs. attention vs. transducer
   • The key teaching slide. Three architecture families decode speech, and the differences matter for the bank.
   • Connectionist temporal classification, CTC, emits a token per audio frame with a blank trick; it is fast and non-autoregressive but has no built-in language modelling. Attention encoder-decoder generates text token by token while attending to the audio — this is Whisper — accurate with built-in language modelling.
   • The transducer, such as recurrent-neural-network transducer (RNN-T), emits text as audio arrives — streaming-friendly, the choice for real-time voice-bots. We unpack each next.
 
-Slide 12 — Vote per frame, then collapse
+Slide 13 — Vote per frame, then collapse
   • CTC, intuitively. Picture each slice of audio voting on a letter. The same sound spans several frames, so you get repeats, and silence votes blank.
   • The trick: collapse repeated letters, then drop the blanks. H, H, blank, E, L, L, blank, L, O collapses to hello.
   • This is why CTC is fast — every frame is decoded at once, in parallel — but it has no sense of language, so it can misread words that sound alike.
 
-Slide 13 — Write text while looking back at the audio
+Slide 14 — Write text while looking back at the audio
   • Attention encoder-decoder, intuitively — a callback to the Day 1 transformer. The encoder reads the whole clip into a representation.
   • The decoder then writes the transcript one token at a time, and for each token it looks back at, or cross-attends to, the relevant part of the audio — the bright cells in this attention map.
   • Because it writes left to right using its own previous words, it has a built-in sense of language and is very accurate — but it is autoregressive, so slower, and it can occasionally hallucinate words that were never said.
 
-Slide 14 — Emit words as you speak
+Slide 15 — Emit words as you speak
   • The transducer, intuitively. Instead of waiting for the whole clip, it emits words as you speak.
   • As each chunk of audio arrives, the model decides whether it has heard enough to output the next word — so text streams out in near real-time.
   • That low latency is exactly what a live voice-bot needs: the caller should not wait for silence before the system reacts.
 
-Slide 15 — What OCBC can self-host
-  • What OCBC can actually self-host, mapped to the three families. Whisper, including large-v3-turbo, is the attention encoder-decoder — multilingual with a huge ecosystem.
+Slide 16 — Open-source STT models you can use
+  • The open-source speech-to-text models you can use, mapped to the three families. Whisper, including large-v3-turbo, is the attention encoder-decoder — multilingual with a huge ecosystem, and the most popular open option.
   • wav2vec2 and XLS-R are CTC, self-supervised, and excellent bases for fine-tuning low-resource languages. NVIDIA Parakeet and Canary are transducer or encoder-decoder, optimised for speed or accuracy. Kaldi remains the classic modular toolkit.
-  • All open-source. Model names move fast — present these as of 2026 and verify the current best before committing.
+  • All open-source and free to run on your own machine. Model names move fast — present these as of 2026 and verify the current best before committing.
 
-Slide 16 — Model + toolchain = production STT
+Slide 17 — Model + toolchain = production STT
   • Production STT is a model plus a toolchain. Around Whisper sits a practical open-source ecosystem.
   • faster-whisper speeds inference; WhisperX adds word-level timestamps, alignment and voice-activity detection; whisper.cpp runs on central-processing-unit or on-device; Silero VAD finds where speech actually is.
   • The point: do not ship the raw model alone. Real systems combine the model with these tools.
 
-Slide 17 — What real call analytics adds on top
+Slide 18 — What real call analytics adds on top
   • Call analytics needs more than the words. Diarization labels who spoke when — agent versus customer. Voice-activity detection separates speech from silence and hold music.
   • Punctuation and casing make a transcript readable; timestamps let you jump to the exact moment a phrase was said, which compliance needs.
   • Open-source options exist for each of these. Transcription is the start, not the whole job.
 
-Slide 18 — Match the model to the job
+Slide 19 — Match the model to the job
   • A decision aid for choosing an STT model. Weigh accuracy, latency, languages and hardware.
   • Overnight compliance batch? Accuracy first — Whisper large. Live voice-bot? Streaming transducer for low latency. Mixed Indonesian-English calls? Whisper, for its multilingual strength.
   • There is no single best model — match the model to the job.
 
-Slide 19 — Text-to-Speech — Teaching Machines to Speak
+Slide 20 — Text-to-Speech — Teaching Machines to Speak
   • Part 2, about 25 minutes. Now the mirror image — turning text into natural-sounding audio.
   • We assemble the three-stage pipeline, then trace how acoustic models evolved from sequential to parallel to end-to-end.
   • Same open-source, self-hostable stance throughout.
 
-Slide 20 — Text in, natural speech out
+Slide 21 — Text in, natural speech out
   • The TTS task: text to natural-sounding audio. We judge it on naturalness — often a one-to-five human rating called Mean Opinion Score, MOS — plus intelligibility and speed.
   • It is harder than it looks. The same sentence has infinitely many valid readings: where you pause, stress, and raise pitch all change with intent.
   • So TTS is not a lookup — the model must decide a plausible prosody every time.
 
-Slide 21 — Text → frontend → acoustic model → vocoder
+Slide 22 — Text → frontend → acoustic model → vocoder
   • The TTS spine, three stages. First the text frontend normalises the input — dollar-1,250 becomes one thousand two hundred fifty — and grapheme-to-phoneme, G2P, turns letters into sound units.
   • Second, the acoustic model turns those phonemes into a Mel spectrogram — the picture of the sound from Session 1, now with decided rhythm and pitch.
   • Third, the vocoder turns that spectrogram into an actual waveform you can hear. Text, to phonemes, to spectrogram, to wave.
 
-Slide 22 — Normalize the text, then map letters to sounds
+Slide 23 — Normalize the text, then map letters to sounds
   • Stage one: the unglamorous but critical text frontend. Normalization expands numbers, dates, currency and abbreviations into spoken words.
   • Then grapheme-to-phoneme maps letters to sound units — how c-a-t becomes the phonemes K AE T. This is deeply language-dependent.
   • Flag it now: this stage is where language adaptation begins, because every language pronounces letters differently.
 
-Slide 23 — Phonemes become the spectrogram picture
+Slide 24 — Phonemes become the spectrogram picture
   • Stage two: the acoustic model predicts the Mel spectrogram from the phonemes — the same picture we met in Session 1, but now generated rather than measured.
   • This is where prosody lives: rhythm, stress and pitch are all decided here, frame by frame.
   • Get this stage wrong and speech sounds robotic or mis-stressed, even if every word is correct.
 
-Slide 24 — Turn the picture into sound
+Slide 25 — Turn the picture into sound
   • Stage three: the vocoder turns the spectrogram into an audible waveform. This is the final mile, and its quality makes or breaks naturalness.
   • A modern open-source vocoder like HiFi-GAN produces clean, natural audio fast.
   • A great acoustic model with a poor vocoder still sounds buzzy — naturalness lives in both stages two and three.
 
-Slide 25 — Sequential → parallel → end-to-end
+Slide 26 — Sequential → parallel → end-to-end
   • How acoustic models matured. Tacotron 2 is an attention sequence-to-sequence model that generates frames one after another — natural, but slow, and it can skip or repeat words.
   • FastSpeech 2 predicts durations up front and generates the whole spectrogram in parallel — fast and stable.
   • VITS and other end-to-end models fuse the acoustic model and vocoder into one network: text straight to wave. The trend is sequential, to parallel, to one unified model.
 
-Slide 26 — Mimic a voice from seconds of audio
+Slide 27 — Mimic a voice from seconds of audio
   • Newer open models can clone a voice from seconds of audio — zero-shot TTS, including LLM-style speech models like XTTS v2.
   • That is powerful for a consistent branded voice across every IVR prompt. But for a bank it carries real risk.
   • Cloning is a deepfake and voice-biometrics threat. Flag consent and misuse explicitly — capability here outruns comfort, and governance must keep up.
 
-Slide 27 — What OCBC can self-host
+Slide 28 — Open-source TTS models you can use
   • Self-hostable TTS options. Piper is fast and lightweight, runs on-device, and is ideal for IVR prompts. Coqui TTS and XTTS are multilingual with voice cloning.
   • ESPnet and PaddleSpeech are research toolkits with many recipes; VITS is the end-to-end option.
   • All open-source. As with STT, names move fast — present as of 2026 and verify.
 
-Slide 28 — Match the voice to the use case
+Slide 29 — Match the voice to the use case
   • Choosing a TTS model: weigh naturalness, latency, footprint, and languages or voices.
   • On-device IVR prompts that must be instant and tiny? Piper. An expressive, multilingual voice-bot? XTTS or VITS.
   • Again, no single winner — pick by the constraint that dominates the use case.
 
-Slide 29 — Data residency decides it
+Slide 30 — Data residency decides it
   • An honest comparison. Closed cloud TTS and STT can be a touch more turnkey and occasionally a notch more natural.
   • But they send audio off-premise — disqualifying for sensitive banking voice. That single fact, data residency, decides it.
   • Open models have closed the gap and keep every byte of audio inside OCBC. Frame it as a deliberate, well-understood trade-off, not a compromise.
 
-Slide 30 — Making It Work for Our Languages & Voices
+Slide 31 — Making It Work for Our Languages & Voices
   • Part 3, about 18 minutes. Base models stumble on our accents, our code-switching, and our product names.
   • We climb the adaptation ladder from cheap prompting to full fine-tuning, with LoRA as the practical default.
   • The concrete case throughout: Indonesian-English code-switched banking calls.
 
-Slide 31 — Base models stumble on our audio
+Slide 32 — Base models stumble on our audio
   • Why adaptation is needed. Base models drop accuracy on accents, on code-switching between Indonesian and English mid-sentence, on local terms, on product names, and on noisy phone audio.
   • Banking piles on jargon and proper nouns the model never saw in training.
   • This is the Indonesian and Bahasa reality for our audience — the gap is real and measurable in WER.
 
-Slide 32 — Cheap → expensive: climb only as needed
+Slide 33 — Cheap → expensive: climb only as needed
   • The adaptation ladder, cheapest to most expensive. Rung one: prompting, biasing and a custom vocabulary — bias the model toward product names and jargon. Almost free.
   • Rung two: a better frontend or lexicon — fix G2P pronunciations and add domain terms, mainly for TTS. Rung three: parameter-efficient fine-tuning with LoRA or adapters — small added weights, little data, avoids forgetting.
   • Rung four: full fine-tuning — retrain on labelled domain and accent audio. Most powerful, most data and compute. Climb only as high as the gap demands.
 
-Slide 33 — Nudge a base model toward our audio
+Slide 34 — Nudge a base model toward our audio
   • Fine-tuning, intuitively. Start from a multilingual base such as Whisper or XLS-R, then continue training on your own audio.
   • You do not start from scratch — you nudge a model that already knows speech toward your accent and vocabulary.
   • Even ten minutes to twenty hours of in-domain data can sharply cut WER on a specific accent. A little targeted data goes a long way.
 
-Slide 34 — Freeze the base, train a tiny adapter
+Slide 35 — Freeze the base, train a tiny adapter
   • LoRA and adapters — the practical default, and a callback to Day 1 fine-tuning. Freeze the big base model and train only tiny inserted matrices.
   • That is cheap, fast, and swappable: you can keep a separate small adapter per accent and load the right one on demand.
   • Because the base stays frozen, you avoid catastrophic forgetting — the model keeps its general ability while gaining your specialism.
 
-Slide 35 — Adaptation needs labelled audio
+Slide 36 — Adaptation needs labelled audio
   • Data is the real bottleneck. Adaptation needs labelled audio — transcribed calls — and that is the hard part to get.
   • Tactics: transcribe a sample of in-house calls, use public Indonesian corpora like Common Voice, and use TTS data augmentation — synthesise accented audio to bootstrap STT training.
   • Flag privacy and consent before using any real customer calls. Data sourcing is a governance question as much as a technical one.
 
-Slide 36 — Measure on our data, not a leaderboard
+Slide 37 — Measure on our data, not a leaderboard
   • Evaluate adaptation properly. Measure WER on a held-out set of our own calls and accents — not a generic leaderboard.
   • Track error per accent and per term, so you know whether product names specifically improved. For TTS, run MOS listening tests with real listeners.
   • Do not trust leaderboard numbers for your audio. The only score that matters is on data that looks like production.
 
-Slide 37 — Capability is not permission
+Slide 38 — Capability is not permission
   • Governance for voice — bank-specific guardrails. Get explicit consent for voice biometrics, and treat cloning as a deepfake risk to control.
   • Transcripts contain personally identifiable information, so apply retention limits and access controls. Keep a human in the loop for any compliance decision.
   • Capability is not permission. Responsible-use framing is non-negotiable for customer voice.
 
-Slide 38 — Speech Tech at OCBC
+Slide 39 — Speech Tech at OCBC
   • The last stretch, about 8 minutes. We tie both directions into one end-to-end voice-bot.
   • Everything open-source and on-premise — audio never leaves OCBC.
   • Then recap the mirror, the mechanisms, and the adaptation ladder.
 
-Slide 39 — Listen → understand → speak, on-prem
+Slide 40 — Listen → understand → speak, on-prem
   • Tie the day together: an end-to-end voice-bot, entirely open-source and on-premise. The caller speaks; voice-activity detection plus streaming STT — a transducer or Whisper — turns it into text.
   • That text goes to the Day-1 RAG and LLM stack, which picks an answer. TTS — Piper or XTTS — speaks the answer back.
   • Every block is self-hosted; audio never leaves OCBC. Specifics here are illustrative unless we have real internal details.
 
-Slide 40 — Listen with Whisper, speak with Piper
+Slide 41 — Listen with Whisper, speak with Piper
   • Recorded demo, replayed live. The voice round-trip in a few lines of open-source Python — listen with Whisper, speak with Piper, both on-prem.
   • Cell 1 loads faster-whisper. Cell 2 transcribes a call, returning Indonesian-English code-switched text. Cell 3 loads a Piper voice. Cell 4 synthesizes a reply to a .wav — shown as a small mock waveform.
   • Press R to replay. That is the whole mirror in code: audio to text, then text back to audio, never leaving the bank.
 
-Slide 41 — Listen, and speak — on our terms
+Slide 42 — Listen, and speak — on our terms
   • Land the plane. The mirror: STT listens, TTS speaks — two directions of one pipeline.
   • The mechanisms: STT decodes via CTC, attention, or transducer; TTS runs frontend, then acoustic model, then vocoder. Adaptation climbs from prompting to frontend to LoRA to full fine-tuning — always open-source.
   • Three takeaways: pick the STT architecture by latency versus accuracy; naturalness lives in the acoustic model plus vocoder; adapt to our languages and measure on our data. Pointers: the Whisper repo, Coqui and Piper, and the Hugging Face Open ASR leaderboard. Questions.

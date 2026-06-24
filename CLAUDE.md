@@ -32,7 +32,8 @@ Topics are grouped by **day**. Each day starts with a `.day-head` banner
 (`.dn` chip "Day N" + `.ds` subtitle) followed by that day's `.topic` rows,
 whose `.t-no` restarts at "Topic 1" within the day. Day 1 = Python Data
 Foundations → ML & MLOps → GenAI & LLMs → Knowledge Retrieval (RAG); Day 2
-opens with Audio Data Analytics. The trailing `.next` "Coming up" card flags
+opens with Speech Technologies (STT & TTS) → Agentic AI Paradigms →
+Conversational AI Design. The trailing `.next` "Coming up" card flags
 the current day still has more sessions to come. Add a new `.day-head` when a
 new day begins; otherwise append the topic row under the current day.
 

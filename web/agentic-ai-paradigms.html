@@ -752,7 +752,7 @@ body.static .scc .bar{transform:none !important}
         <cite data-r data-d="4">A framing principle for agentic AI</cite>
       </div>
     </div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">02</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">01</span></div>
   </section>
 
   <section class="slide" data-notes='["Recap the journey. A plain LLM only predicts text — no memory of past steps, no live data, and it cannot do anything in the world.", "RAG, from Day 1, added knowledge — grounding answers in real documents. Agents add the missing piece: action.", "Today is about turning a knowledgeable text predictor into something that can act toward a goal."]'>
@@ -764,7 +764,7 @@ body.static .scc .bar{transform:none !important}
       <div class="step"><div class="node hot">3</div><h4>+ Agent</h4><p>adds action</p></div>
     </div>
     <div class="flow-cap">A plain LLM can&#39;t <em>do</em> anything. Retrieval-Augmented Generation (RAG) gave it knowledge; an agent gives it <b style="color:var(--red)">action</b>.</div>
-    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">03</span></div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">02</span></div>
   </section>
 
   <section class="slide" data-notes='["The core distinction. A chatbot answers a question and stops. An agent acts: it can search, call APIs, run code, update systems — and loop until a goal is met.", "Banking contrast: what is this customer&#39;s risk is a question a chatbot answers. Investigate and flag this alert is a goal an agent pursues across many steps.", "Everything else today builds on this shift from answering to acting."]'>
@@ -779,15 +779,27 @@ body.static .scc .bar{transform:none !important}
       </div>
       <div class="panel accent" data-r data-d="3">
         <div class="ph"><span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 7V3M8 13h.01M16 13h.01"/></svg></span>Agent</div>
-        <div class="ps">Acts: searches, calls application programming interfaces (APIs), runs code, loops to a goal.</div>
+        <div class="ps">Acts: it searches, calls application programming interfaces (APIs), runs code, and keeps going until the goal is met.</div>
         <div class="chips"><span class="chip">multi-step</span><span class="chip">uses tools</span><span class="chip">until goal met</span></div>
         <div class="where">&ldquo;Investigate and flag this alert&rdquo; &rarr; <b>it acts</b>.</div>
       </div>
     </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">03</span></div>
+  </section>
+
+  <section class="slide" data-notes='["You already use voice agents every day. Siri, Alexa and Google Assistant all do the same three things our project chatbot will do.", "They listen and turn your speech into text, the agent brain decides what to do and calls a tool, then they speak the answer back to you.", "Our OCBC voice chatbot is the same idea, just pointed at banking tasks and kept inside the bank. Keep this picture in mind for the rest of the talk."]'>
+    <div class="kicker"><span class="badge"></span>An everyday example</div>
+    <h2 class="slide-title" data-r data-d="1">You already use voice agents</h2>
+    <div class="cards c3" style="margin-top:22px">
+      <div class="card" data-r data-d="2"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v8M12 11a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v2a3 3 0 0 0 3 3zM6 10a6 6 0 0 0 12 0M12 16v4M9 21h6"/></svg></div><h3>Listen</h3><p>You speak; it turns your voice into text. This is speech-to-text (STT).</p></div>
+      <div class="card" data-r data-d="3"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-1 5 3 3 0 0 0 2 4 3 3 0 0 0 5 1V4.5A2.5 2.5 0 0 0 9 4zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 1 5 3 3 0 0 1-2 4 3 3 0 0 1-5 1"/></svg></div><h3>Decide &amp; act</h3><p>The agent brain works out what you want and calls a tool, like checking the weather.</p></div>
+      <div class="card" data-r data-d="4"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H3v6h3l5 4zM16 9a3 3 0 0 1 0 6M19 6a7 7 0 0 1 0 12"/></svg></div><h3>Speak back</h3><p>It reads the answer out loud. This is text-to-speech (TTS).</p></div>
+    </div>
+    <div class="flow-cap">Siri, Alexa and Google Assistant are everyday <b style="color:var(--red)">voice agents</b> &mdash; the same listen &rarr; decide &rarr; speak loop as our OCBC voice chatbot.</div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">04</span></div>
   </section>
 
-  <section class="slide" data-notes='["Anthropic draws a useful line. Workflows are LLMs and tools wired on predefined code paths — predictable and easy to debug.", "Agents let the LLM dynamically direct its own steps and tool use — flexible, but less predictable.", "Both are agentic systems. The art is choosing how much autonomy a task actually needs."]'>
+  <section class="slide" data-notes='["Anthropic draws a useful line. Workflows are LLMs and tools wired on fixed code paths — predictable and easy to debug.", "Agents let the LLM choose its own steps and tools — more flexible, but harder to predict.", "Both count as agentic systems. The skill is choosing how much freedom a task really needs."]'>
     <div class="kicker"><span class="badge"></span>Workflows vs agents</div>
     <h2 class="slide-title" data-r data-d="1">A spectrum of autonomy</h2>
     <div class="spectrum" data-r data-d="2">
@@ -840,7 +852,7 @@ body.static .scc .bar{transform:none !important}
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon-white.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">08</span></div>
   </section>
 
-  <section class="slide" data-notes='["The building block. An agent starts as an LLM augmented with three capabilities.", "Retrieval — the RAG from Day 1, to pull in knowledge. Tools — functions it can call to act. Memory — state it keeps across steps.", "Everything else today composes from this augmented LLM. It is the atom of agent design."]'>
+  <section class="slide" data-notes='["The building block. An agent starts as an LLM with three extra powers bolted on.", "Retrieval, the RAG from Day 1, to pull in knowledge. Tools, functions it can call to act. Memory, the notes it keeps across steps.", "Everything else today is built from this augmented LLM. It is the basic unit of agent design."]'>
     <div class="kicker"><span class="badge"></span>The building block</div>
     <h2 class="slide-title" data-r data-d="1">The augmented LLM</h2>
     <div class="aug">
@@ -853,7 +865,7 @@ body.static .scc .bar{transform:none !important}
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">09</span></div>
   </section>
 
-  <section class="slide" data-notes='["The heartbeat of every agent: think, act, observe, repeat — until the goal is met or a stop condition fires.", "The model reasons about what to do, calls a tool, reads the result, then decides the next step.", "This loop is what separates an agent from a single LLM call. Watch it cycle."]'>
+  <section class="slide" data-notes='["The heartbeat of every agent: think, act, observe, repeat, until the goal is met or a stop rule fires.", "The model works out what to do, calls a tool, reads the result, then picks the next step. Our voice chatbot runs this same loop after it hears you.", "This loop is what makes an agent more than a single model call. Watch it cycle."]'>
     <div class="kicker"><span class="badge"></span>The agent loop</div>
     <h2 class="slide-title" data-r data-d="1">Think &rarr; Act &rarr; Observe &rarr; repeat</h2>
     <div class="fillc">
@@ -945,7 +957,7 @@ body.static .scc .bar{transform:none !important}
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">14</span></div>
   </section>
 
-  <section class="slide" data-notes='["The lab-proven playbook: five composable workflow patterns. Prompt chaining runs sequential steps, each feeding the next, sometimes with check gates.", "Routing classifies the input and sends it down the right specialised path. Parallelization runs independent subtasks at once, or votes for confidence.", "Orchestrator-workers has a lead LLM split a task and delegate dynamically; evaluator-optimizer has one LLM draft and another critique, looping to improve."]'>
+  <section class="slide" data-notes='["Five tried-and-tested workflow patterns you can mix and match. Prompt chaining runs steps in order, each one feeding the next, sometimes with a check in between.", "Routing looks at the input and sends it down the right path. Parallelization runs jobs that do not depend on each other at the same time, or has them vote.", "Orchestrator-workers has a lead model split a task and hand out the pieces; evaluator-optimizer has one model write a draft and another give feedback, looping until it is good."]'>
     <div class="kicker"><span class="badge"></span>The five workflow patterns</div>
     <h2 class="slide-title" data-r data-d="1">Composable building blocks</h2>
     <div class="wfpat" style="margin-top:22px">
@@ -1010,8 +1022,8 @@ body.static .scc .bar{transform:none !important}
       </div>
       <div class="txt">
         <ul class="bullets">
-          <li data-r data-d="3">A tool = a <b>normal function</b> (DB query, API call, calc)...</li>
-          <li data-r data-d="4" class="strong">...plus a <b>description + input schema</b> the model can read.</li>
+          <li data-r data-d="3">A tool = a <b>normal function</b> &mdash; look up an account, call an API, do a sum.</li>
+          <li data-r data-d="4" class="strong">...plus a <b>description + input list</b> the model can read.</li>
           <li data-r data-d="5">The model decides <b>when</b> to call it; your code runs it.</li>
         </ul>
       </div>
@@ -1019,7 +1031,7 @@ body.static .scc .bar{transform:none !important}
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">19</span></div>
   </section>
 
-  <section class="slide" data-notes='["How function-calling actually works — the round-trip. You give the model the tool schemas. The model outputs structured JSON naming a tool and its arguments.", "Your code runs the real function and feeds the result back. The model reads it and continues.", "The crucial point: the model never executes anything itself. It only requests; your code acts. That is what keeps it controllable."]'>
+  <section class="slide" data-notes='["How function-calling really works, in one round-trip. You hand the model the list of tools. The model replies with plain JSON that names a tool and its arguments.", "Your code runs the real function and sends the result back. The model reads it and carries on.", "The key point: the model never runs anything itself. It only asks; your code does the work. That is what keeps it under control."]'>
     <div class="kicker"><span class="badge"></span>How function-calling works</div>
     <h2 class="slide-title" data-r data-d="1">The model requests; your code runs it</h2>
     <div class="fcall">
@@ -1033,7 +1045,7 @@ body.static .scc .bar{transform:none !important}
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">20</span></div>
   </section>
 
-  <section class="slide" data-notes='["Zoom in on the anatomy of a tool the model actually sees. Three parts: a clear name, a plain-English description of what it does and when to use it, and a typed input schema.", "The model reads only these — it never sees your code. So the description and schema are effectively the prompt for the tool.", "A vague description means the model calls the wrong tool at the wrong time. Treat this like UI copy for the model."]'>
+  <section class="slide" data-notes='["A closer look at what the model actually sees. Three parts: a clear name, a plain-English description of what the tool does and when to use it, and a list of typed inputs.", "The model reads only these. It never sees your code, so the description and the input list act as the prompt for the tool.", "A vague description means the model picks the wrong tool at the wrong time. Write it as carefully as you would write a button label."]'>
     <div class="kicker"><span class="badge"></span>Anatomy of a tool</div>
     <h2 class="slide-title" data-r data-d="1">Name, description, input schema</h2>
     <div class="two" style="margin-top:18px">
@@ -1052,7 +1064,7 @@ body.static .scc .bar{transform:none !important}
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">21</span></div>
   </section>
 
-  <section class="slide" data-notes='["How to write tools the model uses well. Make each tool do one clear thing, with an unambiguous description and a name that reads like its purpose.", "Avoid overlapping tools that do nearly the same job — the model will dither between them. Keep arguments few and well-typed.", "Rule of thumb from the labs: if a new hire couldn&#39;t tell from the description when to use the tool, neither can the model."]'>
+  <section class="slide" data-notes='["How to write tools the model uses well. Make each tool do one clear thing, with a clear description and a name that says what it is for.", "Do not have two tools that do almost the same job, or the model will keep flip-flopping between them. Keep the inputs few and clearly typed.", "Simple test: if a new hire could not tell from the description when to use the tool, the model cannot either."]'>
     <div class="kicker"><span class="badge"></span>Writing good tools</div>
     <h2 class="slide-title" data-r data-d="1">Design tools like you'd brief a new hire</h2>
     <div class="vs" style="margin-top:24px">
@@ -1072,7 +1084,7 @@ body.static .scc .bar{transform:none !important}
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">22</span></div>
   </section>
 
-  <section class="slide" data-notes='["What a tool returns matters as much as what it does. Return concise, structured results the model can read — not a 5,000-row dump that floods the context window.", "Handle errors as data: instead of crashing, return a clear message like account not found so the model can recover and try another path.", "Good error text turns a dead end into a course-correction. The agent is only as resilient as its tools&#39; outputs."]'>
+  <section class="slide" data-notes='["What a tool gives back matters as much as what it does. Return short, tidy results the model can read, not a 5,000-row dump that fills up its memory.", "Treat errors as data. Instead of crashing, return a clear message like account not found so the model can recover and try another path.", "Good error text turns a dead end into a second chance. An agent is only as sturdy as what its tools hand back."]'>
     <div class="kicker"><span class="badge"></span>Results &amp; errors</div>
     <h2 class="slide-title" data-r data-d="1">Return results the model can act on</h2>
     <div class="vs" style="margin-top:24px">
@@ -1092,7 +1104,7 @@ body.static .scc .bar{transform:none !important}
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">23</span></div>
   </section>
 
-  <section class="slide" data-notes='["The interoperability problem: every team re-writing the same tool integrations is wasteful. The Model Context Protocol, MCP, is an open standard that fixes this.", "Think of it as a universal plug: a tool or data source is wrapped once as an MCP server, and any MCP-aware agent can use it — like a USB port for tools.", "It is open and self-hostable, so a bank can run its own MCP servers in-house and share tools across teams without exposing data."]'>
+  <section class="slide" data-notes='["The problem: every team keeps re-building the same tool connections, which is wasteful. The Model Context Protocol (MCP) is an open standard that fixes this.", "Think of it as a universal plug. You wrap a tool or data source once as an MCP server, and any MCP-aware agent can use it, like a USB port for tools.", "It is open and self-hostable, so a bank can run its own MCP servers in-house and share tools across teams without letting data out."]'>
     <div class="kicker"><span class="badge"></span>Model Context Protocol (MCP)</div>
     <h2 class="slide-title" data-r data-d="1">A universal plug for tools</h2>
     <div class="mcp">
@@ -1125,7 +1137,7 @@ body.static .scc .bar{transform:none !important}
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">25</span></div>
   </section>
 
-  <section class="slide demo-slide" data-demo="1" data-notes='["Recorded demo, replayed live. The smallest possible agent loop in plain Python against the LLM API — no framework.", "Cell 1 defines one tool, get_account_balance. Cell 2 sends the user question plus the tool schema. Cell 3 shows the model emitting a tool call as structured JSON; our code runs the real function. Cell 4 feeds the result back and the model writes the final answer.", "Press R to replay. That is the entire pattern: define tools, let the model request, run it, return the result, repeat."]'>
+  <section class="slide demo-slide" data-demo="1" data-notes='["A recorded demo, replayed live. The smallest possible agent loop in plain Python against the LLM API, with no framework.", "Cell 1 makes one tool, get_account_balance. Cell 2 sends the question plus the tool. Cell 3 shows the model asking for the tool as plain JSON, and our code runs the real function. Cell 4 sends the result back and the model writes the final answer.", "Press R to replay. This is the same brain our voice chatbot uses once your speech has been turned into text: make tools, let the model ask, run it, return the result, repeat."]'>
     <div class="kicker" data-r><span class="badge"></span>Recorded Demo · the smallest agent</div>
     <h2 class="slide-title" data-r data-d="1">An agent loop in plain Python</h2>
     <div class="body-area">
@@ -1193,7 +1205,7 @@ llm(messages=[..., tool_result(result)])</div></div><div class="nb-out"><span st
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">28</span></div>
   </section>
 
-  <section class="slide" data-notes='["The workhorse pattern: ReAct — Reason and Act, interleaved. The agent thinks out loud, takes one action, observes the result, then thinks again.", "It plans one step at a time, using real feedback before committing to the next. That makes it robust and easy to follow — you can read its reasoning trace.", "ReAct is the sensible default for most agents. Plan one step, act, observe, repeat."]'>
+  <section class="slide" data-notes='["The workhorse pattern: ReAct, short for Reason and Act, mixed together. The agent thinks out loud, takes one action, looks at the result, then thinks again.", "It plans one step at a time and uses the real result before choosing the next step. That makes it sturdy and easy to follow, because you can read its thinking.", "ReAct is the sensible default for most agents. Plan one step, act, observe, repeat."]'>
     <div class="kicker"><span class="badge"></span>Pattern 1 · ReAct</div>
     <h2 class="slide-title" data-r data-d="1">Reason + Act, one step at a time</h2>
     <div class="two" style="margin-top:10px">
@@ -1243,7 +1255,7 @@ llm(messages=[..., tool_result(result)])</div></div><div class="nb-out"><span st
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Agentic AI Paradigms</div><span class="pg">30</span></div>
   </section>
 
-  <section class="slide" data-notes='["The third pattern adds self-critique. After an attempt the agent reflects: did that work? what went wrong? — and uses the critique to improve the next try.", "Reflexion-style loops noticeably raise quality on hard tasks, because the agent learns from its own mistakes within the run.", "The cost is more steps and more tokens, so reserve it for high-stakes tasks where getting it right outweighs the extra spend."]'>
+  <section class="slide" data-notes='["The third pattern adds self-checking. After a try, the agent asks itself: did that work? what went wrong? Then it uses that feedback to do better next time.", "These reflect-and-retry loops clearly raise quality on hard tasks, because the agent learns from its own mistakes during the run.", "The cost is more steps and more tokens, so save it for high-stakes tasks where getting it right is worth the extra spend."]'>
     <div class="kicker"><span class="badge"></span>Pattern 3 · Reflection</div>
     <h2 class="slide-title" data-r data-d="1">The agent critiques its own work</h2>
     <div class="fcall">

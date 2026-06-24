@@ -1,5 +1,5 @@
 OCBC CRAYON 2026 — Agentic AI Paradigms
-Speaker notes · 40 slides
+Speaker notes · 41 slides
 ================================================
 
 Slide 1 — Agentic AI Paradigms
@@ -19,185 +19,190 @@ Slide 3 — From predicting text to taking action
 
 Slide 4 — A chatbot answers; an agent acts
   • The core distinction. A chatbot answers a question and stops. An agent acts: it can search, call APIs, run code, update systems — and loop until a goal is met.
-  • Banking contrast: what is this customer's risk is a question a chatbot answers. Investigate and flag this alert is a goal an agent pursues across many steps.
+  • Banking contrast: what is this customer&#39;s risk is a question a chatbot answers. Investigate and flag this alert is a goal an agent pursues across many steps.
   • Everything else today builds on this shift from answering to acting.
 
-Slide 5 — A spectrum of autonomy
-  • Anthropic draws a useful line. Workflows are LLMs and tools wired on predefined code paths — predictable and easy to debug.
-  • Agents let the LLM dynamically direct its own steps and tool use — flexible, but less predictable.
-  • Both are agentic systems. The art is choosing how much autonomy a task actually needs.
+Slide 5 — You already use voice agents
+  • You already use voice agents every day. Siri, Alexa and Google Assistant all do the same three things our project chatbot will do.
+  • They listen and turn your speech into text, the agent brain decides what to do and calls a tool, then they speak the answer back to you.
+  • Our OCBC voice chatbot is the same idea, just pointed at banking tasks and kept inside the bank. Keep this picture in mind for the rest of the talk.
 
-Slide 6 — Start simple — add autonomy only when justified
+Slide 6 — A spectrum of autonomy
+  • Anthropic draws a useful line. Workflows are LLMs and tools wired on fixed code paths — predictable and easy to debug.
+  • Agents let the LLM choose its own steps and tools — more flexible, but harder to predict.
+  • Both count as agentic systems. The skill is choosing how much freedom a task really needs.
+
+Slide 7 — Start simple — add autonomy only when justified
   • The number-one lesson from the labs: start simple. Use the simplest thing that works.
   • Do not build an autonomous agent when a workflow, or even a single prompt, would do. Each step up adds latency, cost and unpredictability.
   • Only pay for autonomy when the flexibility is genuinely justified.
 
-Slide 7 — Multi-step work, across systems
+Slide 8 — Multi-step work, across systems
   • What agents unlock for a bank: genuinely multi-step work that spans systems.
   • Multi-step KYC onboarding, investigating a fraud alert, an RM researching across internal systems, and reconciliation that chases discrepancies.
   • But flag the caution now: autonomy plus money needs guardrails. We dedicate the final section to that.
 
-Slide 8 — What an Agent Is Made Of
+Slide 9 — What an Agent Is Made Of
   • Part 1, about 24 minutes. We define the augmented LLM, the think-act-observe loop, and the five workflow patterns.
   • These are composable building blocks — most production systems are workflows, not fully autonomous agents.
   • End on a pragmatic take on frameworks: helpful, not required.
 
-Slide 9 — The augmented LLM
-  • The building block. An agent starts as an LLM augmented with three capabilities.
-  • Retrieval — the RAG from Day 1, to pull in knowledge. Tools — functions it can call to act. Memory — state it keeps across steps.
-  • Everything else today composes from this augmented LLM. It is the atom of agent design.
+Slide 10 — The augmented LLM
+  • The building block. An agent starts as an LLM with three extra powers bolted on.
+  • Retrieval, the RAG from Day 1, to pull in knowledge. Tools, functions it can call to act. Memory, the notes it keeps across steps.
+  • Everything else today is built from this augmented LLM. It is the basic unit of agent design.
 
-Slide 10 — Think → Act → Observe → repeat
-  • The heartbeat of every agent: think, act, observe, repeat — until the goal is met or a stop condition fires.
-  • The model reasons about what to do, calls a tool, reads the result, then decides the next step.
-  • This loop is what separates an agent from a single LLM call. Watch it cycle.
+Slide 11 — Think → Act → Observe → repeat
+  • The heartbeat of every agent: think, act, observe, repeat, until the goal is met or a stop rule fires.
+  • The model works out what to do, calls a tool, reads the result, then picks the next step. Our voice chatbot runs this same loop after it hears you.
+  • This loop is what makes an agent more than a single model call. Watch it cycle.
 
-Slide 11 — Every step gets real feedback
+Slide 12 — Every step gets real feedback
   • Why the loop works at all: grounding. Every action returns real feedback from the environment — a tool result, code output, an API response.
   • The agent uses that feedback to course-correct, rather than guessing in a vacuum the way a single prompt must.
   • This is the deep reason agents can tackle multi-step tasks: reality checks them at every step.
 
-Slide 12 — What every agent needs
+Slide 13 — What every agent needs
   • What every production agent needs, named. The reasoning engine is the LLM itself.
   • Tools are the actions; memory is context and state; orchestration is the loop and control flow; guardrails are the safety limits.
   • Keep this map in mind — the rest of the deck deepens tools, orchestration patterns, and guardrails.
 
-Slide 13 — Short-term vs long-term
-  • Memory comes in two kinds. Short-term is the running context window — this task's steps so far.
+Slide 14 — Short-term vs long-term
+  • Memory comes in two kinds. Short-term is the running context window — this task&#39;s steps so far.
   • Long-term is persisted facts and past tasks, usually stored and pulled back via RAG or a store.
   • Managing context — what to keep, summarise or drop — is the real constraint on how far an agent can go.
 
-Slide 14 — One agent first; multi only when needed
+Slide 15 — One agent first; multi only when needed
   • Resist the urge to go multi-agent first. Start with one agent that does one thing well.
   • Add an orchestrator plus worker agents only when complexity genuinely demands it — for example a researcher plus a separate verifier.
   • More agents means more coordination overhead and more ways to fail. Single first.
 
-Slide 15 — Composable building blocks
-  • The lab-proven playbook: five composable workflow patterns. Prompt chaining runs sequential steps, each feeding the next, sometimes with check gates.
-  • Routing classifies the input and sends it down the right specialised path. Parallelization runs independent subtasks at once, or votes for confidence.
-  • Orchestrator-workers has a lead LLM split a task and delegate dynamically; evaluator-optimizer has one LLM draft and another critique, looping to improve.
+Slide 16 — Composable building blocks
+  • Five tried-and-tested workflow patterns you can mix and match. Prompt chaining runs steps in order, each one feeding the next, sometimes with a check in between.
+  • Routing looks at the input and sends it down the right path. Parallelization runs jobs that do not depend on each other at the same time, or has them vote.
+  • Orchestrator-workers has a lead model split a task and hand out the pieces; evaluator-optimizer has one model write a draft and another give feedback, looping until it is good.
 
-Slide 16 — Pick by the shape of the problem
+Slide 17 — Pick by the shape of the problem
   • A decision aid for picking a pattern. Clear sequential steps point to chaining; distinct input types point to routing.
   • Independent subtasks favour parallelization; unpredictable complexity favours orchestrator-workers; iterative refinement favours evaluator-optimizer.
   • Only truly open-ended problems justify a fully autonomous agent. Match the pattern to the problem shape.
 
-Slide 17 — You can build agents against the API directly
+Slide 18 — You can build agents against the API directly
   • An honest take on frameworks. You can build a capable agent in a few lines directly against the LLM API — the loop is not complicated.
   • Open-source frameworks like LangGraph, LlamaIndex, CrewAI and BeeAI help with state and orchestration, but they add abstraction that can hide your prompts and your bugs.
   • Use them if they earn their keep, but understand what is under the hood. As of 2026 this space moves fast — verify current options.
 
-Slide 18 — Tools — Giving the Model Hands
+Slide 19 — Tools — Giving the Model Hands
   • Part 2, about 22 minutes. The demystifying spine: a tool is a normal function the model can ask you to run.
   • We cover how function-calling actually works, how to write good tools, error handling, and MCP, the open standard.
   • All open-source and self-hostable — you write the functions.
 
-Slide 19 — No proprietary magic — you write the function
+Slide 20 — No proprietary magic — you write the function
   • The single most demystifying point of the day: a tool is just a normal function — search a database, call an API, run a calculation.
   • Plus a description and an input schema the model can read, so it knows when and how to use it.
   • There is no proprietary magic. You write the function; the description tells the model what it does.
 
-Slide 20 — The model requests; your code runs it
-  • How function-calling actually works — the round-trip. You give the model the tool schemas. The model outputs structured JSON naming a tool and its arguments.
-  • Your code runs the real function and feeds the result back. The model reads it and continues.
-  • The crucial point: the model never executes anything itself. It only requests; your code acts. That is what keeps it controllable.
+Slide 21 — The model requests; your code runs it
+  • How function-calling really works, in one round-trip. You hand the model the list of tools. The model replies with plain JSON that names a tool and its arguments.
+  • Your code runs the real function and sends the result back. The model reads it and carries on.
+  • The key point: the model never runs anything itself. It only asks; your code does the work. That is what keeps it under control.
 
-Slide 21 — Name, description, input schema
-  • Zoom in on the anatomy of a tool the model actually sees. Three parts: a clear name, a plain-English description of what it does and when to use it, and a typed input schema.
-  • The model reads only these — it never sees your code. So the description and schema are effectively the prompt for the tool.
-  • A vague description means the model calls the wrong tool at the wrong time. Treat this like UI copy for the model.
+Slide 22 — Name, description, input schema
+  • A closer look at what the model actually sees. Three parts: a clear name, a plain-English description of what the tool does and when to use it, and a list of typed inputs.
+  • The model reads only these. It never sees your code, so the description and the input list act as the prompt for the tool.
+  • A vague description means the model picks the wrong tool at the wrong time. Write it as carefully as you would write a button label.
 
-Slide 22 — Design tools like you'd brief a new hire
-  • How to write tools the model uses well. Make each tool do one clear thing, with an unambiguous description and a name that reads like its purpose.
-  • Avoid overlapping tools that do nearly the same job — the model will dither between them. Keep arguments few and well-typed.
-  • Rule of thumb from the labs: if a new hire couldn't tell from the description when to use the tool, neither can the model.
+Slide 23 — Design tools like you'd brief a new hire
+  • How to write tools the model uses well. Make each tool do one clear thing, with a clear description and a name that says what it is for.
+  • Do not have two tools that do almost the same job, or the model will keep flip-flopping between them. Keep the inputs few and clearly typed.
+  • Simple test: if a new hire could not tell from the description when to use the tool, the model cannot either.
 
-Slide 23 — Return results the model can act on
-  • What a tool returns matters as much as what it does. Return concise, structured results the model can read — not a 5,000-row dump that floods the context window.
-  • Handle errors as data: instead of crashing, return a clear message like account not found so the model can recover and try another path.
-  • Good error text turns a dead end into a course-correction. The agent is only as resilient as its tools' outputs.
+Slide 24 — Return results the model can act on
+  • What a tool gives back matters as much as what it does. Return short, tidy results the model can read, not a 5,000-row dump that fills up its memory.
+  • Treat errors as data. Instead of crashing, return a clear message like account not found so the model can recover and try another path.
+  • Good error text turns a dead end into a second chance. An agent is only as sturdy as what its tools hand back.
 
-Slide 24 — A universal plug for tools
-  • The interoperability problem: every team re-writing the same tool integrations is wasteful. The Model Context Protocol, MCP, is an open standard that fixes this.
-  • Think of it as a universal plug: a tool or data source is wrapped once as an MCP server, and any MCP-aware agent can use it — like a USB port for tools.
-  • It is open and self-hostable, so a bank can run its own MCP servers in-house and share tools across teams without exposing data.
+Slide 25 — A universal plug for tools
+  • The problem: every team keeps re-building the same tool connections, which is wasteful. The Model Context Protocol (MCP) is an open standard that fixes this.
+  • Think of it as a universal plug. You wrap a tool or data source once as an MCP server, and any MCP-aware agent can use it, like a USB port for tools.
+  • It is open and self-hostable, so a bank can run its own MCP servers in-house and share tools across teams without letting data out.
 
-Slide 25 — All self-hostable, in-house
+Slide 26 — All self-hostable, in-house
   • The open-source agent stack a bank can actually run in-house. Open-weight models like Qwen and Llama as the reasoning engine.
   • Frameworks such as LangGraph and LlamaIndex for orchestration; MCP for tools; and vector stores like FAISS or pgvector for memory and retrieval.
   • Everything here is self-hostable — no customer data leaves the bank. As of 2026 the names move fast; the layers are what to remember.
 
-Slide 26 — An agent loop in plain Python
-  • Recorded demo, replayed live. The smallest possible agent loop in plain Python against the LLM API — no framework.
-  • Cell 1 defines one tool, get_account_balance. Cell 2 sends the user question plus the tool schema. Cell 3 shows the model emitting a tool call as structured JSON; our code runs the real function. Cell 4 feeds the result back and the model writes the final answer.
-  • Press R to replay. That is the entire pattern: define tools, let the model request, run it, return the result, repeat.
+Slide 27 — An agent loop in plain Python
+  • A recorded demo, replayed live. The smallest possible agent loop in plain Python against the LLM API, with no framework.
+  • Cell 1 makes one tool, get_account_balance. Cell 2 sends the question plus the tool. Cell 3 shows the model asking for the tool as plain JSON, and our code runs the real function. Cell 4 sends the result back and the model writes the final answer.
+  • Press R to replay. This is the same brain our voice chatbot uses once your speech has been turned into text: make tools, let the model ask, run it, return the result, repeat.
 
-Slide 27 — Planning & Reasoning
+Slide 28 — Planning & Reasoning
   • Part 3, about 24 minutes. Now the agent has hands; this is the brain — how it decides the next step.
   • We cover three reasoning patterns: ReAct, plan-and-execute, and Reflexion-style self-critique.
   • Then a worked banking trajectory, how to evaluate agents, and the failure modes that bite in production.
 
-Slide 28 — Real tasks have many dependent steps
+Slide 29 — Real tasks have many dependent steps
   • Why planning matters. For a one-step question the model can just answer. But real banking tasks have many steps with dependencies — you must do A before you can do B.
-  • Without a plan the agent wanders, repeats itself, or stops early. Planning is how it sequences steps toward a goal and knows when it's done.
+  • Without a plan the agent wanders, repeats itself, or stops early. Planning is how it sequences steps toward a goal and knows when it&#39;s done.
   • The patterns that follow are different answers to one question: how much to plan up front versus decide step by step.
 
-Slide 29 — Reason + Act, one step at a time
-  • The workhorse pattern: ReAct — Reason and Act, interleaved. The agent thinks out loud, takes one action, observes the result, then thinks again.
-  • It plans one step at a time, using real feedback before committing to the next. That makes it robust and easy to follow — you can read its reasoning trace.
+Slide 30 — Reason + Act, one step at a time
+  • The workhorse pattern: ReAct, short for Reason and Act, mixed together. The agent thinks out loud, takes one action, looks at the result, then thinks again.
+  • It plans one step at a time and uses the real result before choosing the next step. That makes it sturdy and easy to follow, because you can read its thinking.
   • ReAct is the sensible default for most agents. Plan one step, act, observe, repeat.
 
-Slide 30 — Plan all steps first, then execute
+Slide 31 — Plan all steps first, then execute
   • Plan-and-execute flips the order: the agent writes a full plan up front, then carries out each step, optionally re-planning if something changes.
   • Up-front planning is more efficient for long tasks — fewer expensive reasoning calls — and the plan is easy to review before anything runs.
   • The trade-off: a plan made too early can be wrong. Good systems let the agent revise the plan when reality disagrees.
 
-Slide 31 — The agent critiques its own work
-  • The third pattern adds self-critique. After an attempt the agent reflects: did that work? what went wrong? — and uses the critique to improve the next try.
-  • Reflexion-style loops noticeably raise quality on hard tasks, because the agent learns from its own mistakes within the run.
-  • The cost is more steps and more tokens, so reserve it for high-stakes tasks where getting it right outweighs the extra spend.
+Slide 32 — The agent critiques its own work
+  • The third pattern adds self-checking. After a try, the agent asks itself: did that work? what went wrong? Then it uses that feedback to do better next time.
+  • These reflect-and-retry loops clearly raise quality on hard tasks, because the agent learns from its own mistakes during the run.
+  • The cost is more steps and more tokens, so save it for high-stakes tasks where getting it right is worth the extra spend.
 
-Slide 32 — Mix patterns to fit the task
+Slide 33 — Mix patterns to fit the task
   • These patterns are not rivals — you combine them. ReAct for the moment-to-moment loop, a plan to give it structure, reflection at checkpoints for quality.
   • Match the pattern to the task: simple and reactive, use ReAct; long and structured, plan first; high-stakes, add reflection.
   • Start with the simplest that works and layer on only what the task demands — the golden rule, again.
 
-Slide 33 — Fraud alert, step by step
+Slide 34 — Fraud alert, step by step
   • A concrete trajectory: an agent investigating a fraud alert, shown as think-act-observe steps. This is illustrative, not a real OCBC system.
-  • It reasons about what to check, calls a tool to pull recent transactions, observes an unusual overseas charge, checks the customer's travel notes, finds none, and drafts a case for a human.
+  • It reasons about what to check, calls a tool to pull recent transactions, observes an unusual overseas charge, checks the customer&#39;s travel notes, finds none, and drafts a case for a human.
   • Notice the last step: it does not block the card itself. It prepares the decision and hands off to a human. That hand-off is the whole point of the next section.
 
-Slide 34 — The path matters, not just the answer
+Slide 35 — The path matters, not just the answer
   • Evaluating agents is harder than evaluating a single answer, because the path matters, not just the final output.
   • Track four things: task success — did it achieve the goal; trajectory quality — were the steps sensible; cost and latency — tokens, tool calls, time; and safety — did it stay within bounds.
   • Build a test set of real tasks and score runs against it. As with any model, you cannot improve what you do not measure.
 
-Slide 35 — What goes wrong in production
+Slide 36 — What goes wrong in production
   • The failure modes that bite in production. Runaway loops: an agent stuck repeating actions can burn real money — one widely-cited case ran up about 47,000 US dollars in API costs from an unbounded loop.
-  • Prompt injection: malicious text inside a document or web page hijacks the agent's instructions — a serious risk when tools touch money. Hallucinated tool calls and compounding errors round it out.
+  • Prompt injection: malicious text inside a document or web page hijacks the agent&#39;s instructions — a serious risk when tools touch money. Hallucinated tool calls and compounding errors round it out.
   • Each of these is why the next slide is guardrails. Autonomy without limits is a liability.
 
-Slide 36 — Production & Safety
+Slide 37 — Production & Safety
   • Part 4, the last stretch, about 12 minutes. Everything so far is capability; this is responsibility.
   • Guardrails, human-in-the-loop, and an end-to-end picture of how a bank would deploy an agent.
   • This is the section that matters most in a regulated environment — autonomy plus money demands control.
 
-Slide 37 — The agent proposes; a human disposes
-  • The control layer. Permission scopes: the agent only gets tools it truly needs — least privilege. Limits: caps on steps, spend and time so a loop can't run away.
+Slide 38 — The agent proposes; a human disposes
+  • The control layer. Permission scopes: the agent only gets tools it truly needs — least privilege. Limits: caps on steps, spend and time so a loop can&#39;t run away.
   • Human-in-the-loop: a person approves any high-stakes or irreversible action — moving money, blocking a card. Validation: check tool inputs and outputs, and sandbox anything that runs code.
   • For a bank these are not optional. The design rule: the agent proposes, a human disposes on anything that matters.
 
-Slide 38 — An agent, wired responsibly
+Slide 39 — An agent, wired responsibly
   • Putting it all together for a bank. A request comes in; the agent plans; it calls in-house tools over MCP, all on open-weight models hosted on-premise so data never leaves.
   • Guardrails wrap every step — scopes, limits, validation — and any high-stakes action routes to a human for approval before it executes.
   • This is illustrative unless we have real details, but the shape is right: open, self-hosted, guard-railed, with a human on the critical path.
 
-Slide 39 — Five things to take away
+Slide 40 — Five things to take away
   • Recap the whole deck. An agent is an LLM plus tools plus a loop that runs until a goal is met.
   • A tool is just a function with a description and schema; planning patterns — ReAct, plan-and-execute, reflection — decide the next step; and guardrails plus a human keep it safe.
   • Above all: start simple, add autonomy only when justified, and keep a human on anything that moves money.
 
-Slide 40 — From text predictor to agent
+Slide 41 — From text predictor to agent
   • Land the plane. We turned a knowledgeable text predictor into something that can act — an agent — and saw how to do it safely in a bank.
   • Call back to the opener: an agent is just a language model that can take actions, and decide which ones to take. Now you can reason about one end to end.
   • Thank them. This wraps the CRAYON series — open the floor for questions.

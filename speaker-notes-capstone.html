@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Speaker notes · Capstone · OCBC CRAYON</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root{--red:#EC1B23;--ink:#1A1A1A;--text:#1F2937;--muted:#5b626d;--faint:#9AA1AC;
+  --line:#E7E8EB;--tint:#FCEEEF;--tint2:#FBE2E3;
+  --fHead:'Manrope',system-ui,sans-serif;--fBody:'Inter',system-ui,sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--fBody);color:var(--text);background:
+    radial-gradient(900px 500px at 100% -10%, rgba(236,27,35,.10), transparent 60%), #fbfbfc;
+  -webkit-font-smoothing:antialiased;padding-bottom:60px}
+.bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;
+  gap:14px;padding:14px 22px;background:rgba(251,251,252,.86);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line)}
+.bar .ttl{font-family:var(--fHead);font-weight:800;font-size:16px;letter-spacing:-.01em;color:var(--ink)}
+.bar .sub{font-size:12px;color:var(--faint);margin-top:2px}
+.bar .right{display:flex;align-items:center;gap:8px;flex:none;flex-wrap:wrap;justify-content:flex-end}
+.btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--fHead);font-weight:700;
+  font-size:12.5px;text-decoration:none;border-radius:99px;padding:8px 14px;white-space:nowrap;
+  cursor:pointer;transition:background .2s ease,color .2s ease,border-color .2s ease}
+.btn svg{width:14px;height:14px}
+.btn.ghost{color:var(--muted);border:1px solid var(--line);background:#fff}
+.btn.ghost:hover{border-color:var(--tint2);color:var(--ink)}
+.btn.red{color:var(--red);background:var(--tint);border:1px solid var(--tint2)}
+.btn.red:hover{background:var(--red);color:#fff;border-color:var(--red)}
+.btn.on{background:var(--red);color:#fff;border-color:var(--red)}
+.banner{display:none;align-items:center;gap:8px;font-size:13px;color:#8a1015;
+  background:var(--tint);border-bottom:1px solid var(--tint2);padding:10px 22px}
+.banner b{color:var(--red)}
+body.editing .banner{display:flex}
+main{max-width:820px;margin:0 auto;padding:8px 22px}
+.lead{font-family:var(--fHead);font-weight:800;letter-spacing:-.02em;font-size:clamp(1.7rem,5vw,2.4rem);
+  color:var(--ink);margin:26px 0 6px}
+.lead .red{color:var(--red)}
+.intro{color:var(--muted);font-size:14.5px;line-height:1.6;margin-bottom:14px;max-width:60ch}
+.s{padding:20px 0;border-bottom:1px solid var(--line)}
+.s:last-child{border-bottom:none}
+.s .n{font-family:var(--fHead);font-weight:800;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--red)}
+.s h2{font-family:var(--fHead);font-weight:700;font-size:18px;letter-spacing:-.015em;color:var(--ink);margin:4px 0 11px}
+.s ul{margin:0;padding-left:19px;display:flex;flex-direction:column;gap:9px}
+.s li{font-size:14.5px;line-height:1.6;color:var(--text)}
+/* edit affordances */
+body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:1px dashed var(--tint2);
+  outline-offset:4px;border-radius:4px}
+.s h2[contenteditable]:focus,.s li[contenteditable]:focus{outline:2px solid var(--red);
+  outline-offset:4px;background:#fff}
+@media(max-width:560px){
+  .bar{padding:11px 14px}
+  .bar .sub{display:none}
+  .btn{padding:7px 10px;font-size:11.5px}
+  .btn .lbl-long{display:none}
+  .banner{padding:9px 14px;font-size:12px}
+  main{padding:6px 16px}
+  .s li{font-size:14px}
+}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div>
+    <div class="ttl">Speaker notes</div>
+    <div class="sub">Capstone · 22 slides</div>
+  </div>
+  <div class="right">
+    <a class="btn ghost" href="index.html">&larr; Back</a>
+    <button class="btn ghost" id="edit" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+      <span id="editLbl">Edit</span>
+    </button>
+    <button class="btn ghost" id="reset" type="button" style="display:none">Reset</button>
+    <a class="btn red" id="dl" href="speaker-notes-capstone.txt" download="OCBC-CRAYON-Capstone-speaker-notes.txt">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3v12M7 11l5 5 5-5M5 21h14"/></svg>
+      <span class="lbl-long">Download&nbsp;</span>.txt
+    </a>
+  </div>
+</header>
+<div class="banner" id="banner">&#9998;&nbsp; Editing — your changes are saved in this browser. Use <b>Download .txt</b> to keep a copy.</div>
+<main>
+  <h1 class="lead">Talk track <span class="red">&middot; every slide</span></h1>
+  <p class="intro">Speaker notes for the OCBC CRAYON 2026 &mdash; Capstone (Building a Voice Agentic AI Chatbot) deck. 22 slides, in order. Press <b>Edit</b> to tweak the wording inline (saved to this browser), or <b>Download .txt</b> for a copy.</p>
+  <div id="notes">
+    <article class="s">
+      <div class="n">Slide 1</div>
+      <h2>Capstone Voice Agentic AI</h2>
+      <ul>
+        <li>Welcome to the Day-2 capstone. Across the last three sessions we learned to make a chatbot listen, think and act, and talk. Today we put it all together into one buildable system.</li>
+        <li>This is the engineering view of our class project: a voice agentic AI chatbot for OCBC. We will name the open-source models, work out how big they are, and pick a GPU.</li>
+        <li>Everything is open-source and self-hosted, so customer audio and data stay inside the bank. By the end you can size the whole stack on paper.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 2</div>
+      <h2>The frame</h2>
+      <ul>
+        <li>The whole day in one line. We learned to listen, to think and act, and to talk. Now we assemble it, and answer the practical questions: what models, how big, and which GPU.</li>
+        <li>This is the bridge from ideas to a thing you can actually stand up on a server.</li>
+        <li>Keep this framing in mind &amp;mdash; listen, think, talk, assemble &amp;mdash; we return to it at the end.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 3</div>
+      <h2>Three topics, now joined into one system</h2>
+      <ul>
+        <li>Day 2 in one picture. Topic 1 taught speech: speech-to-text and text-to-speech. Topic 2 taught agents: an LLM that reasons, retrieves with RAG, and calls tools. Topic 3 taught the conversation design on top.</li>
+        <li>Today, Topic 4, is the join: take those three and wire them into one running system.</li>
+        <li>Each box here becomes a real open-source model in the next part of the deck.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 4</div>
+      <h2>The voice agentic AI loop, one turn</h2>
+      <ul>
+        <li>The end-to-end voice agentic loop. Sound comes in the microphone, speech-to-text turns it into words, guardrails check the input, the LLM agent reasons &amp;mdash; using RAG and tool-calling &amp;mdash; guardrails check the output, text-to-speech turns the reply back into sound, and it plays on the speaker.</li>
+        <li>Notice it is a loop: every turn goes around this circle. Guardrails sit on both the way in and the way out, which is what a bank needs.</li>
+        <li>The whole loop runs on-prem on our own servers, so the customer audio never leaves the bank. Each stage is an open-source model we will size next.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 5</div>
+      <h2>The Model Stack</h2>
+      <ul>
+        <li>Part 1: the model stack. We go component by component, naming the open-source options for each, what each one does, and a rough size.</li>
+        <li>Order matters &amp;mdash; this is the order the audio flows: speech-to-text, the LLM brain, the embedding model and vector database for RAG, guardrails, text-to-speech, and the orchestration that ties tools together.</li>
+        <li>All open-weight and self-hostable, so we control cost and keep data in the bank.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 6</div>
+      <h2>STT: Whisper turns speech into text</h2>
+      <ul>
+        <li>Speech-to-text, or STT, turns the customer audio into text. The open default is Whisper, the free and open model from OpenAI &amp;mdash; large-v3 is about 1.5 billion parameters.</li>
+        <li>For lower cost there are faster-whisper and whisper.cpp, which can even run on a plain CPU with no GPU at all.</li>
+        <li>This is the first stage of the loop: sound in, words out. It is small compared to the LLM.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 7</div>
+      <h2>LLM: the reasoning &amp; tool-calling brain</h2>
+      <ul>
+        <li>The LLM is the brain of the agent: it reasons, decides which tool to call, and writes the reply. Good open-weight choices are Qwen2.5 and Llama 3.x.</li>
+        <li>There is a real trade-off here. A 7-to-8 billion parameter model is cheap and fast; a 70 billion model is higher quality but much more expensive.</li>
+        <li>This is the big VRAM cost in the whole stack &amp;mdash; nearly all your GPU memory goes here. We size it carefully in Part 2.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 8</div>
+      <h2>Embeddings + vector DB power retrieval</h2>
+      <ul>
+        <li>RAG, retrieval-augmented generation, lets the agent look things up in our own documents before it answers. Two pieces make it work: an embedding model and a vector database.</li>
+        <li>The embedding model turns each document and each question into a vector &amp;mdash; a list of numbers that captures meaning. Good open options are Qwen3-Embedding, in a small 0.6B or a larger 8B, and the bge and e5 families.</li>
+        <li>Then the vector database stores those vectors and finds the closest matches fast. FAISS, pgvector and Milvus are the common open choices. The vector DB is not a GPU model &amp;mdash; it runs on ordinary servers.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 9</div>
+      <h2>Guardrails check input and output</h2>
+      <ul>
+        <li>Guardrails are the safety layer. They check the input on the way in and the output on the way out &amp;mdash; blocking unsafe requests and catching leaked personal data, or PII.</li>
+        <li>Open options include Llama Guard, about 8 billion parameters, plus NeMo Guardrails and Granite Guardian.</li>
+        <li>In a bank this is not optional. Notice the guardrail is itself a model, so it adds its own VRAM cost &amp;mdash; budget for it like a second small LLM.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 10</div>
+      <h2>TTS: turn the reply back into a voice</h2>
+      <ul>
+        <li>Text-to-speech, or TTS, turns the reply text back into a voice. The tiny option is Piper, which is so small it runs comfortably on a CPU.</li>
+        <li>If you want a richer or cloned voice, XTTS and VITS are good open choices, at a slightly higher cost.</li>
+        <li>Like Whisper, this is small &amp;mdash; it almost never drives the GPU bill. The last stage of the loop: text out as sound.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 11</div>
+      <h2>LangGraph + MCP wire the agent to tools</h2>
+      <ul>
+        <li>The glue that holds it together is orchestration. LangGraph, from the Agentic AI session, defines the steps and decisions of the agent as a graph &amp;mdash; when to retrieve, when to call a tool, when to answer.</li>
+        <li>MCP, the Model Context Protocol, is the standard way the agent connects to tools &amp;mdash; a balance API, a transfer action, a card-block action &amp;mdash; without custom glue for each.</li>
+        <li>This is a callback to Topic 2. It is mostly code, not a heavy model, so it costs little memory but it is what makes the agent actually do things.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 12</div>
+      <h2>Every component in one table</h2>
+      <ul>
+        <li>The whole stack on one slide. Five model boxes plus a vector database and the orchestration. Read it top to bottom: STT, the LLM brain, the embedding model, guardrails, TTS.</li>
+        <li>Notice the pattern &amp;mdash; the LLM is the only really big one. STT and TTS are small or CPU, embeddings can be small or CPU, guardrails is a second small LLM.</li>
+        <li>Keep this table in your head &amp;mdash; in the next part we attach a real memory number to each row.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 13</div>
+      <h2>How Big Is a Model?</h2>
+      <ul>
+        <li>Part 2: how big is a model? This is the sizing math &amp;mdash; the most useful skill from today. With one formula you can estimate the memory of any model.</li>
+        <li>We cover the core formula, a worked examples table, the overhead you must not forget, and adding up the whole stack.</li>
+        <li>All numbers are rules of thumb for teaching, not exact specs &amp;mdash; but they get you within range, which is what planning needs.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 14</div>
+      <h2>VRAM for weights = params × bytes</h2>
+      <ul>
+        <li>The one formula to remember. The memory for a model&amp;#39;s weights is roughly the number of parameters times the bytes per parameter.</li>
+        <li>Precision sets the bytes. FP32, full precision, is 4 bytes. FP16 or BF16, half precision, is 2 bytes. INT8 is 1 byte. INT4 is about half a byte. Lower precision means smaller and cheaper, with a small quality cost &amp;mdash; that is quantization.</li>
+        <li>So a model with N billion parameters needs about 2N gigabytes in FP16, about N gigabytes in INT8, and about half-N gigabytes in INT4. That single line lets you size anything.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 15</div>
+      <h2>The formula on our actual models</h2>
+      <ul>
+        <li>The same formula applied to our actual models. Whisper at 1.5B is about 3 GB in FP16. A 7-to-8B model is about 14-to-16 GB in FP16, but only 7-to-8 GB in INT8, and about 4 GB in INT4.</li>
+        <li>The 8B embedding model and the 8B guardrail are each about 16 GB in FP16. The big one is the 70B: about 140 GB in FP16, dropping to about 35-to-40 GB in INT4.</li>
+        <li>Read across each row and watch quantization shrink the number &amp;mdash; that is the lever that fits a model onto a smaller GPU.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 16</div>
+      <h2>Weights aren&#x27;t everything: add headroom</h2>
+      <ul>
+        <li>Weights are not everything. Three more things use memory at run time: the KV cache, which grows with context length, batch size and the number of layers; the activations during a forward pass; and the runtime itself, about one to two gigabytes.</li>
+        <li>KV cache, key-value cache, is the model&amp;#39;s short-term memory of the conversation so far &amp;mdash; longer chats and more simultaneous users make it bigger.</li>
+        <li>Rule of thumb: budget about 1.2 to 1.5 times the weight size for inference headroom. Long context or large batches need more. And quantizing to INT8 or INT4 is the main lever to fit a smaller GPU, at a small quality cost.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 17</div>
+      <h2>Two ways to add it up</h2>
+      <ul>
+        <li>Now add up the whole stack two ways. The lean path: an INT4 8B LLM is about 5 GB, Whisper about 3 GB, the embedding model run on CPU or small, an INT4 8B guardrail about 5 GB, and Piper on CPU. Total is well under 24 GB &amp;mdash; it fits comfortably on one 24 GB GPU.</li>
+        <li>The premium path: a full-precision FP16 70B LLM alone is about 140 GB, before overhead &amp;mdash; that needs multiple 80 GB data-center GPUs.</li>
+        <li>Same system, two very different hardware bills. The quantized small-model path is what most teams ship; reserve the 70B path for when quality really demands it.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 18</div>
+      <h2>Which GPU?</h2>
+      <ul>
+        <li>Part 3: which GPU? Now we map our memory numbers onto real hardware. The first number that matters is always VRAM &amp;mdash; the gigabytes of memory on the card.</li>
+        <li>We give an approximate 2026 cheat-sheet, then match a GPU to each kind of job, then a note on concurrency.</li>
+        <li>Treat the cheat-sheet as a snapshot &amp;mdash; verify current models and memory before you buy, because the lineup changes fast.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 19</div>
+      <h2>VRAM is the first number to check</h2>
+      <ul>
+        <li>An approximate 2026 snapshot of GPU memory &amp;mdash; please verify current numbers, the lineup moves fast. The consumer cards, RTX 3090 and 4090, have 24 GB. In the data center, the L4 has 24 GB, the L40S has 48 GB.</li>
+        <li>The A100 comes in 40 or 80 GB, the H100 has 80 GB, and the H200 has 141 GB.</li>
+        <li>The number to look at first is always VRAM in gigabytes &amp;mdash; it decides whether your model even fits before you worry about speed or price.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 20</div>
+      <h2>Pick the card the job needs</h2>
+      <ul>
+        <li>Match the GPU to the job, four cases. A quantized 7-to-8B chatbot stack &amp;mdash; our lean path &amp;mdash; fits on one 24 GB card, an RTX 4090 or an L4.</li>
+        <li>If you want full-precision FP16 7-8B plus embeddings, guardrails and STT/TTS all on the GPU together, step up to one 48 GB L40S or one 80 GB A100.</li>
+        <li>For a high-quality 70B you need one or two 80 GB A100 or H100 cards. And for a tiny on-device demo, skip the GPU entirely: whisper.cpp, Piper, and a 3-to-4B INT4 LLM on CPU.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 21</div>
+      <h2>Many callers multiply the KV cache</h2>
+      <ul>
+        <li>One more thing for production: concurrency. Each simultaneous caller needs their own KV cache &amp;mdash; their own slice of the conversation memory. Ten callers means roughly ten times the KV-cache memory.</li>
+        <li>So the comfortable single-user numbers we computed are a floor, not the production answer. More users multiplies the run-time memory, even though the weights are loaded only once.</li>
+        <li>Production sizing must account for the number of concurrent callers &amp;mdash; plan for the peak, not the average.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 22</div>
+      <h2>The whole stack, sized and placed</h2>
+      <ul>
+        <li>Wrap up. Three things to take away. The stack: STT, the LLM brain, embeddings for RAG, guardrails, and TTS, glued by LangGraph and MCP. The sizing rule: about 2N GB in FP16, and quantize to INT8 or INT4 to fit. And GPU matching: check VRAM first, then pick the smallest card the job fits on.</li>
+        <li>The big picture: a useful voice agentic chatbot fits on a single 24 GB GPU when you quantize, and everything is open-source and self-hosted, so audio and data stay inside the bank.</li>
+        <li>That is the whole of Day 2 assembled into one system you could actually build. Thank you &amp;mdash; questions.</li>
+      </ul>
+    </article>
+  </div>
+</main>
+<script>
+(function(){
+  var KEY = 'ocbc-crayon-capstone-notes-v1';
+  var arts = [].slice.call(document.querySelectorAll('#notes .s'));
+  var fields = [].slice.call(document.querySelectorAll('#notes h2, #notes li'));
+  var resetBtn = document.getElementById('reset');
+
+  function collect(){
+    return arts.map(function(s){
+      return { t: (s.querySelector('h2')||{}).textContent || '',
+               n: [].slice.call(s.querySelectorAll('li')).map(function(li){ return li.textContent; }) };
+    });
+  }
+  function showReset(on){ resetBtn.style.display = on ? '' : 'none'; }
+
+  // apply any saved edits
+  try{
+    var raw = localStorage.getItem(KEY);
+    if(raw){
+      var data = JSON.parse(raw);
+      arts.forEach(function(s,i){
+        var rec = data[i]; if(!rec) return;
+        var h = s.querySelector('h2'); if(h && rec.t != null) h.textContent = rec.t;
+        var lis = [].slice.call(s.querySelectorAll('li'));
+        (rec.n||[]).forEach(function(t,k){ if(lis[k]) lis[k].textContent = t; });
+      });
+      showReset(true);
+    }
+  }catch(e){}
+
+  function save(){ try{ localStorage.setItem(KEY, JSON.stringify(collect())); showReset(true); }catch(e){} }
+
+  // edit toggle
+  var editing = false, editBtn = document.getElementById('edit'), editLbl = document.getElementById('editLbl');
+  editBtn.addEventListener('click', function(){
+    editing = !editing;
+    document.body.classList.toggle('editing', editing);
+    editBtn.classList.toggle('on', editing);
+    editLbl.textContent = editing ? 'Done' : 'Edit';
+    fields.forEach(function(el){ el.contentEditable = editing ? 'true' : 'false'; });
+    if(editing){ if(fields[0]) fields[0].focus(); } else { save(); }
+  });
+  document.addEventListener('input', function(){ if(editing) save(); });
+
+  // download current (edited) content as .txt
+  function buildTxt(){
+    var L = ['OCBC CRAYON 2026 — Capstone', 'Speaker notes · ' + arts.length + ' slides',
+             '================================================', ''];
+    collect().forEach(function(r,i){
+      L.push('Slide ' + (i+1) + ' — ' + r.t);
+      r.n.forEach(function(n){ L.push('  \u2022 ' + n); });
+      L.push('');
+    });
+    return L.join('\n').replace(/\s+$/, '') + '\n';
+  }
+  document.getElementById('dl').addEventListener('click', function(ev){
+    ev.preventDefault();
+    var blob = new Blob([buildTxt()], { type: 'text/plain;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'OCBC-CRAYON-Capstone-speaker-notes.txt';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+  });
+
+  resetBtn.addEventListener('click', function(){
+    if(!confirm('Discard your edits and restore the original notes?')) return;
+    try{ localStorage.removeItem(KEY); }catch(e){}
+    location.reload();
+  });
+})();
+</script>
+</body>
+</html>
