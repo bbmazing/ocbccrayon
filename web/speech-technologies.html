@@ -950,6 +950,53 @@ body.static .fnode, body.static .fconn{opacity:1 !important; transform:none !imp
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">07</span></div>
   </section>
 
+  <section class="slide" data-notes='["Now the same listening story, but with the real parts named. Inside there are four stages. Capture turns sound into numbers &mdash; about sixteen thousand a second at 16 kHz.", "Feature extraction squeezes that into a mel-spectrogram. The acoustic model &mdash; an encoder-decoder Transformer like Whisper &mdash; turns it into tokens, and decoding picks the wording that fits the language.", "We grade it with Word Error Rate. For our case the hard parts are code-switching, numbers and amounts, noise and accents, and latency &mdash; which is why faster-whisper is used."]'>
+    <div class="kicker"><span class="badge"></span>Under the hood &middot; the listening pipeline</div>
+    <h2 class="slide-title" data-r data-d="1">Inside the listening half, named for real</h2>
+    <div style="display:flex;align-items:stretch;gap:7px;margin-top:16px">
+      <div data-r data-d="2" style="flex:1;border:1px solid var(--line);border-radius:13px;padding:12px 13px;background:#fff;display:flex;flex-direction:column;gap:4px;min-width:0">
+        <div style="font-family:var(--fMono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--red)">Step 1 &middot; Capture</div>
+        <div style="font-family:var(--fHead);font-weight:800;font-size:13.5px;color:var(--ink);line-height:1.15">Audio &rarr; digital</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.38">Analog sound sampled to digital &mdash; ~16 kHz for speech, i.e. 16,000 amplitude values every second.</div>
+      </div>
+      <div style="align-self:center;color:var(--red);flex:none;display:flex"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div data-r data-d="3" style="flex:1;border:1px solid var(--line);border-radius:13px;padding:12px 13px;background:#fff;display:flex;flex-direction:column;gap:4px;min-width:0">
+        <div style="font-family:var(--fMono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--red)">Step 2 &middot; Features</div>
+        <div style="font-family:var(--fHead);font-weight:800;font-size:13.5px;color:var(--ink);line-height:1.15">Mel-spectrogram</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.38">The raw signal is too heavy, so it is compressed into a denser picture &mdash; a frequency-vs-time map. Whisper uses this.</div>
+      </div>
+      <div style="align-self:center;color:var(--red);flex:none;display:flex"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div data-r data-d="4" style="flex:1;border:1px solid var(--line);border-radius:13px;padding:12px 13px;background:#fff;display:flex;flex-direction:column;gap:4px;min-width:0">
+        <div style="font-family:var(--fMono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--red)">Step 3 &middot; Acoustic model</div>
+        <div style="font-family:var(--fHead);font-weight:800;font-size:13.5px;color:var(--ink);line-height:1.15">Features &rarr; tokens</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.38">An encoder-decoder Transformer: the encoder reads the spectrogram, the decoder writes text token by token.</div>
+      </div>
+      <div style="align-self:center;color:var(--red);flex:none;display:flex"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div data-r data-d="5" style="flex:1;border:1px solid var(--line);border-radius:13px;padding:12px 13px;background:#fff;display:flex;flex-direction:column;gap:4px;min-width:0">
+        <div style="font-family:var(--fMono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--red)">Step 4 &middot; Decoding</div>
+        <div style="font-family:var(--fHead);font-weight:800;font-size:13.5px;color:var(--ink);line-height:1.15">Pick the wording</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.38">A language step chooses the most plausible words &mdash; &ldquo;saldo rekening&rdquo;, not &ldquo;saldo rek ening&rdquo;.</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1.05fr 1fr;gap:13px;margin-top:14px">
+      <div data-r data-d="6" style="border:1px solid var(--tint-red-2);background:var(--tint-red);border-radius:14px;padding:13px 15px;display:flex;flex-direction:column;gap:5px">
+        <div style="font-family:var(--fMono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--red-dark)">Key metric</div>
+        <div style="font-family:var(--fHead);font-weight:800;font-size:15.5px;color:var(--ink)">WER &mdash; Word Error Rate</div>
+        <div style="font-size:11.5px;color:var(--muted);line-height:1.4">Share of words wrong (substitutions + insertions + deletions). For Indonesian banking it is critical &mdash; hearing &ldquo;transfer 5 ribu&rdquo; for &ldquo;transfer 500 ribu&rdquo; is fatal.</div>
+      </div>
+      <div data-r data-d="7" style="border:1px solid var(--line);background:var(--card);border-radius:14px;padding:13px 15px;display:flex;flex-direction:column;gap:8px">
+        <div style="font-family:var(--fMono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Hard parts for our case</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <span style="font-family:var(--fMono);font-size:10.5px;padding:5px 9px;border-radius:8px;background:#fff;border:1px solid var(--line);color:var(--text)">Code-switching: &ldquo;cek balance aku dong&rdquo;</span>
+          <span style="font-family:var(--fMono);font-size:10.5px;padding:5px 9px;border-radius:8px;background:#fff;border:1px solid var(--line);color:var(--text)">Numbers: &ldquo;dua juta lima ratus&rdquo; &rarr; 2.500.000</span>
+          <span style="font-family:var(--fMono);font-size:10.5px;padding:5px 9px;border-radius:8px;background:#fff;border:1px solid var(--line);color:var(--text)">Noise &amp; regional accents</span>
+          <span style="font-family:var(--fMono);font-size:10.5px;padding:5px 9px;border-radius:8px;background:#fff;border:1px solid var(--line);color:var(--text)">Latency &rarr; faster-whisper (CTranslate2)</span>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">00</span></div>
+  </section>
+
   <section class="slide" data-notes='["The models that do the listening. Qwen3-ASR is a strong, modern speech-to-text model. It works in many languages and is a good first choice today. Whisper is the well-known name many people already know.", "All of these are free to run on the bank&#39;s own computers. So nothing has to be sent away.", "Model names change fast. Treat these as good options as of 2026, not a fixed list."]'>
     <div class="kicker"><span class="badge"></span>Models that listen</div>
     <h2 class="slide-title" data-r data-d="1">Two listening models worth knowing</h2>
@@ -1114,6 +1161,47 @@ body.static .fnode, body.static .fconn{opacity:1 !important; transform:none !imp
       <div class="hstep" data-r data-d="4"><div class="htech"><div class="hk">Step 3 · Make sound</div><div class="htt">Make the sound</div><div class="hts">turn the plan into real audio</div></div><div class="hlay"><div class="hk">the story</div><div class="htt">He speaks it aloud</div><div class="hts">in a warm, natural voice</div></div></div>
     </div>
     <div class="flow-cap"><b style="color:var(--red)">One story, left to right:</b> tidy the script &rarr; plan how to say it &rarr; speak it aloud. One model now does all three.</div>
+    <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">00</span></div>
+  </section>
+
+  <section class="slide" data-notes='["Now the speaking story with its real parts. Modern text-to-speech is three stages. Normalization turns &lsquo;Rp2.500.000&rsquo; into the words you actually say &mdash; easy to overlook, but it makes or breaks a banking voice.", "An acoustic model turns text into a mel-spectrogram plus prosody, and a vocoder like HiFi-GAN turns that into real sound. VITS does both at once, which is why it is popular.", "We track two scores: MOS for naturalness, and Real-Time Factor for speed. The hard parts: fewer Indonesian models, natural prosody on long sentences, and keeping the whole round-trip under a second or two."]'>
+    <div class="kicker"><span class="badge"></span>Under the hood &middot; the speaking pipeline</div>
+    <h2 class="slide-title" data-r data-d="1">Inside the speaking half, named for real</h2>
+    <div style="display:flex;align-items:stretch;gap:7px;margin-top:16px">
+      <div data-r data-d="2" style="flex:1;border:1px solid var(--line);border-radius:13px;padding:12px 13px;background:#fff;display:flex;flex-direction:column;gap:4px;min-width:0">
+        <div style="font-family:var(--fMono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--red)">Step 1 &middot; Normalize</div>
+        <div style="font-family:var(--fHead);font-weight:800;font-size:13.5px;color:var(--ink);line-height:1.15">Read it as spoken</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.38">&ldquo;Rp2.500.000&rdquo; &rarr; &ldquo;dua juta lima ratus ribu rupiah&rdquo;, not spelled out. Underrated, but vital &mdash; banking is full of numbers, dates and terms.</div>
+      </div>
+      <div style="align-self:center;color:var(--red);flex:none;display:flex"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div data-r data-d="3" style="flex:1;border:1px solid var(--line);border-radius:13px;padding:12px 13px;background:#fff;display:flex;flex-direction:column;gap:4px;min-width:0">
+        <div style="font-family:var(--fMono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--red)">Step 2 &middot; Acoustic model</div>
+        <div style="font-family:var(--fHead);font-weight:800;font-size:13.5px;color:var(--ink);line-height:1.15">Text &rarr; mel-spectrogram</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.38">Tacotron2, FastSpeech2 or end-to-end VITS turn text/phonemes into a spectral picture plus prosody (intonation, pauses, stress).</div>
+      </div>
+      <div style="align-self:center;color:var(--red);flex:none;display:flex"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+      <div data-r data-d="4" style="flex:1;border:1px solid var(--line);border-radius:13px;padding:12px 13px;background:#fff;display:flex;flex-direction:column;gap:4px;min-width:0">
+        <div style="font-family:var(--fMono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--red)">Step 3 &middot; Vocoder</div>
+        <div style="font-family:var(--fHead);font-weight:800;font-size:13.5px;color:var(--ink);line-height:1.15">Spectrogram &rarr; waveform</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.38">HiFi-GAN and friends turn the spectrogram into real, natural-sounding audio you can actually hear.</div>
+      </div>
+    </div>
+    <div class="flow-cap" style="margin-top:12px"><b style="color:var(--red)">VITS</b> merges steps 2&ndash;3 into one end-to-end model &mdash; which is why it is so popular.</div>
+    <div style="display:grid;grid-template-columns:1.05fr 1fr;gap:13px;margin-top:12px">
+      <div data-r data-d="5" style="border:1px solid var(--tint-red-2);background:var(--tint-red);border-radius:14px;padding:13px 15px;display:flex;flex-direction:column;gap:6px">
+        <div style="font-family:var(--fMono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--red-dark)">Key metrics</div>
+        <div style="font-size:11.5px;color:var(--muted);line-height:1.4"><b style="color:var(--ink)">MOS</b> &mdash; Mean Opinion Score: humans rate naturalness 1&ndash;5.</div>
+        <div style="font-size:11.5px;color:var(--muted);line-height:1.4"><b style="color:var(--ink)">RTF</b> &mdash; Real-Time Factor: RTF &lt; 1 means audio is made faster than its own length (needed for real-time).</div>
+      </div>
+      <div data-r data-d="6" style="border:1px solid var(--line);background:var(--card);border-radius:14px;padding:13px 15px;display:flex;flex-direction:column;gap:8px">
+        <div style="font-family:var(--fMono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Hard parts for our case</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <span style="font-family:var(--fMono);font-size:10.5px;padding:5px 9px;border-radius:8px;background:#fff;border:1px solid var(--line);color:var(--text)">Fewer Bahasa Indonesia models &mdash; Coqui XTTS or fine-tuned Indo</span>
+          <span style="font-family:var(--fMono);font-size:10.5px;padding:5px 9px;border-radius:8px;background:#fff;border:1px solid var(--line);color:var(--text)">Natural prosody on long sentences</span>
+          <span style="font-family:var(--fMono);font-size:10.5px;padding:5px 9px;border-radius:8px;background:#fff;border:1px solid var(--line);color:var(--text)">Round-trip STT + RAG + TTS under ~1&ndash;2 s</span>
+        </div>
+      </div>
+    </div>
     <div class="foot"><div class="mark"><img src="assets/ocbc-icon.png" alt=""/>OCBC CRAYON · Speech Technologies</div><span class="pg">00</span></div>
   </section>
 
