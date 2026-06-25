@@ -1,5 +1,5 @@
-OCBC CRAYON 2026 — Speech Technologies
-Speaker notes · 35 slides
+OCBC CRAYON 2026 — Speech Technologies (STT & TTS)
+Speaker notes · 37 slides
 ================================================
 
 Slide 1 — Speech Technologies machines that listen & speak
@@ -52,127 +52,137 @@ Slide 10 — A waiter taking your order in a loud cafe
   • The waiter hears the messy sound, jots quick shorthand, uses the menu and your earlier words to guess what you meant, then writes the final order. That order is the text.
   • Modern AI does all of this in one trained model. But the waiter story makes every step easy to see.
 
-Slide 11 — Two listening models worth knowing
+Slide 11 — Inside the listening half, named for real
+  • Now the same listening story, but with the real parts named. Inside there are four stages. Capture turns sound into numbers — about sixteen thousand a second at 16 kHz.
+  • Feature extraction squeezes that into a mel-spectrogram. The acoustic model — an encoder-decoder Transformer like Whisper — turns it into tokens, and decoding picks the wording that fits the language.
+  • We grade it with Word Error Rate. For our case the hard parts are code-switching, numbers and amounts, noise and accents, and latency — which is why faster-whisper is used.
+
+Slide 12 — Two listening models worth knowing
   • The models that do the listening. Qwen3-ASR is a strong, modern speech-to-text model. It works in many languages and is a good first choice today. Whisper is the well-known name many people already know.
   • All of these are free to run on the bank's own computers. So nothing has to be sent away.
   • Model names change fast. Treat these as good options as of 2026, not a fixed list.
 
-Slide 12 — Same sentence, two listeners
+Slide 13 — Same sentence, two listeners
   • What does good listening look like? Compare a poor listener with a great one on the same sentence.
   • The weak one drops words, gets the product name wrong, and skips the full stops. So the assistant acts on the wrong thing. The strong one gets it clean.
   • This is the bar we want. Not perfect, but good enough that the next step gets the right words.
 
-Slide 13 — Part 2 — Speaking — Turning Text into Voice
+Slide 14 — Part 2 — Speaking — Turning Text into Voice
   • Part 2: the other half — speaking. Now the machine is an actor reading a script out loud.
   • The hard part is not just saying the words. It is saying them in a natural way, with the right rhythm and tone.
   • Same idea as before, but the other way round: text in, voice out.
 
-Slide 14 — Words in, natural voice out
+Slide 15 — Words in, natural voice out
   • The speaking task: turn written words into a voice that sounds natural, not like a robot.
   • Here is why it is hard. The same sentence can be read in many ways. Where you pause, which word you stress, whether your voice rises — all change the feel.
   • So a good actor does not just read the words. He decides how to say them. The model must do the same.
 
-Slide 15 — Same words, very different meaning
+Slide 16 — Same words, very different meaning
   • A worked example of why delivery matters. Take one short sentence — “You spent it all.” — and notice how the meaning flips depending on which word you stress.
   • Stress “you” and it is an accusation; stress “all” and it is surprise; flat and even, it is just a neutral fact.
   • Same words, three different messages. A good voice actor — and a good speaking model — has to choose the right one.
 
-Slide 16 — One model: text straight to voice
+Slide 17 — One model: text straight to voice
   • Like listening, speaking used to take many separate steps. Modern AI now does it in one step. Written words go straight to a natural voice.
   • So picture it simply: text in, voice out, from one model.
   • Both halves now match. Each one is a single AI model that does the whole job.
 
-Slide 17 — “Your balance is $1,250” — said two ways
+Slide 18 — “Your balance is $1,250” — said two ways
   • What makes a robot voice different from a natural one? Same words, two very different ways of saying them.
   • The robot voice reads every word at the same flat pace, says numbers wrong, and pauses in odd places. It sounds like a machine. The natural voice groups the number, says the money clearly, and breathes between phrases.
   • For a bank, this is not just a nice extra. A clear, natural voice is easier to trust and easier to hear on a phone line.
 
-Slide 18 — A few seconds can copy a voice
+Slide 19 — A few seconds can copy a voice
   • A powerful new skill: from just a few seconds of someone's voice, models can make that voice say anything. This is useful for one steady brand voice.
   • But it is also how voice deepfakes are made. This is a real worry for a bank, where a voice can be a password.
   • So the rule is simple: only copy a voice with clear permission, and stop bad use.
 
-Slide 19 — Two speaking models worth knowing
+Slide 20 — Two speaking models worth knowing
   • The models that do the speaking. Qwen3-TTS is a strong, modern model. It turns text into a natural voice in many languages. Piper is a well-known, light option. It is great when speed and small size matter.
   • Both run on the bank's own machines. So the assistant's voice is made inside the bank.
   • Like the listening models, names change fast. These are good picks as of 2026.
 
-Slide 20 — An actor given a script to perform
+Slide 21 — An actor given a script to perform
   • Here is the whole speaking job, told as one story. Picture an actor who is handed a script. The top row is what the machine really does. The bottom row is the actor story, step by step.
   • The actor reads and tidies the script, so ‘$1,250’ becomes ‘twelve-fifty’. Then he decides how to perform it — where to pause, what to stress. Then he speaks it aloud in a natural voice.
   • One model now does all three. But the actor story shows why a good voice sounds like a person, not a robot.
 
-Slide 21 — Listening and speaking are mirror images
+Slide 22 — Inside the speaking half, named for real
+  • Now the speaking story with its real parts. Modern text-to-speech is three stages. Normalization turns ‘Rp2.500.000’ into the words you actually say — easy to overlook, but it makes or breaks a banking voice.
+  • An acoustic model turns text into a mel-spectrogram plus prosody, and a vocoder like HiFi-GAN turns that into real sound. VITS does both at once, which is why it is popular.
+  • We track two scores: MOS for naturalness, and Real-Time Factor for speed. The hard parts: fewer Indonesian models, natural prosody on long sentences, and keeping the whole round-trip under a second or two.
+
+Slide 23 — Listening and speaking are mirror images
   • We have now seen both halves. Let us put them side by side, so the shape is clear. They are mirror images of each other.
   • Listening goes sound to text, like a waiter taking your order. Speaking goes text to sound, like an actor reading a script. Same idea, opposite direction.
   • Hold this picture. Every voice system is just these two halves joined together.
 
-Slide 22 — Part 3 — Making It Work for Our Voices
+Slide 24 — Part 3 — Making It Work for Our Voices
   • Part 3: the base models are good in general. But they trip on our accents, our mix of languages, and our product names.
   • So we teach them about us. We start with the cheapest, simplest fixes. We only go further if we need to.
   • Our example is a customer switching between Indonesian and English in one sentence.
 
-Slide 23 — A general model trips on our world
+Slide 25 — A general model trips on our world
   • Why we need to adapt. A general model is good. But it trips on the things that make us us: local accents, switching between Indonesian and English in one sentence, and our own product names.
   • Phone lines are noisy too, which makes it harder.
   • None of this is a fault. The model just has not met our world yet. That is what we fix next.
 
-Slide 24 — Just give it our list of names
+Slide 26 — Just give it our list of names
   • Here is the cheapest fix in action. A customer says one of our product names — say “FRANK account”. The plain model has never heard it. So it guesses something close: “frank a count”.
   • We do not retrain anything. We just give the model a short list of words we expect to hear — our product and branch names. So it leans towards them.
   • Same audio, but now it spells the name right. A tiny, almost-free change that fixes many mistakes.
 
-Slide 25 — Cheapest fix first — climb only as needed
+Slide 27 — Cheapest fix first — climb only as needed
   • How we teach the model about us — cheapest first, like a ladder. The lowest step is just giving it a list of our product names. Then it expects to hear them.
   • Next, fix a few tricky words so it says them right. Then give it a little extra practice on our own recordings. This light fix does not make it forget everything else.
   • Only the top step — a big retraining on lots of our audio — is heavy. Climb only as high as you need.
 
-Slide 26 — Common problems have simple fixes
+Slide 28 — Common problems have simple fixes
   • Things still go wrong on real calls. The good news: each common problem has a simple, cheap fix. Read each row left to right — the problem, then the fix.
   • A wrong product name? Give it our word list. A noisy line? Clean the sound first. A long silence? Start speaking sooner. None of these need a big retraining.
   • The lesson: most mistakes have an easy answer. We try the cheap fix first, and only do more if we must.
 
-Slide 27 — Part 4 — Putting It Together at OCBC
+Slide 29 — Part 4 — Putting It Together at OCBC
   • The last stretch: putting both halves together into one bank voice assistant.
   • Everything runs inside the bank, so customer audio never leaves — then we recap.
   • This is where the whole story lands.
 
-Slide 28 — A voice is personal — so it never leaves
+Slide 30 — A voice is personal — so it never leaves
   • Why do we run all of this inside the bank? A caller's voice is very personal data. It can show who they are. In some systems a voice is even used as a password.
   • If we sent the audio to an outside service, that recording would leave our walls. Instead, the listening and speaking models run on our own machines. So the sound never goes anywhere.
   • This is the one real difference from Siri or Alexa: same loop, but the audio stays put. It is why we use free, self-hosted models.
 
-Slide 29 — Listen → decide → speak — all inside the bank
+Slide 31 — Listen → decide → speak — all inside the bank
   • The whole story in one line: the assistant listens, works out an answer, then speaks. The listening model turns the caller's words into text.
   • That text goes to the assistant's brain to pick an answer, and the speaking model reads the answer back out loud.
   • The key point: every step runs inside the bank, so customer audio never leaves OCBC.
 
-Slide 30 — A customer asks for their balance
+Slide 32 — A customer asks for their balance
   • Let us walk one real call, step by step. A customer calls and says, in a mix of Indonesian and English, “Tolong cek balance saya.”
   • The listening model turns that into clean text. The assistant's brain reads the text, looks up the balance, and writes a short reply. The speaking model reads the reply back in a warm voice.
   • Follow the four boxes left to right. This is the whole round-trip on one real OCBC call — and every box runs inside the bank.
 
-Slide 31 — A real conversation can't wait
+Slide 33 — A real conversation can't wait
   • One thing the round-trip diagram hides: speed. A real talk has a rhythm, and a voice assistant must keep up with it.
   • If the reply comes in about a second, it feels like a natural chat. Wait several seconds in silence and the caller thinks the line dropped. They start talking over it, or hang up.
   • So we do not wait for the whole sentence to finish. We start listening as the caller speaks, and start speaking as soon as the first words are ready. The trick is to feel instant.
 
-Slide 32 — Listen, then speak — in a few lines
+Slide 34 — Listen, then speak — in a few lines
   • A short recorded demo, replayed live: the full round-trip in a few lines of code — first listen, then speak, both running in-house.
   • It takes a recording, turns it into text (here with mixed Indonesian and English), then turns a reply back into a spoken audio file — shown as a little waveform.
   • Press R to replay. This is the whole story in code: sound to words, then words back to sound, never leaving the bank.
 
-Slide 33 — A simple cheat-sheet for choosing
+Slide 35 — A simple cheat-sheet for choosing
   • A quick, simple guide for picking a model. For the listening half, start with Qwen3-ASR. It is strong and handles our mix of languages. Use Whisper when you want the most well-known option.
   • For the speaking half, start with Qwen3-TTS for the most natural voice. Use Piper when speed and small size matter more — for example on a small server.
   • The simple rule: start with the Qwen3 models. Keep Whisper and Piper as trusted, lighter backups. Names move fast, so check again each year.
 
-Slide 34 — The whole session in three plain words
+Slide 36 — The whole session in three plain words
   • Before we close, three plain words to take home. These are the big ideas, with no jargon.
   • Listen means turning speech into text, like a waiter. Speak means turning text into a voice, like an actor. Adapt means teaching the model our accents and names.
   • If you remember only these three words, you remember the whole session.
 
-Slide 35 — Listen, and speak — on our terms
+Slide 37 — Listen, and speak — on our terms
   • Let us wrap up. A voice assistant is two sides of one coin: it listens, then it speaks.
   • Modern AI now does each half in one step. We teach it our accents and names, cheapest fixes first. Our bank assistant uses all of this, running inside the bank.
   • Three things to remember: listening and speaking are two halves of one system; one AI model now does each; and we make both work for our voices — with audio that never leaves the bank. Questions welcome.

@@ -65,7 +65,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
 <header class="bar">
   <div>
     <div class="ttl">Speaker notes</div>
-    <div class="sub">Speech Technologies · 35 slides</div>
+    <div class="sub">Speech Technologies · 37 slides</div>
   </div>
   <div class="right">
     <a class="btn ghost" href="index.html">&larr; Back</a>
@@ -83,7 +83,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
 <div class="banner" id="banner">&#9998;&nbsp; Editing — your changes are saved in this browser. Use <b>Download .txt</b> to keep a copy.</div>
 <main>
   <h1 class="lead">Talk track <span class="red">&middot; every slide</span></h1>
-  <p class="intro">Speaker notes for the OCBC CRAYON 2026 &mdash; Speech Technologies deck. 35 slides, in order. Press <b>Edit</b> to tweak the wording inline (saved to this browser), or <b>Download .txt</b> for a copy.</p>
+  <p class="intro">Speaker notes for the OCBC CRAYON 2026 &mdash; Speech Technologies deck. 37 slides, in order. Press <b>Edit</b> to tweak the wording inline (saved to this browser), or <b>Download .txt</b> for a copy.</p>
   <div id="notes">
     <article class="s">
       <div class="n">Slide 1</div>
@@ -177,6 +177,15 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
     </article>
     <article class="s">
       <div class="n">Slide 11</div>
+      <h2>Inside the listening half, named for real</h2>
+      <ul>
+        <li>Now the same listening story, but with the real parts named. Inside there are four stages. Capture turns sound into numbers — about sixteen thousand a second at 16 kHz.</li>
+        <li>Feature extraction squeezes that into a mel-spectrogram. The acoustic model — an encoder-decoder Transformer like Whisper — turns it into tokens, and decoding picks the wording that fits the language.</li>
+        <li>We grade it with Word Error Rate. For our case the hard parts are code-switching, numbers and amounts, noise and accents, and latency — which is why faster-whisper is used.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 12</div>
       <h2>Two listening models worth knowing</h2>
       <ul>
         <li>The models that do the listening. Qwen3-ASR is a strong, modern speech-to-text model. It works in many languages and is a good first choice today. Whisper is the well-known name many people already know.</li>
@@ -185,7 +194,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 12</div>
+      <div class="n">Slide 13</div>
       <h2>Same sentence, two listeners</h2>
       <ul>
         <li>What does good listening look like? Compare a poor listener with a great one on the same sentence.</li>
@@ -194,7 +203,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 13</div>
+      <div class="n">Slide 14</div>
       <h2>Part 2 — Speaking — Turning Text into Voice</h2>
       <ul>
         <li>Part 2: the other half — speaking. Now the machine is an actor reading a script out loud.</li>
@@ -203,7 +212,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 14</div>
+      <div class="n">Slide 15</div>
       <h2>Words in, natural voice out</h2>
       <ul>
         <li>The speaking task: turn written words into a voice that sounds natural, not like a robot.</li>
@@ -212,7 +221,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 15</div>
+      <div class="n">Slide 16</div>
       <h2>Same words, very different meaning</h2>
       <ul>
         <li>A worked example of why delivery matters. Take one short sentence — “You spent it all.” — and notice how the meaning flips depending on which word you stress.</li>
@@ -221,7 +230,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 16</div>
+      <div class="n">Slide 17</div>
       <h2>One model: text straight to voice</h2>
       <ul>
         <li>Like listening, speaking used to take many separate steps. Modern AI now does it in one step. Written words go straight to a natural voice.</li>
@@ -230,7 +239,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 17</div>
+      <div class="n">Slide 18</div>
       <h2>“Your balance is $1,250” — said two ways</h2>
       <ul>
         <li>What makes a robot voice different from a natural one? Same words, two very different ways of saying them.</li>
@@ -239,7 +248,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 18</div>
+      <div class="n">Slide 19</div>
       <h2>A few seconds can copy a voice</h2>
       <ul>
         <li>A powerful new skill: from just a few seconds of someone's voice, models can make that voice say anything. This is useful for one steady brand voice.</li>
@@ -248,7 +257,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 19</div>
+      <div class="n">Slide 20</div>
       <h2>Two speaking models worth knowing</h2>
       <ul>
         <li>The models that do the speaking. Qwen3-TTS is a strong, modern model. It turns text into a natural voice in many languages. Piper is a well-known, light option. It is great when speed and small size matter.</li>
@@ -257,7 +266,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 20</div>
+      <div class="n">Slide 21</div>
       <h2>An actor given a script to perform</h2>
       <ul>
         <li>Here is the whole speaking job, told as one story. Picture an actor who is handed a script. The top row is what the machine really does. The bottom row is the actor story, step by step.</li>
@@ -266,7 +275,16 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 21</div>
+      <div class="n">Slide 22</div>
+      <h2>Inside the speaking half, named for real</h2>
+      <ul>
+        <li>Now the speaking story with its real parts. Modern text-to-speech is three stages. Normalization turns ‘Rp2.500.000’ into the words you actually say — easy to overlook, but it makes or breaks a banking voice.</li>
+        <li>An acoustic model turns text into a mel-spectrogram plus prosody, and a vocoder like HiFi-GAN turns that into real sound. VITS does both at once, which is why it is popular.</li>
+        <li>We track two scores: MOS for naturalness, and Real-Time Factor for speed. The hard parts: fewer Indonesian models, natural prosody on long sentences, and keeping the whole round-trip under a second or two.</li>
+      </ul>
+    </article>
+    <article class="s">
+      <div class="n">Slide 23</div>
       <h2>Listening and speaking are mirror images</h2>
       <ul>
         <li>We have now seen both halves. Let us put them side by side, so the shape is clear. They are mirror images of each other.</li>
@@ -275,7 +293,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 22</div>
+      <div class="n">Slide 24</div>
       <h2>Part 3 — Making It Work for Our Voices</h2>
       <ul>
         <li>Part 3: the base models are good in general. But they trip on our accents, our mix of languages, and our product names.</li>
@@ -284,7 +302,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 23</div>
+      <div class="n">Slide 25</div>
       <h2>A general model trips on our world</h2>
       <ul>
         <li>Why we need to adapt. A general model is good. But it trips on the things that make us us: local accents, switching between Indonesian and English in one sentence, and our own product names.</li>
@@ -293,7 +311,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 24</div>
+      <div class="n">Slide 26</div>
       <h2>Just give it our list of names</h2>
       <ul>
         <li>Here is the cheapest fix in action. A customer says one of our product names — say “FRANK account”. The plain model has never heard it. So it guesses something close: “frank a count”.</li>
@@ -302,7 +320,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 25</div>
+      <div class="n">Slide 27</div>
       <h2>Cheapest fix first — climb only as needed</h2>
       <ul>
         <li>How we teach the model about us — cheapest first, like a ladder. The lowest step is just giving it a list of our product names. Then it expects to hear them.</li>
@@ -311,7 +329,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 26</div>
+      <div class="n">Slide 28</div>
       <h2>Common problems have simple fixes</h2>
       <ul>
         <li>Things still go wrong on real calls. The good news: each common problem has a simple, cheap fix. Read each row left to right — the problem, then the fix.</li>
@@ -320,7 +338,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 27</div>
+      <div class="n">Slide 29</div>
       <h2>Part 4 — Putting It Together at OCBC</h2>
       <ul>
         <li>The last stretch: putting both halves together into one bank voice assistant.</li>
@@ -329,7 +347,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 28</div>
+      <div class="n">Slide 30</div>
       <h2>A voice is personal — so it never leaves</h2>
       <ul>
         <li>Why do we run all of this inside the bank? A caller's voice is very personal data. It can show who they are. In some systems a voice is even used as a password.</li>
@@ -338,7 +356,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 29</div>
+      <div class="n">Slide 31</div>
       <h2>Listen → decide → speak — all inside the bank</h2>
       <ul>
         <li>The whole story in one line: the assistant listens, works out an answer, then speaks. The listening model turns the caller's words into text.</li>
@@ -347,7 +365,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 30</div>
+      <div class="n">Slide 32</div>
       <h2>A customer asks for their balance</h2>
       <ul>
         <li>Let us walk one real call, step by step. A customer calls and says, in a mix of Indonesian and English, “Tolong cek balance saya.”</li>
@@ -356,7 +374,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 31</div>
+      <div class="n">Slide 33</div>
       <h2>A real conversation can't wait</h2>
       <ul>
         <li>One thing the round-trip diagram hides: speed. A real talk has a rhythm, and a voice assistant must keep up with it.</li>
@@ -365,7 +383,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 32</div>
+      <div class="n">Slide 34</div>
       <h2>Listen, then speak — in a few lines</h2>
       <ul>
         <li>A short recorded demo, replayed live: the full round-trip in a few lines of code — first listen, then speak, both running in-house.</li>
@@ -374,7 +392,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 33</div>
+      <div class="n">Slide 35</div>
       <h2>A simple cheat-sheet for choosing</h2>
       <ul>
         <li>A quick, simple guide for picking a model. For the listening half, start with Qwen3-ASR. It is strong and handles our mix of languages. Use Whisper when you want the most well-known option.</li>
@@ -383,7 +401,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 34</div>
+      <div class="n">Slide 36</div>
       <h2>The whole session in three plain words</h2>
       <ul>
         <li>Before we close, three plain words to take home. These are the big ideas, with no jargon.</li>
@@ -392,7 +410,7 @@ body.editing .s h2[contenteditable],body.editing .s li[contenteditable]{outline:
       </ul>
     </article>
     <article class="s">
-      <div class="n">Slide 35</div>
+      <div class="n">Slide 37</div>
       <h2>Listen, and speak — on our terms</h2>
       <ul>
         <li>Let us wrap up. A voice assistant is two sides of one coin: it listens, then it speaks.</li>
